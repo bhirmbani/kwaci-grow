@@ -17,11 +17,22 @@ import { validateCalculations } from './utils/financialCalculations.test'
 import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import { AppSidebar } from './components/AppSidebar'
 import { useSidebarState } from './hooks/useSidebarState'
+import { WarehouseManagement } from './components/warehouse/WarehouseManagement'
 
 
 function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
+  const [currentView, setCurrentView] = useState<'dashboard' | 'warehouse'>('dashboard')
   const { defaultOpen, onOpenChange } = useSidebarState()
+
+  // Handle navigation from sidebar
+  const handleNavigation = (url: string) => {
+    if (url === '#warehouse') {
+      setCurrentView('warehouse')
+    } else {
+      setCurrentView('dashboard')
+    }
+  }
 
   // Initialize database on app start
   useEffect(() => {
@@ -113,13 +124,13 @@ function App() {
 
   return (
     <SidebarProvider defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      <AppSidebar />
+      <AppSidebar onNavigate={handleNavigation} />
       <main className="flex-1 min-h-screen bg-background">
         <div className="flex items-center gap-2 p-4 border-b">
           <SidebarTrigger />
           <div className="flex-1 flex justify-between items-center">
             <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
-              Coffee Cart Financial Dashboard
+              {currentView === 'warehouse' ? 'Warehouse Management' : 'Coffee Cart Financial Dashboard'}
             </h1>
             <ThemeToggle />
           </div>
@@ -127,64 +138,70 @@ function App() {
 
         <div className="p-4">
           <div className="max-w-7xl mx-auto">
-            {/* Configuration & Data Management - Compact Layout */}
-            <div className="mb-6 p-3 bg-card rounded-lg border shadow-sm">
-              <h2 className="text-lg font-semibold mb-4">Configuration & Data Management</h2>
+            {currentView === 'warehouse' ? (
+              <WarehouseManagement />
+            ) : (
+              <>
+                {/* Configuration & Data Management - Compact Layout */}
+                <div className="mb-6 p-3 bg-card rounded-lg border shadow-sm">
+                  <h2 className="text-lg font-semibold mb-4">Configuration & Data Management</h2>
 
-              {/* Horizontal Layout for Input Controls and Sheet Triggers */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-                {/* Input Controls - Compact */}
-                <div className="lg:col-span-1">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Financial Parameters</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label htmlFor="daysPerMonth" className="text-xs">Days/Month</Label>
-                      <Input
-                        id="daysPerMonth"
-                        type="number"
-                        value={daysPerMonth}
-                        onChange={(e) => setDaysPerMonth(Number(e.target.value))}
-                        min="1"
-                        max="31"
-                        className="h-8 text-sm"
-                      />
+                  {/* Horizontal Layout for Input Controls and Sheet Triggers */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+                    {/* Input Controls - Compact */}
+                    <div className="lg:col-span-1">
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Financial Parameters</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label htmlFor="daysPerMonth" className="text-xs">Days/Month</Label>
+                          <Input
+                            id="daysPerMonth"
+                            type="number"
+                            value={daysPerMonth}
+                            onChange={(e) => setDaysPerMonth(Number(e.target.value))}
+                            min="1"
+                            max="31"
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="pricePerCup" className="text-xs">Price/Cup (IDR)</Label>
+                          <Input
+                            id="pricePerCup"
+                            type="number"
+                            value={pricePerCup}
+                            onChange={(e) => setPricePerCup(Number(e.target.value))}
+                            min="0"
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="pricePerCup" className="text-xs">Price/Cup (IDR)</Label>
-                      <Input
-                        id="pricePerCup"
-                        type="number"
-                        value={pricePerCup}
-                        onChange={(e) => setPricePerCup(Number(e.target.value))}
-                        min="0"
-                        className="h-8 text-sm"
-                      />
+
+                    {/* Sheet Triggers - Compact */}
+                    <div className="lg:col-span-2">
+                      <h3 className="text-sm font-medium text-muted-foreground mb-2">Data Management</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                        <FinancialTermsSheet />
+                        <BonusSchemeSheet
+                          bonusScheme={bonusScheme}
+                          onUpdate={setBonusScheme}
+                        />
+                        <InitialCapitalSheet />
+                        <FixedCostsSheet />
+                        <VariableCOGSSheet
+                          items={cogsItems}
+                          onUpdate={setCogsItems}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Sheet Triggers - Compact */}
-                <div className="lg:col-span-2">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Data Management</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                    <FinancialTermsSheet />
-                    <BonusSchemeSheet
-                      bonusScheme={bonusScheme}
-                      onUpdate={setBonusScheme}
-                    />
-                    <InitialCapitalSheet />
-                    <FixedCostsSheet />
-                    <VariableCOGSSheet
-                      items={cogsItems}
-                      onUpdate={setCogsItems}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Financial Table - The Primary Focus */}
-            {memoizedProjectionTable}
+                {/* Main Financial Table - The Primary Focus */}
+                {memoizedProjectionTable}
+              </>
+            )}
           </div>
         </div>
       </main>

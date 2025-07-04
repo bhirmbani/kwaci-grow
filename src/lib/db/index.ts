@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -7,6 +7,8 @@ export class FinancialDashboardDB extends Dexie {
   financialItems!: EntityTable<FinancialItem, 'id'>
   bonusSchemes!: EntityTable<BonusScheme, 'id'>
   appSettings!: EntityTable<AppSetting, 'id'>
+  warehouseBatches!: EntityTable<WarehouseBatch, 'id'>
+  warehouseItems!: EntityTable<WarehouseItem, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -89,6 +91,15 @@ export class FinancialDashboardDB extends Dexie {
           // Users will need to recreate the relationship through the UI
         }
       })
+    })
+
+    // Version 4 - Add warehouse management tables
+    this.version(4).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt'
     })
   }
 }

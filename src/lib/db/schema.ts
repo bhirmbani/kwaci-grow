@@ -36,10 +36,34 @@ export interface AppSetting {
   updatedAt: string
 }
 
+export interface WarehouseBatch {
+  id: string
+  batchNumber: number // Auto-incrementing starting at 1
+  dateAdded: string // ISO date string
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface WarehouseItem {
+  id: string
+  batchId: string // Foreign key to WarehouseBatch
+  ingredientName: string
+  quantity: number
+  unit: string
+  costPerUnit: number // Cost per unit (e.g., cost per ml, cost per gram)
+  totalCost: number // Total cost for this ingredient
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Type aliases for new entities (same as the main types for Dexie)
 export type NewFinancialItem = Omit<FinancialItem, 'createdAt' | 'updatedAt'>
 export type NewBonusScheme = Omit<BonusScheme, 'id' | 'createdAt' | 'updatedAt'>
 export type NewAppSetting = Omit<AppSetting, 'id' | 'createdAt' | 'updatedAt'>
+export type NewWarehouseBatch = Omit<WarehouseBatch, 'createdAt' | 'updatedAt'>
+export type NewWarehouseItem = Omit<WarehouseItem, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

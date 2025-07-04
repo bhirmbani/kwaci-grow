@@ -11,6 +11,7 @@ import {
   FileText,
   PieChart,
   Keyboard,
+  Package,
 } from "lucide-react"
 
 import {
@@ -51,6 +52,12 @@ const items = [
     description: "Calculate cost of goods sold",
   },
   {
+    title: "Warehouse",
+    url: "#warehouse",
+    icon: Package,
+    description: "Manage warehouse stock and inventory",
+  },
+  {
     title: "Fixed Assets",
     url: "#fixed-assets",
     icon: DollarSign,
@@ -81,11 +88,18 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onNavigate?: (url: string) => void
+}
+
+export function AppSidebar({ onNavigate }: AppSidebarProps) {
   const handleNavigation = (url: string) => {
-    // For now, just scroll to the relevant section or handle navigation
-    console.log('Navigating to:', url)
-    // In a real app, you'd use React Router or similar
+    if (onNavigate) {
+      onNavigate(url)
+    } else {
+      // Fallback behavior
+      console.log('Navigating to:', url)
+    }
   }
 
   return (
