@@ -3,9 +3,11 @@ import { FinancialTermsAlert } from './components/FinancialTermsAlert'
 import { BonusSchemeCard } from './components/BonusSchemeCard'
 import { FinancialItemsTable } from './components/FinancialItemsTable'
 import { ProjectionTable } from './components/ProjectionTable'
+import { ThemeToggle } from './components/ThemeToggle'
 import type { BonusScheme, FinancialItem } from './types'
 
 function App() {
+
   const [capitalItems, setCapitalItems] = useState<FinancialItem[]>([
     { id: '1', name: 'Electric Cargo Bike', value: 19500000 }
   ])
@@ -26,18 +28,22 @@ function App() {
 
   const [bonusScheme, setBonusScheme] = useState<BonusScheme>({
     target: 1320,
-    perCup: 500
+    perCup: 500,
+    baristaCount: 1
   })
 
   const [daysPerMonth, setDaysPerMonth] = useState(22)
   const [pricePerCup, setPricePerCup] = useState(8000)
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
-          Coffee Cart Financial Dashboard
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-foreground">
+            Coffee Cart Financial Dashboard
+          </h1>
+          <ThemeToggle />
+        </div>
         
         <FinancialTermsAlert />
         

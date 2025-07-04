@@ -7,6 +7,7 @@ export interface FinancialItem {
 export interface BonusScheme {
   target: number
   perCup: number
+  baristaCount: number
 }
 
 export interface ProjectionRow {

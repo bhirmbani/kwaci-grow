@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -44,5 +46,28 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+  }
+
+  /* Global dark mode styles */
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Ensure all elements inherit the theme colors by default */
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  /* Global component theming */
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* Ensure cards and other components get proper theming */
+  [data-radix-collection-item] {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
   }
 }

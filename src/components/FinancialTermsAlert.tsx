@@ -3,7 +3,7 @@ import { Info } from "lucide-react"
 
 export function FinancialTermsAlert() {
   return (
-    <Alert className="mb-6 bg-blue-50 border-blue-200">
+    <Alert className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-950/50 dark:border-blue-800">
       <Info className="h-4 w-4" />
       <AlertTitle>📊 Key Financial Terms Explained</AlertTitle>
       <AlertDescription>

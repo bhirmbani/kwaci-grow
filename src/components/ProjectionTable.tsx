@@ -38,7 +38,7 @@ export function ProjectionTable({
       
       let bonus = 0
       if (monthlyCups > bonusScheme.target) {
-        bonus = (monthlyCups - bonusScheme.target) * bonusScheme.perCup
+        bonus = (monthlyCups - bonusScheme.target) * bonusScheme.perCup * bonusScheme.baristaCount
       }
       
       const netProfit = grossProfit - fixedTotal - bonus
@@ -110,7 +110,7 @@ export function ProjectionTable({
                   <TableCell className="text-right">{formatCurrency(projection.grossProfit)}</TableCell>
                   <TableCell className="text-right">{formatCurrency(projection.fixedCosts)}</TableCell>
                   <TableCell className="text-right">{formatCurrency(projection.bonus)}</TableCell>
-                  <TableCell className={`text-right font-semibold ${projection.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <TableCell className={`text-right font-semibold ${projection.netProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {formatCurrency(projection.netProfit)}
                   </TableCell>
                 </TableRow>
