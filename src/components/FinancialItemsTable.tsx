@@ -12,20 +12,38 @@ interface FinancialItemsTableProps {
   items: FinancialItem[]
   onUpdate: (items: FinancialItem[]) => void
   currency?: boolean
+  enableFixedAssets?: boolean
 }
 
 export const FinancialItemsTable = memo(function FinancialItemsTable({
   title,
   items,
   onUpdate,
-  currency = true
+  currency = true,
+  enableFixedAssets = false
 }: FinancialItemsTableProps) {
-  const [newItem, setNewItem] = useState({ name: "", value: 0, note: "" })
+  const [newItem, setNewItem] = useState({
+    name: "",
+    value: 0,
+    note: "",
+    isFixedAsset: false,
+    estimatedUsefulLifeYears: undefined as number | undefined
+  })
 
-  const updateItem = useCallback((id: string, field: "name" | "value" | "note", value: string | number) => {
-    const updatedItems = items.map(item =>
-      item.id === id ? { ...item, [field]: value } : item
-    )
+  const updateItem = useCallback((id: string, field: keyof FinancialItem, value: string | number | boolean) => {
+    const updatedItems = items.map(item => {
+      if (item.id === id) {
+        const updatedItem = { ...item, [field]: value }
+
+        // If unchecking fixed asset, clear useful life
+        if (field === 'isFixedAsset' && !value) {
+          updatedItem.estimatedUsefulLifeYears = undefined
+        }
+
+        return updatedItem
+      }
+      return item
+    })
     onUpdate(updatedItems)
   }, [items, onUpdate])
 
@@ -40,12 +58,20 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
         id: Date.now().toString(),
         name: newItem.name,
         value: newItem.value,
-        note: newItem.note || ""
+        note: newItem.note || "",
+        isFixedAsset: enableFixedAssets ? newItem.isFixedAsset : undefined,
+        estimatedUsefulLifeYears: enableFixedAssets && newItem.isFixedAsset ? newItem.estimatedUsefulLifeYears : undefined
       }
       onUpdate([...items, item])
-      setNewItem({ name: "", value: 0, note: "" })
+      setNewItem({
+        name: "",
+        value: 0,
+        note: "",
+        isFixedAsset: false,
+        estimatedUsefulLifeYears: undefined
+      })
     }
-  }, [newItem, items, onUpdate])
+  }, [newItem, items, onUpdate, enableFixedAssets])
 
   const total = items.reduce((sum, item) => sum + item.value, 0)
 
@@ -62,6 +88,12 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
               <TableHead className="text-right">
                 {currency ? "Amount (IDR)" : "Cost/Cup (IDR)"}
               </TableHead>
+              {enableFixedAssets && (
+                <>
+                  <TableHead className="text-center">Fixed Asset</TableHead>
+                  <TableHead className="text-center">Useful Life (years)</TableHead>
+                </>
+              )}
               <TableHead>Note</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
@@ -84,6 +116,31 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
                     className="text-right"
                   />
                 </TableCell>
+                {enableFixedAssets && (
+                  <>
+                    <TableCell className="text-center">
+                      <input
+                        type="checkbox"
+                        checked={item.isFixedAsset || false}
+                        onChange={(e) => updateItem(item.id, "isFixedAsset", e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {item.isFixedAsset && (
+                        <Input
+                          type="number"
+                          min="1"
+                          step="0.1"
+                          value={item.estimatedUsefulLifeYears || ""}
+                          onChange={(e) => updateItem(item.id, "estimatedUsefulLifeYears", Number(e.target.value))}
+                          placeholder="Years"
+                          className="text-center w-20"
+                        />
+                      )}
+                    </TableCell>
+                  </>
+                )}
                 <TableCell>
                   <Input
                     value={item.note || ""}
@@ -119,6 +176,35 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
                   className="text-right"
                 />
               </TableCell>
+              {enableFixedAssets && (
+                <>
+                  <TableCell className="text-center">
+                    <input
+                      type="checkbox"
+                      checked={newItem.isFixedAsset}
+                      onChange={(e) => setNewItem({
+                        ...newItem,
+                        isFixedAsset: e.target.checked,
+                        estimatedUsefulLifeYears: e.target.checked ? newItem.estimatedUsefulLifeYears : undefined
+                      })}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {newItem.isFixedAsset && (
+                      <Input
+                        type="number"
+                        min="1"
+                        step="0.1"
+                        value={newItem.estimatedUsefulLifeYears || ""}
+                        onChange={(e) => setNewItem({ ...newItem, estimatedUsefulLifeYears: Number(e.target.value) })}
+                        placeholder="Years"
+                        className="text-center w-20"
+                      />
+                    )}
+                  </TableCell>
+                </>
+              )}
               <TableCell>
                 <Input
                   value={newItem.note}
@@ -144,6 +230,12 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
               <TableCell className="text-right font-semibold">
                 {formatCurrency(total)}
               </TableCell>
+              {enableFixedAssets && (
+                <>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                </>
+              )}
               <TableCell></TableCell>
               <TableCell></TableCell>
             </TableRow>

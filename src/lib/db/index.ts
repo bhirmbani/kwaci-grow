@@ -69,6 +69,27 @@ export class FinancialDashboardDB extends Dexie {
         }
       })
     })
+
+    // Version 3 - Add fixed asset management fields
+    this.version(3).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt'
+    }).upgrade(tx => {
+      // Initialize fixed asset fields for existing items
+      return tx.table('financialItems').toCollection().modify((item: any) => {
+        // Set default values for new fields
+        item.isFixedAsset = false
+        item.estimatedUsefulLifeYears = null
+        item.sourceAssetId = null
+
+        // Mark existing depreciation entries with sourceAssetId if we can identify them
+        if (item.category === 'fixed_costs' && item.name.toLowerCase().includes('depreciation')) {
+          // This is likely a depreciation entry, but we can't automatically link it
+          // Users will need to recreate the relationship through the UI
+        }
+      })
+    })
   }
 }
 

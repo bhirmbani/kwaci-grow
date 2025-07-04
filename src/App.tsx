@@ -25,15 +25,8 @@ function App() {
 
   // Database hooks
   const {
-    items: capitalItems,
-    loading: capitalLoading,
-    updateItems: setCapitalItems
-  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL)
-
-  const {
     items: fixedItems,
-    loading: fixedLoading,
-    updateItems: setFixedItems
+    loading: fixedLoading
   } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS)
 
   const {
@@ -62,8 +55,8 @@ function App() {
 
   // Memoize loading state calculation
   const isLoading = useMemo(() =>
-    !dbInitialized || capitalLoading || fixedLoading || cogsLoading || bonusLoading || daysLoading || priceLoading,
-    [dbInitialized, capitalLoading, fixedLoading, cogsLoading, bonusLoading, daysLoading, priceLoading]
+    !dbInitialized || fixedLoading || cogsLoading || bonusLoading || daysLoading || priceLoading,
+    [dbInitialized, fixedLoading, cogsLoading, bonusLoading, daysLoading, priceLoading]
   )
 
   // Memoize the ProjectionTable component to prevent unnecessary re-renders
@@ -125,14 +118,8 @@ function App() {
               bonusScheme={bonusScheme}
               onUpdate={setBonusScheme}
             />
-            <InitialCapitalSheet
-              items={capitalItems}
-              onUpdate={setCapitalItems}
-            />
-            <FixedCostsSheet
-              items={fixedItems}
-              onUpdate={setFixedItems}
-            />
+            <InitialCapitalSheet />
+            <FixedCostsSheet />
             <VariableCOGSSheet
               items={cogsItems}
               onUpdate={setCogsItems}
