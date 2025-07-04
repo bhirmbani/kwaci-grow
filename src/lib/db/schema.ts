@@ -74,10 +74,11 @@ export interface StockTransaction {
   id: string
   ingredientName: string
   unit: string
-  transactionType: 'ADD' | 'DEDUCT' | 'ADJUST' // Type of stock transaction
-  quantity: number // Positive for ADD, negative for DEDUCT
-  reason: string // Reason for the transaction (e.g., "Sale", "Warehouse addition", "Manual adjustment")
+  transactionType: 'ADD' | 'DEDUCT' | 'ADJUST' | 'RESERVE' | 'UNRESERVE' // Type of stock transaction
+  quantity: number // Positive for ADD/RESERVE, negative for DEDUCT/UNRESERVE
+  reason: string // Reason for the transaction (e.g., "Sale", "Warehouse addition", "Manual adjustment", "Order reservation")
   batchId?: string // Optional reference to warehouse batch
+  reservationId?: string // Optional reference to reservation for RESERVE/UNRESERVE transactions
   transactionDate: string
   createdAt: string
   updatedAt: string

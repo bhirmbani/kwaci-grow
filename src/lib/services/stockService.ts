@@ -298,4 +298,200 @@ export class StockService {
       throw error
     }
   }
+
+  /**
+   * Reserve stock for pending orders or commitments
+   */
+  static async reserveStock(
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
+    try {
+      if (quantity <= 0) {
+        return { success: false, error: 'Reservation quantity must be positive' }
+      }
+
+      let result = { success: false, availableStock: 0 }
+
+      await db.transaction('rw', [db.stockLevels, db.stockTransactions], async () => {
+        // Get current stock level
+        const currentStock = await this.getStockLevel(ingredientName, unit)
+
+        if (!currentStock) {
+          result = { success: false, availableStock: 0, error: 'Stock record not found' }
+          return
+        }
+
+        const availableStock = currentStock.currentStock - currentStock.reservedStock
+
+        if (availableStock < quantity) {
+          result = {
+            success: false,
+            availableStock,
+            error: `Insufficient available stock: need ${quantity}, have ${availableStock}`
+          }
+          return
+        }
+
+        // Update stock level with new reservation
+        await this.upsertStockLevel({
+          ...currentStock,
+          reservedStock: currentStock.reservedStock + quantity
+        })
+
+        // Record transaction
+        await this.recordTransaction({
+          ingredientName,
+          unit,
+          transactionType: 'RESERVE',
+          quantity,
+          reason,
+          reservationId,
+          transactionDate: new Date().toISOString()
+        })
+
+        result = { success: true, availableStock: availableStock - quantity }
+      })
+
+      return result
+    } catch (error) {
+      console.error('Error reserving stock:', error)
+      return { success: false, error: 'Unexpected error reserving stock' }
+    }
+  }
+
+  /**
+   * Unreserve stock (release reservation)
+   */
+  static async unreserveStock(
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
+    try {
+      if (quantity <= 0) {
+        return { success: false, error: 'Unreservation quantity must be positive' }
+      }
+
+      let result = { success: false, availableStock: 0 }
+
+      await db.transaction('rw', [db.stockLevels, db.stockTransactions], async () => {
+        // Get current stock level
+        const currentStock = await this.getStockLevel(ingredientName, unit)
+
+        if (!currentStock) {
+          result = { success: false, availableStock: 0, error: 'Stock record not found' }
+          return
+        }
+
+        if (currentStock.reservedStock < quantity) {
+          result = {
+            success: false,
+            availableStock: currentStock.currentStock - currentStock.reservedStock,
+            error: `Cannot unreserve more than reserved: trying to unreserve ${quantity}, have ${currentStock.reservedStock} reserved`
+          }
+          return
+        }
+
+        // Update stock level with reduced reservation
+        const newReservedStock = currentStock.reservedStock - quantity
+        await this.upsertStockLevel({
+          ...currentStock,
+          reservedStock: newReservedStock
+        })
+
+        // Record transaction
+        await this.recordTransaction({
+          ingredientName,
+          unit,
+          transactionType: 'UNRESERVE',
+          quantity: -quantity, // Negative for unreservation
+          reason,
+          reservationId,
+          transactionDate: new Date().toISOString()
+        })
+
+        result = { success: true, availableStock: currentStock.currentStock - newReservedStock }
+      })
+
+      return result
+    } catch (error) {
+      console.error('Error unreserving stock:', error)
+      return { success: false, error: 'Unexpected error unreserving stock' }
+    }
+  }
+
+  /**
+   * Update existing reservation quantity
+   */
+  static async updateReservation(
+    ingredientName: string,
+    unit: string,
+    newQuantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
+    try {
+      if (newQuantity < 0) {
+        return { success: false, error: 'Reservation quantity cannot be negative' }
+      }
+
+      let result = { success: false, availableStock: 0 }
+
+      await db.transaction('rw', [db.stockLevels, db.stockTransactions], async () => {
+        // Get current stock level
+        const currentStock = await this.getStockLevel(ingredientName, unit)
+
+        if (!currentStock) {
+          result = { success: false, availableStock: 0, error: 'Stock record not found' }
+          return
+        }
+
+        const currentReserved = currentStock.reservedStock
+        const availableStock = currentStock.currentStock - currentReserved
+        const reservationDifference = newQuantity - currentReserved
+
+        // If increasing reservation, check if we have enough available stock
+        if (reservationDifference > 0 && availableStock < reservationDifference) {
+          result = {
+            success: false,
+            availableStock,
+            error: `Insufficient available stock for reservation increase: need ${reservationDifference} more, have ${availableStock}`
+          }
+          return
+        }
+
+        // Update stock level with new reservation amount
+        await this.upsertStockLevel({
+          ...currentStock,
+          reservedStock: newQuantity
+        })
+
+        // Record transaction for the change
+        if (reservationDifference !== 0) {
+          await this.recordTransaction({
+            ingredientName,
+            unit,
+            transactionType: reservationDifference > 0 ? 'RESERVE' : 'UNRESERVE',
+            quantity: Math.abs(reservationDifference) * (reservationDifference > 0 ? 1 : -1),
+            reason: `${reason} (Updated reservation from ${currentReserved} to ${newQuantity})`,
+            reservationId,
+            transactionDate: new Date().toISOString()
+          })
+        }
+
+        result = { success: true, availableStock: currentStock.currentStock - newQuantity }
+      })
+
+      return result
+    } catch (error) {
+      console.error('Error updating reservation:', error)
+      return { success: false, error: 'Unexpected error updating reservation' }
+    }
+  }
 }

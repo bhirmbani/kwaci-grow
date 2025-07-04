@@ -4,15 +4,26 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { AlertTriangle, Package, TrendingUp, TrendingDown, Settings } from 'lucide-react'
+import { AlertTriangle, Package, TrendingUp, TrendingDown, Settings, Check, X, Edit3 } from 'lucide-react'
 import { useStockLevels, useLowStockAlerts } from '@/hooks/useStock'
 import { formatCurrency } from '@/utils/formatters'
 
 export function StockLevels() {
-  const { stockLevels, loading, error, updateLowStockThreshold } = useStockLevels()
+  const {
+    stockLevels,
+    loading,
+    error,
+    updateLowStockThreshold,
+    reserveStock,
+    unreserveStock,
+    updateReservation
+  } = useStockLevels()
   const { alerts } = useLowStockAlerts()
   const [editingThreshold, setEditingThreshold] = useState<string | null>(null)
   const [newThreshold, setNewThreshold] = useState<number>(0)
+  const [editingReservation, setEditingReservation] = useState<string | null>(null)
+  const [newReservation, setNewReservation] = useState<number>(0)
+  const [reservationMessage, setReservationMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const handleThresholdEdit = (stockId: string, currentThreshold: number) => {
     setEditingThreshold(stockId)
@@ -29,6 +40,115 @@ export function StockLevels() {
   const handleThresholdCancel = () => {
     setEditingThreshold(null)
     setNewThreshold(0)
+  }
+
+  const handleReservationEdit = (stockId: string, currentReservation: number) => {
+    setEditingReservation(stockId)
+    setNewReservation(currentReservation)
+    setReservationMessage(null)
+  }
+
+  const handleReservationSave = async (ingredientName: string, unit: string, currentReservation: number) => {
+    if (newReservation < 0) {
+      setReservationMessage({
+        type: 'error',
+        text: 'Reservation quantity cannot be negative'
+      })
+      return
+    }
+
+    try {
+      const result = await updateReservation(
+        ingredientName,
+        unit,
+        newReservation,
+        `Manual reservation update via Stock Levels`
+      )
+
+      if (result.success) {
+        setEditingReservation(null)
+        setReservationMessage({
+          type: 'success',
+          text: `Reservation updated successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+        })
+        // Clear success message after 3 seconds
+        setTimeout(() => setReservationMessage(null), 3000)
+      } else {
+        setReservationMessage({
+          type: 'error',
+          text: result.error || 'Failed to update reservation'
+        })
+      }
+    } catch (error) {
+      setReservationMessage({
+        type: 'error',
+        text: 'An unexpected error occurred while updating reservation'
+      })
+    }
+  }
+
+  const handleReservationCancel = () => {
+    setEditingReservation(null)
+    setNewReservation(0)
+    setReservationMessage(null)
+  }
+
+  const handleQuickReserve = async (ingredientName: string, unit: string, quantity: number) => {
+    try {
+      const result = await reserveStock(
+        ingredientName,
+        unit,
+        quantity,
+        `Quick reserve ${quantity} ${unit} via Stock Levels`
+      )
+
+      if (result.success) {
+        setReservationMessage({
+          type: 'success',
+          text: `Reserved ${quantity} ${unit} successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+        })
+        setTimeout(() => setReservationMessage(null), 3000)
+      } else {
+        setReservationMessage({
+          type: 'error',
+          text: result.error || 'Failed to reserve stock'
+        })
+      }
+    } catch (error) {
+      setReservationMessage({
+        type: 'error',
+        text: 'An unexpected error occurred while reserving stock'
+      })
+    }
+  }
+
+  const handleQuickUnreserve = async (ingredientName: string, unit: string, quantity: number) => {
+    try {
+      const result = await unreserveStock(
+        ingredientName,
+        unit,
+        quantity,
+        `Quick unreserve ${quantity} ${unit} via Stock Levels`
+      )
+
+      if (result.success) {
+        setReservationMessage({
+          type: 'success',
+          text: `Unreserved ${quantity} ${unit} successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+        })
+        setTimeout(() => setReservationMessage(null), 3000)
+      } else {
+        setReservationMessage({
+          type: 'error',
+          text: result.error || 'Failed to unreserve stock'
+        })
+      }
+    } catch (error) {
+      setReservationMessage({
+        type: 'error',
+        text: 'An unexpected error occurred while unreserving stock'
+      })
+    }
   }
 
   if (loading) {
@@ -110,6 +230,25 @@ export function StockLevels() {
         </Card>
       )}
 
+      {/* Reservation Messages */}
+      {reservationMessage && (
+        <Card className={`border-2 ${
+          reservationMessage.type === 'success'
+            ? 'border-green-200 bg-green-50 dark:bg-green-950/20'
+            : 'border-red-200 bg-red-50 dark:bg-red-950/20'
+        }`}>
+          <CardContent className="p-4">
+            <div className={`text-sm font-medium ${
+              reservationMessage.type === 'success'
+                ? 'text-green-700 dark:text-green-300'
+                : 'text-red-700 dark:text-red-300'
+            }`}>
+              {reservationMessage.text}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Stock Levels Table */}
       <Card>
         <CardHeader>
@@ -142,9 +281,10 @@ export function StockLevels() {
                 const availableStock = currentStock - reservedStock
                 const isLowStock = currentStock <= lowStockThreshold
                 const isEditing = editingThreshold === stock.id
+                const isEditingReservation = editingReservation === stock.id
 
                 return (
-                  <TableRow key={stock.id}>
+                  <TableRow key={stock.id} className="group">
                     <TableCell>
                       <div className="font-medium">{stock.ingredientName}</div>
                       <div className="text-xs text-muted-foreground">
@@ -157,12 +297,49 @@ export function StockLevels() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      {reservedStock > 0 ? (
-                        <span className="text-orange-600">
-                          {reservedStock.toFixed(1)} {stock.unit}
-                        </span>
+                      {isEditingReservation ? (
+                        <div className="flex items-center gap-1 justify-end">
+                          <Input
+                            type="number"
+                            value={newReservation}
+                            onChange={(e) => setNewReservation(Math.max(0, Number(e.target.value)))}
+                            className="w-20 h-8 text-sm"
+                            min="0"
+                            max={currentStock}
+                            step="0.1"
+                          />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleReservationSave(stock.ingredientName, stock.unit, reservedStock)}
+                          >
+                            <Check className="h-3 w-3 text-green-600" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={handleReservationCancel}
+                          >
+                            <X className="h-3 w-3 text-red-600" />
+                          </Button>
+                        </div>
                       ) : (
-                        <span className="text-muted-foreground">0</span>
+                        <div className="flex items-center gap-2 justify-end">
+                          <span className={reservedStock > 0 ? "text-orange-600 font-medium" : "text-muted-foreground"}>
+                            {reservedStock.toFixed(1)} {stock.unit}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleReservationEdit(stock.id, reservedStock)}
+                            title="Edit reservation"
+                          >
+                            <Edit3 className="h-3 w-3" />
+                          </Button>
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -224,16 +401,43 @@ export function StockLevels() {
                       )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {!isEditing && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleThresholdEdit(stock.id, stock.lowStockThreshold)}
-                          className="h-8 px-2"
-                        >
-                          <Settings className="h-3 w-3" />
-                        </Button>
-                      )}
+                      <div className="flex items-center gap-1 justify-center">
+                        {!isEditing && !isEditingReservation && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleThresholdEdit(stock.id, stock.lowStockThreshold)}
+                              className="h-8 px-2"
+                              title="Edit low stock threshold"
+                            >
+                              <Settings className="h-3 w-3" />
+                            </Button>
+                            {reservedStock > 0 && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleQuickUnreserve(stock.ingredientName, stock.unit, reservedStock)}
+                                className="h-8 px-2 text-orange-600 hover:text-orange-700"
+                                title="Release all reservations"
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            )}
+                            {availableStock > 0 && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleQuickReserve(stock.ingredientName, stock.unit, Math.min(10, availableStock))}
+                                className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                                title={`Quick reserve ${Math.min(10, availableStock)} ${stock.unit}`}
+                              >
+                                +{Math.min(10, availableStock)}
+                              </Button>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 )

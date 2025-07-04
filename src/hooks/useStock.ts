@@ -59,6 +59,78 @@ export function useStockLevels() {
     }
   }, [loadStockLevels])
 
+  const reserveStock = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setError(null)
+      const result = await StockService.reserveStock(ingredientName, unit, quantity, reason, reservationId)
+
+      if (result.success) {
+        // Reload stock levels to reflect changes
+        await loadStockLevels()
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reserve stock'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    }
+  }, [loadStockLevels])
+
+  const unreserveStock = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setError(null)
+      const result = await StockService.unreserveStock(ingredientName, unit, quantity, reason, reservationId)
+
+      if (result.success) {
+        // Reload stock levels to reflect changes
+        await loadStockLevels()
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to unreserve stock'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    }
+  }, [loadStockLevels])
+
+  const updateReservation = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    newQuantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setError(null)
+      const result = await StockService.updateReservation(ingredientName, unit, newQuantity, reason, reservationId)
+
+      if (result.success) {
+        // Reload stock levels to reflect changes
+        await loadStockLevels()
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update reservation'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    }
+  }, [loadStockLevels])
+
   useEffect(() => {
     loadStockLevels()
   }, [loadStockLevels])
@@ -69,7 +141,10 @@ export function useStockLevels() {
     error,
     loadStockLevels,
     processSale,
-    updateLowStockThreshold
+    updateLowStockThreshold,
+    reserveStock,
+    unreserveStock,
+    updateReservation
   }
 }
 
@@ -186,5 +261,99 @@ export function useStockLevel(ingredientName: string, unit: string) {
     error,
     loadStockLevel,
     deductStock
+  }
+}
+
+/**
+ * Hook for managing stock reservations
+ */
+export function useStockReservations() {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const reserveStock = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await StockService.reserveStock(ingredientName, unit, quantity, reason, reservationId)
+
+      if (!result.success && result.error) {
+        setError(result.error)
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reserve stock'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const unreserveStock = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await StockService.unreserveStock(ingredientName, unit, quantity, reason, reservationId)
+
+      if (!result.success && result.error) {
+        setError(result.error)
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to unreserve stock'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const updateReservation = useCallback(async (
+    ingredientName: string,
+    unit: string,
+    newQuantity: number,
+    reason: string,
+    reservationId?: string
+  ): Promise<{ success: boolean; error?: string; availableStock?: number }> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await StockService.updateReservation(ingredientName, unit, newQuantity, reason, reservationId)
+
+      if (!result.success && result.error) {
+        setError(result.error)
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update reservation'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  return {
+    loading,
+    error,
+    reserveStock,
+    unreserveStock,
+    updateReservation
   }
 }
