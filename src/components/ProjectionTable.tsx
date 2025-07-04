@@ -104,6 +104,8 @@ export function ProjectionTable({
     setSelectedRowData(undefined)
   }
 
+
+
   const generateProjections = () => {
     const projections = []
     for (let cupsPerDay = 10; cupsPerDay <= 200; cupsPerDay += 10) {
@@ -156,11 +158,11 @@ export function ProjectionTable({
             >
               <div
                 ref={tableScrollRef}
-                className="overflow-x-auto overflow-y-auto h-full focus:outline-none"
+                className="table-container overflow-x-auto overflow-y-auto h-full focus:outline-none"
                 tabIndex={0}
                 style={{ scrollBehavior: 'smooth' }}
               >
-                <Table>
+                <Table noWrapper>
                   <TableHeader sticky>
                     <TableRow>
                     <TableHead sticky className="min-w-[100px]" scope="col">

@@ -231,6 +231,45 @@
     }
   }
 
+  /* Sticky table headers fix */
+  .table-sticky-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background-color: hsl(var(--background)) !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+    /* Add a subtle background to make it more visible when sticky */
+    backdrop-filter: blur(8px);
+  }
+
+  /* Ensure table container supports sticky positioning */
+  .table-container {
+    position: relative;
+    overflow: auto;
+  }
+
+  /* Additional sticky header support for table elements */
+  .table-container table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  /* Ensure sticky headers work in all browsers */
+  .table-container thead th.table-sticky-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 21 !important;
+  }
+
+  /* Fix for webkit browsers */
+  .table-container thead.table-sticky-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+  }
+
   /* Sheet animations */
   @keyframes slide-in-from-right {
     from {
