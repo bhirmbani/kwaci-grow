@@ -16,7 +16,7 @@ interface DataInputSheetProps {
   triggerLabel: string
   triggerIcon?: ReactNode
   children: ReactNode
-  side?: "left" | "right" | "top" | "bottom"
+  side?: "left" | "right" | "top" | "bottom" | "right-wide"
   buttonColor?: "blue" | "green" | "yellow"
 }
 
@@ -46,15 +46,17 @@ export function DataInputSheet({
           <span className="truncate">{triggerLabel}</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side={side}>
-        <SheetHeader>
+      <SheetContent side={side} className="flex flex-col h-full">
+        <SheetHeader className="flex-shrink-0">
           <SheetTitle>{title}</SheetTitle>
           {description && (
             <SheetDescription>{description}</SheetDescription>
           )}
         </SheetHeader>
-        <div className="mt-6">
-          {children}
+        <div className="flex-1 overflow-y-auto mt-6 pr-2 -mr-2">
+          <div className="space-y-6 pb-6">
+            {children}
+          </div>
         </div>
       </SheetContent>
     </Sheet>

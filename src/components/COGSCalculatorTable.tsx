@@ -4,17 +4,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Trash2, Plus, Calculator, ShoppingCart } from "lucide-react"
+import { Trash2, Plus, Calculator } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
 import {
   calculateCostPerCup,
   calculateTotalCOGSPerCup,
   updateCalculatedValue,
-  calculateIngredientQuantities,
   getFormattedQuantity,
+  generateShoppingList,
   UNIT_OPTIONS,
   type UnitOption
 } from "@/utils/cogsCalculations"
+import { ShoppingListSummary } from "./ShoppingListSummary"
 import type { FinancialItem } from "@/types"
 
 interface COGSCalculatorTableProps {
@@ -100,22 +101,26 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
   // Calculate totals
   const totalCOGSPerCup = useMemo(() => calculateTotalCOGSPerCup(items), [items])
   const totalDailyCOGS = useMemo(() => totalCOGSPerCup * dailyTarget, [totalCOGSPerCup, dailyTarget])
-  const ingredientQuantities = useMemo(() => calculateIngredientQuantities(items, dailyTarget), [items, dailyTarget])
+
+  // Calculate shopping list totals
+  const shoppingListSummary = useMemo(() => {
+    return generateShoppingList(items, dailyTarget)
+  }, [items, dailyTarget])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Daily Target Input */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <Calculator className="h-6 w-6" />
             COGS Calculator
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
-              <label htmlFor="dailyTarget" className="block text-sm font-medium mb-2">
+              <label htmlFor="dailyTarget" className="block text-sm font-medium mb-3 text-muted-foreground">
                 Daily Target (cups)
               </label>
               <Input
@@ -125,22 +130,31 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                 onChange={(e) => onDailyTargetChange(Number(e.target.value))}
                 min="0"
                 placeholder="Enter daily target..."
+                className="text-lg font-medium"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-3 text-muted-foreground">
                 Total COGS per Cup
               </label>
-              <div className="h-10 px-3 py-2 bg-muted rounded-md flex items-center font-semibold">
+              <div className="h-12 px-4 py-3 bg-green-50 border border-green-200 rounded-md flex items-center font-bold text-lg text-green-700">
                 {formatCurrency(totalCOGSPerCup)}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-3 text-muted-foreground">
                 Total Daily COGS
               </label>
-              <div className="h-10 px-3 py-2 bg-muted rounded-md flex items-center font-semibold text-primary">
+              <div className="h-12 px-4 py-3 bg-blue-50 border border-blue-200 rounded-md flex items-center font-bold text-lg text-blue-700">
                 {formatCurrency(totalDailyCOGS)}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-3 text-muted-foreground">
+                Shopping Cost
+              </label>
+              <div className="h-12 px-4 py-3 bg-purple-50 border border-purple-200 rounded-md flex items-center font-bold text-lg text-purple-700">
+                {formatCurrency(shoppingListSummary.grandTotal)}
               </div>
             </div>
           </div>
@@ -152,53 +166,55 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Ingredient</TableHead>
-                <TableHead className="text-right">Base Cost (IDR)</TableHead>
-                <TableHead className="text-right">Base Qty</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead className="text-right">Usage/Cup</TableHead>
-                <TableHead className="text-right">Cost/Cup</TableHead>
-                <TableHead className="text-right">Total Needed</TableHead>
-                <TableHead>Note</TableHead>
-                <TableHead className="w-10"></TableHead>
-              </TableRow>
-            </TableHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table className="min-w-full table-fixed">
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="px-4 py-3 font-semibold w-[15%]">Ingredient</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[12%]">Base Cost (IDR)</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[10%]">Base Qty</TableHead>
+                  <TableHead className="px-4 py-3 font-semibold w-[8%]">Unit</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[10%]">Usage/Cup</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[12%]">Cost/Cup</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[12%]">Total Needed</TableHead>
+                  <TableHead className="px-4 py-3 font-semibold w-[16%]">Note</TableHead>
+                  <TableHead className="px-4 py-3 w-[5%]"></TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {items.map((item) => {
                 const costPerCup = calculateCostPerCup(item)
                 return (
-                  <TableRow key={item.id}>
-                    <TableCell>
+                  <TableRow key={item.id} className="hover:bg-muted/50 transition-colors border-b">
+                    <TableCell className="px-4 py-4">
                       <Input
                         value={item.name}
                         onChange={(e) => updateItem(item.id, "name", e.target.value)}
                         placeholder="Ingredient name"
+                        className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
                       />
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="px-4 py-4 text-right">
                       <Input
                         type="number"
                         value={item.baseUnitCost || 0}
                         onChange={(e) => updateItem(item.id, "baseUnitCost", Number(e.target.value))}
-                        className="text-right"
+                        className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0"
                       />
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="px-4 py-4 text-right">
                       <Input
                         type="number"
                         value={item.baseUnitQuantity || 1}
                         onChange={(e) => updateItem(item.id, "baseUnitQuantity", Number(e.target.value))}
-                        className="text-right"
+                        className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0.01"
                         step="0.01"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-4 py-4">
                       <Select
                         value={item.unit || "ml"}
                         onChange={(e) => updateItem(item.id, "unit", e.target.value)}
@@ -210,13 +226,13 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         ))}
                       </Select>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="px-4 py-4 text-right">
                       <div className="relative">
                         <Input
                           type="number"
                           value={item.usagePerCup || 0}
                           onChange={(e) => updateItem(item.id, "usagePerCup", Number(e.target.value))}
-                          className="text-right pr-12"
+                          className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right pr-12 transition-all"
                           min="0"
                           step="0.01"
                           placeholder={`per cup`}
@@ -226,28 +242,37 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right font-semibold">
+                    <TableCell className="px-4 py-4 text-right font-semibold text-green-600">
                       {formatCurrency(costPerCup)}
                     </TableCell>
-                    <TableCell className="text-right font-medium text-blue-600">
-                      {item.usagePerCup && item.unit
-                        ? getFormattedQuantity(item.usagePerCup * dailyTarget, item.unit)
-                        : '-'
-                      }
+                    <TableCell className="px-4 py-4 text-right font-medium text-blue-600">
+                      {(() => {
+                        // More robust checking for Total Needed calculation
+                        const hasValidUsage = (item.usagePerCup !== undefined && item.usagePerCup !== null && item.usagePerCup >= 0);
+                        const hasValidUnit = (item.unit && item.unit.trim() !== '');
+                        const hasValidTarget = (dailyTarget > 0);
+
+                        if (hasValidUsage && hasValidUnit && hasValidTarget && item.usagePerCup !== undefined && item.unit) {
+                          const totalNeeded = item.usagePerCup * dailyTarget;
+                          return getFormattedQuantity(totalNeeded, item.unit);
+                        }
+                        return '-';
+                      })()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-4 py-4">
                       <Input
                         value={item.note || ""}
                         onChange={(e) => updateItem(item.id, "note", e.target.value)}
                         placeholder="Add note..."
+                        className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-4 py-4">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeItem(item.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -257,34 +282,35 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
               })}
               
               {/* Add new item row */}
-              <TableRow className="border-t-2">
-                <TableCell>
+              <TableRow className="border-t-2 bg-muted/20">
+                <TableCell className="px-4 py-4">
                   <Input
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     placeholder="Add new ingredient..."
+                    className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring transition-all"
                   />
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="px-4 py-4 text-right">
                   <Input
                     type="number"
                     value={newItem.baseUnitCost}
                     onChange={(e) => setNewItem({ ...newItem, baseUnitCost: Number(e.target.value) })}
-                    className="text-right"
+                    className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                     min="0"
                   />
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="px-4 py-4 text-right">
                   <Input
                     type="number"
                     value={newItem.baseUnitQuantity}
                     onChange={(e) => setNewItem({ ...newItem, baseUnitQuantity: Number(e.target.value) })}
-                    className="text-right"
+                    className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                     min="0.01"
                     step="0.01"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-4">
                   <Select
                     value={newItem.unit}
                     onChange={(e) => setNewItem({ ...newItem, unit: e.target.value as UnitOption })}
@@ -296,13 +322,13 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                     ))}
                   </Select>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="px-4 py-4 text-right">
                   <div className="relative">
                     <Input
                       type="number"
                       value={newItem.usagePerCup}
                       onChange={(e) => setNewItem({ ...newItem, usagePerCup: Number(e.target.value) })}
-                      className="text-right pr-12"
+                      className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring text-right pr-12 transition-all"
                       min="0"
                       step="0.01"
                       placeholder="per cup"
@@ -312,32 +338,33 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="text-right font-semibold">
+                <TableCell className="px-4 py-4 text-right font-semibold text-green-600">
                   {formatCurrency(
                     newItem.baseUnitCost && newItem.baseUnitQuantity && newItem.usagePerCup
                       ? Math.round((newItem.baseUnitCost / newItem.baseUnitQuantity) * newItem.usagePerCup)
                       : 0
                   )}
                 </TableCell>
-                <TableCell className="text-right font-medium text-blue-600">
+                <TableCell className="px-4 py-4 text-right font-medium text-blue-600">
                   {newItem.usagePerCup && newItem.unit
                     ? getFormattedQuantity(newItem.usagePerCup * dailyTarget, newItem.unit)
                     : '-'
                   }
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-4">
                   <Input
                     value={newItem.note}
                     onChange={(e) => setNewItem({ ...newItem, note: e.target.value })}
                     placeholder="Add note..."
+                    className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring transition-all"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-4 py-4">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={addItem}
-                    className="text-green-500 hover:text-green-700"
+                    className="text-green-500 hover:text-green-700 hover:bg-green-50 transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -345,53 +372,24 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
               </TableRow>
             </TableBody>
             <TableFooter>
-              <TableRow>
-                <TableCell className="font-semibold" colSpan={5}>Total COGS per Cup</TableCell>
-                <TableCell className="text-right font-semibold">
+              <TableRow className="bg-muted/30 border-t-2">
+                <TableCell className="px-4 py-4 font-semibold text-lg" colSpan={5}>Total COGS per Cup</TableCell>
+                <TableCell className="px-4 py-4 text-right font-bold text-lg text-green-600">
                   {formatCurrency(totalCOGSPerCup)}
                 </TableCell>
                 <TableCell colSpan={3}></TableCell>
               </TableRow>
             </TableFooter>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
       {/* Shopping List Summary */}
-      {ingredientQuantities.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
-              Shopping List for {dailyTarget} Cups
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ingredientQuantities.map((ingredient) => (
-                <div key={ingredient.id} className="p-4 bg-muted rounded-lg">
-                  <div className="font-semibold text-sm text-muted-foreground mb-1">
-                    {ingredient.name}
-                  </div>
-                  <div className="text-lg font-bold text-primary">
-                    {ingredient.formattedQuantity}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {ingredient.usagePerCup} {ingredient.unit} per cup
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {ingredientQuantities.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Add ingredients with usage amounts to see shopping list</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      <ShoppingListSummary
+        items={items}
+        dailyTarget={dailyTarget}
+      />
     </div>
   )
 })

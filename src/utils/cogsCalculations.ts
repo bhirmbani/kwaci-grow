@@ -140,7 +140,7 @@ export type UnitOption = typeof UNIT_OPTIONS[number]['value']
  * Calculate total quantity needed for daily target
  */
 export function calculateTotalQuantityNeeded(item: FinancialItem, dailyTarget: number): number {
-  if (!item.usagePerCup || dailyTarget <= 0) {
+  if ((item.usagePerCup === undefined || item.usagePerCup === null) || dailyTarget <= 0) {
     return 0
   }
   return item.usagePerCup * dailyTarget
@@ -156,6 +156,15 @@ export interface UnitConversion {
 }
 
 export function convertToLargerUnit(quantity: number, unit: string): UnitConversion {
+  // Handle null, undefined, or empty unit
+  if (!unit || unit.trim() === '') {
+    return {
+      value: quantity,
+      unit: 'unit',
+      displayText: `${quantity.toLocaleString()} unit`
+    }
+  }
+
   const conversions: Record<string, { threshold: number; targetUnit: string; factor: number }> = {
     'ml': { threshold: 1000, targetUnit: 'l', factor: 1000 },
     'g': { threshold: 1000, targetUnit: 'kg', factor: 1000 },
@@ -163,7 +172,7 @@ export function convertToLargerUnit(quantity: number, unit: string): UnitConvers
     'tbsp': { threshold: 16, targetUnit: 'cup', factor: 16 },
   }
 
-  const conversion = conversions[unit]
+  const conversion = conversions[unit.toLowerCase()]
 
   if (conversion && quantity >= conversion.threshold) {
     const convertedValue = quantity / conversion.factor
@@ -187,6 +196,15 @@ export function convertToLargerUnit(quantity: number, unit: string): UnitConvers
  * Get formatted quantity display with unit conversion
  */
 export function getFormattedQuantity(quantity: number, unit: string): string {
+  // Handle edge cases
+  if (quantity < 0) {
+    return '0 unit'
+  }
+
+  if (!unit || unit.trim() === '') {
+    return `${quantity.toLocaleString()} unit`
+  }
+
   const conversion = convertToLargerUnit(quantity, unit)
   return conversion.displayText
 }
@@ -205,7 +223,12 @@ export interface IngredientQuantity {
 
 export function calculateIngredientQuantities(items: FinancialItem[], dailyTarget: number): IngredientQuantity[] {
   return items
-    .filter(item => item.usagePerCup && item.unit) // Only include items with complete data
+    .filter(item => {
+      // More robust filtering for items that should show Total Needed
+      const hasValidUsage = (item.usagePerCup !== undefined && item.usagePerCup !== null && item.usagePerCup >= 0);
+      const hasValidUnit = (item.unit && item.unit.trim() !== '');
+      return hasValidUsage && hasValidUnit;
+    })
     .map(item => {
       const totalNeeded = calculateTotalQuantityNeeded(item, dailyTarget)
       const formattedQuantity = getFormattedQuantity(totalNeeded, item.unit!)
@@ -219,4 +242,78 @@ export function calculateIngredientQuantities(items: FinancialItem[], dailyTarge
         formattedQuantity
       }
     })
+}
+
+/**
+ * Shopping List Calculation Functions
+ */
+
+export interface ShoppingListItem {
+  id: string
+  name: string
+  totalNeeded: number
+  formattedQuantity: string
+  unit: string
+  unitCost: number // Cost per base unit
+  totalCost: number // Total cost for this ingredient
+  baseUnitQuantity: number
+}
+
+export interface ShoppingListSummary {
+  items: ShoppingListItem[]
+  grandTotal: number
+  totalItems: number
+}
+
+/**
+ * Calculate unit cost (cost per base unit) for an ingredient
+ */
+export function calculateUnitCost(item: FinancialItem): number {
+  if (!item.baseUnitCost || !item.baseUnitQuantity || item.baseUnitQuantity <= 0) {
+    return 0
+  }
+  return item.baseUnitCost / item.baseUnitQuantity
+}
+
+/**
+ * Calculate total cost for purchasing an ingredient for daily target
+ */
+export function calculateIngredientTotalCost(item: FinancialItem, dailyTarget: number): number {
+  const totalNeeded = calculateTotalQuantityNeeded(item, dailyTarget)
+  const unitCost = calculateUnitCost(item)
+  return totalNeeded * unitCost
+}
+
+/**
+ * Generate shopping list with costs for all ingredients
+ */
+export function generateShoppingList(items: FinancialItem[], dailyTarget: number): ShoppingListSummary {
+  const shoppingItems = items
+    .filter(item => hasCompleteCOGSData(item) && item.usagePerCup! > 0) // Only items with complete data and actual usage
+    .map(item => {
+      const totalNeeded = calculateTotalQuantityNeeded(item, dailyTarget)
+      const unitCost = calculateUnitCost(item)
+      const totalCost = calculateIngredientTotalCost(item, dailyTarget)
+      const formattedQuantity = getFormattedQuantity(totalNeeded, item.unit!)
+
+      return {
+        id: item.id,
+        name: item.name,
+        totalNeeded,
+        formattedQuantity,
+        unit: item.unit!,
+        unitCost,
+        totalCost,
+        baseUnitQuantity: item.baseUnitQuantity!
+      }
+    })
+    .sort((a, b) => b.totalCost - a.totalCost) // Sort by total cost descending
+
+  const grandTotal = shoppingItems.reduce((sum, item) => sum + item.totalCost, 0)
+
+  return {
+    items: shoppingItems,
+    grandTotal,
+    totalItems: shoppingItems.length
+  }
 }

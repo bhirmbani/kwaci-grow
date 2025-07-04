@@ -159,7 +159,75 @@
   @media (max-width: 640px) {
     [data-radix-dialog-content] {
       min-width: 280px;
-      max-width: calc(100vw - 32px); /* Leave some margin on very small screens */
+      max-width: calc(100vw - 16px); /* Leave some margin on very small screens */
+    }
+  }
+
+  /* Wide sheet specific adjustments */
+  [data-radix-dialog-content][data-side="right-wide"] {
+    max-width: calc(100vw - 32px); /* Ensure some margin on all screen sizes */
+  }
+
+  /* Mobile adjustments for wide sheets - prioritize usability */
+  @media (max-width: 640px) {
+    [data-radix-dialog-content][data-side="right-wide"] {
+      width: calc(100vw - 16px) !important;
+      max-width: calc(100vw - 16px);
+      right: 8px !important;
+      left: 8px !important;
+      transform: none !important;
+    }
+  }
+
+  /* Small tablet adjustments for wide sheets */
+  @media (min-width: 641px) and (max-width: 768px) {
+    [data-radix-dialog-content][data-side="right-wide"] {
+      width: 92% !important;
+      max-width: 92%;
+    }
+  }
+
+  /* Large tablet adjustments for wide sheets */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    [data-radix-dialog-content][data-side="right-wide"] {
+      width: 88% !important;
+      max-width: 88%;
+    }
+  }
+
+  /* Desktop adjustments for wide sheets */
+  @media (min-width: 1025px) {
+    [data-radix-dialog-content][data-side="right-wide"] {
+      width: 80% !important;
+      max-width: 80%;
+    }
+  }
+
+  /* Large desktop adjustments for wide sheets */
+  @media (min-width: 1440px) {
+    [data-radix-dialog-content][data-side="right-wide"] {
+      width: 75% !important;
+      max-width: 75%;
+    }
+  }
+
+  /* Table improvements for wide sheets */
+  [data-radix-dialog-content][data-side="right-wide"] .table-fixed {
+    table-layout: fixed;
+  }
+
+  [data-radix-dialog-content][data-side="right-wide"] .table-fixed td,
+  [data-radix-dialog-content][data-side="right-wide"] .table-fixed th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Responsive table adjustments for mobile in wide sheets */
+  @media (max-width: 640px) {
+    [data-radix-dialog-content][data-side="right-wide"] .table-fixed th,
+    [data-radix-dialog-content][data-side="right-wide"] .table-fixed td {
+      padding: 8px 4px;
+      font-size: 0.875rem;
     }
   }
 

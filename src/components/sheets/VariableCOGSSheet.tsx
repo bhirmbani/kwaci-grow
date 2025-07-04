@@ -24,7 +24,7 @@ export const VariableCOGSSheet = memo(function VariableCOGSSheet({ items, onUpda
       triggerLabel="COGS Calculator"
       triggerIcon={<Package className="h-4 w-4" />}
       buttonColor="yellow"
-      side="right"
+      side="right-wide"
     >
       <COGSCalculatorTable
         title="Ingredient Cost Calculator"
