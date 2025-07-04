@@ -136,8 +136,11 @@ export function StockLevels() {
             </TableHeader>
             <TableBody>
               {stockLevels.map((stock) => {
-                const availableStock = stock.currentStock - stock.reservedStock
-                const isLowStock = stock.currentStock <= stock.lowStockThreshold
+                const currentStock = typeof stock.currentStock === 'number' && !isNaN(stock.currentStock) ? stock.currentStock : 0
+                const reservedStock = typeof stock.reservedStock === 'number' && !isNaN(stock.reservedStock) ? stock.reservedStock : 0
+                const lowStockThreshold = typeof stock.lowStockThreshold === 'number' && !isNaN(stock.lowStockThreshold) ? stock.lowStockThreshold : 0
+                const availableStock = currentStock - reservedStock
+                const isLowStock = currentStock <= lowStockThreshold
                 const isEditing = editingThreshold === stock.id
 
                 return (
@@ -150,13 +153,13 @@ export function StockLevels() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="font-medium">
-                        {stock.currentStock.toFixed(1)} {stock.unit}
+                        {currentStock.toFixed(1)} {stock.unit}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      {stock.reservedStock > 0 ? (
+                      {reservedStock > 0 ? (
                         <span className="text-orange-600">
-                          {stock.reservedStock.toFixed(1)} {stock.unit}
+                          {reservedStock.toFixed(1)} {stock.unit}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">0</span>

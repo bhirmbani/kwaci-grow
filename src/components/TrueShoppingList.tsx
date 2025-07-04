@@ -1,9 +1,13 @@
-import { memo, useMemo } from "react"
+import { memo, useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { ShoppingCart, Package, AlertTriangle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ShoppingCart, Package, AlertTriangle, TrendingUp } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
+import { useWarehouse } from "@/hooks/useWarehouse"
+import { generateShoppingList } from "@/utils/cogsCalculations"
 import type { FinancialItem } from "@/types"
 
 interface TrueShoppingListProps {
@@ -24,6 +28,18 @@ interface ShoppingListItem {
   wastePercentage: number
 }
 
+// Interface for warehouse service compatibility
+interface WarehouseShoppingListItem {
+  id: string
+  name: string
+  totalNeeded: number // This will be the actual purchased quantity (unitsToBuy * baseUnitQuantity)
+  formattedQuantity: string
+  unit: string
+  unitCost: number
+  totalCost: number
+  baseUnitQuantity: number
+}
+
 interface ShoppingListSummary {
   items: ShoppingListItem[]
   totalCost: number
@@ -41,8 +57,8 @@ function calculatePurchaseQuantity(totalNeeded: number, baseUnitQuantity: number
 /**
  * Calculate waste amount when purchasing in base units
  */
-function calculateWaste(totalNeeded: number, baseUnitQuantity: number, unitsToBy: number): number {
-  const totalPurchased = unitsToBy * baseUnitQuantity
+function calculateWaste(totalNeeded: number, baseUnitQuantity: number, unitsToBuy: number): number {
+  const totalPurchased = unitsToBuy * baseUnitQuantity
   return Math.max(0, totalPurchased - totalNeeded)
 }
 
@@ -65,10 +81,10 @@ function generateTrueShoppingList(items: FinancialItem[], dailyTarget: number): 
     })
     .map(item => {
       const totalNeeded = item.usagePerCup! * dailyTarget
-      const unitsToBy = calculatePurchaseQuantity(totalNeeded, item.baseUnitQuantity!)
-      const wasteAmount = calculateWaste(totalNeeded, item.baseUnitQuantity!, unitsToBy)
+      const unitsToBuy = calculatePurchaseQuantity(totalNeeded, item.baseUnitQuantity!)
+      const wasteAmount = calculateWaste(totalNeeded, item.baseUnitQuantity!, unitsToBuy)
       const wastePercentage = totalNeeded > 0 ? (wasteAmount / (totalNeeded + wasteAmount)) * 100 : 0
-      const totalCost = unitsToBy * item.baseUnitCost!
+      const totalCost = unitsToBuy * item.baseUnitCost!
 
       return {
         id: item.id,
@@ -77,7 +93,7 @@ function generateTrueShoppingList(items: FinancialItem[], dailyTarget: number): 
         baseUnitQuantity: item.baseUnitQuantity!,
         baseUnitCost: item.baseUnitCost!,
         unit: item.unit!,
-        unitsToBy,
+        unitsToBuy,
         totalCost,
         wasteAmount,
         wastePercentage
@@ -85,7 +101,7 @@ function generateTrueShoppingList(items: FinancialItem[], dailyTarget: number): 
     })
 
   const totalCost = shoppingItems.reduce((sum, item) => sum + item.totalCost, 0)
-  const totalItems = shoppingItems.reduce((sum, item) => sum + item.unitsToBy, 0)
+  const totalItems = shoppingItems.reduce((sum, item) => sum + item.unitsToBuy, 0)
   const totalWaste = shoppingItems.reduce((sum, item) => sum + item.wasteAmount, 0)
 
   return {
@@ -100,9 +116,71 @@ export const TrueShoppingList = memo(function TrueShoppingList({
   items,
   dailyTarget
 }: TrueShoppingListProps) {
+  const [isAddingToWarehouse, setIsAddingToWarehouse] = useState(false)
+  const [warehouseMessage, setWarehouseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [batchNote, setBatchNote] = useState('')
+  const { addFromShoppingList } = useWarehouse()
+
   const shoppingList: ShoppingListSummary = useMemo(() => {
     return generateTrueShoppingList(items, dailyTarget)
   }, [items, dailyTarget])
+
+  // Calculate theoretical costs for comparison
+  const theoreticalShoppingList = useMemo(() => {
+    return generateShoppingList(items, dailyTarget)
+  }, [items, dailyTarget])
+
+  // Convert True Shopping List items to warehouse-compatible format
+  const warehouseShoppingListItems: WarehouseShoppingListItem[] = useMemo(() => {
+    return shoppingList.items.map(item => ({
+      id: item.id,
+      name: item.name,
+      totalNeeded: item.unitsToBuy * item.baseUnitQuantity, // Actual purchased quantity in base units
+      formattedQuantity: `${item.unitsToBuy} units of ${item.baseUnitQuantity}${item.unit} containers`,
+      unit: item.unit,
+      unitCost: item.baseUnitCost / item.baseUnitQuantity, // Cost per base unit
+      totalCost: item.totalCost,
+      baseUnitQuantity: item.baseUnitQuantity
+    }))
+  }, [shoppingList.items])
+
+  const handleAddToWarehouse = async () => {
+    if (warehouseShoppingListItems.length === 0) return
+
+    setIsAddingToWarehouse(true)
+    setWarehouseMessage(null)
+
+    try {
+      const defaultNote = `True Shopping List for ${dailyTarget} cups per day - Total: ${formatCurrency(shoppingList.totalCost)} (${shoppingList.totalItems} units)`
+      const finalNote = batchNote.trim() ? `${batchNote.trim()} | ${defaultNote}` : defaultNote
+
+      const result = await addFromShoppingList(
+        warehouseShoppingListItems,
+        finalNote
+      )
+
+      if (result.success) {
+        setWarehouseMessage({
+          type: 'success',
+          text: `Successfully added ${warehouseShoppingListItems.length} ingredients to warehouse as Batch #${result.batch?.batchNumber}`
+        })
+        // Clear the note after successful addition
+        setBatchNote('')
+      } else {
+        setWarehouseMessage({
+          type: 'error',
+          text: result.error || 'Failed to add items to warehouse'
+        })
+      }
+    } catch (error) {
+      setWarehouseMessage({
+        type: 'error',
+        text: 'An unexpected error occurred while adding items to warehouse'
+      })
+    } finally {
+      setIsAddingToWarehouse(false)
+    }
+  }
 
   if (shoppingList.items.length === 0) {
     return (
@@ -161,10 +239,10 @@ export const TrueShoppingList = memo(function TrueShoppingList({
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="font-medium text-blue-600">
-                    {item.unitsToBy} units
+                    {item.unitsToBuy} units
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    = {(item.unitsToBy * item.baseUnitQuantity).toFixed(1)} {item.unit}
+                    = {(item.unitsToBuy * item.baseUnitQuantity).toFixed(1)} {item.unit}
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
@@ -251,6 +329,52 @@ export const TrueShoppingList = memo(function TrueShoppingList({
           </div>
         </div>
 
+        {/* Cost Comparison */}
+        <div className="mt-4 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+          <h4 className="font-semibold text-green-900 dark:text-green-100 mb-3 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Cost Comparison: Actual vs Theoretical
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-green-700 dark:text-green-300">Actual Shopping Cost:</span>
+                <span className="font-semibold">{formatCurrency(shoppingList.totalCost)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-green-700 dark:text-green-300">Theoretical Daily Cost:</span>
+                <span className="font-semibold">{formatCurrency(theoreticalShoppingList.grandTotal)}</span>
+              </div>
+              <div className="flex justify-between border-t border-green-200 dark:border-green-800 pt-2">
+                <span className="text-green-700 dark:text-green-300 font-medium">Cost Difference:</span>
+                <span className="font-bold text-orange-600">
+                  {formatCurrency(shoppingList.totalCost - theoreticalShoppingList.grandTotal)}
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-green-700 dark:text-green-300">Actual Cost per Cup:</span>
+                <span className="font-semibold">{formatCurrency(shoppingList.totalCost / dailyTarget)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-green-700 dark:text-green-300">Theoretical Cost per Cup:</span>
+                <span className="font-semibold">{formatCurrency(theoreticalShoppingList.grandTotal / dailyTarget)}</span>
+              </div>
+              <div className="flex justify-between border-t border-green-200 dark:border-green-800 pt-2">
+                <span className="text-green-700 dark:text-green-300 font-medium">Waste Impact:</span>
+                <span className="font-bold text-orange-600">
+                  +{formatCurrency((shoppingList.totalCost - theoreticalShoppingList.grandTotal) / dailyTarget)}/cup
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 text-xs text-green-600 dark:text-green-400 border-t border-green-200 dark:border-green-800 pt-2">
+            <strong>Explanation:</strong> The difference comes from packaging constraints. You must buy whole units (e.g., 1L containers)
+            even if you only need partial amounts, creating waste but reflecting real shopping costs.
+          </div>
+        </div>
+
         {/* Shopping Tips */}
         <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
           <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
@@ -262,7 +386,61 @@ export const TrueShoppingList = memo(function TrueShoppingList({
             <p>• Consider buying larger base units to reduce waste percentage</p>
           </div>
         </div>
+
+        {/* Warehouse Message */}
+        {warehouseMessage && (
+          <div className={`mt-4 p-4 rounded-lg ${
+            warehouseMessage.type === 'success'
+              ? 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-300'
+              : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300'
+          }`}>
+            <p className="text-sm font-medium">{warehouseMessage.text}</p>
+          </div>
+        )}
+
+        {/* Optional Note Input for Warehouse */}
+        {shoppingList.items.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <label htmlFor="batch-note" className="text-sm font-medium text-muted-foreground">
+              Optional note for warehouse batch:
+            </label>
+            <Input
+              id="batch-note"
+              placeholder="e.g., Weekly stock replenishment, Special order..."
+              value={batchNote}
+              onChange={(e) => setBatchNote(e.target.value)}
+              className="text-sm"
+            />
+          </div>
+        )}
       </CardContent>
+
+      {/* Floating Action Button for Add to Warehouse */}
+      {shoppingList.items.length > 0 && (
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 group animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="relative">
+            <Button
+              onClick={handleAddToWarehouse}
+              disabled={isAddingToWarehouse}
+              size="lg"
+              className="h-14 w-14 md:h-16 md:w-16 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 border-2 border-blue-400/20 hover:border-blue-300/30 dark:border-blue-500/30 dark:hover:border-blue-400/40 hover:scale-110 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+              title={isAddingToWarehouse ? "Adding to warehouse..." : "Add to Warehouse"}
+            >
+              {isAddingToWarehouse ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
+              ) : (
+                <Package className="h-6 w-6 text-white drop-shadow-sm" />
+              )}
+            </Button>
+
+            {/* Tooltip */}
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-popover text-popover-foreground text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none shadow-md border border-border">
+              {isAddingToWarehouse ? "Adding to warehouse..." : `Add ${shoppingList.items.length} items to warehouse`}
+              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-popover"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   )
 })

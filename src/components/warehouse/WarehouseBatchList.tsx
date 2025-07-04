@@ -81,7 +81,10 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
       <div className="space-y-3">
         {filteredBatches.map((batch) => {
           const isExpanded = expandedBatches.has(batch.id)
-          const totalValue = batch.items.reduce((sum, item) => sum + item.totalCost, 0)
+          const totalValue = batch.items.reduce((sum, item) => {
+            const cost = typeof item.totalCost === 'number' && !isNaN(item.totalCost) ? item.totalCost : 0
+            return sum + cost
+          }, 0)
 
           return (
             <Card key={batch.id}>

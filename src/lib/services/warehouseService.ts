@@ -93,11 +93,11 @@ export class WarehouseService {
   static convertShoppingListToWarehouseItems(shoppingListItems: ShoppingListItem[]): Omit<NewWarehouseItem, 'id' | 'batchId'>[] {
     return shoppingListItems.map(item => ({
       ingredientName: item.name,
-      quantity: item.totalNeeded,
+      quantity: item.totalNeeded, // For True Shopping List, this is already the purchased quantity in base units
       unit: item.unit,
       costPerUnit: item.unitCost,
       totalCost: item.totalCost,
-      note: `Added from COGS calculator - ${item.formattedQuantity} needed`
+      note: `Added from shopping list - ${item.formattedQuantity}`
     }))
   }
 
@@ -112,7 +112,7 @@ export class WarehouseService {
       // Create the batch
       const batch = await this.createBatch({
         dateAdded: new Date().toISOString(),
-        note: note || `Batch created from COGS calculator on ${new Date().toLocaleDateString()}`
+        note: note || `Batch created from shopping list on ${new Date().toLocaleDateString()}`
       })
 
       // Convert shopping list items to warehouse items
@@ -241,7 +241,10 @@ export class WarehouseService {
       const totalItems = await db.warehouseItems.count()
       
       const allItems = await db.warehouseItems.toArray()
-      const totalValue = allItems.reduce((sum, item) => sum + item.totalCost, 0)
+      const totalValue = allItems.reduce((sum, item) => {
+        const cost = typeof item.totalCost === 'number' && !isNaN(item.totalCost) ? item.totalCost : 0
+        return sum + cost
+      }, 0)
       
       const latestBatch = await db.warehouseBatches
         .orderBy('batchNumber')

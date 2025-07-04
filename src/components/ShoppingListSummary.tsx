@@ -1,13 +1,9 @@
-import { memo, useMemo, useState } from "react"
+import { memo, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { ShoppingCart, TrendingUp, CheckCircle, AlertCircle, Package } from "lucide-react"
+import { ShoppingCart, TrendingUp, Package } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
 import { generateShoppingList, type ShoppingListSummary as ShoppingListSummaryType } from "@/utils/cogsCalculations"
-import { useWarehouse } from "@/hooks/useWarehouse"
 import type { FinancialItem } from "@/types"
 
 interface IngredientRequirementsProps {
@@ -19,54 +15,9 @@ export const IngredientRequirementsCalculator = memo(function IngredientRequirem
   items,
   dailyTarget
 }: IngredientRequirementsProps) {
-  const [isAddingToWarehouse, setIsAddingToWarehouse] = useState(false)
-  const [warehouseMessage, setWarehouseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [batchNote, setBatchNote] = useState('')
-  const { addFromShoppingList } = useWarehouse()
-
   const shoppingList: ShoppingListSummaryType = useMemo(() => {
     return generateShoppingList(items, dailyTarget)
   }, [items, dailyTarget])
-
-  const handleAddToWarehouse = async () => {
-    if (shoppingList.items.length === 0) return
-
-    setIsAddingToWarehouse(true)
-    setWarehouseMessage(null)
-
-    try {
-      const defaultNote = `Shopping list for ${dailyTarget} cups per day - Total: ${formatCurrency(shoppingList.grandTotal)}`
-      const finalNote = batchNote.trim() ? `${batchNote.trim()} | ${defaultNote}` : defaultNote
-
-      const result = await addFromShoppingList(
-        shoppingList.items,
-        finalNote
-      )
-
-      if (result.success) {
-        setWarehouseMessage({
-          type: 'success',
-          text: `Successfully added ${shoppingList.items.length} ingredients to warehouse as Batch #${result.batch?.batchNumber}`
-        })
-        // Clear the note after successful addition
-        setBatchNote('')
-      } else {
-        setWarehouseMessage({
-          type: 'error',
-          text: result.error || 'Failed to add items to warehouse'
-        })
-      }
-    } catch (error) {
-      setWarehouseMessage({
-        type: 'error',
-        text: 'An unexpected error occurred while adding items to warehouse'
-      })
-    } finally {
-      setIsAddingToWarehouse(false)
-      // Clear message after 5 seconds
-      setTimeout(() => setWarehouseMessage(null), 5000)
-    }
-  }
 
   if (shoppingList.items.length === 0) {
     return (
@@ -169,11 +120,11 @@ export const IngredientRequirementsCalculator = memo(function IngredientRequirem
         {/* Cost per Cup Breakdown */}
         <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
           <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-            Cost Analysis
+            Theoretical Cost Analysis
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
             <div>
-              <span className="text-blue-700 dark:text-blue-300">Cost per cup:</span>
+              <span className="text-blue-700 dark:text-blue-300">Theoretical cost per cup:</span>
               <span className="font-semibold ml-2">
                 {formatCurrency(shoppingList.grandTotal / dailyTarget)}
               </span>
@@ -185,86 +136,28 @@ export const IngredientRequirementsCalculator = memo(function IngredientRequirem
               </span>
             </div>
           </div>
+          <div className="text-xs text-blue-600 dark:text-blue-400 border-t border-blue-200 dark:border-blue-800 pt-2">
+            <strong>Note:</strong> This shows theoretical costs based on exact daily usage amounts.
+            For actual shopping costs (including packaging waste), see the True Shopping List below.
+          </div>
         </div>
 
-        {/* Warehouse Integration - Note Input */}
+
+
+        {/* Note about warehouse integration */}
         {shoppingList.items.length > 0 && (
-          <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-dashed border-muted-foreground/30 space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="batch-note" className="text-sm font-medium flex items-center gap-2">
-                📝 Batch Note (Optional)
-              </Label>
-              <Textarea
-                id="batch-note"
-                placeholder="Add a custom note for this warehouse batch (e.g., 'Morning rush preparation', 'Special event stock')..."
-                value={batchNote}
-                onChange={(e) => setBatchNote(e.target.value)}
-                className="min-h-[60px] resize-none bg-background/50 border-muted-foreground/20 focus:border-primary/50 transition-colors"
-                maxLength={200}
-              />
-              <div className="flex justify-between items-center">
-                <p className="text-xs text-muted-foreground">
-                  This note will be saved with your warehouse batch for future reference
+          <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="flex items-start gap-2">
+              <Package className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-amber-800 dark:text-amber-200 mb-1">
+                  Warehouse Integration
                 </p>
-                <p className="text-xs text-muted-foreground font-mono">
-                  {batchNote.length}/200
+                <p className="text-amber-700 dark:text-amber-300">
+                  This shows daily usage amounts. To add items to warehouse with actual purchase quantities,
+                  use the <strong>True Shopping List</strong> section below.
                 </p>
               </div>
-            </div>
-
-            {warehouseMessage && (
-              <div className={`flex items-center gap-2 p-3 rounded-lg text-sm animate-in fade-in slide-in-from-top-2 duration-300 ${
-                warehouseMessage.type === 'success'
-                  ? 'bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800'
-                  : 'bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
-              }`}>
-                {warehouseMessage.type === 'success' ? (
-                  <CheckCircle className="h-4 w-4 flex-shrink-0" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                )}
-                <span>{warehouseMessage.text}</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Floating Action Button for Add to Warehouse */}
-        {shoppingList.items.length > 0 && (
-          <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 group animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="relative">
-              <Button
-                onClick={handleAddToWarehouse}
-                disabled={isAddingToWarehouse}
-                size="lg"
-                className="h-14 w-14 md:h-16 md:w-16 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-2 border-blue-400/20 hover:border-blue-300/30 hover:scale-110 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-                title={isAddingToWarehouse ? "Adding to warehouse..." : "Add to Warehouse"}
-              >
-                {isAddingToWarehouse ? (
-                  <div className="animate-spin rounded-full h-5 w-5 md:h-6 md:w-6 border-b-2 border-white"></div>
-                ) : (
-                  <Package className="h-6 w-6 md:h-7 md:w-7 text-white drop-shadow-sm" />
-                )}
-              </Button>
-
-              {/* Item count badge */}
-              {!isAddingToWarehouse && (
-                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full h-6 w-6 md:h-7 md:w-7 flex items-center justify-center shadow-lg border-2 border-white animate-in zoom-in duration-200">
-                  {shoppingList.items.length}
-                </div>
-              )}
-            </div>
-
-            {/* Tooltip - Desktop */}
-            <div className="hidden md:block absolute bottom-full right-0 mb-2 bg-popover text-popover-foreground px-3 py-1 rounded-md text-sm shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-              {isAddingToWarehouse ? "Adding to warehouse..." : `Add ${shoppingList.items.length} ingredients to warehouse`}
-              <div className="absolute top-full right-3 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-popover"></div>
-            </div>
-
-            {/* Helper text for mobile */}
-            <div className="md:hidden absolute bottom-full right-0 mb-2 bg-popover text-popover-foreground px-2 py-1 rounded text-xs shadow-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-              {isAddingToWarehouse ? "Adding..." : `Add ${shoppingList.items.length} items`}
-              <div className="absolute top-full right-2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-popover"></div>
             </div>
           </div>
         )}

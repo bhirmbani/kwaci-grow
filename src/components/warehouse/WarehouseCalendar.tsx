@@ -56,8 +56,11 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
         isToday,
         hasBatches,
         batches: dayBatches,
-        totalValue: dayBatches.reduce((sum, batch) => 
-          sum + batch.items.reduce((itemSum, item) => itemSum + item.totalCost, 0), 0
+        totalValue: dayBatches.reduce((sum, batch) =>
+          sum + batch.items.reduce((itemSum, item) => {
+            const cost = typeof item.totalCost === 'number' && !isNaN(item.totalCost) ? item.totalCost : 0
+            return itemSum + cost
+          }, 0), 0
         )
       })
       

@@ -194,13 +194,15 @@ function getTopIngredients(batches: any[]) {
   batches.forEach(batch => {
     batch.items.forEach((item: any) => {
       const key = `${item.ingredientName}-${item.unit}`
+      const quantity = typeof item.quantity === 'number' && !isNaN(item.quantity) ? item.quantity : 0
+
       if (ingredientMap.has(key)) {
         const existing = ingredientMap.get(key)!
-        existing.totalQuantity += item.quantity
+        existing.totalQuantity += quantity
       } else {
         ingredientMap.set(key, {
           name: item.ingredientName,
-          totalQuantity: item.quantity,
+          totalQuantity: quantity,
           unit: item.unit
         })
       }
