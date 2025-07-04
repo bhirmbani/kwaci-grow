@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -9,6 +9,8 @@ export class FinancialDashboardDB extends Dexie {
   appSettings!: EntityTable<AppSetting, 'id'>
   warehouseBatches!: EntityTable<WarehouseBatch, 'id'>
   warehouseItems!: EntityTable<WarehouseItem, 'id'>
+  stockLevels!: EntityTable<StockLevel, 'id'>
+  stockTransactions!: EntityTable<StockTransaction, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -100,6 +102,17 @@ export class FinancialDashboardDB extends Dexie {
       appSettings: '++id, &key, value, createdAt, updatedAt',
       warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
       warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt'
+    })
+
+    // Version 5 - Add stock management tables
+    this.version(5).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, &[ingredientName+unit], ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, transactionDate, createdAt, updatedAt'
     })
   }
 }

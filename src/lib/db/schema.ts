@@ -58,12 +58,39 @@ export interface WarehouseItem {
   updatedAt: string
 }
 
+export interface StockLevel {
+  id: string
+  ingredientName: string
+  unit: string
+  currentStock: number // Current available stock
+  reservedStock: number // Stock reserved for pending orders
+  lowStockThreshold: number // Alert when stock falls below this level
+  lastUpdated: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StockTransaction {
+  id: string
+  ingredientName: string
+  unit: string
+  transactionType: 'ADD' | 'DEDUCT' | 'ADJUST' // Type of stock transaction
+  quantity: number // Positive for ADD, negative for DEDUCT
+  reason: string // Reason for the transaction (e.g., "Sale", "Warehouse addition", "Manual adjustment")
+  batchId?: string // Optional reference to warehouse batch
+  transactionDate: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Type aliases for new entities (same as the main types for Dexie)
 export type NewFinancialItem = Omit<FinancialItem, 'createdAt' | 'updatedAt'>
 export type NewBonusScheme = Omit<BonusScheme, 'id' | 'createdAt' | 'updatedAt'>
 export type NewAppSetting = Omit<AppSetting, 'id' | 'createdAt' | 'updatedAt'>
 export type NewWarehouseBatch = Omit<WarehouseBatch, 'createdAt' | 'updatedAt'>
 export type NewWarehouseItem = Omit<WarehouseItem, 'createdAt' | 'updatedAt'>
+export type NewStockLevel = Omit<StockLevel, 'createdAt' | 'updatedAt'>
+export type NewStockTransaction = Omit<StockTransaction, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

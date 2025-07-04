@@ -15,7 +15,8 @@ import {
   UNIT_OPTIONS,
   type UnitOption
 } from "@/utils/cogsCalculations"
-import { ShoppingListSummary } from "./ShoppingListSummary"
+import { IngredientRequirementsCalculator } from "./ShoppingListSummary"
+import { TrueShoppingList } from "./TrueShoppingList"
 import type { FinancialItem } from "@/types"
 
 interface COGSCalculatorTableProps {
@@ -385,8 +386,14 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
         </CardContent>
       </Card>
 
-      {/* Shopping List Summary */}
-      <ShoppingListSummary
+      {/* Ingredient Requirements Calculator */}
+      <IngredientRequirementsCalculator
+        items={items}
+        dailyTarget={dailyTarget}
+      />
+
+      {/* True Shopping List */}
+      <TrueShoppingList
         items={items}
         dailyTarget={dailyTarget}
       />

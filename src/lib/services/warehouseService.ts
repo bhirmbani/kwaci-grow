@@ -1,6 +1,7 @@
 import { db } from '../db'
 import type { WarehouseBatch, WarehouseItem, NewWarehouseBatch, NewWarehouseItem } from '../db/schema'
 import type { ShoppingListItem } from '@/utils/cogsCalculations'
+import { StockService } from './stockService'
 import { v4 as uuidv4 } from 'uuid'
 
 export class WarehouseService {
@@ -43,12 +44,12 @@ export class WarehouseService {
   }
 
   /**
-   * Add items to a warehouse batch
+   * Add items to a warehouse batch and update stock levels
    */
   static async addItemsToBatch(batchId: string, items: Omit<NewWarehouseItem, 'id' | 'batchId'>[]): Promise<WarehouseItem[]> {
     try {
       const now = new Date().toISOString()
-      
+
       const warehouseItems: WarehouseItem[] = items.map(item => ({
         id: uuidv4(),
         batchId,
@@ -62,7 +63,23 @@ export class WarehouseService {
         updatedAt: now
       }))
 
-      await db.warehouseItems.bulkAdd(warehouseItems)
+      // Use transaction to ensure both warehouse items and stock are updated together
+      await db.transaction('rw', [db.warehouseItems, db.stockLevels, db.stockTransactions], async () => {
+        // Add warehouse items
+        await db.warehouseItems.bulkAdd(warehouseItems)
+
+        // Update stock levels for each item
+        for (const item of warehouseItems) {
+          await StockService.addStock(
+            item.ingredientName,
+            item.unit,
+            item.quantity,
+            `Warehouse addition - Batch #${batchId}`,
+            batchId
+          )
+        }
+      })
+
       return warehouseItems
     } catch (error) {
       console.error('Error adding items to warehouse batch:', error)

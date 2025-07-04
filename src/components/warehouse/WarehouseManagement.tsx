@@ -8,9 +8,11 @@ import { formatCurrency } from '@/utils/formatters'
 import { WarehouseBatchList } from './WarehouseBatchList'
 import { WarehouseCalendar } from './WarehouseCalendar'
 import { WarehouseStats } from './WarehouseStats'
+import { StockLevels } from './StockLevels'
+import { SalesProcessor } from '../SalesProcessor'
 
 export function WarehouseManagement() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'batches' | 'calendar'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'sales'>('overview')
   const { batches, loading, error } = useWarehouse()
   const { stats, loading: statsLoading } = useWarehouseStats()
 
@@ -56,18 +58,26 @@ export function WarehouseManagement() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Overview
           </TabsTrigger>
+          <TabsTrigger value="stock" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
+            Stock Levels
+          </TabsTrigger>
+          <TabsTrigger value="sales" className="flex items-center gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            Sales
+          </TabsTrigger>
           <TabsTrigger value="batches" className="flex items-center gap-2">
             <List className="h-4 w-4" />
-            Batch List
+            Batches
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            Calendar View
+            Calendar
           </TabsTrigger>
         </TabsList>
 
@@ -155,6 +165,14 @@ export function WarehouseManagement() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="stock">
+          <StockLevels />
+        </TabsContent>
+
+        <TabsContent value="sales">
+          <SalesProcessor />
         </TabsContent>
 
         <TabsContent value="batches">

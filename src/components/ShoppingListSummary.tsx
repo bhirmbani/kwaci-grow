@@ -4,21 +4,21 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { ShoppingCart, TrendingUp, CheckCircle, AlertCircle, Plus } from "lucide-react"
+import { ShoppingCart, TrendingUp, CheckCircle, AlertCircle, Package } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
 import { generateShoppingList, type ShoppingListSummary as ShoppingListSummaryType } from "@/utils/cogsCalculations"
 import { useWarehouse } from "@/hooks/useWarehouse"
 import type { FinancialItem } from "@/types"
 
-interface ShoppingListSummaryProps {
+interface IngredientRequirementsProps {
   items: FinancialItem[]
   dailyTarget: number
 }
 
-export const ShoppingListSummary = memo(function ShoppingListSummary({
+export const IngredientRequirementsCalculator = memo(function IngredientRequirementsCalculator({
   items,
   dailyTarget
-}: ShoppingListSummaryProps) {
+}: IngredientRequirementsProps) {
   const [isAddingToWarehouse, setIsAddingToWarehouse] = useState(false)
   const [warehouseMessage, setWarehouseMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [batchNote, setBatchNote] = useState('')
@@ -74,12 +74,12 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
         <CardHeader className="bg-card">
           <CardTitle className="flex items-center gap-2 text-card-foreground">
             <ShoppingCart className="h-5 w-5" />
-            Shopping List Summary
+            Ingredient Requirements Calculator
           </CardTitle>
         </CardHeader>
         <CardContent className="bg-card">
           <p className="text-muted-foreground text-center py-8">
-            No ingredients with complete COGS data found. Add ingredients with base cost, quantity, usage per cup, and unit to see the shopping list.
+            No ingredients with complete COGS data found. Add ingredients with base cost, quantity, usage per cup, and unit to see the ingredient requirements.
           </p>
         </CardContent>
       </Card>
@@ -91,10 +91,10 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
       <CardHeader className="bg-card">
         <CardTitle className="flex items-center gap-2 text-card-foreground">
           <ShoppingCart className="h-5 w-5" />
-          Shopping List Summary
+          Ingredient Requirements Calculator
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Ingredients needed for {dailyTarget} cups per day
+          Cost per cup breakdown for {dailyTarget} cups per day
         </p>
       </CardHeader>
       <CardContent className="bg-card">
@@ -237,19 +237,19 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
                 onClick={handleAddToWarehouse}
                 disabled={isAddingToWarehouse}
                 size="lg"
-                className="h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 bg-primary hover:bg-primary/90 hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="h-14 w-14 md:h-16 md:w-16 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-2 border-blue-400/20 hover:border-blue-300/30 hover:scale-110 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                 title={isAddingToWarehouse ? "Adding to warehouse..." : "Add to Warehouse"}
               >
                 {isAddingToWarehouse ? (
-                  <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 md:h-6 md:w-6 border-b-2 border-white"></div>
                 ) : (
-                  <Plus className="h-5 w-5 md:h-6 md:w-6" />
+                  <Package className="h-6 w-6 md:h-7 md:w-7 text-white drop-shadow-sm" />
                 )}
               </Button>
 
               {/* Item count badge */}
               {!isAddingToWarehouse && (
-                <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center shadow-sm animate-in zoom-in duration-200">
+                <div className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full h-6 w-6 md:h-7 md:w-7 flex items-center justify-center shadow-lg border-2 border-white animate-in zoom-in duration-200">
                   {shoppingList.items.length}
                 </div>
               )}
