@@ -21,6 +21,11 @@ function dbToAppItem(dbItem: FinancialItem): AppFinancialItem {
     name: dbItem.name,
     value: dbItem.value,
     note: dbItem.note || '',
+    // Include COGS calculation fields
+    baseUnitCost: dbItem.baseUnitCost,
+    baseUnitQuantity: dbItem.baseUnitQuantity,
+    usagePerCup: dbItem.usagePerCup,
+    unit: dbItem.unit,
   }
 }
 
@@ -32,6 +37,11 @@ function appToDbItem(appItem: AppFinancialItem, category: FinancialItemCategory)
     value: appItem.value,
     category,
     note: appItem.note || '',
+    // Include COGS calculation fields
+    baseUnitCost: appItem.baseUnitCost,
+    baseUnitQuantity: appItem.baseUnitQuantity,
+    usagePerCup: appItem.usagePerCup,
+    unit: appItem.unit,
   }
 }
 

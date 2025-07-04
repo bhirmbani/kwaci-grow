@@ -64,6 +64,7 @@ export class AppSettingsService {
     const defaults = [
       { key: 'days_per_month' as AppSettingKey, value: '22' },
       { key: 'price_per_cup' as AppSettingKey, value: '8000' },
+      { key: 'daily_target_cups' as AppSettingKey, value: '60' },
     ]
 
     for (const defaultSetting of defaults) {

@@ -2,11 +2,16 @@
 export interface FinancialItem {
   id: string
   name: string
-  value: number // Store in smallest currency unit (IDR)
+  value: number // Store in smallest currency unit (IDR) - calculated cost per cup for VARIABLE_COGS
   category: FinancialItemCategory
   note: string
   createdAt: string
   updatedAt: string
+  // COGS calculation fields (optional, used for VARIABLE_COGS category)
+  baseUnitCost?: number // Cost of base unit (e.g., 20000 IDR per liter)
+  baseUnitQuantity?: number // Quantity of base unit (e.g., 1000 ml)
+  usagePerCup?: number // Usage amount per cup (e.g., 100 ml)
+  unit?: string // Unit of measurement (e.g., "ml", "g", "piece")
 }
 
 export interface BonusScheme {
@@ -45,6 +50,7 @@ export type FinancialItemCategory = typeof FINANCIAL_ITEM_CATEGORIES[keyof typeo
 export const APP_SETTING_KEYS = {
   DAYS_PER_MONTH: 'days_per_month',
   PRICE_PER_CUP: 'price_per_cup',
+  DAILY_TARGET_CUPS: 'daily_target_cups',
 } as const
 
 export type AppSettingKey = typeof APP_SETTING_KEYS[keyof typeof APP_SETTING_KEYS]
