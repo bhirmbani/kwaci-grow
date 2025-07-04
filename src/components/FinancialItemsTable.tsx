@@ -31,6 +31,8 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
   })
 
   const updateItem = useCallback((id: string, field: keyof FinancialItem, value: string | number | boolean) => {
+    console.log('🔄 FinancialItemsTable: Updating item field:', { id, field, value })
+
     const updatedItems = items.map(item => {
       if (item.id === id) {
         const updatedItem = { ...item, [field]: value }
@@ -40,10 +42,13 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
           updatedItem.estimatedUsefulLifeYears = undefined
         }
 
+        console.log('✅ FinancialItemsTable: Updated item:', updatedItem)
         return updatedItem
       }
       return item
     })
+
+    console.log('🔄 FinancialItemsTable: Calling onUpdate with items:', updatedItems)
     onUpdate(updatedItems)
   }, [items, onUpdate])
 

@@ -16,7 +16,15 @@ interface UseFinancialItemsResult {
 
 // Convert database FinancialItem to app FinancialItem
 function dbToAppItem(dbItem: FinancialItem): AppFinancialItem {
-  return {
+  console.log('🔄 dbToAppItem: Converting DB item to App item:', {
+    id: dbItem.id,
+    name: dbItem.name,
+    isFixedAsset: dbItem.isFixedAsset,
+    estimatedUsefulLifeYears: dbItem.estimatedUsefulLifeYears,
+    sourceAssetId: dbItem.sourceAssetId
+  })
+
+  const appItem = {
     id: dbItem.id,
     name: dbItem.name,
     value: dbItem.value,
@@ -26,12 +34,27 @@ function dbToAppItem(dbItem: FinancialItem): AppFinancialItem {
     baseUnitQuantity: dbItem.baseUnitQuantity,
     usagePerCup: dbItem.usagePerCup,
     unit: dbItem.unit,
+    // Include fixed asset management fields
+    isFixedAsset: dbItem.isFixedAsset,
+    estimatedUsefulLifeYears: dbItem.estimatedUsefulLifeYears,
+    sourceAssetId: dbItem.sourceAssetId,
   }
+
+  console.log('✅ dbToAppItem: Converted to App item:', appItem)
+  return appItem
 }
 
 // Convert app FinancialItem to database format
 function appToDbItem(appItem: AppFinancialItem, category: FinancialItemCategory): Omit<FinancialItem, 'createdAt' | 'updatedAt'> {
-  return {
+  console.log('🔄 appToDbItem: Converting App item to DB item:', {
+    id: appItem.id,
+    name: appItem.name,
+    isFixedAsset: appItem.isFixedAsset,
+    estimatedUsefulLifeYears: appItem.estimatedUsefulLifeYears,
+    sourceAssetId: appItem.sourceAssetId
+  })
+
+  const dbItem = {
     id: appItem.id,
     name: appItem.name,
     value: appItem.value,
@@ -42,7 +65,14 @@ function appToDbItem(appItem: AppFinancialItem, category: FinancialItemCategory)
     baseUnitQuantity: appItem.baseUnitQuantity,
     usagePerCup: appItem.usagePerCup,
     unit: appItem.unit,
+    // Include fixed asset management fields
+    isFixedAsset: appItem.isFixedAsset,
+    estimatedUsefulLifeYears: appItem.estimatedUsefulLifeYears,
+    sourceAssetId: appItem.sourceAssetId,
   }
+
+  console.log('✅ appToDbItem: Converted to DB item:', dbItem)
+  return dbItem
 }
 
 export function useFinancialItems(category: FinancialItemCategory): UseFinancialItemsResult {
