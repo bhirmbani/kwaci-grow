@@ -70,4 +70,235 @@
     background-color: hsl(var(--card));
     color: hsl(var(--card-foreground));
   }
+
+  /* Ensure proper background colors for shadcn/ui components */
+  .bg-background {
+    background-color: hsl(var(--background)) !important;
+  }
+
+  .bg-card {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  .bg-popover {
+    background-color: hsl(var(--popover)) !important;
+  }
+
+  .text-foreground {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .text-card-foreground {
+    color: hsl(var(--card-foreground)) !important;
+  }
+
+  .text-popover-foreground {
+    color: hsl(var(--popover-foreground)) !important;
+  }
+
+  /* Specific fixes for Sheet component transparency issues */
+  [data-radix-dialog-content] {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* Ensure Sheet overlay is properly styled */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Force solid backgrounds for all sheet content */
+  .sheet-content {
+    background-color: hsl(var(--background)) !important;
+    opacity: 1 !important;
+  }
+
+  /* Additional Sheet component fixes */
+  [data-state="open"][data-radix-dialog-content] {
+    background-color: hsl(var(--background)) !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure all Sheet wrapper content is opaque */
+  .sheet-content *,
+  [data-radix-dialog-content] * {
+    opacity: 1;
+  }
+
+  /* Override any potential transparency issues */
+  .bg-background {
+    background-color: hsl(var(--background)) !important;
+    opacity: 1 !important;
+  }
+
+  /* Debug: Ensure CSS variables are working */
+  :root {
+    /* Fallback colors in case variables fail */
+    --background-fallback: #ffffff;
+    --foreground-fallback: #000000;
+  }
+
+  .dark {
+    --background-fallback: #000000;
+    --foreground-fallback: #ffffff;
+  }
+
+  /* Fallback for Sheet content if CSS variables fail */
+  [data-radix-dialog-content]:not([style*="background"]) {
+    background-color: var(--background-fallback) !important;
+    color: var(--foreground-fallback) !important;
+  }
+
+  /* Ensure Sheet components have proper minimum width on mobile */
+  [data-radix-dialog-content] {
+    min-width: 320px; /* Minimum width for mobile readability */
+  }
+
+  /* Responsive adjustments for very small screens */
+  @media (max-width: 640px) {
+    [data-radix-dialog-content] {
+      min-width: 280px;
+      max-width: calc(100vw - 32px); /* Leave some margin on very small screens */
+    }
+  }
+
+  /* Sheet animations */
+  @keyframes slide-in-from-right {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-to-right {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide-in-from-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-to-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes slide-in-from-top {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-to-top {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
+  @keyframes slide-in-from-bottom {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-to-bottom {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .animate-in {
+    animation-fill-mode: forwards;
+  }
+
+  .animate-out {
+    animation-fill-mode: forwards;
+  }
+
+  .slide-in-from-right {
+    animation: slide-in-from-right 0.5s ease-out;
+  }
+
+  .slide-out-to-right {
+    animation: slide-out-to-right 0.3s ease-in;
+  }
+
+  .slide-in-from-left {
+    animation: slide-in-from-left 0.5s ease-out;
+  }
+
+  .slide-out-to-left {
+    animation: slide-out-to-left 0.3s ease-in;
+  }
+
+  .slide-in-from-top {
+    animation: slide-in-from-top 0.5s ease-out;
+  }
+
+  .slide-out-to-top {
+    animation: slide-out-to-top 0.3s ease-in;
+  }
+
+  .slide-in-from-bottom {
+    animation: slide-in-from-bottom 0.5s ease-out;
+  }
+
+  .slide-out-to-bottom {
+    animation: slide-out-to-bottom 0.3s ease-in;
+  }
+
+  .fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .fade-out {
+    animation: fade-out 0.3s ease-in;
+  }
 }

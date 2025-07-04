@@ -12,7 +12,7 @@ interface BonusSchemeCardProps {
 
 export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps) {
   return (
-    <Card className="mb-6">
+    <Card>
       <CardHeader>
         <CardTitle>Bonus Scheme</CardTitle>
       </CardHeader>

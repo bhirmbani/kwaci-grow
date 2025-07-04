@@ -11,24 +11,16 @@ interface FinancialItemsTableProps {
   title: string
   items: FinancialItem[]
   onUpdate: (items: FinancialItem[]) => void
-  buttonColor?: "blue" | "green" | "yellow"
   currency?: boolean
 }
 
-export function FinancialItemsTable({ 
-  title, 
-  items, 
-  onUpdate, 
-  buttonColor = "blue",
+export function FinancialItemsTable({
+  title,
+  items,
+  onUpdate,
   currency = true
 }: FinancialItemsTableProps) {
   const [newItem, setNewItem] = useState({ name: "", value: 0 })
-
-  const buttonVariants = {
-    blue: "bg-blue-500 hover:bg-blue-600",
-    green: "bg-green-500 hover:bg-green-600", 
-    yellow: "bg-yellow-500 hover:bg-yellow-600"
-  }
 
   const updateItem = (id: string, field: "name" | "value", value: string | number) => {
     const updatedItems = items.map(item =>

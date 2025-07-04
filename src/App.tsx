@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { FinancialTermsAlert } from './components/FinancialTermsAlert'
-import { BonusSchemeCard } from './components/BonusSchemeCard'
-import { FinancialItemsTable } from './components/FinancialItemsTable'
 import { ProjectionTable } from './components/ProjectionTable'
 import { ThemeToggle } from './components/ThemeToggle'
+import { FinancialTermsSheet } from './components/sheets/FinancialTermsSheet'
+import { BonusSchemeSheet } from './components/sheets/BonusSchemeSheet'
+import { InitialCapitalSheet } from './components/sheets/InitialCapitalSheet'
+import { FixedCostsSheet } from './components/sheets/FixedCostsSheet'
+import { VariableCOGSSheet } from './components/sheets/VariableCOGSSheet'
 import type { BonusScheme, FinancialItem } from './types'
 
 function App() {
@@ -44,41 +46,32 @@ function App() {
           </h1>
           <ThemeToggle />
         </div>
-        
-        <FinancialTermsAlert />
-        
-        <BonusSchemeCard 
-          bonusScheme={bonusScheme}
-          onUpdate={setBonusScheme}
-        />
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">1. Initial Capital</h2>
-          <FinancialItemsTable
-            title="Initial Capital"
-            items={capitalItems}
-            onUpdate={setCapitalItems}
-            buttonColor="blue"
-          />
+        {/* Navigation Bar with Sheet Triggers */}
+        <div className="mb-8 p-4 sm:p-6 bg-card rounded-lg border shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 text-center sm:text-left">Configuration & Data Management</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+            <FinancialTermsSheet />
+            <BonusSchemeSheet
+              bonusScheme={bonusScheme}
+              onUpdate={setBonusScheme}
+            />
+            <InitialCapitalSheet
+              items={capitalItems}
+              onUpdate={setCapitalItems}
+            />
+            <FixedCostsSheet
+              items={fixedItems}
+              onUpdate={setFixedItems}
+            />
+            <VariableCOGSSheet
+              items={cogsItems}
+              onUpdate={setCogsItems}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <FinancialItemsTable
-            title="Fixed Costs / Month"
-            items={fixedItems}
-            onUpdate={setFixedItems}
-            buttonColor="green"
-          />
-          
-          <FinancialItemsTable
-            title="Variable COGS per Cup"
-            items={cogsItems}
-            onUpdate={setCogsItems}
-            buttonColor="yellow"
-            currency={false}
-          />
-        </div>
-
+        {/* Main Financial Table - The Primary Focus */}
         <ProjectionTable
           daysPerMonth={daysPerMonth}
           pricePerCup={pricePerCup}
