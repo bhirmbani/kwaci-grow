@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,7 +11,23 @@ interface BonusSchemeCardProps {
   onUpdate: (scheme: BonusScheme) => void
 }
 
-export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps) {
+export const BonusSchemeCard = memo(function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps) {
+  const handleBaristaCountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ ...bonusScheme, baristaCount: Number(e.target.value) })
+  }, [bonusScheme, onUpdate])
+
+  const handleTargetChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ ...bonusScheme, target: Number(e.target.value) })
+  }, [bonusScheme, onUpdate])
+
+  const handlePerCupChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ ...bonusScheme, perCup: Number(e.target.value) })
+  }, [bonusScheme, onUpdate])
+
+  const handleNoteChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate({ ...bonusScheme, note: e.target.value })
+  }, [bonusScheme, onUpdate])
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +42,7 @@ export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps)
               type="number"
               min="1"
               value={bonusScheme.baristaCount}
-              onChange={(e) => onUpdate({ ...bonusScheme, baristaCount: Number(e.target.value) })}
+              onChange={handleBaristaCountChange}
               className="text-right"
             />
           </div>
@@ -35,7 +52,7 @@ export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps)
               id="bonusTarget"
               type="number"
               value={bonusScheme.target}
-              onChange={(e) => onUpdate({ ...bonusScheme, target: Number(e.target.value) })}
+              onChange={handleTargetChange}
               className="text-right"
             />
           </div>
@@ -45,10 +62,19 @@ export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps)
               id="bonusPerCup"
               type="number"
               value={bonusScheme.perCup}
-              onChange={(e) => onUpdate({ ...bonusScheme, perCup: Number(e.target.value) })}
+              onChange={handlePerCupChange}
               className="text-right"
             />
           </div>
+        </div>
+        <div className="mt-4">
+          <Label htmlFor="bonusNote">Notes</Label>
+          <Input
+            id="bonusNote"
+            value={bonusScheme.note || ""}
+            onChange={handleNoteChange}
+            placeholder="Add notes about the bonus scheme..."
+          />
         </div>
         <CardDescription>
           Contoh: {bonusScheme.baristaCount} barista{bonusScheme.baristaCount > 1 ? 's' : ''} mendapat bonus Rp {formatNumber(bonusScheme.perCup)} per cup
@@ -58,4 +84,4 @@ export function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps)
       </CardContent>
     </Card>
   )
-}
+})

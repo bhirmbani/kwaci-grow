@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { DataInputSheet } from "./DataInputSheet"
 import { FinancialItemsTable } from "../FinancialItemsTable"
 import { DollarSign } from "lucide-react"
@@ -8,7 +9,7 @@ interface InitialCapitalSheetProps {
   onUpdate: (items: FinancialItem[]) => void
 }
 
-export function InitialCapitalSheet({ items, onUpdate }: InitialCapitalSheetProps) {
+export const InitialCapitalSheet = memo(function InitialCapitalSheet({ items, onUpdate }: InitialCapitalSheetProps) {
   return (
     <DataInputSheet
       title="Initial Capital"
@@ -27,4 +28,4 @@ export function InitialCapitalSheet({ items, onUpdate }: InitialCapitalSheetProp
       </div>
     </DataInputSheet>
   )
-}
+})

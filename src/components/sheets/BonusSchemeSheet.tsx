@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { ConfigurationSheet } from "./ConfigurationSheet"
 import { BonusSchemeCard } from "../BonusSchemeCard"
 import { Users } from "lucide-react"
@@ -8,7 +9,7 @@ interface BonusSchemeSheetProps {
   onUpdate: (scheme: BonusScheme) => void
 }
 
-export function BonusSchemeSheet({ bonusScheme, onUpdate }: BonusSchemeSheetProps) {
+export const BonusSchemeSheet = memo(function BonusSchemeSheet({ bonusScheme, onUpdate }: BonusSchemeSheetProps) {
   return (
     <ConfigurationSheet
       title="Bonus Scheme Configuration"
@@ -18,11 +19,11 @@ export function BonusSchemeSheet({ bonusScheme, onUpdate }: BonusSchemeSheetProp
       side="right"
     >
       <div className="space-y-4">
-        <BonusSchemeCard 
+        <BonusSchemeCard
           bonusScheme={bonusScheme}
           onUpdate={onUpdate}
         />
       </div>
     </ConfigurationSheet>
   )
-}
+})

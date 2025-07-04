@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { ProjectionTable } from './components/ProjectionTable'
 import { ThemeToggle } from './components/ThemeToggle'
 import { FinancialTermsSheet } from './components/sheets/FinancialTermsSheet'
@@ -6,36 +6,105 @@ import { BonusSchemeSheet } from './components/sheets/BonusSchemeSheet'
 import { InitialCapitalSheet } from './components/sheets/InitialCapitalSheet'
 import { FixedCostsSheet } from './components/sheets/FixedCostsSheet'
 import { VariableCOGSSheet } from './components/sheets/VariableCOGSSheet'
-import type { BonusScheme, FinancialItem } from './types'
+import { useFinancialItems } from './hooks/useFinancialItems'
+import { useBonusScheme } from './hooks/useBonusScheme'
+import { useAppSetting } from './hooks/useAppSetting'
+import { ensureDatabaseInitialized } from './lib/db/init'
+import { FINANCIAL_ITEM_CATEGORIES, APP_SETTING_KEYS } from './lib/db/schema'
+
 
 function App() {
+  const [dbInitialized, setDbInitialized] = useState(false)
 
-  const [capitalItems, setCapitalItems] = useState<FinancialItem[]>([
-    { id: '1', name: 'Electric Cargo Bike', value: 19500000 }
-  ])
+  // Initialize database on app start
+  useEffect(() => {
+    ensureDatabaseInitialized()
+      .then(() => setDbInitialized(true))
+      .catch(console.error)
+  }, [])
 
-  const [fixedItems, setFixedItems] = useState<FinancialItem[]>([
-    { id: '2', name: 'Depreciation (2-year)', value: 812500 },
-    { id: '3', name: 'Warehouse Rent', value: 1000000 },
-    { id: '4', name: 'Barista Salary', value: 2000000 }
-  ])
+  // Database hooks
+  const {
+    items: capitalItems,
+    loading: capitalLoading,
+    updateItems: setCapitalItems
+  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL)
 
-  const [cogsItems, setCogsItems] = useState<FinancialItem[]>([
-    { id: '5', name: 'Milk (100ml)', value: 2000 },
-    { id: '6', name: 'Coffee Beans (5g)', value: 1000 },
-    { id: '7', name: 'Palm Sugar (10ml)', value: 485 },
-    { id: '8', name: 'Cup + Lid', value: 850 },
-    { id: '9', name: 'Ice Cubes (100g)', value: 292 }
-  ])
+  const {
+    items: fixedItems,
+    loading: fixedLoading,
+    updateItems: setFixedItems
+  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS)
 
-  const [bonusScheme, setBonusScheme] = useState<BonusScheme>({
-    target: 1320,
-    perCup: 500,
-    baristaCount: 1
-  })
+  const {
+    items: cogsItems,
+    loading: cogsLoading,
+    updateItems: setCogsItems
+  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS)
 
-  const [daysPerMonth, setDaysPerMonth] = useState(22)
-  const [pricePerCup, setPricePerCup] = useState(8000)
+  const {
+    scheme: bonusScheme,
+    loading: bonusLoading,
+    updateScheme: setBonusScheme
+  } = useBonusScheme()
+
+  const {
+    value: daysPerMonth,
+    loading: daysLoading,
+    updateValue: setDaysPerMonth
+  } = useAppSetting(APP_SETTING_KEYS.DAYS_PER_MONTH, 22)
+
+  const {
+    value: pricePerCup,
+    loading: priceLoading,
+    updateValue: setPricePerCup
+  } = useAppSetting(APP_SETTING_KEYS.PRICE_PER_CUP, 8000)
+
+  // Memoize loading state calculation
+  const isLoading = useMemo(() =>
+    !dbInitialized || capitalLoading || fixedLoading || cogsLoading || bonusLoading || daysLoading || priceLoading,
+    [dbInitialized, capitalLoading, fixedLoading, cogsLoading, bonusLoading, daysLoading, priceLoading]
+  )
+
+  // Memoize the ProjectionTable component to prevent unnecessary re-renders
+  const memoizedProjectionTable = useMemo(() => {
+    // Only render if we have valid bonusScheme data
+    if (!bonusScheme) return null
+
+    return (
+      <ProjectionTable
+        daysPerMonth={daysPerMonth}
+        pricePerCup={pricePerCup}
+        fixedItems={fixedItems}
+        cogsItems={cogsItems}
+        bonusScheme={bonusScheme}
+        onDaysChange={setDaysPerMonth}
+        onPriceChange={setPricePerCup}
+      />
+    )
+  }, [daysPerMonth, pricePerCup, fixedItems, cogsItems, bonusScheme, setDaysPerMonth, setPricePerCup])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading financial dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Ensure we have valid data before rendering
+  if (!bonusScheme) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">Failed to load financial data. Please refresh the page.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -72,15 +141,7 @@ function App() {
         </div>
 
         {/* Main Financial Table - The Primary Focus */}
-        <ProjectionTable
-          daysPerMonth={daysPerMonth}
-          pricePerCup={pricePerCup}
-          fixedItems={fixedItems}
-          cogsItems={cogsItems}
-          bonusScheme={bonusScheme}
-          onDaysChange={setDaysPerMonth}
-          onPriceChange={setPricePerCup}
-        />
+        {memoizedProjectionTable}
       </div>
     </div>
   )

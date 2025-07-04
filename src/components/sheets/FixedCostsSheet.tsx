@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { DataInputSheet } from "./DataInputSheet"
 import { FinancialItemsTable } from "../FinancialItemsTable"
 import { Calendar } from "lucide-react"
@@ -8,7 +9,7 @@ interface FixedCostsSheetProps {
   onUpdate: (items: FinancialItem[]) => void
 }
 
-export function FixedCostsSheet({ items, onUpdate }: FixedCostsSheetProps) {
+export const FixedCostsSheet = memo(function FixedCostsSheet({ items, onUpdate }: FixedCostsSheetProps) {
   return (
     <DataInputSheet
       title="Fixed Costs / Month"
@@ -27,4 +28,4 @@ export function FixedCostsSheet({ items, onUpdate }: FixedCostsSheetProps) {
       </div>
     </DataInputSheet>
   )
-}
+})

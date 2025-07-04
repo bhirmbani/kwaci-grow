@@ -2,12 +2,14 @@ export interface FinancialItem {
   id: string
   name: string
   value: number
+  note?: string
 }
 
 export interface BonusScheme {
   target: number
   perCup: number
   baristaCount: number
+  note?: string
 }
 
 export interface ProjectionRow {

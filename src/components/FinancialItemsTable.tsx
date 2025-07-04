@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, memo, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,37 +14,38 @@ interface FinancialItemsTableProps {
   currency?: boolean
 }
 
-export function FinancialItemsTable({
+export const FinancialItemsTable = memo(function FinancialItemsTable({
   title,
   items,
   onUpdate,
   currency = true
 }: FinancialItemsTableProps) {
-  const [newItem, setNewItem] = useState({ name: "", value: 0 })
+  const [newItem, setNewItem] = useState({ name: "", value: 0, note: "" })
 
-  const updateItem = (id: string, field: "name" | "value", value: string | number) => {
+  const updateItem = useCallback((id: string, field: "name" | "value" | "note", value: string | number) => {
     const updatedItems = items.map(item =>
       item.id === id ? { ...item, [field]: value } : item
     )
     onUpdate(updatedItems)
-  }
+  }, [items, onUpdate])
 
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     const updatedItems = items.filter(item => item.id !== id)
     onUpdate(updatedItems)
-  }
+  }, [items, onUpdate])
 
-  const addItem = () => {
+  const addItem = useCallback(() => {
     if (newItem.name.trim()) {
       const item: FinancialItem = {
         id: Date.now().toString(),
         name: newItem.name,
-        value: newItem.value
+        value: newItem.value,
+        note: newItem.note || ""
       }
       onUpdate([...items, item])
-      setNewItem({ name: "", value: 0 })
+      setNewItem({ name: "", value: 0, note: "" })
     }
-  }
+  }, [newItem, items, onUpdate])
 
   const total = items.reduce((sum, item) => sum + item.value, 0)
 
@@ -61,6 +62,7 @@ export function FinancialItemsTable({
               <TableHead className="text-right">
                 {currency ? "Amount (IDR)" : "Cost/Cup (IDR)"}
               </TableHead>
+              <TableHead>Note</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
@@ -80,6 +82,13 @@ export function FinancialItemsTable({
                     value={item.value}
                     onChange={(e) => updateItem(item.id, "value", Number(e.target.value))}
                     className="text-right"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.note || ""}
+                    onChange={(e) => updateItem(item.id, "note", e.target.value)}
+                    placeholder="Add note..."
                   />
                 </TableCell>
                 <TableCell>
@@ -111,6 +120,13 @@ export function FinancialItemsTable({
                 />
               </TableCell>
               <TableCell>
+                <Input
+                  value={newItem.note}
+                  onChange={(e) => setNewItem({ ...newItem, note: e.target.value })}
+                  placeholder="Add note..."
+                />
+              </TableCell>
+              <TableCell>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -129,10 +145,11 @@ export function FinancialItemsTable({
                 {formatCurrency(total)}
               </TableCell>
               <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableFooter>
         </Table>
       </CardContent>
     </Card>
   )
-}
+})

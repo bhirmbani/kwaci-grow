@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { DataInputSheet } from "./DataInputSheet"
 import { FinancialItemsTable } from "../FinancialItemsTable"
 import { Package } from "lucide-react"
@@ -8,7 +9,7 @@ interface VariableCOGSSheetProps {
   onUpdate: (items: FinancialItem[]) => void
 }
 
-export function VariableCOGSSheet({ items, onUpdate }: VariableCOGSSheetProps) {
+export const VariableCOGSSheet = memo(function VariableCOGSSheet({ items, onUpdate }: VariableCOGSSheetProps) {
   return (
     <DataInputSheet
       title="Variable COGS per Cup"
@@ -28,4 +29,4 @@ export function VariableCOGSSheet({ items, onUpdate }: VariableCOGSSheetProps) {
       </div>
     </DataInputSheet>
   )
-}
+})
