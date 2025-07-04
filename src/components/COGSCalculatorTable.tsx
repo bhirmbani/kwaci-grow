@@ -110,14 +110,14 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
   return (
     <div className="space-y-8">
       {/* Daily Target Input */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-xl">
+      <Card className="shadow-sm bg-card border-border">
+        <CardHeader className="pb-4 bg-card">
+          <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
             <Calculator className="h-6 w-6" />
             COGS Calculator
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="bg-card">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label htmlFor="dailyTarget" className="block text-sm font-medium mb-3 text-muted-foreground">
@@ -162,11 +162,11 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
       </Card>
 
       {/* Ingredients Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
+      <Card className="bg-card border-border">
+        <CardHeader className="bg-card">
+          <CardTitle className="text-card-foreground">{title}</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 bg-card">
           <div className="overflow-x-auto">
             <Table className="min-w-full table-fixed">
               <TableHeader>

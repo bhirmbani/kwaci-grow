@@ -29,11 +29,11 @@ export const BonusSchemeCard = memo(function BonusSchemeCard({ bonusScheme, onUp
   }, [bonusScheme, onUpdate])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Bonus Scheme</CardTitle>
+    <Card className="bg-card border-border">
+      <CardHeader className="bg-card">
+        <CardTitle className="text-card-foreground">Bonus Scheme</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-card">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
             <Label htmlFor="baristaCount">Number of Baristas</Label>

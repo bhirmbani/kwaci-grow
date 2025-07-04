@@ -32,7 +32,8 @@ export function ConfigurationSheet({
       <SheetTrigger asChild>
         <Button
           variant="outline"
-          className="gap-2 w-full justify-start hover:bg-accent hover:text-accent-foreground transition-colors"
+          size="sm"
+          className="gap-1 w-full justify-start hover:bg-accent hover:text-accent-foreground transition-colors text-xs h-8"
           aria-label={`Open ${title} configuration`}
         >
           {triggerIcon}

@@ -14,10 +14,14 @@ import { useAppSetting } from './hooks/useAppSetting'
 import { ensureDatabaseInitialized } from './lib/db/init'
 import { FINANCIAL_ITEM_CATEGORIES, APP_SETTING_KEYS } from './lib/db/schema'
 import { validateCalculations } from './utils/financialCalculations.test'
+import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
+import { AppSidebar } from './components/AppSidebar'
+import { useSidebarState } from './hooks/useSidebarState'
 
 
 function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
+  const { defaultOpen, onOpenChange } = useSidebarState()
 
   // Initialize database on app start
   useEffect(() => {
@@ -108,72 +112,83 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground">
-            Coffee Cart Financial Dashboard
-          </h1>
-          <ThemeToggle />
-        </div>
-
-        {/* Configuration & Data Management */}
-        <div className="mb-8 p-4 sm:p-6 bg-card rounded-lg border shadow-sm space-y-6">
-          <h2 className="text-lg font-semibold text-center sm:text-left">Configuration & Data Management</h2>
-
-          {/* Input Controls */}
-          <div className="space-y-4">
-            <h3 className="text-md font-medium text-muted-foreground">Financial Parameters</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="daysPerMonth">Days/Month</Label>
-                <Input
-                  id="daysPerMonth"
-                  type="number"
-                  value={daysPerMonth}
-                  onChange={(e) => setDaysPerMonth(Number(e.target.value))}
-                  min="1"
-                  max="31"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="pricePerCup">Price/Cup (IDR)</Label>
-                <Input
-                  id="pricePerCup"
-                  type="number"
-                  value={pricePerCup}
-                  onChange={(e) => setPricePerCup(Number(e.target.value))}
-                  min="0"
-                  className="mt-1"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Sheet Triggers */}
-          <div className="space-y-4">
-            <h3 className="text-md font-medium text-muted-foreground">Data Management</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-              <FinancialTermsSheet />
-              <BonusSchemeSheet
-                bonusScheme={bonusScheme}
-                onUpdate={setBonusScheme}
-              />
-              <InitialCapitalSheet />
-              <FixedCostsSheet />
-              <VariableCOGSSheet
-                items={cogsItems}
-                onUpdate={setCogsItems}
-              />
-            </div>
+    <SidebarProvider defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+      <AppSidebar />
+      <main className="flex-1 min-h-screen bg-background">
+        <div className="flex items-center gap-2 p-4 border-b">
+          <SidebarTrigger />
+          <div className="flex-1 flex justify-between items-center">
+            <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
+              Coffee Cart Financial Dashboard
+            </h1>
+            <ThemeToggle />
           </div>
         </div>
 
-        {/* Main Financial Table - The Primary Focus */}
-        {memoizedProjectionTable}
-      </div>
-    </div>
+        <div className="p-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Configuration & Data Management - Compact Layout */}
+            <div className="mb-6 p-3 bg-card rounded-lg border shadow-sm">
+              <h2 className="text-lg font-semibold mb-4">Configuration & Data Management</h2>
+
+              {/* Horizontal Layout for Input Controls and Sheet Triggers */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+                {/* Input Controls - Compact */}
+                <div className="lg:col-span-1">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Financial Parameters</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="daysPerMonth" className="text-xs">Days/Month</Label>
+                      <Input
+                        id="daysPerMonth"
+                        type="number"
+                        value={daysPerMonth}
+                        onChange={(e) => setDaysPerMonth(Number(e.target.value))}
+                        min="1"
+                        max="31"
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="pricePerCup" className="text-xs">Price/Cup (IDR)</Label>
+                      <Input
+                        id="pricePerCup"
+                        type="number"
+                        value={pricePerCup}
+                        onChange={(e) => setPricePerCup(Number(e.target.value))}
+                        min="0"
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sheet Triggers - Compact */}
+                <div className="lg:col-span-2">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Data Management</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                    <FinancialTermsSheet />
+                    <BonusSchemeSheet
+                      bonusScheme={bonusScheme}
+                      onUpdate={setBonusScheme}
+                    />
+                    <InitialCapitalSheet />
+                    <FixedCostsSheet />
+                    <VariableCOGSSheet
+                      items={cogsItems}
+                      onUpdate={setCogsItems}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Financial Table - The Primary Focus */}
+            {memoizedProjectionTable}
+          </div>
+        </div>
+      </main>
+    </SidebarProvider>
   )
 }
 

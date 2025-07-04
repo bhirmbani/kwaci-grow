@@ -39,7 +39,8 @@ export function DataInputSheet({
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          className={`gap-2 w-full justify-start transition-colors ${buttonVariants[buttonColor]}`}
+          size="sm"
+          className={`gap-1 w-full justify-start transition-colors text-xs h-8 ${buttonVariants[buttonColor]}`}
           aria-label={`Open ${title} data input`}
         >
           {triggerIcon}

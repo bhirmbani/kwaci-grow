@@ -21,14 +21,14 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
 
   if (shoppingList.items.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className="bg-card border-border">
+        <CardHeader className="bg-card">
+          <CardTitle className="flex items-center gap-2 text-card-foreground">
             <ShoppingCart className="h-5 w-5" />
             Shopping List Summary
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="bg-card">
           <p className="text-muted-foreground text-center py-8">
             No ingredients with complete COGS data found. Add ingredients with base cost, quantity, usage per cup, and unit to see the shopping list.
           </p>
@@ -38,9 +38,9 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="bg-card border-border">
+      <CardHeader className="bg-card">
+        <CardTitle className="flex items-center gap-2 text-card-foreground">
           <ShoppingCart className="h-5 w-5" />
           Shopping List Summary
         </CardTitle>
@@ -48,7 +48,7 @@ export const ShoppingListSummary = memo(function ShoppingListSummary({
           Ingredients needed for {dailyTarget} cups per day
         </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-card">
         <Table>
           <TableHeader>
             <TableRow>

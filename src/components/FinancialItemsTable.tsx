@@ -81,11 +81,11 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
   const total = items.reduce((sum, item) => sum + item.value, 0)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+    <Card className="bg-card border-border">
+      <CardHeader className="bg-card">
+        <CardTitle className="text-card-foreground">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-card">
         <Table>
           <TableHeader>
             <TableRow>

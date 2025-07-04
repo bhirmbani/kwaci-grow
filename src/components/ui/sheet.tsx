@@ -13,18 +13,18 @@ const SheetClose = SheetPrimitive.Close
 const SheetPortal = SheetPrimitive.Portal
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background text-foreground p-6 shadow-lg border transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 sheet-content",
+  "fixed z-[101] gap-4 bg-background text-foreground p-6 shadow-lg border border-border transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 sheet-content opacity-100",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 h-1/2 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        top: "inset-x-0 top-0 h-1/2 border-b border-border data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
         bottom:
-          "inset-x-0 bottom-0 h-1/2 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-        left: "inset-y-0 left-0 h-full w-1/2 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
+          "inset-x-0 bottom-0 h-1/2 border-t border-border data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        left: "inset-y-0 left-0 h-full w-1/2 border-r border-border data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
         right:
-          "inset-y-0 right-0 h-full w-1/2 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+          "inset-y-0 right-0 h-full w-1/2 border-l border-border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
         "right-wide":
-          "inset-y-0 right-0 h-full w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[75%] border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+          "inset-y-0 right-0 h-full w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] xl:w-[75%] border-l border-border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
       },
     },
     defaultVariants: {
@@ -39,7 +39,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:fade-in data-[state=closed]:fade-out",
+      "fixed inset-0 z-[100] bg-background/20 dark:bg-background/80 backdrop-blur-sm data-[state=open]:fade-in data-[state=closed]:fade-out transition-all duration-300",
       className
     )}
     {...props}
