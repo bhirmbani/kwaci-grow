@@ -12,6 +12,7 @@ import {
   PieChart,
   Keyboard,
   Package,
+  Factory,
 } from "lucide-react"
 
 import {
@@ -56,6 +57,12 @@ const items = [
     url: "#warehouse",
     icon: Package,
     description: "Manage warehouse stock and inventory",
+  },
+  {
+    title: "Production",
+    url: "#production",
+    icon: Factory,
+    description: "Manage production batches and allocations",
   },
   {
     title: "Fixed Assets",

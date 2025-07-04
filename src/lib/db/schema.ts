@@ -74,12 +74,35 @@ export interface StockTransaction {
   id: string
   ingredientName: string
   unit: string
-  transactionType: 'ADD' | 'DEDUCT' | 'ADJUST' | 'RESERVE' | 'UNRESERVE' // Type of stock transaction
+  transactionType: 'ADD' | 'DEDUCT' | 'ADJUST' | 'RESERVE' | 'UNRESERVE' | 'PRODUCTION_COMPLETE' // Type of stock transaction
   quantity: number // Positive for ADD/RESERVE, negative for DEDUCT/UNRESERVE
   reason: string // Reason for the transaction (e.g., "Sale", "Warehouse addition", "Manual adjustment", "Order reservation")
   batchId?: string // Optional reference to warehouse batch
   reservationId?: string // Optional reference to reservation for RESERVE/UNRESERVE transactions
+  reservationPurpose?: string // Purpose of reservation (e.g., "Manual Reservation", "Production Batch #5")
+  productionBatchId?: string // Optional reference to production batch
   transactionDate: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ProductionBatch {
+  id: string
+  batchNumber: number // Auto-incrementing starting at 1
+  dateCreated: string // ISO date string
+  status: 'Pending' | 'In Progress' | 'Completed' // Production batch status
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ProductionItem {
+  id: string
+  productionBatchId: string // Foreign key to ProductionBatch
+  ingredientName: string
+  quantity: number
+  unit: string
+  note: string
   createdAt: string
   updatedAt: string
 }
@@ -92,6 +115,8 @@ export type NewWarehouseBatch = Omit<WarehouseBatch, 'createdAt' | 'updatedAt'>
 export type NewWarehouseItem = Omit<WarehouseItem, 'createdAt' | 'updatedAt'>
 export type NewStockLevel = Omit<StockLevel, 'createdAt' | 'updatedAt'>
 export type NewStockTransaction = Omit<StockTransaction, 'createdAt' | 'updatedAt'>
+export type NewProductionBatch = Omit<ProductionBatch, 'createdAt' | 'updatedAt'>
+export type NewProductionItem = Omit<ProductionItem, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {
@@ -110,3 +135,17 @@ export const APP_SETTING_KEYS = {
 } as const
 
 export type AppSettingKey = typeof APP_SETTING_KEYS[keyof typeof APP_SETTING_KEYS]
+
+// Production batch status enum
+export const PRODUCTION_BATCH_STATUS = {
+  PENDING: 'Pending',
+  IN_PROGRESS: 'In Progress',
+  COMPLETED: 'Completed',
+} as const
+
+export type ProductionBatchStatus = typeof PRODUCTION_BATCH_STATUS[keyof typeof PRODUCTION_BATCH_STATUS]
+
+// Helper type for production batch with items
+export interface ProductionBatchWithItems extends ProductionBatch {
+  items: ProductionItem[]
+}

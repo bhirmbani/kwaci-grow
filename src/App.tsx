@@ -18,17 +18,20 @@ import { SidebarProvider, SidebarTrigger } from './components/ui/sidebar'
 import { AppSidebar } from './components/AppSidebar'
 import { useSidebarState } from './hooks/useSidebarState'
 import { WarehouseManagement } from './components/warehouse/WarehouseManagement'
+import { ProductionManagement } from './components/production/ProductionManagement'
 
 
 function App() {
   const [dbInitialized, setDbInitialized] = useState(false)
-  const [currentView, setCurrentView] = useState<'dashboard' | 'warehouse'>('dashboard')
+  const [currentView, setCurrentView] = useState<'dashboard' | 'warehouse' | 'production'>('dashboard')
   const { defaultOpen, onOpenChange } = useSidebarState()
 
   // Handle navigation from sidebar
   const handleNavigation = (url: string) => {
     if (url === '#warehouse') {
       setCurrentView('warehouse')
+    } else if (url === '#production') {
+      setCurrentView('production')
     } else {
       setCurrentView('dashboard')
     }
@@ -130,7 +133,11 @@ function App() {
           <SidebarTrigger />
           <div className="flex-1 flex justify-between items-center">
             <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
-              {currentView === 'warehouse' ? 'Warehouse Management' : 'Coffee Cart Financial Dashboard'}
+              {currentView === 'warehouse'
+                ? 'Warehouse Management'
+                : currentView === 'production'
+                ? 'Production Management'
+                : 'Coffee Cart Financial Dashboard'}
             </h1>
             <ThemeToggle />
           </div>
@@ -140,6 +147,8 @@ function App() {
           <div className="max-w-7xl mx-auto">
             {currentView === 'warehouse' ? (
               <WarehouseManagement />
+            ) : currentView === 'production' ? (
+              <ProductionManagement />
             ) : (
               <>
                 {/* Configuration & Data Management - Compact Layout */}

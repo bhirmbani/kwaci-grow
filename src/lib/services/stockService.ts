@@ -307,7 +307,9 @@ export class StockService {
     unit: string,
     quantity: number,
     reason: string,
-    reservationId?: string
+    reservationId?: string,
+    reservationPurpose?: string,
+    productionBatchId?: string
   ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
     try {
       if (quantity <= 0) {
@@ -350,6 +352,8 @@ export class StockService {
           quantity,
           reason,
           reservationId,
+          reservationPurpose,
+          productionBatchId,
           transactionDate: new Date().toISOString()
         })
 
@@ -371,7 +375,9 @@ export class StockService {
     unit: string,
     quantity: number,
     reason: string,
-    reservationId?: string
+    reservationId?: string,
+    reservationPurpose?: string,
+    productionBatchId?: string
   ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
     try {
       if (quantity <= 0) {
@@ -413,6 +419,8 @@ export class StockService {
           quantity: -quantity, // Negative for unreservation
           reason,
           reservationId,
+          reservationPurpose,
+          productionBatchId,
           transactionDate: new Date().toISOString()
         })
 
@@ -492,6 +500,110 @@ export class StockService {
     } catch (error) {
       console.error('Error updating reservation:', error)
       return { success: false, error: 'Unexpected error updating reservation' }
+    }
+  }
+
+  /**
+   * Allocate stock for production (reserve with production purpose)
+   */
+  static async allocateForProduction(
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    productionBatchId: string,
+    batchNumber: number
+  ): Promise<{ success: boolean; availableStock?: number; error?: string }> {
+    const reservationPurpose = `Production Batch #${batchNumber}`
+    const reason = `Allocated for ${reservationPurpose}`
+
+    return this.reserveStock(
+      ingredientName,
+      unit,
+      quantity,
+      reason,
+      productionBatchId,
+      reservationPurpose,
+      productionBatchId
+    )
+  }
+
+  /**
+   * Complete production and convert allocation to actual deduction
+   */
+  static async completeProduction(
+    ingredientName: string,
+    unit: string,
+    quantity: number,
+    productionBatchId: string,
+    batchNumber: number
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const reservationPurpose = `Production Batch #${batchNumber}`
+
+      // First unreserve the stock
+      const unreserveResult = await this.unreserveStock(
+        ingredientName,
+        unit,
+        quantity,
+        `${reservationPurpose} completed`,
+        productionBatchId,
+        reservationPurpose,
+        productionBatchId
+      )
+
+      if (!unreserveResult.success) {
+        return { success: false, error: unreserveResult.error }
+      }
+
+      // Then deduct the stock permanently
+      const deductResult = await this.deductStock(
+        ingredientName,
+        unit,
+        quantity,
+        `${reservationPurpose} completed`
+      )
+
+      if (!deductResult.success) {
+        return { success: false, error: 'Failed to deduct stock after unreserving' }
+      }
+
+      return { success: true }
+    } catch (error) {
+      console.error('Error completing production:', error)
+      return { success: false, error: 'Unexpected error completing production' }
+    }
+  }
+
+  /**
+   * Get all reservations with their purposes
+   */
+  static async getReservationsWithPurpose(): Promise<Array<{
+    ingredientName: string
+    unit: string
+    quantity: number
+    purpose: string
+    reservationId?: string
+    productionBatchId?: string
+    transactionDate: string
+  }>> {
+    try {
+      const reserveTransactions = await db.stockTransactions
+        .where('transactionType')
+        .equals('RESERVE')
+        .toArray()
+
+      return reserveTransactions.map(tx => ({
+        ingredientName: tx.ingredientName,
+        unit: tx.unit,
+        quantity: tx.quantity,
+        purpose: tx.reservationPurpose || 'Manual Reservation',
+        reservationId: tx.reservationId,
+        productionBatchId: tx.productionBatchId,
+        transactionDate: tx.transactionDate
+      }))
+    } catch (error) {
+      console.error('Error getting reservations with purpose:', error)
+      throw error
     }
   }
 }

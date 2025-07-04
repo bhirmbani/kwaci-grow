@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -11,6 +11,8 @@ export class FinancialDashboardDB extends Dexie {
   warehouseItems!: EntityTable<WarehouseItem, 'id'>
   stockLevels!: EntityTable<StockLevel, 'id'>
   stockTransactions!: EntityTable<StockTransaction, 'id'>
+  productionBatches!: EntityTable<ProductionBatch, 'id'>
+  productionItems!: EntityTable<ProductionItem, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -113,6 +115,19 @@ export class FinancialDashboardDB extends Dexie {
       warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
       stockLevels: 'id, &[ingredientName+unit], ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
       stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, transactionDate, createdAt, updatedAt'
+    })
+
+    // Version 6 - Add production management tables and extend stock transactions
+    this.version(6).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, &[ingredientName+unit], ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt'
     })
   }
 }

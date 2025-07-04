@@ -2,17 +2,17 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Package, Calendar, List, TrendingUp, ShoppingCart } from 'lucide-react'
+import { Package, Calendar, List, TrendingUp, Factory, ShoppingCart } from 'lucide-react'
 import { useWarehouse, useWarehouseStats } from '@/hooks/useWarehouse'
 import { formatCurrency } from '@/utils/formatters'
 import { WarehouseBatchList } from './WarehouseBatchList'
 import { WarehouseCalendar } from './WarehouseCalendar'
 import { WarehouseStats } from './WarehouseStats'
 import { StockLevels } from './StockLevels'
-import { SalesProcessor } from '../SalesProcessor'
+import { ProductionAllocation } from '../production/ProductionAllocation'
 
 export function WarehouseManagement() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'sales'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'production'>('overview')
   const { batches, loading, error } = useWarehouse()
   const { stats, loading: statsLoading } = useWarehouseStats()
 
@@ -67,9 +67,9 @@ export function WarehouseManagement() {
             <Package className="h-4 w-4" />
             Stock Levels
           </TabsTrigger>
-          <TabsTrigger value="sales" className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4" />
-            Sales
+          <TabsTrigger value="production" className="flex items-center gap-2">
+            <Factory className="h-4 w-4" />
+            Quick Production Allocation
           </TabsTrigger>
           <TabsTrigger value="batches" className="flex items-center gap-2">
             <List className="h-4 w-4" />
@@ -171,8 +171,8 @@ export function WarehouseManagement() {
           <StockLevels />
         </TabsContent>
 
-        <TabsContent value="sales">
-          <SalesProcessor />
+        <TabsContent value="production">
+          <ProductionAllocation />
         </TabsContent>
 
         <TabsContent value="batches">
