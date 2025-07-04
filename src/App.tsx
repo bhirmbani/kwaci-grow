@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { ProjectionTable } from './components/ProjectionTable'
 import { ThemeToggle } from './components/ThemeToggle'
+import { Input } from './components/ui/input'
+import { Label } from './components/ui/label'
 import { FinancialTermsSheet } from './components/sheets/FinancialTermsSheet'
 import { BonusSchemeSheet } from './components/sheets/BonusSchemeSheet'
 import { InitialCapitalSheet } from './components/sheets/InitialCapitalSheet'
@@ -11,6 +13,7 @@ import { useBonusScheme } from './hooks/useBonusScheme'
 import { useAppSetting } from './hooks/useAppSetting'
 import { ensureDatabaseInitialized } from './lib/db/init'
 import { FINANCIAL_ITEM_CATEGORIES, APP_SETTING_KEYS } from './lib/db/schema'
+import { validateCalculations } from './utils/financialCalculations.test'
 
 
 function App() {
@@ -19,7 +22,14 @@ function App() {
   // Initialize database on app start
   useEffect(() => {
     ensureDatabaseInitialized()
-      .then(() => setDbInitialized(true))
+      .then(() => {
+        setDbInitialized(true)
+        // Run financial calculations validation in development
+        if (import.meta.env.DEV) {
+          console.log('Running financial calculations validation...')
+          validateCalculations()
+        }
+      })
       .catch(console.error)
   }, [])
 
@@ -71,8 +81,6 @@ function App() {
         fixedItems={fixedItems}
         cogsItems={cogsItems}
         bonusScheme={bonusScheme}
-        onDaysChange={setDaysPerMonth}
-        onPriceChange={setPricePerCup}
       />
     )
   }, [daysPerMonth, pricePerCup, fixedItems, cogsItems, bonusScheme, setDaysPerMonth, setPricePerCup])
@@ -109,21 +117,56 @@ function App() {
           <ThemeToggle />
         </div>
 
-        {/* Navigation Bar with Sheet Triggers */}
-        <div className="mb-8 p-4 sm:p-6 bg-card rounded-lg border shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 text-center sm:text-left">Configuration & Data Management</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-            <FinancialTermsSheet />
-            <BonusSchemeSheet
-              bonusScheme={bonusScheme}
-              onUpdate={setBonusScheme}
-            />
-            <InitialCapitalSheet />
-            <FixedCostsSheet />
-            <VariableCOGSSheet
-              items={cogsItems}
-              onUpdate={setCogsItems}
-            />
+        {/* Configuration & Data Management */}
+        <div className="mb-8 p-4 sm:p-6 bg-card rounded-lg border shadow-sm space-y-6">
+          <h2 className="text-lg font-semibold text-center sm:text-left">Configuration & Data Management</h2>
+
+          {/* Input Controls */}
+          <div className="space-y-4">
+            <h3 className="text-md font-medium text-muted-foreground">Financial Parameters</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="daysPerMonth">Days/Month</Label>
+                <Input
+                  id="daysPerMonth"
+                  type="number"
+                  value={daysPerMonth}
+                  onChange={(e) => setDaysPerMonth(Number(e.target.value))}
+                  min="1"
+                  max="31"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="pricePerCup">Price/Cup (IDR)</Label>
+                <Input
+                  id="pricePerCup"
+                  type="number"
+                  value={pricePerCup}
+                  onChange={(e) => setPricePerCup(Number(e.target.value))}
+                  min="0"
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sheet Triggers */}
+          <div className="space-y-4">
+            <h3 className="text-md font-medium text-muted-foreground">Data Management</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+              <FinancialTermsSheet />
+              <BonusSchemeSheet
+                bonusScheme={bonusScheme}
+                onUpdate={setBonusScheme}
+              />
+              <InitialCapitalSheet />
+              <FixedCostsSheet />
+              <VariableCOGSSheet
+                items={cogsItems}
+                onUpdate={setCogsItems}
+              />
+            </div>
           </div>
         </div>
 
