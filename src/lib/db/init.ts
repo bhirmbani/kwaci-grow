@@ -11,7 +11,10 @@ export async function ensureDatabaseInitialized(): Promise<void> {
 
   try {
     await initializeDatabase()
-    await seedDatabase() // Seed the database with default data
+
+    // Seed the database with default data (seeder functions check for existing data)
+    await seedDatabase()
+
     await AppSettingsService.ensureDefaults()
     isInitialized = true
     console.log('Database initialized successfully')

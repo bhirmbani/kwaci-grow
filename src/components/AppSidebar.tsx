@@ -13,6 +13,7 @@ import {
   Keyboard,
   Package,
   Factory,
+  Beaker,
 } from "lucide-react"
 
 import {
@@ -46,6 +47,18 @@ const items = [
     url: "/",
     icon: Home,
     description: "Main financial dashboard",
+  },
+  {
+    title: "Products",
+    url: "/products",
+    icon: Package,
+    description: "Manage products and their compositions",
+  },
+  {
+    title: "Ingredients",
+    url: "/ingredients",
+    icon: Beaker,
+    description: "Manage ingredients and their properties",
   },
   {
     title: "COGS Calculator",

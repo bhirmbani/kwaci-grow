@@ -1,0 +1,200 @@
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Package, Plus, List, TrendingUp } from 'lucide-react'
+import { useProductsWithCounts } from '@/hooks/useProducts'
+import { ProductList } from './ProductList'
+import { ProductForm } from './ProductForm'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+
+export function ProductManagement() {
+  const [activeTab, setActiveTab] = useState<'overview' | 'products'>('overview')
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
+  const { products, loading, error, loadProducts } = useProductsWithCounts()
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading products...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center text-red-500">
+          <p>Error loading products: {error}</p>
+          <Button onClick={loadProducts} className="mt-4">
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const totalProducts = products.length
+  const totalIngredients = products.reduce((sum, product) => sum + product.ingredientCount, 0)
+  const averageIngredientsPerProduct = totalProducts > 0 ? (totalIngredients / totalProducts).toFixed(1) : '0'
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Product Management</h1>
+          <p className="text-muted-foreground">
+            Manage your products and their ingredient compositions
+          </p>
+        </div>
+        <Sheet open={isCreateSheetOpen} onOpenChange={setIsCreateSheetOpen}>
+          <SheetTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Product
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-[600px] sm:w-[600px]">
+            <SheetHeader>
+              <SheetTitle>Create New Product</SheetTitle>
+              <SheetDescription>
+                Add a new product to your catalog
+              </SheetDescription>
+            </SheetHeader>
+            <ProductForm
+              onSuccess={() => {
+                setIsCreateSheetOpen(false)
+                loadProducts()
+              }}
+              onCancel={() => setIsCreateSheetOpen(false)}
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Main Content Tabs */}
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="products" className="flex items-center gap-2">
+            <List className="h-4 w-4" />
+            Products
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Statistics Cards */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                <Package className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{totalProducts}</div>
+                <p className="text-xs text-muted-foreground">
+                  Active products in catalog
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Ingredients</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{totalIngredients}</div>
+                <p className="text-xs text-muted-foreground">
+                  Across all products
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Avg. Ingredients</CardTitle>
+                <Package className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{averageIngredientsPerProduct}</div>
+                <p className="text-xs text-muted-foreground">
+                  Per product
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Recent Products */}
+            <Card className="md:col-span-2 lg:col-span-3">
+              <CardHeader>
+                <CardTitle>Recent Products</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {products.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No products yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Create your first product to get started
+                    </p>
+                    <Button onClick={() => setIsCreateSheetOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Product
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {products.slice(0, 5).map((product) => (
+                      <div
+                        key={product.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div>
+                          <h4 className="font-medium">{product.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {product.description}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {product.ingredientCount} ingredients
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setActiveTab('products')}
+                        >
+                          View Details
+                        </Button>
+                      </div>
+                    ))}
+                    {products.length > 5 && (
+                      <div className="text-center pt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setActiveTab('products')}
+                        >
+                          View All Products ({products.length})
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="products">
+          <ProductList products={products} onProductsChange={loadProducts} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

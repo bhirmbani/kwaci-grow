@@ -8,7 +8,20 @@ export class StockService {
    */
   static async getStockLevel(ingredientName: string, unit: string): Promise<StockLevel | null> {
     try {
-      return await db.stockLevels.where('[ingredientName+unit]').equals([ingredientName, unit]).first() || null
+      // Validate parameters to prevent IDBKeyRange errors
+      if (!ingredientName || typeof ingredientName !== 'string') {
+        throw new Error('Invalid ingredientName parameter')
+      }
+      if (!unit || typeof unit !== 'string') {
+        throw new Error('Invalid unit parameter')
+      }
+
+      // Use simple query instead of compound index to avoid IDBKeyRange errors
+      return await db.stockLevels
+        .where('ingredientName')
+        .equals(ingredientName)
+        .and(stock => stock.unit === unit)
+        .first() || null
     } catch (error) {
       console.error('Error getting stock level:', error)
       throw error

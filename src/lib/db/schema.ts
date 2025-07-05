@@ -107,6 +107,40 @@ export interface ProductionItem {
   updatedAt: string
 }
 
+export interface Product {
+  id: string
+  name: string
+  description: string
+  note: string
+  isActive: boolean // For soft deletion
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Ingredient {
+  id: string
+  name: string
+  baseUnitCost: number // Cost of base unit (e.g., 20000 IDR per liter)
+  baseUnitQuantity: number // Quantity of base unit (e.g., 1000 ml)
+  unit: string // Unit of measurement (e.g., "ml", "g", "piece")
+  supplierInfo?: string // Optional supplier information
+  category?: string // Optional ingredient category
+  note: string
+  isActive: boolean // For soft deletion
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ProductIngredient {
+  id: string
+  productId: string // Foreign key to Product
+  ingredientId: string // Foreign key to Ingredient
+  usagePerCup: number // Usage amount per cup (e.g., 100 ml)
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Type aliases for new entities (same as the main types for Dexie)
 export type NewFinancialItem = Omit<FinancialItem, 'createdAt' | 'updatedAt'>
 export type NewBonusScheme = Omit<BonusScheme, 'id' | 'createdAt' | 'updatedAt'>
@@ -117,6 +151,9 @@ export type NewStockLevel = Omit<StockLevel, 'createdAt' | 'updatedAt'>
 export type NewStockTransaction = Omit<StockTransaction, 'createdAt' | 'updatedAt'>
 export type NewProductionBatch = Omit<ProductionBatch, 'createdAt' | 'updatedAt'>
 export type NewProductionItem = Omit<ProductionItem, 'createdAt' | 'updatedAt'>
+export type NewProduct = Omit<Product, 'createdAt' | 'updatedAt'>
+export type NewIngredient = Omit<Ingredient, 'createdAt' | 'updatedAt'>
+export type NewProductIngredient = Omit<ProductIngredient, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {
@@ -148,4 +185,14 @@ export type ProductionBatchStatus = typeof PRODUCTION_BATCH_STATUS[keyof typeof 
 // Helper type for production batch with items
 export interface ProductionBatchWithItems extends ProductionBatch {
   items: ProductionItem[]
+}
+
+// Helper type for product with ingredients
+export interface ProductWithIngredients extends Product {
+  ingredients: (ProductIngredient & { ingredient: Ingredient })[]
+}
+
+// Helper type for ingredient with usage info
+export interface IngredientWithUsage extends Ingredient {
+  usageInProducts: (ProductIngredient & { product: Product })[]
 }

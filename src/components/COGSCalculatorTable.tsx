@@ -1,17 +1,21 @@
-import { useState, memo, useCallback, useMemo } from "react"
+import { useState, memo, useCallback, useMemo, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Trash2, Plus, Calculator } from "lucide-react"
+import { Trash2, Plus, Calculator, Package } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
+import { useProducts } from "@/hooks/useProducts"
 import {
   calculateCostPerCup,
   calculateTotalCOGSPerCup,
   updateCalculatedValue,
   getFormattedQuantity,
   generateShoppingList,
+  convertProductToFinancialItems,
+  calculateProductCOGSPerCup,
+  generateProductShoppingList,
   UNIT_OPTIONS,
   type UnitOption
 } from "@/utils/cogsCalculations"
@@ -43,6 +47,33 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
   dailyTarget,
   onDailyTargetChange
 }: COGSCalculatorTableProps) {
+  const { products, loading: productsLoading } = useProducts()
+  const [selectedProductId, setSelectedProductId] = useState<string>('custom')
+  const [isProductMode, setIsProductMode] = useState(false)
+
+  // Handle product selection
+  const handleProductChange = useCallback(async (productId: string) => {
+    setSelectedProductId(productId)
+
+    if (productId === 'custom') {
+      setIsProductMode(false)
+      return
+    }
+
+    setIsProductMode(true)
+
+    // Find the selected product
+    const selectedProduct = products.find(p => p.id === productId)
+    if (selectedProduct) {
+      // We need to get the product with ingredients
+      // For now, we'll use the existing items as fallback
+      // This should be improved to fetch the actual product data
+      console.log('Selected product:', selectedProduct.name)
+    }
+  }, [products])
+
+  // Check if we have products available
+  const hasProducts = products.length > 0
   const [newItem, setNewItem] = useState<NewCOGSItem>({
     name: "",
     baseUnitCost: 0,
@@ -165,7 +196,34 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
       {/* Ingredients Table */}
       <Card className="bg-card border-border">
         <CardHeader className="bg-card">
-          <CardTitle className="text-card-foreground">{title}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-card-foreground">{title}</CardTitle>
+            {hasProducts && (
+              <div className="flex items-center gap-2">
+                <Package className="h-4 w-4 text-muted-foreground" />
+                <Select value={selectedProductId} onValueChange={handleProductChange}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Select product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="custom">Custom Ingredients</SelectItem>
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id}>
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+          {isProductMode && (
+            <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-700">
+                Using product-based ingredients. Switch to "Custom Ingredients" to manually edit.
+              </p>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="p-0 bg-card">
           <div className="overflow-x-auto">
@@ -194,6 +252,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "name", e.target.value)}
                         placeholder="Ingredient name"
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
+                        disabled={isProductMode}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right">
@@ -203,6 +262,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "baseUnitCost", Number(e.target.value))}
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0"
+                        disabled={isProductMode}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right">
@@ -213,12 +273,14 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0.01"
                         step="0.01"
+                        disabled={isProductMode}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4">
                       <Select
                         value={item.unit || "ml"}
                         onValueChange={(value) => updateItem(item.id, "unit", value)}
+                        disabled={isProductMode}
                       >
                         <SelectTrigger className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all">
                           <SelectValue />
@@ -242,6 +304,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                           min="0"
                           step="0.01"
                           placeholder={`per cup`}
+                          disabled={isProductMode}
                         />
                         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
                           {item.unit || 'ml'}
@@ -271,6 +334,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "note", e.target.value)}
                         placeholder="Add note..."
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
+                        disabled={isProductMode}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4">
@@ -279,6 +343,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         size="icon"
                         onClick={() => removeItem(item.id)}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                        disabled={isProductMode}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -286,9 +351,10 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                   </TableRow>
                 )
               })}
-              
-              {/* Add new item row */}
-              <TableRow className="border-t-2 bg-muted/20">
+
+              {/* Add new item row - only show in custom mode */}
+              {!isProductMode && (
+                <TableRow className="border-t-2 bg-muted/20">
                 <TableCell className="px-4 py-4">
                   <Input
                     value={newItem.name}
@@ -381,6 +447,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                   </Button>
                 </TableCell>
               </TableRow>
+              )}
             </TableBody>
             <TableFooter>
               <TableRow className="bg-muted/30 border-t-2">

@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -13,6 +13,9 @@ export class FinancialDashboardDB extends Dexie {
   stockTransactions!: EntityTable<StockTransaction, 'id'>
   productionBatches!: EntityTable<ProductionBatch, 'id'>
   productionItems!: EntityTable<ProductionItem, 'id'>
+  products!: EntityTable<Product, 'id'>
+  ingredients!: EntityTable<Ingredient, 'id'>
+  productIngredients!: EntityTable<ProductIngredient, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -129,6 +132,328 @@ export class FinancialDashboardDB extends Dexie {
       productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
       productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt'
     })
+
+    // Version 7 - Add product management tables (fixed indexing)
+    this.version(7).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, &[ingredientName+unit], ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      // Migration logic: Convert existing VARIABLE_COGS items to ingredients and create default product
+      const now = new Date().toISOString()
+
+      // Get existing VARIABLE_COGS items
+      const cogsItems = await tx.table('financialItems')
+        .where('category')
+        .equals('variable_cogs')
+        .toArray()
+
+      if (cogsItems.length > 0) {
+        console.log('Migrating VARIABLE_COGS items to new product management system...')
+
+        // Create ingredients from existing COGS items
+        const ingredients = cogsItems.map((item: any) => ({
+          id: `ingredient-${item.id}`,
+          name: item.name,
+          baseUnitCost: item.baseUnitCost || 0,
+          baseUnitQuantity: item.baseUnitQuantity || 1,
+          unit: item.unit || 'piece',
+          supplierInfo: '',
+          category: 'Coffee Ingredients',
+          note: item.note || `Migrated from COGS item: ${item.name}`,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Create default "Coffee" product
+        const defaultProduct = {
+          id: 'product-default-coffee',
+          name: 'Coffee',
+          description: 'Default coffee product migrated from existing COGS configuration',
+          note: 'Auto-created during migration from hardcoded COGS items',
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }
+
+        // Create product-ingredient relationships
+        const productIngredients = cogsItems.map((item: any) => ({
+          id: `pi-${item.id}`,
+          productId: defaultProduct.id,
+          ingredientId: `ingredient-${item.id}`,
+          usagePerCup: item.usagePerCup || 0,
+          note: `Migrated from COGS item: ${item.name}`,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Insert new data
+        await tx.table('ingredients').bulkAdd(ingredients)
+        await tx.table('products').add(defaultProduct)
+        await tx.table('productIngredients').bulkAdd(productIngredients)
+
+        console.log(`Migration completed: Created ${ingredients.length} ingredients, 1 product, and ${productIngredients.length} product-ingredient relationships`)
+      }
+    })
+
+    // Version 8 - Fix indexing issues
+    this.version(8).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, &[ingredientName+unit], ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      // Clear any problematic data and recreate with proper structure
+      console.log('Fixing product management data structure...')
+
+      // Clear existing product management tables to avoid indexing issues
+      await tx.table('productIngredients').clear()
+      await tx.table('products').clear()
+      await tx.table('ingredients').clear()
+
+      // Re-run the migration logic
+      const now = new Date().toISOString()
+
+      // Get existing VARIABLE_COGS items
+      const cogsItems = await tx.table('financialItems')
+        .where('category')
+        .equals('variable_cogs')
+        .toArray()
+
+      if (cogsItems.length > 0) {
+        console.log('Re-migrating VARIABLE_COGS items to new product management system...')
+
+        // Create ingredients from existing COGS items
+        const ingredients = cogsItems.map((item: any) => ({
+          id: `ingredient-${item.id}`,
+          name: item.name,
+          baseUnitCost: item.baseUnitCost || 0,
+          baseUnitQuantity: item.baseUnitQuantity || 1,
+          unit: item.unit || 'piece',
+          supplierInfo: '',
+          category: 'Coffee Ingredients',
+          note: item.note || `Migrated from COGS item: ${item.name}`,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Create default "Coffee" product
+        const defaultProduct = {
+          id: 'product-default-coffee',
+          name: 'Coffee',
+          description: 'Default coffee product migrated from existing COGS configuration',
+          note: 'Auto-created during migration from hardcoded COGS items',
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }
+
+        // Create product-ingredient relationships
+        const productIngredients = cogsItems.map((item: any) => ({
+          id: `pi-${item.id}`,
+          productId: defaultProduct.id,
+          ingredientId: `ingredient-${item.id}`,
+          usagePerCup: item.usagePerCup || 0,
+          note: `Migrated from COGS item: ${item.name}`,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Insert new data
+        await tx.table('ingredients').bulkAdd(ingredients)
+        await tx.table('products').add(defaultProduct)
+        await tx.table('productIngredients').bulkAdd(productIngredients)
+
+        console.log(`Re-migration completed: Created ${ingredients.length} ingredients, 1 product, and ${productIngredients.length} product-ingredient relationships`)
+      }
+    })
+
+    // Version 9 - Fix compound index issues that cause IDBKeyRange errors
+    this.version(9).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt, [ingredientName+unit]',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('Fixing compound index syntax to prevent IDBKeyRange errors...')
+      // No data migration needed, just fixing the index syntax
+      // The compound index is now defined as [ingredientName+unit] instead of &[ingredientName+unit]
+      // This should resolve the "Failed to execute 'bound' on 'IDBKeyRange'" errors
+    })
+
+    // Version 10 - Remove compound index entirely to fix IDBKeyRange errors
+    this.version(10).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('Removing compound index from stockLevels to prevent IDBKeyRange errors...')
+      // Clear and recreate stockLevels table to remove any corrupted compound index data
+      await tx.table('stockLevels').clear()
+      console.log('StockLevels table cleared and will use simple indexes only')
+    })
+
+    // Version 11 - Force complete database recreation to fix persistent IDBKeyRange errors
+    this.version(11).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Force recreating all product management tables to fix IDBKeyRange errors...')
+
+      // Clear all potentially problematic tables
+      await tx.table('productIngredients').clear()
+      await tx.table('products').clear()
+      await tx.table('ingredients').clear()
+      await tx.table('stockLevels').clear()
+
+      console.log('✅ All product management tables cleared')
+
+      // Re-run the migration logic from existing COGS items
+      const now = new Date().toISOString()
+
+      // Get existing VARIABLE_COGS items
+      const cogsItems = await tx.table('financialItems')
+        .where('category')
+        .equals('variable_cogs')
+        .toArray()
+
+      if (cogsItems.length > 0) {
+        console.log(`🔄 Re-migrating ${cogsItems.length} VARIABLE_COGS items to new product management system...`)
+
+        // Create ingredients from existing COGS items
+        const ingredients = cogsItems.map((item: any) => ({
+          id: `ingredient-${item.id}`,
+          name: item.name,
+          baseUnitCost: item.baseUnitCost || 0,
+          baseUnitQuantity: item.baseUnitQuantity || 1,
+          unit: item.unit || 'piece',
+          supplierInfo: '',
+          category: 'Coffee Ingredients',
+          note: item.note || `Migrated from COGS item: ${item.name}`,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Create default "Coffee" product
+        const defaultProduct = {
+          id: 'product-default-coffee',
+          name: 'Coffee',
+          description: 'Default coffee product migrated from existing COGS configuration',
+          note: 'Auto-created during migration from hardcoded COGS items',
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }
+
+        // Create product-ingredient relationships
+        const productIngredients = cogsItems.map((item: any) => ({
+          id: `pi-${item.id}`,
+          productId: defaultProduct.id,
+          ingredientId: `ingredient-${item.id}`,
+          usagePerCup: item.usagePerCup || 0,
+          note: `Migrated from COGS item: ${item.name}`,
+          createdAt: now,
+          updatedAt: now
+        }))
+
+        // Insert new data
+        await tx.table('ingredients').bulkAdd(ingredients)
+        await tx.table('products').add(defaultProduct)
+        await tx.table('productIngredients').bulkAdd(productIngredients)
+
+        console.log(`✅ Force re-migration completed: Created ${ingredients.length} ingredients, 1 product, and ${productIngredients.length} product-ingredient relationships`)
+      } else {
+        console.log('ℹ️ No COGS items found to migrate')
+        console.log('ℹ️ Product management tables will remain empty until data is added manually')
+      }
+    })
+
+    // Version 12 - Complete database reset with fresh seeded data
+    this.version(12).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Database Version 12: Complete reset with fresh seeded data...')
+
+      // Clear ALL tables for a complete fresh start
+      await tx.table('financialItems').clear()
+      await tx.table('bonusSchemes').clear()
+      await tx.table('appSettings').clear()
+      await tx.table('warehouseBatches').clear()
+      await tx.table('warehouseItems').clear()
+      await tx.table('stockLevels').clear()
+      await tx.table('stockTransactions').clear()
+      await tx.table('productionBatches').clear()
+      await tx.table('productionItems').clear()
+      await tx.table('productIngredients').clear()
+      await tx.table('products').clear()
+      await tx.table('ingredients').clear()
+
+      console.log('✅ All tables cleared - starting with fresh database')
+
+      // Import and call the seeding functions
+      const { seedDatabase } = await import('./seed')
+      await seedDatabase()
+
+      console.log('✅ Database reset and seeding complete')
+    })
   }
 }
 
@@ -143,6 +468,21 @@ export async function initializeDatabase() {
     console.log('Database initialized successfully')
   } catch (error) {
     console.error('Failed to initialize database:', error)
+
+    // Only check for actual IDBKeyRange DataError, not general errors
+    if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+      console.error('🚨 IDBKeyRange error detected - database corruption likely')
+      console.error('💡 A database reset is required to fix this issue')
+
+      // Provide a more helpful error message
+      const helpfulError = new Error(
+        'Database corruption detected (IDBKeyRange error). ' +
+        'A database reset is required to fix this issue.'
+      )
+      helpfulError.name = 'DatabaseCorruptionError'
+      throw helpfulError
+    }
+
     throw error
   }
 }

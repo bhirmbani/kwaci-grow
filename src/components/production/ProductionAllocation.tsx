@@ -5,11 +5,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Factory, CheckCircle, AlertCircle, Package } from 'lucide-react'
 import { useStockLevels } from '@/hooks/useStock'
 import { useFinancialItems } from '@/hooks/useFinancialItems'
 import { useProduction } from '@/hooks/useProduction'
+import { useProducts, useProduct } from '@/hooks/useProducts'
 import { FINANCIAL_ITEM_CATEGORIES } from '@/lib/db/schema'
+import { convertProductToFinancialItems } from '@/utils/cogsCalculations'
 import type { FinancialItem } from '@/types'
 import { ProductionBatchStatusManager } from './ProductionBatchStatusManager'
 
@@ -18,17 +21,31 @@ export function ProductionAllocation() {
   const [note, setNote] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  
+  const [selectedProductId, setSelectedProductId] = useState<string>('legacy')
+
   const { stockLevels, loading: stockLoading } = useStockLevels()
   const { items: cogsItems, loading: cogsLoading } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS)
   const { createBatchWithItems, batches, loading: productionLoading, error: productionError } = useProduction()
-
-  // Filter COGS items that have complete data for stock allocation
-  const validIngredients = cogsItems.filter((item: FinancialItem) =>
-    item.usagePerCup !== undefined &&
-    item.unit !== undefined &&
-    item.usagePerCup > 0
+  const { products, loading: productsLoading } = useProducts()
+  const { product: selectedProduct, loading: selectedProductLoading } = useProduct(
+    selectedProductId !== 'legacy' ? selectedProductId : ''
   )
+
+  // Get ingredients based on selected mode (product or legacy COGS)
+  const validIngredients = useMemo(() => {
+    if (selectedProductId === 'legacy') {
+      // Use legacy COGS items
+      return cogsItems.filter((item: FinancialItem) =>
+        item.usagePerCup !== undefined &&
+        item.unit !== undefined &&
+        item.usagePerCup > 0
+      )
+    } else if (selectedProduct) {
+      // Convert product ingredients to FinancialItem format
+      return convertProductToFinancialItems(selectedProduct)
+    }
+    return []
+  }, [selectedProductId, selectedProduct, cogsItems])
 
   // Calculate stock validation for current allocation
   const stockValidation = useMemo(() => {
@@ -106,10 +123,14 @@ export function ProductionAllocation() {
 
     try {
       // Prepare batch data
+      const productInfo = selectedProductId === 'legacy'
+        ? 'Legacy COGS Items'
+        : selectedProduct?.name || 'Unknown Product'
+
       const batchData = {
         dateCreated: new Date().toISOString(),
         status: 'Pending' as const,
-        note: note || `Production allocation for ${cupsToAllocate} cups`
+        note: note || `Production allocation for ${cupsToAllocate} cups of ${productInfo}`
       }
 
       // Prepare items data
@@ -125,10 +146,11 @@ export function ProductionAllocation() {
       if (result.success) {
         setMessage({
           type: 'success',
-          text: `Successfully created Production Batch #${result.batch?.batchNumber} for ${cupsToAllocate} cups. Ingredients allocated from stock.`
+          text: `Successfully created Production Batch #${result.batch?.batchNumber} for ${cupsToAllocate} cups of ${productInfo}. Ingredients allocated from stock.`
         })
         setCupsToAllocate(0)
         setNote('')
+        // Keep product selection for next batch
       } else {
         setMessage({
           type: 'error',
@@ -173,6 +195,34 @@ export function ProductionAllocation() {
           </p>
         </CardHeader>
       <CardContent className="space-y-4">
+        {/* Product Selection */}
+        <div className="space-y-2">
+          <Label htmlFor="product-selection">Product to Produce</Label>
+          <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select product" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="legacy">Legacy COGS Items</SelectItem>
+              {products.map((product) => (
+                <SelectItem key={product.id} value={product.id}>
+                  {product.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedProductId !== 'legacy' && selectedProduct && (
+            <div className="p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-700">
+                <strong>{selectedProduct.name}</strong>: {selectedProduct.description}
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                {selectedProduct.ingredients.length} ingredients configured
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Production Input */}
         <div className="space-y-2">
           <Label htmlFor="cups-to-allocate">Number of Cups to Produce</Label>
@@ -294,7 +344,7 @@ export function ProductionAllocation() {
             ? 'Creating Production Batch...'
             : !stockValidation.isValid && cupsToAllocate > 0
             ? 'Insufficient Stock for Production'
-            : `Allocate for ${cupsToAllocate} Cups`
+            : `Allocate for ${cupsToAllocate} Cups${selectedProductId !== 'legacy' && selectedProduct ? ` of ${selectedProduct.name}` : ''}`
           }
         </Button>
 

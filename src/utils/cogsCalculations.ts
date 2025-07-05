@@ -1,4 +1,5 @@
 import type { FinancialItem } from '@/types'
+import type { ProductWithIngredients } from '@/lib/db/schema'
 
 /**
  * Calculate cost per cup for a single ingredient
@@ -135,6 +136,96 @@ export const UNIT_OPTIONS = [
 ] as const
 
 export type UnitOption = typeof UNIT_OPTIONS[number]['value']
+
+/**
+ * Product-based COGS calculation functions
+ */
+
+/**
+ * Convert product with ingredients to FinancialItem format for compatibility
+ */
+export function convertProductToFinancialItems(product: ProductWithIngredients): FinancialItem[] {
+  return product.ingredients.map(pi => ({
+    id: pi.ingredient.id,
+    name: pi.ingredient.name,
+    value: (pi.ingredient.baseUnitCost / pi.ingredient.baseUnitQuantity) * pi.usagePerCup,
+    category: 'variable_cogs' as const,
+    note: pi.note || '',
+    createdAt: pi.ingredient.createdAt,
+    updatedAt: pi.ingredient.updatedAt,
+    baseUnitCost: pi.ingredient.baseUnitCost,
+    baseUnitQuantity: pi.ingredient.baseUnitQuantity,
+    usagePerCup: pi.usagePerCup,
+    unit: pi.ingredient.unit
+  }))
+}
+
+/**
+ * Calculate total COGS per cup for a product
+ */
+export function calculateProductCOGSPerCup(product: ProductWithIngredients): number {
+  return product.ingredients.reduce((total, pi) => {
+    const ingredient = pi.ingredient
+    const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
+    return total + costPerCup
+  }, 0)
+}
+
+/**
+ * Calculate ingredient quantities needed for a product
+ */
+export function calculateProductIngredientQuantities(product: ProductWithIngredients, dailyTarget: number): IngredientQuantity[] {
+  return product.ingredients
+    .filter(pi => pi.usagePerCup > 0)
+    .map(pi => {
+      const ingredient = pi.ingredient
+      const totalNeeded = pi.usagePerCup * dailyTarget
+      const formattedQuantity = getFormattedQuantity(totalNeeded, ingredient.unit)
+
+      return {
+        id: ingredient.id,
+        name: ingredient.name,
+        usagePerCup: pi.usagePerCup,
+        unit: ingredient.unit,
+        totalNeeded,
+        formattedQuantity
+      }
+    })
+}
+
+/**
+ * Generate shopping list for a product
+ */
+export function generateProductShoppingList(product: ProductWithIngredients, dailyTarget: number): ShoppingListSummary {
+  const shoppingItems = product.ingredients
+    .filter(pi => pi.usagePerCup > 0)
+    .map(pi => {
+      const ingredient = pi.ingredient
+      const totalNeeded = pi.usagePerCup * dailyTarget
+      const unitCost = ingredient.baseUnitCost / ingredient.baseUnitQuantity
+      const totalCost = totalNeeded * unitCost
+      const formattedQuantity = getFormattedQuantity(totalNeeded, ingredient.unit)
+
+      return {
+        id: ingredient.id,
+        name: ingredient.name,
+        totalNeeded,
+        formattedQuantity,
+        unit: ingredient.unit,
+        unitCost,
+        totalCost,
+        baseUnitQuantity: ingredient.baseUnitQuantity
+      }
+    })
+
+  const totalCost = shoppingItems.reduce((sum, item) => sum + item.totalCost, 0)
+
+  return {
+    items: shoppingItems,
+    totalCost,
+    dailyTarget
+  }
+}
 
 /**
  * Calculate total quantity needed for daily target

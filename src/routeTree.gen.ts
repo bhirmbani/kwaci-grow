@@ -10,8 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarehouseRouteImport } from './routes/warehouse'
+import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
+import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as CogsRouteImport } from './routes/cogs'
 import { Route as AccountRouteImport } from './routes/account'
@@ -26,14 +29,29 @@ const WarehouseRoute = WarehouseRouteImport.update({
   path: '/warehouse',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestDatabaseRoute = TestDatabaseRouteImport.update({
+  id: '/test-database',
+  path: '/test-database',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductsRoute = ProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductionRoute = ProductionRouteImport.update({
   id: '/production',
   path: '/production',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IngredientsRoute = IngredientsRouteImport.update({
+  id: '/ingredients',
+  path: '/ingredients',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FixedAssetsRoute = FixedAssetsRouteImport.update({
@@ -82,8 +100,11 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
+  '/ingredients': typeof IngredientsRoute
   '/production': typeof ProductionRoute
+  '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/test-database': typeof TestDatabaseRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -95,8 +116,11 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
+  '/ingredients': typeof IngredientsRoute
   '/production': typeof ProductionRoute
+  '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/test-database': typeof TestDatabaseRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -109,8 +133,11 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
+  '/ingredients': typeof IngredientsRoute
   '/production': typeof ProductionRoute
+  '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
+  '/test-database': typeof TestDatabaseRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -124,8 +151,11 @@ export interface FileRouteTypes {
     | '/account'
     | '/cogs'
     | '/fixed-assets'
+    | '/ingredients'
     | '/production'
+    | '/products'
     | '/settings'
+    | '/test-database'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -137,8 +167,11 @@ export interface FileRouteTypes {
     | '/account'
     | '/cogs'
     | '/fixed-assets'
+    | '/ingredients'
     | '/production'
+    | '/products'
     | '/settings'
+    | '/test-database'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -150,8 +183,11 @@ export interface FileRouteTypes {
     | '/account'
     | '/cogs'
     | '/fixed-assets'
+    | '/ingredients'
     | '/production'
+    | '/products'
     | '/settings'
+    | '/test-database'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -164,8 +200,11 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   CogsRoute: typeof CogsRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
+  IngredientsRoute: typeof IngredientsRoute
   ProductionRoute: typeof ProductionRoute
+  ProductsRoute: typeof ProductsRoute
   SettingsRoute: typeof SettingsRoute
+  TestDatabaseRoute: typeof TestDatabaseRoute
   WarehouseRoute: typeof WarehouseRoute
   ReportsCostsRoute: typeof ReportsCostsRoute
   ReportsFinancialRoute: typeof ReportsFinancialRoute
@@ -182,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WarehouseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test-database': {
+      id: '/test-database'
+      path: '/test-database'
+      fullPath: '/test-database'
+      preLoaderRoute: typeof TestDatabaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -189,11 +235,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/production': {
       id: '/production'
       path: '/production'
       fullPath: '/production'
       preLoaderRoute: typeof ProductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ingredients': {
+      id: '/ingredients'
+      path: '/ingredients'
+      fullPath: '/ingredients'
+      preLoaderRoute: typeof IngredientsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fixed-assets': {
@@ -260,8 +320,11 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   CogsRoute: CogsRoute,
   FixedAssetsRoute: FixedAssetsRoute,
+  IngredientsRoute: IngredientsRoute,
   ProductionRoute: ProductionRoute,
+  ProductsRoute: ProductsRoute,
   SettingsRoute: SettingsRoute,
+  TestDatabaseRoute: TestDatabaseRoute,
   WarehouseRoute: WarehouseRoute,
   ReportsCostsRoute: ReportsCostsRoute,
   ReportsFinancialRoute: ReportsFinancialRoute,
