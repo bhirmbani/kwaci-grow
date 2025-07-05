@@ -35,9 +35,8 @@ export function ProductionBatchStatusManager({
   const error = propError ?? hookError
 
   // Filter to show only non-completed batches for quick status management
-  const activeBatches = batches
-    .filter(batch => batch.status !== 'Completed')
-    .slice(0, maxItems)
+  const allActiveBatches = batches.filter(batch => batch.status !== 'Completed')
+  const activeBatches = allActiveBatches.slice(0, maxItems)
 
   const getStatusIcon = (status: ProductionBatchStatus) => {
     switch (status) {
@@ -301,10 +300,14 @@ export function ProductionBatchStatusManager({
               </Table>
             )}
             
-            {batches.length > maxItems && (
+            {batches.length > 0 && (
               <p className="text-xs text-muted-foreground text-center">
-                Showing {maxItems} of {batches.filter(b => b.status !== 'Completed').length} active batches. 
-                View all in Production page.
+                {allActiveBatches.length > maxItems ? (
+                  <>Showing {activeBatches.length} of {allActiveBatches.length} active batches. </>
+                ) : (
+                  <>Showing {activeBatches.length} active batch{activeBatches.length !== 1 ? 'es' : ''}. </>
+                )}
+                View all {batches.length} batch{batches.length !== 1 ? 'es' : ''} in Production page.
               </p>
             )}
           </div>
