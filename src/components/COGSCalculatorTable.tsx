@@ -2,7 +2,7 @@ import { useState, memo, useCallback, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2, Plus, Calculator } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
@@ -218,13 +218,18 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                     <TableCell className="px-4 py-4">
                       <Select
                         value={item.unit || "ml"}
-                        onChange={(e) => updateItem(item.id, "unit", e.target.value)}
+                        onValueChange={(value) => updateItem(item.id, "unit", value)}
                       >
-                        {UNIT_OPTIONS.map(option => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
+                        <SelectTrigger className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {UNIT_OPTIONS.map(option => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right">
@@ -314,13 +319,18 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                 <TableCell className="px-4 py-4">
                   <Select
                     value={newItem.unit}
-                    onChange={(e) => setNewItem({ ...newItem, unit: e.target.value as UnitOption })}
+                    onValueChange={(value) => setNewItem({ ...newItem, unit: value as UnitOption })}
                   >
-                    {UNIT_OPTIONS.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                    <SelectTrigger className="border-dashed border-2 bg-background/50 focus:bg-background focus:border-solid focus:border-input focus:ring-2 focus:ring-ring transition-all">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {UNIT_OPTIONS.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </TableCell>
                 <TableCell className="px-4 py-4 text-right">

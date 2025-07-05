@@ -9,12 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import { Package, Plus, Trash2, Factory, User } from 'lucide-react'
+import { Package, Plus, Trash2, Factory, User, AlertCircle } from 'lucide-react'
 import { useReservations } from '@/hooks/useReservations'
+import { useStockLevels } from '@/hooks/useStock'
 
 export function ReservedOperationsList() {
   const [purposeFilter, setPurposeFilter] = useState<'all' | 'manual' | 'production'>('all')
   const [newReservation, setNewReservation] = useState({
+    selectedStockId: '',
     ingredientName: '',
     unit: '',
     quantity: 0,
@@ -22,15 +24,17 @@ export function ReservedOperationsList() {
   })
   const [isCreatingReservation, setIsCreatingReservation] = useState(false)
   
-  const { 
-    reservations, 
-    loading, 
-    error, 
-    releaseReservation, 
+  const {
+    reservations,
+    loading,
+    error,
+    releaseReservation,
     createManualReservation,
     groupedReservations,
     getReservationStats
   } = useReservations()
+
+  const { stockLevels, loading: stockLoading } = useStockLevels()
 
   // Filter reservations based on purpose
   const filteredReservations = reservations.filter(reservation => {
@@ -42,6 +46,43 @@ export function ReservedOperationsList() {
 
   const stats = getReservationStats()
   const grouped = groupedReservations()
+
+  // Get available stock items for selection
+  const availableStockItems = stockLevels.filter(stock => {
+    const availableStock = stock.currentStock - stock.reservedStock
+    return availableStock > 0
+  })
+
+  // Get selected stock item details
+  const selectedStock = stockLevels.find(stock =>
+    `${stock.ingredientName}-${stock.unit}` === newReservation.selectedStockId
+  )
+  const selectedAvailableStock = selectedStock
+    ? selectedStock.currentStock - selectedStock.reservedStock
+    : 0
+
+  // Handle stock selection
+  const handleStockSelection = (stockId: string) => {
+    // Ignore placeholder value
+    if (stockId === "no-items-available") {
+      return
+    }
+
+    const stock = stockLevels.find(s => `${s.ingredientName}-${s.unit}` === stockId)
+    if (stock) {
+      setNewReservation(prev => ({
+        ...prev,
+        selectedStockId: stockId,
+        ingredientName: stock.ingredientName,
+        unit: stock.unit,
+        quantity: 0 // Reset quantity when changing stock
+      }))
+    }
+  }
+
+  // Validate reservation quantity
+  const isValidQuantity = newReservation.quantity > 0 &&
+    newReservation.quantity <= selectedAvailableStock
 
   const handleReleaseReservation = async (reservation: typeof reservations[0]) => {
     const result = await releaseReservation(
@@ -59,7 +100,7 @@ export function ReservedOperationsList() {
   }
 
   const handleCreateReservation = async () => {
-    if (!newReservation.ingredientName || !newReservation.unit || newReservation.quantity <= 0) {
+    if (!newReservation.ingredientName || !newReservation.unit || !isValidQuantity) {
       return
     }
 
@@ -72,7 +113,13 @@ export function ReservedOperationsList() {
     )
 
     if (result.success) {
-      setNewReservation({ ingredientName: '', unit: '', quantity: 0, reason: '' })
+      setNewReservation({
+        selectedStockId: '',
+        ingredientName: '',
+        unit: '',
+        quantity: 0,
+        reason: ''
+      })
     } else {
       console.error('Failed to create reservation:', result.error)
     }
@@ -184,35 +231,90 @@ export function ReservedOperationsList() {
                   </SheetDescription>
                 </SheetHeader>
                 <div className="space-y-4 mt-6">
+                  {stockLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                      <p className="text-sm text-muted-foreground">Loading stock data...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="stock-selection">Select Ingredient from Stock</Label>
+                        <Select
+                          value={newReservation.selectedStockId}
+                          onValueChange={handleStockSelection}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose an ingredient from available stock" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableStockItems.length === 0 ? (
+                              <SelectItem value="no-items-available" disabled>
+                                No stock items available for reservation
+                              </SelectItem>
+                            ) : (
+                              availableStockItems.map((stock) => {
+                                const availableStock = stock.currentStock - stock.reservedStock
+                                return (
+                                  <SelectItem
+                                    key={`${stock.ingredientName}-${stock.unit}`}
+                                    value={`${stock.ingredientName}-${stock.unit}`}
+                                  >
+                                    {stock.ingredientName} ({availableStock.toFixed(1)} {stock.unit} available)
+                                  </SelectItem>
+                                )
+                              })
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Show selected stock details */}
+                      {selectedStock && (
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">Selected: {selectedStock.ingredientName}</span>
+                            <span className="text-muted-foreground">
+                              Unit: {selectedStock.unit}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm mt-1">
+                            <span>Available for reservation:</span>
+                            <span className="font-medium text-green-600">
+                              {selectedAvailableStock.toFixed(1)} {selectedStock.unit}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                   <div className="space-y-2">
-                    <Label htmlFor="ingredient-name">Ingredient Name</Label>
-                    <Input
-                      id="ingredient-name"
-                      value={newReservation.ingredientName}
-                      onChange={(e) => setNewReservation(prev => ({ ...prev, ingredientName: e.target.value }))}
-                      placeholder="Enter ingredient name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="unit">Unit</Label>
-                    <Input
-                      id="unit"
-                      value={newReservation.unit}
-                      onChange={(e) => setNewReservation(prev => ({ ...prev, unit: e.target.value }))}
-                      placeholder="e.g., ml, g, piece"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity</Label>
+                    <Label htmlFor="quantity">Quantity to Reserve</Label>
                     <Input
                       id="quantity"
                       type="number"
                       min="0"
+                      max={selectedAvailableStock}
                       step="0.1"
                       value={newReservation.quantity || ''}
                       onChange={(e) => setNewReservation(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                      placeholder="Enter quantity to reserve"
+                      placeholder={selectedStock ? `Enter quantity (max: ${selectedAvailableStock.toFixed(1)} ${selectedStock.unit})` : "Select an ingredient first"}
+                      disabled={!selectedStock}
+                      className={!isValidQuantity && newReservation.quantity > 0 ? 'border-red-500' : ''}
                     />
+                    {newReservation.quantity > 0 && !isValidQuantity && (
+                      <div className="flex items-center gap-2 text-sm text-red-600">
+                        <AlertCircle className="h-4 w-4" />
+                        <span>
+                          Quantity exceeds available stock ({selectedAvailableStock.toFixed(1)} {selectedStock?.unit} available)
+                        </span>
+                      </div>
+                    )}
+                    {selectedStock && newReservation.quantity > 0 && isValidQuantity && (
+                      <div className="text-sm text-green-600">
+                        ✓ Valid reservation quantity
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reason">Reason (Optional)</Label>
@@ -224,13 +326,36 @@ export function ReservedOperationsList() {
                       rows={3}
                     />
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleCreateReservation}
-                    disabled={isCreatingReservation || !newReservation.ingredientName || !newReservation.unit || newReservation.quantity <= 0}
+                    disabled={
+                      isCreatingReservation ||
+                      !selectedStock ||
+                      !isValidQuantity ||
+                      stockLoading
+                    }
                     className="w-full"
                   >
-                    {isCreatingReservation ? 'Creating...' : 'Create Reservation'}
+                    {isCreatingReservation
+                      ? 'Creating...'
+                      : !selectedStock
+                      ? 'Select Ingredient First'
+                      : !isValidQuantity && newReservation.quantity > 0
+                      ? 'Invalid Quantity'
+                      : 'Create Reservation'
+                    }
                   </Button>
+
+                  {availableStockItems.length === 0 && !stockLoading && (
+                    <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4" />
+                        <span>
+                          No stock available for reservation. Add items to warehouse first.
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

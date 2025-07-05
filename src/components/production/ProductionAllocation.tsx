@@ -11,6 +11,7 @@ import { useFinancialItems } from '@/hooks/useFinancialItems'
 import { useProduction } from '@/hooks/useProduction'
 import { FINANCIAL_ITEM_CATEGORIES } from '@/lib/db/schema'
 import type { FinancialItem } from '@/types'
+import { ProductionBatchStatusManager } from './ProductionBatchStatusManager'
 
 export function ProductionAllocation() {
   const [cupsToAllocate, setCupsToAllocate] = useState<number>(0)
@@ -160,16 +161,17 @@ export function ProductionAllocation() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Factory className="h-5 w-5" />
-          Quick Production Allocation
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Allocate ingredients for production batches and reserve stock
-        </p>
-      </CardHeader>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Factory className="h-5 w-5" />
+            Quick Production Allocation
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Allocate ingredients for production batches and reserve stock
+          </p>
+        </CardHeader>
       <CardContent className="space-y-4">
         {/* Production Input */}
         <div className="space-y-2">
@@ -344,5 +346,13 @@ export function ProductionAllocation() {
         </div>
       </CardContent>
     </Card>
+
+    {/* Production Batch Status Management */}
+    <ProductionBatchStatusManager
+      showTitle={true}
+      maxItems={3}
+      compact={true}
+    />
+  </div>
   )
 }
