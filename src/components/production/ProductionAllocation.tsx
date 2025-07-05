@@ -21,7 +21,7 @@ export function ProductionAllocation() {
   
   const { stockLevels, loading: stockLoading } = useStockLevels()
   const { items: cogsItems, loading: cogsLoading } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS)
-  const { createBatchWithItems } = useProduction()
+  const { createBatchWithItems, batches, loading: productionLoading, error: productionError } = useProduction()
 
   // Filter COGS items that have complete data for stock allocation
   const validIngredients = cogsItems.filter((item: FinancialItem) =>
@@ -352,6 +352,9 @@ export function ProductionAllocation() {
       showTitle={true}
       maxItems={3}
       compact={true}
+      batches={batches}
+      loading={productionLoading}
+      error={productionError}
     />
   </div>
   )

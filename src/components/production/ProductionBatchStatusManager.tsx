@@ -13,15 +13,26 @@ interface ProductionBatchStatusManagerProps {
   showTitle?: boolean
   maxItems?: number
   compact?: boolean
+  batches?: ProductionBatchWithItems[]
+  loading?: boolean
+  error?: string | null
 }
 
-export function ProductionBatchStatusManager({ 
-  showTitle = true, 
+export function ProductionBatchStatusManager({
+  showTitle = true,
   maxItems = 5,
-  compact = false 
+  compact = false,
+  batches: propBatches,
+  loading: propLoading,
+  error: propError
 }: ProductionBatchStatusManagerProps) {
-  const { batches, updateBatchStatus, loading, error } = useProduction()
+  const { batches: hookBatches, updateBatchStatus, loading: hookLoading, error: hookError } = useProduction()
   const [updatingBatch, setUpdatingBatch] = useState<string | null>(null)
+
+  // Use props if provided, otherwise fall back to hook
+  const batches = propBatches ?? hookBatches
+  const loading = propLoading ?? hookLoading
+  const error = propError ?? hookError
 
   // Filter to show only non-completed batches for quick status management
   const activeBatches = batches
