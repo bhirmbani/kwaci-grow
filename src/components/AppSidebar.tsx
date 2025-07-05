@@ -117,7 +117,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
             <SidebarMenuButton size="lg" asChild>
               <a href="#" className="flex items-center gap-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Coffee className="size-4" />
+                  <Coffee className="size-4" aria-hidden="true" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
@@ -146,7 +146,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                     onClick={() => handleNavigation(item.url)}
                   >
                     <a href={item.url} title={item.description}>
-                      <item.icon />
+                      <item.icon aria-hidden="true" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
@@ -156,7 +156,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
                             <a href={subItem.url} title={subItem.title}>
-                              <subItem.icon />
+                              <subItem.icon aria-hidden="true" />
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>
@@ -179,7 +179,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <a href="#settings">
-                    <Settings />
+                    <Settings aria-hidden="true" />
                     <span>Settings</span>
                   </a>
                 </SidebarMenuButton>
@@ -198,12 +198,12 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <User className="size-4" />
+                  <User className="size-4" aria-hidden="true" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Coffee Cart Owner</span>
                     <span className="truncate text-xs">owner@coffeecart.com</span>
                   </div>
-                  <ChevronUp className="ml-auto size-4" />
+                  <ChevronUp className="ml-auto size-4" aria-hidden="true" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -213,15 +213,15 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                 sideOffset={4}
               >
                 <DropdownMenuItem>
-                  <User />
+                  <User aria-hidden="true" />
                   Account
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Settings />
+                  <Settings aria-hidden="true" />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Keyboard />
+                  <Keyboard aria-hidden="true" />
                   Keyboard Shortcuts
                 </DropdownMenuItem>
                 <DropdownMenuItem>
