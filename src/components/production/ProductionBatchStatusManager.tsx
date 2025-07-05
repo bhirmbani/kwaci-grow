@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,11 +28,20 @@ export function ProductionBatchStatusManager({
 }: ProductionBatchStatusManagerProps) {
   const { batches: hookBatches, updateBatchStatus, loading: hookLoading, error: hookError } = useProduction()
   const [updatingBatch, setUpdatingBatch] = useState<string | null>(null)
+  const [optimisticBatches, setOptimisticBatches] = useState<ProductionBatchWithItems[]>([])
 
   // Use props if provided, otherwise fall back to hook
-  const batches = propBatches ?? hookBatches
+  const sourceBatches = propBatches ?? hookBatches
   const loading = propLoading ?? hookLoading
   const error = propError ?? hookError
+
+  // Sync optimistic batches with source batches
+  useEffect(() => {
+    setOptimisticBatches(sourceBatches)
+  }, [sourceBatches])
+
+  // Use optimistic batches for display, fall back to source batches
+  const batches = optimisticBatches.length > 0 ? optimisticBatches : sourceBatches
 
   // Filter to show only non-completed batches for quick status management
   const allActiveBatches = batches.filter(batch => batch.status !== 'Completed')
@@ -77,13 +86,27 @@ export function ProductionBatchStatusManager({
 
   const handleStatusChange = async (batchId: string, newStatus: ProductionBatchStatus) => {
     setUpdatingBatch(batchId)
+
+    // Optimistically update the local batches for immediate UI feedback
+    setOptimisticBatches(prevBatches =>
+      prevBatches.map(batch =>
+        batch.id === batchId
+          ? { ...batch, status: newStatus, updatedAt: new Date().toISOString() }
+          : batch
+      )
+    )
+
     try {
       const result = await updateBatchStatus(batchId, newStatus)
       if (!result.success) {
         console.error('Failed to update batch status:', result.error)
+        // Revert optimistic update on failure
+        setOptimisticBatches(sourceBatches)
       }
     } catch (error) {
       console.error('Error updating batch status:', error)
+      // Revert optimistic update on error
+      setOptimisticBatches(sourceBatches)
     } finally {
       setUpdatingBatch(null)
     }
