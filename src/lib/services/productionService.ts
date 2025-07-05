@@ -57,32 +57,30 @@ export class ProductionService {
         throw new Error('Production batch not found')
       }
 
-      await db.transaction('rw', [db.productionItems, db.stockLevels, db.stockTransactions], async () => {
-        for (const item of items) {
-          const productionItem: ProductionItem = {
-            id: uuidv4(),
-            productionBatchId: batchId,
-            ingredientName: item.ingredientName,
-            quantity: item.quantity,
-            unit: item.unit,
-            note: item.note || '',
-            createdAt: now,
-            updatedAt: now
-          }
-
-          await db.productionItems.add(productionItem)
-          productionItems.push(productionItem)
-
-          // Allocate stock for this production item
-          await StockService.allocateForProduction(
-            item.ingredientName,
-            item.unit,
-            item.quantity,
-            batchId,
-            batch.batchNumber
-          )
+      for (const item of items) {
+        const productionItem: ProductionItem = {
+          id: uuidv4(),
+          productionBatchId: batchId,
+          ingredientName: item.ingredientName,
+          quantity: item.quantity,
+          unit: item.unit,
+          note: item.note || '',
+          createdAt: now,
+          updatedAt: now
         }
-      })
+
+        await db.productionItems.add(productionItem)
+        productionItems.push(productionItem)
+
+        // Allocate stock for this production item
+        await StockService.allocateForProduction(
+          item.ingredientName,
+          item.unit,
+          item.quantity,
+          batchId,
+          batch.batchNumber
+        )
+      }
 
       return productionItems
     } catch (error) {
@@ -173,19 +171,17 @@ export class ProductionService {
   static async updateBatchStatus(batchId: string, status: ProductionBatchStatus): Promise<void> {
     try {
       const now = new Date().toISOString()
-      
-      await db.transaction('rw', [db.productionBatches, db.stockLevels, db.stockTransactions], async () => {
-        // Update batch status
-        await db.productionBatches.update(batchId, {
-          status,
-          updatedAt: now
-        })
 
-        // If status is 'Completed', convert reservations to actual deductions
-        if (status === 'Completed') {
-          await this.completeProductionBatch(batchId)
-        }
+      // Update batch status
+      await db.productionBatches.update(batchId, {
+        status,
+        updatedAt: now
       })
+
+      // If status is 'Completed', convert reservations to actual deductions
+      if (status === 'Completed') {
+        await this.completeProductionBatch(batchId)
+      }
     } catch (error) {
       console.error('Error updating production batch status:', error)
       throw error
@@ -230,27 +226,25 @@ export class ProductionService {
         throw new Error('Production batch not found')
       }
 
-      await db.transaction('rw', [db.productionBatches, db.productionItems, db.stockLevels, db.stockTransactions], async () => {
-        // Get items to release reservations
-        const items = await db.productionItems.where('productionBatchId').equals(batchId).toArray()
+      // Get items to release reservations
+      const items = await db.productionItems.where('productionBatchId').equals(batchId).toArray()
 
-        // Release stock reservations for each item (only if not completed)
-        if (batch.status !== 'Completed') {
-          for (const item of items) {
-            await StockService.unreserveStock(
-              item.ingredientName,
-              item.unit,
-              item.quantity,
-              `Production Batch #${batch.batchNumber} deleted`,
-              batchId
-            )
-          }
+      // Release stock reservations for each item (only if not completed)
+      if (batch.status !== 'Completed') {
+        for (const item of items) {
+          await StockService.unreserveStock(
+            item.ingredientName,
+            item.unit,
+            item.quantity,
+            `Production Batch #${batch.batchNumber} deleted`,
+            batchId
+          )
         }
+      }
 
-        // Delete items and batch
-        await db.productionItems.where('productionBatchId').equals(batchId).delete()
-        await db.productionBatches.delete(batchId)
-      })
+      // Delete items and batch
+      await db.productionItems.where('productionBatchId').equals(batchId).delete()
+      await db.productionBatches.delete(batchId)
     } catch (error) {
       console.error('Error deleting production batch:', error)
       throw error
