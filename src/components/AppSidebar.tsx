@@ -31,6 +31,7 @@ import {
   SidebarMenuSubItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
+import { Link } from '@tanstack/react-router'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,72 +43,60 @@ import {
 const items = [
   {
     title: "Dashboard",
-    url: "#dashboard",
+    url: "/",
     icon: Home,
-    isActive: true, // Mark dashboard as active by default
+    description: "Main financial dashboard",
   },
   {
     title: "COGS Calculator",
-    url: "#cogs",
+    url: "/cogs",
     icon: Calculator,
     description: "Calculate cost of goods sold",
   },
   {
     title: "Warehouse",
-    url: "#warehouse",
+    url: "/warehouse",
     icon: Package,
     description: "Manage warehouse stock and inventory",
   },
   {
     title: "Production",
-    url: "#production",
+    url: "/production",
     icon: Factory,
     description: "Manage production batches and allocations",
   },
   {
     title: "Fixed Assets",
-    url: "#fixed-assets",
+    url: "/fixed-assets",
     icon: DollarSign,
     description: "Manage fixed assets and depreciation",
   },
   {
     title: "Reports",
-    url: "#reports",
+    url: "/reports",
     icon: BarChart3,
     description: "Financial reports and analytics",
     items: [
       {
         title: "Financial Overview",
-        url: "#reports/financial",
+        url: "/reports/financial",
         icon: PieChart,
       },
       {
         title: "Profit Analysis",
-        url: "#reports/profit",
+        url: "/reports/profit",
         icon: TrendingUp,
       },
       {
         title: "Cost Breakdown",
-        url: "#reports/costs",
+        url: "/reports/costs",
         icon: FileText,
       },
     ],
   },
 ]
 
-interface AppSidebarProps {
-  onNavigate?: (url: string) => void
-}
-
-export function AppSidebar({ onNavigate }: AppSidebarProps) {
-  const handleNavigation = (url: string) => {
-    if (onNavigate) {
-      onNavigate(url)
-    } else {
-      // Fallback behavior
-      console.log('Navigating to:', url)
-    }
-  }
+export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" variant="sidebar">
@@ -115,7 +104,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Coffee className="size-4" aria-hidden="true" />
                 </div>
@@ -127,7 +116,7 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                     Financial Dashboard
                   </span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -140,25 +129,21 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={item.isActive}
-                    onClick={() => handleNavigation(item.url)}
-                  >
-                    <a href={item.url} title={item.description}>
+                  <SidebarMenuButton asChild>
+                    <Link to={item.url} title={item.description}>
                       <item.icon aria-hidden="true" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                   {item.items && (
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url} title={subItem.title}>
+                            <Link to={subItem.url} title={subItem.title}>
                               <subItem.icon aria-hidden="true" />
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -178,10 +163,10 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href="#settings">
+                  <Link to="/settings">
                     <Settings aria-hidden="true" />
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -212,13 +197,17 @@ export function AppSidebar({ onNavigate }: AppSidebarProps) {
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem>
-                  <User aria-hidden="true" />
-                  Account
+                <DropdownMenuItem asChild>
+                  <Link to="/account">
+                    <User aria-hidden="true" />
+                    Account
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings aria-hidden="true" />
-                  Settings
+                <DropdownMenuItem asChild>
+                  <Link to="/settings">
+                    <Settings aria-hidden="true" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Keyboard aria-hidden="true" />
