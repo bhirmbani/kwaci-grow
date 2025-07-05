@@ -202,6 +202,27 @@
     border-color: hsl(var(--border)) !important;
   }
 
+  /* Enhanced Select dropdown styling for better readability */
+  [data-radix-select-content] {
+    background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
+
+  [data-radix-select-item] {
+    color: hsl(var(--popover-foreground)) !important;
+  }
+
+  [data-radix-select-item][data-highlighted] {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+
+  [data-radix-select-item][data-state="checked"] {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+
   /* Button styling inside sheets */
   [data-radix-dialog-content] button:not([class*="bg-"]) {
     background-color: hsl(var(--secondary)) !important;
