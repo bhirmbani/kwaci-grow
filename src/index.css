@@ -99,14 +99,14 @@
 
   /* Enhanced Sheet component styling with solid, theme-aware backgrounds */
   /* Sheet overlay with proper theme-aware opacity */
-  [data-radix-dialog-overlay] {
+[data-radix-dialog-overlay] {
     background-color: hsl(var(--background) / 0.2) !important;
     backdrop-filter: blur(4px) !important;
     z-index: 100 !important;
   }
 
   .dark [data-radix-dialog-overlay] {
-    background-color: hsl(var(--background) / 0.8) !important;
+    background-color: hsl(var(--background) / 0.2) !important;
     backdrop-filter: blur(4px) !important;
   }
 
