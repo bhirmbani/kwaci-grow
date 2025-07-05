@@ -14,6 +14,8 @@ import {
   Package,
   Factory,
   Beaker,
+  Database,
+  Bug,
 } from "lucide-react"
 
 import {
@@ -179,6 +181,24 @@ export function AppSidebar() {
                   <Link to="/settings">
                     <Settings aria-hidden="true" />
                     <span>Settings</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Dev Tools</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/test-database">
+                    <Database aria-hidden="true" />
+                    <span>Database Test</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
