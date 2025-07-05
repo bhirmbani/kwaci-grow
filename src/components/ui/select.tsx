@@ -67,7 +67,7 @@ SelectScrollDownButton.displayName =
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "item-aligned", ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -78,6 +78,8 @@ const SelectContent = React.forwardRef<
         className
       )}
       position={position}
+      sideOffset={4}
+      collisionPadding={10}
       {...props}
     >
       <SelectScrollUpButton />
@@ -85,7 +87,7 @@ const SelectContent = React.forwardRef<
         className={cn(
           "p-2",
           position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+            "w-full min-w-[var(--radix-select-trigger-width)]"
         )}
       >
         {children}
@@ -115,7 +117,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-3 text-sm font-medium outline-none focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors duration-150",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-3 text-sm font-medium outline-none focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors duration-150 min-h-[2rem] whitespace-nowrap",
       className
     )}
     {...props}

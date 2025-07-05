@@ -207,20 +207,114 @@
     background-color: hsl(var(--popover)) !important;
     color: hsl(var(--popover-foreground)) !important;
     border-color: hsl(var(--border)) !important;
+    isolation: isolate !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
-  [data-radix-select-item] {
+  /* Target the actual listbox element that gets rendered */
+  [role="listbox"][data-state="open"] {
+    background-color: hsl(var(--popover)) !important;
     color: hsl(var(--popover-foreground)) !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Target by the specific classes applied */
+  .bg-popover {
+    background-color: hsl(var(--popover)) !important;
+    opacity: 1 !important;
+  }
+
+  /* Target the exact element structure from the HTML */
+  div[role="listbox"][data-state="open"].bg-popover {
+    background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Ensure solid background for light theme */
+  :root [data-radix-select-content],
+  :root [role="listbox"][data-state="open"],
+  :root .bg-popover,
+  :root div[role="listbox"][data-state="open"].bg-popover,
+  :root div[role="listbox"].bg-popover {
+    background-color: hsl(0 0% 100%) !important;
+    color: hsl(222.2 84% 4.9%) !important;
+    border: 1px solid hsl(214.3 31.8% 91.4%) !important;
+    box-shadow: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05) !important;
+  }
+
+  /* Ensure solid background for dark theme */
+  .dark [data-radix-select-content],
+  .dark [role="listbox"][data-state="open"],
+  .dark .bg-popover,
+  .dark div[role="listbox"][data-state="open"].bg-popover,
+  .dark div[role="listbox"].bg-popover {
+    background-color: hsl(222.2 84% 4.9%) !important;
+    color: hsl(210 40% 98%) !important;
+    border: 1px solid hsl(217.2 32.6% 17.5%) !important;
+    box-shadow: 0 10px 15px -3px hsl(0 0% 0% / 0.3), 0 4px 6px -2px hsl(0 0% 0% / 0.2) !important;
+  }
+
+  [data-radix-select-item],
+  [role="option"] {
+    color: hsl(var(--popover-foreground)) !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 2rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure solid item text colors for light theme */
+  :root [data-radix-select-item],
+  :root [role="option"] {
+    color: hsl(222.2 84% 4.9%) !important;
+  }
+
+  /* Ensure solid item text colors for dark theme */
+  .dark [data-radix-select-item],
+  .dark [role="option"] {
+    color: hsl(210 40% 98%) !important;
   }
 
   [data-radix-select-item][data-highlighted] {
     background-color: hsl(var(--accent)) !important;
     color: hsl(var(--accent-foreground)) !important;
+    opacity: 1 !important;
   }
 
   [data-radix-select-item][data-state="checked"] {
     background-color: hsl(var(--accent)) !important;
     color: hsl(var(--accent-foreground)) !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure solid hover/selected backgrounds for light theme */
+  :root [data-radix-select-item][data-highlighted],
+  :root [data-radix-select-item][data-state="checked"] {
+    background-color: hsl(210 40% 96%) !important;
+    color: hsl(222.2 47.4% 11.2%) !important;
+  }
+
+  /* Ensure solid hover/selected backgrounds for dark theme */
+  .dark [data-radix-select-item][data-highlighted],
+  .dark [data-radix-select-item][data-state="checked"] {
+    background-color: hsl(217.2 32.6% 17.5%) !important;
+    color: hsl(210 40% 98%) !important;
+  }
+
+  /* Prevent multiple select dropdowns from interfering */
+  [data-radix-select-content] {
+    contain: layout style paint !important;
   }
 
   /* Button styling inside sheets */
