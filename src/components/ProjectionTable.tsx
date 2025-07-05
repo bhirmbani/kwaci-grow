@@ -6,6 +6,16 @@ import type { BonusScheme, FinancialItem } from "@/types"
 
 import { formatCurrency } from "@/utils/formatters"
 
+interface Projection {
+  cupsPerDay: number
+  revenue: number
+  variableCogs: number
+  grossProfit: number
+  fixedCosts: number
+  bonus: number
+  netProfit: number
+}
+
 interface ProjectionTableProps {
   daysPerMonth: number
   pricePerCup: number
@@ -25,18 +35,13 @@ export function ProjectionTable({
   const cogsTotal = cogsItems.reduce((sum, item) => sum + item.value, 0)
 
   // State for selected row to show detailed calculations
-  const [selectedRowData, setSelectedRowData] = useState<{
-    cupsPerDay: number
-    revenue: number
-    variableCogs: number
-    grossProfit: number
-    fixedCosts: number
-    bonus: number
-    netProfit: number
-    daysPerMonth: number
-    pricePerCup: number
-    cogsPerCup: number
-  } | undefined>(undefined)
+  const [selectedRowData, setSelectedRowData] = useState<
+    (Projection & {
+      daysPerMonth: number
+      pricePerCup: number
+      cogsPerCup: number
+    }) | undefined
+  >(undefined)
 
   // State to track which row is currently selected (by cupsPerDay value)
   const [selectedRowId, setSelectedRowId] = useState<number | undefined>(undefined)
@@ -73,7 +78,7 @@ export function ProjectionTable({
   }, [])
 
   // Handle row selection with click
-  const handleRowClick = (projection: any) => {
+  const handleRowClick = (projection: Projection) => {
     const isCurrentlySelected = selectedRowId === projection.cupsPerDay
 
     if (isCurrentlySelected) {
@@ -106,8 +111,8 @@ export function ProjectionTable({
 
 
 
-  const generateProjections = () => {
-    const projections = []
+  const generateProjections = (): Projection[] => {
+    const projections: Projection[] = []
     for (let cupsPerDay = 10; cupsPerDay <= 200; cupsPerDay += 10) {
       const monthlyCups = cupsPerDay * daysPerMonth
       const revenue = monthlyCups * pricePerCup
