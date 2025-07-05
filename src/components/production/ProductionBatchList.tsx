@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -22,17 +22,82 @@ export function ProductionBatchList({ batches }: ProductionBatchListProps) {
   const [editingBatch, setEditingBatch] = useState<ProductionBatchWithItems | null>(null)
   const [editNote, setEditNote] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | ProductionBatchStatus>('all')
+  const [currentStatus, setCurrentStatus] = useState<ProductionBatchStatus | null>(null)
+  const [optimisticBatches, setOptimisticBatches] = useState<ProductionBatchWithItems[]>(batches)
   const { updateBatchStatus, deleteBatch, updateBatch } = useProduction()
 
+  // Sync optimisticBatches with incoming batches prop
+  useEffect(() => {
+    setOptimisticBatches(batches)
+  }, [batches])
+
+  // Sync currentStatus with selectedBatch
+  useEffect(() => {
+    if (selectedBatch) {
+      setCurrentStatus(selectedBatch.status)
+    } else {
+      setCurrentStatus(null)
+    }
+  }, [selectedBatch])
+
+  // Sync selectedBatch with updated optimisticBatches array
+  useEffect(() => {
+    if (selectedBatch) {
+      const updatedBatch = optimisticBatches.find(batch => batch.id === selectedBatch.id)
+      if (updatedBatch) {
+        // Update selectedBatch if any property has changed, not just status
+        const hasChanges = JSON.stringify(updatedBatch) !== JSON.stringify(selectedBatch)
+        if (hasChanges) {
+          setSelectedBatch(updatedBatch)
+        }
+      }
+    }
+  }, [optimisticBatches, selectedBatch?.id]) // Only depend on selectedBatch.id to avoid infinite loops
+
   // Filter batches based on status
-  const filteredBatches = batches.filter(batch => 
+  const filteredBatches = optimisticBatches.filter(batch =>
     statusFilter === 'all' || batch.status === statusFilter
   )
 
   const handleStatusChange = async (batchId: string, newStatus: ProductionBatchStatus) => {
+    // Immediately update the currentStatus for the dropdown
+    setCurrentStatus(newStatus)
+
+    // Optimistically update the optimisticBatches array for immediate table feedback
+    setOptimisticBatches(prevBatches =>
+      prevBatches.map(batch =>
+        batch.id === batchId
+          ? { ...batch, status: newStatus, updatedAt: new Date().toISOString() }
+          : batch
+      )
+    )
+
+    // Optimistically update the selectedBatch state for immediate UI feedback
+    if (selectedBatch && selectedBatch.id === batchId) {
+      const updatedBatch = {
+        ...selectedBatch,
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      }
+      setSelectedBatch(updatedBatch)
+    }
+
     const result = await updateBatchStatus(batchId, newStatus)
+
     if (!result.success) {
       console.error('Failed to update batch status:', result.error)
+      // Revert the optimistic updates if the API call failed
+      // Reset optimisticBatches to the original batches prop
+      setOptimisticBatches(batches)
+
+      if (selectedBatch && selectedBatch.id === batchId) {
+        // Find the original batch from the batches array to get the correct status
+        const originalBatch = batches.find(b => b.id === batchId)
+        if (originalBatch) {
+          setCurrentStatus(originalBatch.status)
+          setSelectedBatch(originalBatch)
+        }
+      }
     }
   }
 
@@ -106,7 +171,7 @@ export function ProductionBatchList({ batches }: ProductionBatchListProps) {
               </Select>
             </div>
             <div className="text-sm text-muted-foreground">
-              Showing {filteredBatches.length} of {batches.length} batches
+              Showing {filteredBatches.length} of {optimisticBatches.length} batches
             </div>
           </div>
         </CardHeader>
@@ -177,7 +242,8 @@ export function ProductionBatchList({ batches }: ProductionBatchListProps) {
                                   <div className="flex items-center justify-between">
                                     <span className="font-medium">Status:</span>
                                     <Select
-                                      value={selectedBatch.status}
+                                      key={`${selectedBatch.id}-${currentStatus}`}
+                                      value={currentStatus || selectedBatch.status}
                                       onValueChange={(value) => handleStatusChange(selectedBatch.id, value as ProductionBatchStatus)}
                                       disabled={selectedBatch.status === 'Completed'}
                                     >
