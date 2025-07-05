@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useIngredients, useIngredientCategories } from '@/hooks/useIngredients'
 import { UNIT_OPTIONS } from '@/utils/cogsCalculations'
@@ -23,7 +24,8 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
     unit: '',
     supplierInfo: '',
     category: '',
-    note: ''
+    note: '',
+    isActive: true
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +44,8 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         unit: ingredient.unit,
         supplierInfo: ingredient.supplierInfo || '',
         category: ingredient.category || '',
-        note: ingredient.note
+        note: ingredient.note,
+        isActive: ingredient.isActive
       })
     }
   }, [ingredient])
@@ -84,7 +87,8 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         unit: formData.unit,
         supplierInfo: formData.supplierInfo.trim(),
         category: formData.category.trim(),
-        note: formData.note.trim()
+        note: formData.note.trim(),
+        isActive: formData.isActive
       }
 
       let result
@@ -106,7 +110,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
     }
   }
 
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
+  const handleInputChange = (field: keyof typeof formData, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -119,6 +123,15 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
   const baseUnitCost = parseFloat(formData.baseUnitCost) || 0
   const baseUnitQuantity = parseFloat(formData.baseUnitQuantity) || 1
   const unitCost = baseUnitQuantity > 0 ? baseUnitCost / baseUnitQuantity : 0
+
+  // Form validation for button state
+  const isFormValid =
+    formData.name.trim() &&
+    formData.unit &&
+    !isNaN(baseUnitCost) &&
+    baseUnitCost >= 0 &&
+    !isNaN(baseUnitQuantity) &&
+    baseUnitQuantity > 0
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 mt-6">
@@ -249,10 +262,24 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         />
       </div>
 
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="isActive"
+          checked={formData.isActive}
+          onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+        />
+        <Label htmlFor="isActive" className="text-sm font-medium">
+          Active Status
+        </Label>
+        <span className="text-sm text-muted-foreground">
+          {formData.isActive ? 'Ingredient is active' : 'Ingredient is inactive'}
+        </span>
+      </div>
+
       <div className="flex items-center gap-3 pt-4">
         <Button
           type="submit"
-          disabled={isSubmitting || !formData.name.trim() || !formData.unit}
+          disabled={isSubmitting || !isFormValid}
         >
           {isSubmitting 
             ? (isEditing ? 'Updating...' : 'Creating...') 

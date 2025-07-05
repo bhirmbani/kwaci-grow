@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { Package, Plus, List, TrendingUp } from 'lucide-react'
 import { useProductsWithCounts } from '@/hooks/useProducts'
 import { ProductList } from './ProductList'
@@ -11,7 +13,8 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 export function ProductManagement() {
   const [activeTab, setActiveTab] = useState<'overview' | 'products'>('overview')
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
-  const { products, loading, error, loadProducts } = useProductsWithCounts()
+  const [includeInactive, setIncludeInactive] = useState(false)
+  const { products, loading, error, loadProducts } = useProductsWithCounts(includeInactive)
 
   if (loading) {
     return (
@@ -192,7 +195,28 @@ export function ProductManagement() {
         </TabsContent>
 
         <TabsContent value="products">
-          <ProductList products={products} onProductsChange={loadProducts} />
+          <div className="space-y-4">
+            {/* Filter Controls */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Product Filters</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="include-inactive"
+                      checked={includeInactive}
+                      onCheckedChange={setIncludeInactive}
+                    />
+                    <Label htmlFor="include-inactive" className="text-sm font-medium">
+                      Show inactive products
+                    </Label>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <ProductList products={products} onProductsChange={loadProducts} />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

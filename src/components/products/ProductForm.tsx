@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 import { useProducts } from '@/hooks/useProducts'
 import type { Product } from '@/lib/db/schema'
 
@@ -16,7 +17,8 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    note: ''
+    note: '',
+    isActive: true
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +32,8 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
       setFormData({
         name: product.name,
         description: product.description,
-        note: product.note
+        note: product.note,
+        isActive: product.isActive
       })
     }
   }, [product])
@@ -52,13 +55,15 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
         result = await updateProduct(product.id, {
           name: formData.name.trim(),
           description: formData.description.trim(),
-          note: formData.note.trim()
+          note: formData.note.trim(),
+          isActive: formData.isActive
         })
       } else {
         result = await createProduct({
           name: formData.name.trim(),
           description: formData.description.trim(),
-          note: formData.note.trim()
+          note: formData.note.trim(),
+          isActive: formData.isActive
         })
       }
 
@@ -74,7 +79,7 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
     }
   }
 
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
+  const handleInputChange = (field: keyof typeof formData, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -122,6 +127,20 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           placeholder="Additional notes about this product"
           rows={2}
         />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="isActive"
+          checked={formData.isActive}
+          onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+        />
+        <Label htmlFor="isActive" className="text-sm font-medium">
+          Active Status
+        </Label>
+        <span className="text-sm text-muted-foreground">
+          {formData.isActive ? 'Product is active' : 'Product is inactive'}
+        </span>
       </div>
 
       <div className="flex items-center gap-3 pt-4">

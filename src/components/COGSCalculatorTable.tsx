@@ -1,4 +1,4 @@
-import { useState, memo, useCallback, useMemo, useEffect } from "react"
+import { useState, memo, useCallback, useMemo, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2, Plus, Calculator, Package } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
-import { useProducts } from "@/hooks/useProducts"
+import { useProducts, useProduct } from "@/hooks/useProducts"
 import {
   calculateCostPerCup,
   calculateTotalCOGSPerCup,
@@ -50,27 +50,69 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
   const { products, loading: productsLoading } = useProducts()
   const [selectedProductId, setSelectedProductId] = useState<string>('custom')
   const [isProductMode, setIsProductMode] = useState(false)
+  const [customItems, setCustomItems] = useState<FinancialItem[]>([])
+
+  // Use refs to track previous values and prevent infinite loops
+  const prevSelectedProductIdRef = useRef<string>('custom')
+  const prevIsProductModeRef = useRef<boolean>(false)
+  const prevProductLoadingRef = useRef<boolean>(false)
+  const prevSelectedProductRef = useRef<any>(null)
+
+  // Fetch product data when a product is selected
+  const { product: selectedProduct, loading: productLoading } = useProduct(
+    selectedProductId !== 'custom' ? selectedProductId : ''
+  )
+
+  // Initialize custom items from initial items
+  useEffect(() => {
+    if (customItems.length === 0 && items.length > 0 && selectedProductId === 'custom') {
+      setCustomItems(items)
+    }
+  }, [items, customItems.length, selectedProductId])
 
   // Handle product selection
-  const handleProductChange = useCallback(async (productId: string) => {
+  const handleProductChange = useCallback((productId: string) => {
+    // Store current items as custom items before switching away from custom mode
+    if (selectedProductId === 'custom' && productId !== 'custom') {
+      setCustomItems(items)
+    }
+
     setSelectedProductId(productId)
+    setIsProductMode(productId !== 'custom')
+  }, [selectedProductId, items])
 
-    if (productId === 'custom') {
-      setIsProductMode(false)
-      return
+  // Single useEffect to handle all updates and prevent infinite loops
+  useEffect(() => {
+    const productIdChanged = prevSelectedProductIdRef.current !== selectedProductId
+    const modeChanged = prevIsProductModeRef.current !== isProductMode
+    const loadingChanged = prevProductLoadingRef.current !== productLoading
+    const productChanged = prevSelectedProductRef.current !== selectedProduct
+
+    // Only proceed if there's an actual change
+    if (productIdChanged || modeChanged || loadingChanged || productChanged) {
+      // Update refs
+      prevSelectedProductIdRef.current = selectedProductId
+      prevIsProductModeRef.current = isProductMode
+      prevProductLoadingRef.current = productLoading
+      prevSelectedProductRef.current = selectedProduct
+
+      if (!isProductMode && selectedProductId === 'custom') {
+        // Restore custom items when switching to custom mode
+        if (customItems.length > 0) {
+          onUpdate(customItems)
+        }
+      } else if (isProductMode) {
+        if (productLoading) {
+          // Clear items immediately when starting to load a new product
+          onUpdate([])
+        } else if (selectedProduct) {
+          // Load product items when data is available
+          const productItems = convertProductToFinancialItems(selectedProduct)
+          onUpdate(productItems)
+        }
+      }
     }
-
-    setIsProductMode(true)
-
-    // Find the selected product
-    const selectedProduct = products.find(p => p.id === productId)
-    if (selectedProduct) {
-      // We need to get the product with ingredients
-      // For now, we'll use the existing items as fallback
-      // This should be improved to fetch the actual product data
-      console.log('Selected product:', selectedProduct.name)
-    }
-  }, [products])
+  }, [selectedProductId, isProductMode, productLoading, selectedProduct, customItems, onUpdate])
 
   // Check if we have products available
   const hasProducts = products.length > 0
@@ -201,7 +243,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
             {hasProducts && (
               <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-muted-foreground" />
-                <Select value={selectedProductId} onValueChange={handleProductChange}>
+                <Select value={selectedProductId} onValueChange={handleProductChange} disabled={productLoading}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Select product" />
                   </SelectTrigger>
@@ -214,6 +256,9 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                     ))}
                   </SelectContent>
                 </Select>
+                {productLoading && (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                )}
               </div>
             )}
           </div>
@@ -252,7 +297,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "name", e.target.value)}
                         placeholder="Ingredient name"
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right">
@@ -262,7 +307,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "baseUnitCost", Number(e.target.value))}
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0"
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4 text-right">
@@ -273,14 +318,14 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring text-right transition-all"
                         min="0.01"
                         step="0.01"
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4">
                       <Select
                         value={item.unit || "ml"}
                         onValueChange={(value) => updateItem(item.id, "unit", value)}
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       >
                         <SelectTrigger className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all">
                           <SelectValue />
@@ -304,7 +349,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                           min="0"
                           step="0.01"
                           placeholder={`per cup`}
-                          disabled={isProductMode}
+                          disabled={isProductMode || productLoading}
                         />
                         <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
                           {item.unit || 'ml'}
@@ -334,7 +379,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         onChange={(e) => updateItem(item.id, "note", e.target.value)}
                         placeholder="Add note..."
                         className="border-0 bg-transparent focus:bg-background focus:border-input focus:ring-2 focus:ring-ring transition-all"
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       />
                     </TableCell>
                     <TableCell className="px-4 py-4">
@@ -343,7 +388,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
                         size="icon"
                         onClick={() => removeItem(item.id)}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
-                        disabled={isProductMode}
+                        disabled={isProductMode || productLoading}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

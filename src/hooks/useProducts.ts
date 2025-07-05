@@ -140,8 +140,13 @@ export function useProduct(id: string) {
   const [error, setError] = useState<string | null>(null)
 
   const loadProduct = useCallback(async () => {
-    if (!id) return
-    
+    if (!id) {
+      setLoading(false)
+      setProduct(null)
+      setError(null)
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)
@@ -210,7 +215,7 @@ export function useProductCOGS(productId: string) {
   }
 }
 
-export function useProductsWithCounts() {
+export function useProductsWithCounts(includeInactive: boolean = false) {
   const [products, setProducts] = useState<Array<Product & { ingredientCount: number }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -219,7 +224,7 @@ export function useProductsWithCounts() {
     try {
       setLoading(true)
       setError(null)
-      const productsWithCounts = await ProductService.getAllWithIngredientCounts()
+      const productsWithCounts = await ProductService.getAllWithIngredientCounts(includeInactive)
       setProducts(productsWithCounts)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load products')
@@ -227,7 +232,7 @@ export function useProductsWithCounts() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [includeInactive])
 
   useEffect(() => {
     loadProducts()

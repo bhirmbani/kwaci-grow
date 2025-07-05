@@ -4,13 +4,17 @@ import { v4 as uuidv4 } from 'uuid'
 
 export class ProductService {
   /**
-   * Get all active products
+   * Get all products (active and inactive)
    */
-  static async getAll(): Promise<Product[]> {
+  static async getAll(includeInactive: boolean = false): Promise<Product[]> {
     try {
-      return await db.products
-        .filter(product => product.isActive === true)
-        .sortBy('name')
+      if (includeInactive) {
+        return await db.products.orderBy('name').toArray()
+      } else {
+        return await db.products
+          .filter(product => product.isActive === true)
+          .sortBy('name')
+      }
     } catch (error) {
       console.error('ProductService.getAll() - Database error:', error)
 
@@ -286,9 +290,9 @@ export class ProductService {
   /**
    * Get all products with their ingredient counts
    */
-  static async getAllWithIngredientCounts(): Promise<Array<Product & { ingredientCount: number }>> {
+  static async getAllWithIngredientCounts(includeInactive: boolean = false): Promise<Array<Product & { ingredientCount: number }>> {
     try {
-      const products = await this.getAll()
+      const products = await this.getAll(includeInactive)
 
       // If no products exist, return empty array
       if (products.length === 0) {
