@@ -47,7 +47,7 @@ export function useIngredients() {
 
   const updateIngredient = useCallback(async (
     id: string,
-    updates: Partial<Omit<Ingredient, 'id' | 'createdAt' | 'isActive'>>
+    updates: Partial<Omit<Ingredient, 'id' | 'createdAt'>>
   ): Promise<{ success: boolean; ingredient?: Ingredient; error?: string }> => {
     try {
       setError(null)
@@ -133,7 +133,7 @@ export function useIngredient(id: string) {
   }
 }
 
-export function useIngredientsWithCounts() {
+export function useIngredientsWithCounts(includeInactive: boolean = false) {
   const [ingredients, setIngredients] = useState<Array<Ingredient & { usageCount: number }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -142,7 +142,7 @@ export function useIngredientsWithCounts() {
     try {
       setLoading(true)
       setError(null)
-      const ingredientsWithCounts = await IngredientService.getAllWithUsageCounts()
+      const ingredientsWithCounts = await IngredientService.getAllWithUsageCounts(includeInactive)
       setIngredients(ingredientsWithCounts)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load ingredients')
@@ -150,7 +150,7 @@ export function useIngredientsWithCounts() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [includeInactive])
 
   useEffect(() => {
     loadIngredients()
@@ -183,6 +183,45 @@ export function useIngredientCategories() {
     }
   }, [])
 
+  const createCategory = useCallback(async (categoryName: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setError(null)
+      const result = await IngredientService.createCategory(categoryName)
+      if (result.success) {
+        await loadCategories() // Reload categories
+      }
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create category'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    }
+  }, [loadCategories])
+
+  const deleteCategory = useCallback(async (categoryName: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      setError(null)
+      const result = await IngredientService.deleteCategory(categoryName)
+      if (result.success) {
+        await loadCategories() // Reload categories
+      }
+      return result
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete category'
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    }
+  }, [loadCategories])
+
+  const getCategoryUsageCount = useCallback(async (categoryName: string): Promise<number> => {
+    try {
+      return await IngredientService.getCategoryUsageCount(categoryName)
+    } catch (err) {
+      console.error('Error getting category usage count:', err)
+      return 0
+    }
+  }, [])
+
   useEffect(() => {
     loadCategories()
   }, [loadCategories])
@@ -191,7 +230,10 @@ export function useIngredientCategories() {
     categories,
     loading,
     error,
-    loadCategories
+    loadCategories,
+    createCategory,
+    deleteCategory,
+    getCategoryUsageCount
   }
 }
 

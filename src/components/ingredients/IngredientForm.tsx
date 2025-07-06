@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useIngredients, useIngredientCategories } from '@/hooks/useIngredients'
+import { useIngredients } from '@/hooks/useIngredients'
+import { CategoryCombobox } from './CategoryCombobox'
 import { UNIT_OPTIONS } from '@/utils/cogsCalculations'
 import { formatCurrency } from '@/utils/formatters'
 import type { Ingredient } from '@/lib/db/schema'
@@ -16,77 +18,81 @@ interface IngredientFormProps {
   onCancel: () => void
 }
 
+interface FormData {
+  name: string
+  baseUnitCost: string
+  baseUnitQuantity: string
+  unit: string
+  supplierInfo: string
+  category: string
+  note: string
+  isActive: boolean
+}
+
 export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    baseUnitCost: '',
-    baseUnitQuantity: '',
-    unit: '',
-    supplierInfo: '',
-    category: '',
-    note: '',
-    isActive: true
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    reset
+  } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      baseUnitCost: '',
+      baseUnitQuantity: '',
+      unit: '__NONE__',
+      supplierInfo: '',
+      category: '__NONE__',
+      note: '',
+      isActive: true
+    }
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  
+
   const { createIngredient, updateIngredient } = useIngredients()
-  const { categories } = useIngredientCategories()
   const isEditing = !!ingredient
 
   // Initialize form data
   useEffect(() => {
     if (ingredient) {
-      setFormData({
+      reset({
         name: ingredient.name,
         baseUnitCost: ingredient.baseUnitCost.toString(),
         baseUnitQuantity: ingredient.baseUnitQuantity.toString(),
-        unit: ingredient.unit,
+        unit: ingredient.unit && ingredient.unit.trim() !== '' ? ingredient.unit : '__NONE__',
         supplierInfo: ingredient.supplierInfo || '',
-        category: ingredient.category || '',
-        note: ingredient.note,
+        category: ingredient.category && ingredient.category.trim() !== '' ? ingredient.category : '__NONE__',
+        note: ingredient.note || '',
         isActive: ingredient.isActive
       })
+    } else {
+      // Reset form when no ingredient (creating new)
+      reset({
+        name: '',
+        baseUnitCost: '',
+        baseUnitQuantity: '',
+        unit: '__NONE__',
+        supplierInfo: '',
+        category: '__NONE__',
+        note: '',
+        isActive: true
+      })
     }
-  }, [ingredient])
+  }, [ingredient, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
-
+  const onSubmit = async (formData: FormData) => {
     try {
-      // Validate form
-      if (!formData.name.trim()) {
-        setError('Ingredient name is required')
-        return
-      }
-
-      if (!formData.unit) {
-        setError('Unit is required')
-        return
-      }
-
       const baseUnitCost = parseFloat(formData.baseUnitCost)
       const baseUnitQuantity = parseFloat(formData.baseUnitQuantity)
-
-      if (isNaN(baseUnitCost) || baseUnitCost < 0) {
-        setError('Base unit cost must be a valid positive number')
-        return
-      }
-
-      if (isNaN(baseUnitQuantity) || baseUnitQuantity <= 0) {
-        setError('Base unit quantity must be a valid positive number')
-        return
-      }
 
       const ingredientData = {
         name: formData.name.trim(),
         baseUnitCost,
         baseUnitQuantity,
-        unit: formData.unit,
+        unit: formData.unit === '__NONE__' ? '' : formData.unit,
         supplierInfo: formData.supplierInfo.trim(),
-        category: formData.category.trim(),
+        category: formData.category === '__NONE__' ? '' : formData.category.trim(),
         note: formData.note.trim(),
         isActive: formData.isActive
       }
@@ -101,43 +107,41 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
       if (result.success) {
         onSuccess()
       } else {
-        setError(result.error || 'Failed to save ingredient')
+        // Handle API errors - you might want to use setError from react-hook-form here
+        console.error(result.error || 'Failed to save ingredient')
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
-    } finally {
-      setIsSubmitting(false)
+      console.error(err instanceof Error ? err.message : 'An unexpected error occurred')
     }
   }
 
-  const handleInputChange = (field: keyof typeof formData, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-    // Clear error when user starts typing
-    if (error) setError(null)
+  // Watch form values for unit cost preview and form state
+  const watchedValues = watch(['baseUnitCost', 'baseUnitQuantity', 'category', 'unit', 'isActive'])
+  const [watchedBaseUnitCost, watchedBaseUnitQuantity, watchedCategory, watchedUnit, watchedIsActive] = watchedValues
+
+  const handleUnitChange = (value: string) => {
+    setValue('unit', value)
+  }
+
+  const handleIsActiveChange = (checked: boolean) => {
+    setValue('isActive', checked)
   }
 
   // Calculate unit cost for preview
-  const baseUnitCost = parseFloat(formData.baseUnitCost) || 0
-  const baseUnitQuantity = parseFloat(formData.baseUnitQuantity) || 1
-  const unitCost = baseUnitQuantity > 0 ? baseUnitCost / baseUnitQuantity : 0
+  const { baseUnitCost, baseUnitQuantity, unitCost } = useMemo(() => {
+    const baseUnitCost = parseFloat(watchedBaseUnitCost) || 0
+    const baseUnitQuantity = parseFloat(watchedBaseUnitQuantity) || 1
+    const unitCost = baseUnitQuantity > 0 ? baseUnitCost / baseUnitQuantity : 0
 
-  // Form validation for button state
-  const isFormValid =
-    formData.name.trim() &&
-    formData.unit &&
-    !isNaN(baseUnitCost) &&
-    baseUnitCost >= 0 &&
-    !isNaN(baseUnitQuantity) &&
-    baseUnitQuantity > 0
+    return { baseUnitCost, baseUnitQuantity, unitCost }
+  }, [watchedBaseUnitCost, watchedBaseUnitQuantity])
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-      {error && (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
+      {(errors.name || errors.unit || errors.category || errors.baseUnitCost || errors.baseUnitQuantity) && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-          {error}
+          {errors.name?.message || errors.unit?.message || errors.category?.message ||
+           errors.baseUnitCost?.message || errors.baseUnitQuantity?.message}
         </div>
       )}
 
@@ -146,33 +150,36 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
           <Label htmlFor="name">Ingredient Name *</Label>
           <Input
             id="name"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            {...register('name', {
+              required: 'Ingredient name is required',
+              validate: (value) => value.trim() !== '' || 'Ingredient name is required'
+            })}
             placeholder="Enter ingredient name"
-            required
           />
+          {errors.name && (
+            <p className="text-sm text-red-600">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
-          <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select or enter category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            value={formData.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
-            placeholder="Or enter new category"
-            className="mt-2"
+          <Label htmlFor="category">Category *</Label>
+          <CategoryCombobox
+            value={watchedCategory === '__NONE__' ? '' : watchedCategory}
+            onValueChange={(value) => setValue('category', value || '__NONE__')}
+            placeholder="Select or create category..."
+            disabled={isSubmitting}
           />
+          {/* Hidden input for validation */}
+          <input
+            type="hidden"
+            {...register('category', {
+              required: 'Category is required',
+              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || 'Category is required'
+            })}
+          />
+          {errors.category && (
+            <p className="text-sm text-red-600">{errors.category.message}</p>
+          )}
         </div>
       </div>
 
@@ -184,14 +191,19 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
             type="number"
             step="0.01"
             min="0"
-            value={formData.baseUnitCost}
-            onChange={(e) => handleInputChange('baseUnitCost', e.target.value)}
+            {...register('baseUnitCost', {
+              required: 'Base unit cost is required',
+              min: { value: 0, message: 'Base unit cost must be positive' },
+              validate: (value) => !isNaN(parseFloat(value)) || 'Base unit cost must be a valid number'
+            })}
             placeholder="0.00"
-            required
           />
           <p className="text-xs text-muted-foreground">
             Cost for the base quantity
           </p>
+          {errors.baseUnitCost && (
+            <p className="text-sm text-red-600">{errors.baseUnitCost.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -201,23 +213,35 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
             type="number"
             step="0.01"
             min="0.01"
-            value={formData.baseUnitQuantity}
-            onChange={(e) => handleInputChange('baseUnitQuantity', e.target.value)}
+            {...register('baseUnitQuantity', {
+              required: 'Base unit quantity is required',
+              min: { value: 0.01, message: 'Base unit quantity must be positive' },
+              validate: (value) => !isNaN(parseFloat(value)) || 'Base unit quantity must be a valid number'
+            })}
             placeholder="1.00"
-            required
           />
           <p className="text-xs text-muted-foreground">
             Quantity in the base unit
           </p>
+          {errors.baseUnitQuantity && (
+            <p className="text-sm text-red-600">{errors.baseUnitQuantity.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="unit">Unit *</Label>
-          <Select value={formData.unit} onValueChange={(value) => handleInputChange('unit', value)}>
+          <Select
+            key={`unit-${ingredient?.id || 'new'}`}
+            value={watchedUnit}
+            onValueChange={handleUnitChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select unit" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="__NONE__">
+                <span className="text-muted-foreground">No unit selected</span>
+              </SelectItem>
               {UNIT_OPTIONS.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
@@ -225,6 +249,17 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
               ))}
             </SelectContent>
           </Select>
+          {/* Hidden input for validation */}
+          <input
+            type="hidden"
+            {...register('unit', {
+              required: 'Unit is required',
+              validate: (value) => value !== '__NONE__' || 'Unit is required'
+            })}
+          />
+          {errors.unit && (
+            <p className="text-sm text-red-600">{errors.unit.message}</p>
+          )}
         </div>
       </div>
 
@@ -233,7 +268,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         <div className="p-3 bg-muted/30 rounded-lg">
           <p className="text-sm font-medium">Cost Preview:</p>
           <p className="text-lg font-bold text-primary">
-            {formatCurrency(unitCost)} per {formData.unit || 'unit'}
+            {formatCurrency(unitCost)} per {watchedUnit && watchedUnit !== '__NONE__' ? watchedUnit : 'unit'}
           </p>
           <p className="text-xs text-muted-foreground">
             {formatCurrency(baseUnitCost)} ÷ {baseUnitQuantity} = {formatCurrency(unitCost)}
@@ -245,8 +280,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         <Label htmlFor="supplierInfo">Supplier Information</Label>
         <Input
           id="supplierInfo"
-          value={formData.supplierInfo}
-          onChange={(e) => handleInputChange('supplierInfo', e.target.value)}
+          {...register('supplierInfo')}
           placeholder="Supplier name, contact, etc."
         />
       </div>
@@ -255,8 +289,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         <Label htmlFor="note">Notes</Label>
         <Textarea
           id="note"
-          value={formData.note}
-          onChange={(e) => handleInputChange('note', e.target.value)}
+          {...register('note')}
           placeholder="Additional notes about this ingredient"
           rows={3}
         />
@@ -265,24 +298,29 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
       <div className="flex items-center space-x-2">
         <Switch
           id="isActive"
-          checked={formData.isActive}
-          onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+          checked={watchedIsActive}
+          onCheckedChange={handleIsActiveChange}
         />
         <Label htmlFor="isActive" className="text-sm font-medium">
           Active Status
         </Label>
         <span className="text-sm text-muted-foreground">
-          {formData.isActive ? 'Ingredient is active' : 'Ingredient is inactive'}
+          {watchedIsActive ? 'Ingredient is active' : 'Ingredient is inactive'}
         </span>
+        {/* Hidden input for form validation */}
+        <input
+          type="hidden"
+          {...register('isActive')}
+        />
       </div>
 
       <div className="flex items-center gap-3 pt-4">
         <Button
           type="submit"
-          disabled={isSubmitting || !isFormValid}
+          disabled={isSubmitting || Object.keys(errors).length > 0}
         >
-          {isSubmitting 
-            ? (isEditing ? 'Updating...' : 'Creating...') 
+          {isSubmitting
+            ? (isEditing ? 'Updating...' : 'Creating...')
             : (isEditing ? 'Update Ingredient' : 'Create Ingredient')
           }
         </Button>

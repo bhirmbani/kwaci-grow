@@ -4,13 +4,17 @@ import { v4 as uuidv4 } from 'uuid'
 
 export class IngredientService {
   /**
-   * Get all active ingredients
+   * Get all ingredients (active and inactive)
    */
-  static async getAll(): Promise<Ingredient[]> {
+  static async getAll(includeInactive: boolean = false): Promise<Ingredient[]> {
     try {
-      return await db.ingredients
-        .filter(ingredient => ingredient.isActive === true)
-        .sortBy('name')
+      if (includeInactive) {
+        return await db.ingredients.orderBy('name').toArray()
+      } else {
+        return await db.ingredients
+          .filter(ingredient => ingredient.isActive === true)
+          .sortBy('name')
+      }
     } catch (error) {
       console.error('IngredientService.getAll() - Database error:', error)
 
@@ -82,7 +86,7 @@ export class IngredientService {
   /**
    * Update an existing ingredient
    */
-  static async update(id: string, updates: Partial<Omit<Ingredient, 'id' | 'createdAt' | 'isActive'>>): Promise<Ingredient> {
+  static async update(id: string, updates: Partial<Omit<Ingredient, 'id' | 'createdAt'>>): Promise<Ingredient> {
     const now = new Date().toISOString()
 
     await db.ingredients.update(id, {
@@ -140,13 +144,77 @@ export class IngredientService {
    * Get all unique categories
    */
   static async getCategories(): Promise<string[]> {
-    const ingredients = await this.getAll()
+    const ingredients = await this.getAll(true) // Include inactive to get all categories
     const categories = new Set(
       ingredients
         .map(ing => ing.category)
         .filter(cat => cat && cat.trim() !== '')
     )
     return Array.from(categories).sort()
+  }
+
+  /**
+   * Create a new category by creating a placeholder ingredient
+   * Note: Categories are derived from ingredients, so we don't store them separately
+   */
+  static async createCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const trimmedName = categoryName.trim()
+      if (!trimmedName) {
+        return { success: false, error: 'Category name cannot be empty' }
+      }
+
+      // Check if category already exists
+      const existingCategories = await this.getCategories()
+      if (existingCategories.includes(trimmedName)) {
+        return { success: false, error: 'Category already exists' }
+      }
+
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: 'Failed to create category' }
+    }
+  }
+
+  /**
+   * Delete a category by updating all ingredients that use it
+   */
+  static async deleteCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Check if category is in use
+      const ingredientsUsingCategory = await this.getByCategory(categoryName)
+      if (ingredientsUsingCategory.length > 0) {
+        return {
+          success: false,
+          error: `Cannot delete category "${categoryName}" because it is used by ${ingredientsUsingCategory.length} ingredient(s)`
+        }
+      }
+
+      // Check inactive ingredients too
+      const allIngredients = await this.getAll(true)
+      const inactiveIngredientsUsingCategory = allIngredients.filter(
+        ing => ing.category === categoryName && !ing.isActive
+      )
+
+      if (inactiveIngredientsUsingCategory.length > 0) {
+        return {
+          success: false,
+          error: `Cannot delete category "${categoryName}" because it is used by ${inactiveIngredientsUsingCategory.length} inactive ingredient(s)`
+        }
+      }
+
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: 'Failed to delete category' }
+    }
+  }
+
+  /**
+   * Get ingredients count by category
+   */
+  static async getCategoryUsageCount(categoryName: string): Promise<number> {
+    const allIngredients = await this.getAll(true) // Include inactive
+    return allIngredients.filter(ing => ing.category === categoryName).length
   }
 
   /**
@@ -164,9 +232,9 @@ export class IngredientService {
   /**
    * Get ingredients with their usage counts
    */
-  static async getAllWithUsageCounts(): Promise<Array<Ingredient & { usageCount: number }>> {
+  static async getAllWithUsageCounts(includeInactive: boolean = false): Promise<Array<Ingredient & { usageCount: number }>> {
     try {
-      const ingredients = await this.getAll()
+      const ingredients = await this.getAll(includeInactive)
 
       // If no ingredients exist, return empty array
       if (ingredients.length === 0) {

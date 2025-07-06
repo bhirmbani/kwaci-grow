@@ -108,7 +108,7 @@ export class ProductService {
   /**
    * Update an existing product
    */
-  static async update(id: string, updates: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>): Promise<Product> {
+  static async update(id: string, updates: Partial<Omit<Product, 'id' | 'createdAt'>>): Promise<Product> {
     const now = new Date().toISOString()
 
     await db.products.update(id, {

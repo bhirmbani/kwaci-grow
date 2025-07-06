@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { Package, Plus, List, TrendingUp } from 'lucide-react'
 import { useIngredientsWithCounts, useIngredientCategories } from '@/hooks/useIngredients'
 import { IngredientList } from './IngredientList'
@@ -11,7 +13,8 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 export function IngredientManagement() {
   const [activeTab, setActiveTab] = useState<'overview' | 'ingredients'>('overview')
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
-  const { ingredients, loading, error, loadIngredients } = useIngredientsWithCounts()
+  const [includeInactive, setIncludeInactive] = useState(false)
+  const { ingredients, loading, error, loadIngredients } = useIngredientsWithCounts(includeInactive)
   const { categories } = useIngredientCategories()
 
   if (loading) {
@@ -207,7 +210,28 @@ export function IngredientManagement() {
         </TabsContent>
 
         <TabsContent value="ingredients">
-          <IngredientList ingredients={ingredients} onIngredientsChange={loadIngredients} />
+          <div className="space-y-4">
+            {/* Filter Controls */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Ingredient Filters</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="include-inactive"
+                      checked={includeInactive}
+                      onCheckedChange={setIncludeInactive}
+                    />
+                    <Label htmlFor="include-inactive" className="text-sm font-medium">
+                      Show inactive ingredients
+                    </Label>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            <IngredientList ingredients={ingredients} onIngredientsChange={loadIngredients} />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

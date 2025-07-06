@@ -38,7 +38,7 @@ export function useProducts() {
 
   const updateProduct = useCallback(async (
     id: string,
-    updates: Partial<Omit<Product, 'id' | 'createdAt' | 'isActive'>>
+    updates: Partial<Omit<Product, 'id' | 'createdAt'>>
   ): Promise<{ success: boolean; product?: Product; error?: string }> => {
     try {
       setError(null)

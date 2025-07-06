@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Ingredient Editing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        .code {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ingredient Editing Functionality Test</h1>
+    
+    <div class="test-section success">
+        <h2>✅ Issues Identified and Fixed</h2>
+        <p><strong>Problem 1:</strong> Type mismatch in ingredient editing functionality</p>
+        <p><strong>Root Cause 1:</strong> The <code>updateIngredient</code> function excluded <code>isActive</code> from the updates type, but the <code>IngredientForm</code> was trying to pass it.</p>
+        <p><strong>Solution 1:</strong> Updated type signatures to allow <code>isActive</code> in updates for both ingredients and products.</p>
+
+        <p><strong>Problem 2:</strong> "Update Ingredient" button always disabled</p>
+        <p><strong>Root Cause 2:</strong> Form validation logic ran before form data was populated by useEffect, causing validation to fail with empty values.</p>
+        <p><strong>Solution 2:</strong> Wrapped validation logic in useMemo to re-run when form data changes.</p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Changes Made</h2>
+        
+        <div class="step">
+            <h3>1. Updated useIngredients Hook</h3>
+            <div class="code">
+// Before:
+updates: Partial&lt;Omit&lt;Ingredient, 'id' | 'createdAt' | 'isActive'&gt;&gt;
+
+// After:
+updates: Partial&lt;Omit&lt;Ingredient, 'id' | 'createdAt'&gt;&gt;
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>2. Updated useProducts Hook (for consistency)</h3>
+            <div class="code">
+// Before:
+updates: Partial&lt;Omit&lt;Product, 'id' | 'createdAt' | 'isActive'&gt;&gt;
+
+// After:
+updates: Partial&lt;Omit&lt;Product, 'id' | 'createdAt'&gt;&gt;
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>3. Updated Service Layer Types</h3>
+            <div class="code">
+// IngredientService.update and ProductService.update
+// Now allow isActive in updates
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>4. Fixed Button Validation Logic</h3>
+            <div class="code">
+// Before: Validation ran immediately with empty form data
+const isFormValid = formData.name.trim() && formData.unit && ...
+
+// After: Validation wrapped in useMemo to re-run when form data changes
+const { isFormValid } = useMemo(() => {
+  // validation logic
+  return { baseUnitCost, baseUnitQuantity, unitCost, isFormValid }
+}, [formData])
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 How to Test</h2>
+        
+        <div class="step">
+            <h3>1. Navigate to Ingredient Management</h3>
+            <p>Go to <a href="http://localhost:5173/" target="_blank">http://localhost:5173/</a> and click on "Ingredient Management" in the sidebar.</p>
+        </div>
+
+        <div class="step">
+            <h3>2. Switch to Ingredients Tab</h3>
+            <p>Click on the "Ingredients" tab to see the list of ingredients.</p>
+        </div>
+
+        <div class="step">
+            <h3>3. Test Edit Functionality</h3>
+            <p>Click the edit button (pencil icon) for any ingredient. The edit form should open in a Sheet component.</p>
+        </div>
+
+        <div class="step">
+            <h3>4. Modify and Save</h3>
+            <p>Make changes to any field (name, cost, quantity, unit, etc.) and click "Update Ingredient". The changes should save successfully.</p>
+        </div>
+
+        <div class="step">
+            <h3>5. Verify Changes</h3>
+            <p>The sheet should close and the ingredient list should refresh with your changes visible.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 What Was Different from Product Editing</h2>
+        
+        <div class="step">
+            <h3>Key Differences Found:</h3>
+            <ul>
+                <li><strong>Type Constraints:</strong> Ingredient editing had stricter type constraints that excluded <code>isActive</code></li>
+                <li><strong>Validation:</strong> Ingredient service includes validation that product service doesn't have</li>
+                <li><strong>Form Complexity:</strong> Ingredient form has more fields (baseUnitCost, baseUnitQuantity, unit, category, supplierInfo)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Why Product Editing Worked:</h3>
+            <p>Product editing worked despite the same type issue because:</p>
+            <ul>
+                <li>No validation layer in ProductService</li>
+                <li>TypeScript was allowing the type mismatch to pass through</li>
+                <li>The database update was still working with the extra field</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section success">
+        <h2>✅ Expected Result</h2>
+        <p>After the fix, ingredient editing should work exactly like product editing:</p>
+        <ul>
+            <li>Edit button opens the ingredient form in a Sheet component</li>
+            <li>Form fields are pre-populated with current values</li>
+            <li>Changes can be made and saved successfully</li>
+            <li>Sheet closes and list refreshes after successful update</li>
+            <li>All fields including isActive (status) can be updated</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Next Steps</h2>
+        <p>The ingredient editing functionality should now work correctly. If you encounter any issues:</p>
+        <ol>
+            <li>Check the browser console for any TypeScript or runtime errors</li>
+            <li>Verify that the database is properly seeded with test ingredients</li>
+            <li>Test both creating new ingredients and editing existing ones</li>
+            <li>Ensure the validation logic in IngredientService is working as expected</li>
+        </ol>
+    </div>
+</body>
+</html>
