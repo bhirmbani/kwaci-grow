@@ -24,8 +24,9 @@ import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { SalesTargetService } from '@/lib/services/salesTargetService'
 import { BranchService } from '@/lib/services/branchService'
+import { MenuService } from '@/lib/services/menuService'
 import { formatCurrency } from '@/utils/formatters'
-import type { DailySalesTarget, Branch } from '@/lib/db/schema'
+import type { DailySalesTarget, Branch, MenuWithProductCount } from '@/lib/db/schema'
 
 const salesTargetSchema = z.object({
   menuId: z.string().min(1, 'Menu is required'),
@@ -46,6 +47,7 @@ interface SalesTargetFormProps {
 
 export function SalesTargetForm({ target, menuId, onSuccess, onCancel }: SalesTargetFormProps) {
   const [branches, setBranches] = useState<Branch[]>([])
+  const [menus, setMenus] = useState<MenuWithProductCount[]>([])
   const [loading, setLoading] = useState(true)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const isEditing = !!target
@@ -65,21 +67,25 @@ export function SalesTargetForm({ target, menuId, onSuccess, onCancel }: SalesTa
   const watchedTargetDate = watch('targetDate')
   const watchedTargetAmount = watch('targetAmount')
 
-  // Load branches
+  // Load branches and menus
   useEffect(() => {
-    const loadBranches = async () => {
+    const loadData = async () => {
       try {
         setLoading(true)
-        const branchesData = await BranchService.getAll()
+        const [branchesData, menusData] = await Promise.all([
+          BranchService.getAll(),
+          MenuService.getAllWithProductCounts(false) // Only active menus
+        ])
         setBranches(branchesData)
+        setMenus(menusData)
       } catch (error) {
-        console.error('Failed to load branches:', error)
+        console.error('Failed to load data:', error)
       } finally {
         setLoading(false)
       }
     }
 
-    loadBranches()
+    loadData()
   }, [])
 
   // Initialize form data when target prop changes
@@ -141,6 +147,54 @@ export function SalesTargetForm({ target, menuId, onSuccess, onCancel }: SalesTa
           {Object.values(errors).map((error, index) => (
             <div key={index}>{error?.message}</div>
           ))}
+        </div>
+      )}
+
+      {/* Menu Selection - Only show when not editing and no menuId provided */}
+      {!isEditing && !menuId && (
+        <div className="space-y-2">
+          <Label htmlFor="menuId">Menu *</Label>
+          <Select
+            value={watch('menuId')}
+            onValueChange={(value) => setValue('menuId', value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a menu" />
+            </SelectTrigger>
+            <SelectContent>
+              {menus.map((menu) => (
+                <SelectItem key={menu.id} value={menu.id}>
+                  <div>
+                    <p className="font-medium">{menu.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {menu.productCount} products
+                    </p>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.menuId && (
+            <p className="text-sm text-red-600">{errors.menuId.message}</p>
+          )}
+        </div>
+      )}
+
+      {/* Menu Display - Show when editing or menuId provided */}
+      {(isEditing || menuId) && (
+        <div className="space-y-2">
+          <Label>Menu</Label>
+          <div className="p-3 bg-muted rounded-md">
+            <p className="font-medium">
+              {isEditing && target ?
+                menus.find(m => m.id === target.menuId)?.name || 'Unknown Menu' :
+                menus.find(m => m.id === menuId)?.name || 'Loading...'
+              }
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Menu cannot be changed when editing a target
+            </p>
+          </div>
         </div>
       )}
 
