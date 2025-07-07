@@ -164,6 +164,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         <div className="space-y-2">
           <Label htmlFor="category">Category *</Label>
           <CategoryCombobox
+            key={`category-${ingredient?.id || 'new'}`}
             value={watchedCategory === '__NONE__' ? '' : watchedCategory}
             onValueChange={(value) => setValue('category', value || '__NONE__')}
             placeholder="Select or create category..."
