@@ -141,6 +141,14 @@ export interface ProductIngredient {
   updatedAt: string
 }
 
+export interface IngredientCategory {
+  id: string
+  name: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Type aliases for new entities (same as the main types for Dexie)
 export type NewFinancialItem = Omit<FinancialItem, 'createdAt' | 'updatedAt'>
 export type NewBonusScheme = Omit<BonusScheme, 'id' | 'createdAt' | 'updatedAt'>
@@ -154,6 +162,7 @@ export type NewProductionItem = Omit<ProductionItem, 'createdAt' | 'updatedAt'>
 export type NewProduct = Omit<Product, 'createdAt' | 'updatedAt'>
 export type NewIngredient = Omit<Ingredient, 'createdAt' | 'updatedAt'>
 export type NewProductIngredient = Omit<ProductIngredient, 'createdAt' | 'updatedAt'>
+export type NewIngredientCategory = Omit<IngredientCategory, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

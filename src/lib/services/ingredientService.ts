@@ -80,26 +80,7 @@ export class IngredientService {
       updatedAt: now,
     }
 
-    await db.transaction('rw', db.ingredients, async () => {
-      // Clean up any placeholder ingredients for this category
-      if (ingredientData.category) {
-        const placeholders = await db.ingredients
-          .filter(ing => 
-            ing.category === ingredientData.category && 
-            ing.name.startsWith('__PLACEHOLDER_') &&
-            !ing.isActive
-          )
-          .toArray()
-        
-        // Delete placeholder ingredients
-        for (const placeholder of placeholders) {
-          await db.ingredients.delete(placeholder.id)
-        }
-      }
-      
-      // Add the new ingredient
-      await db.ingredients.add(newIngredient)
-    })
+    await db.ingredients.add(newIngredient)
     
     return newIngredient
   }
@@ -110,28 +91,9 @@ export class IngredientService {
   static async update(id: string, updates: Partial<Omit<Ingredient, 'id' | 'createdAt'>>): Promise<Ingredient> {
     const now = new Date().toISOString()
 
-    await db.transaction('rw', db.ingredients, async () => {
-      // Clean up any placeholder ingredients for the new category if category is being updated
-      if (updates.category) {
-        const placeholders = await db.ingredients
-          .filter(ing => 
-            ing.category === updates.category && 
-            ing.name.startsWith('__PLACEHOLDER_') &&
-            !ing.isActive
-          )
-          .toArray()
-        
-        // Delete placeholder ingredients
-        for (const placeholder of placeholders) {
-          await db.ingredients.delete(placeholder.id)
-        }
-      }
-      
-      // Update the ingredient
-      await db.ingredients.update(id, {
-        ...updates,
-        updatedAt: now,
-      })
+    await db.ingredients.update(id, {
+      ...updates,
+      updatedAt: now,
     })
 
     const updated = await this.getById(id)
@@ -184,19 +146,12 @@ export class IngredientService {
    * Get all unique categories
    */
   static async getCategories(): Promise<string[]> {
-    const ingredients = await this.getAll(true) // Include inactive to get all categories
-    const categories = new Set(
-      ingredients
-        .map(ing => ing.category)
-        .filter((cat): cat is string => cat !== undefined && cat.trim() !== '')
-    )
-    return Array.from(categories).sort()
+    const categories = await db.ingredientCategories.orderBy('name').toArray()
+    return categories.map(cat => cat.name)
   }
 
   /**
-   * Create a new category by creating a placeholder ingredient
-   * Note: Categories are derived from ingredients, so we create a placeholder ingredient
-   * that will be automatically cleaned up when a real ingredient with this category is created
+   * Create a new category
    */
   static async createCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
     try {
@@ -211,24 +166,17 @@ export class IngredientService {
         return { success: false, error: 'Category already exists' }
       }
 
-      // Create a placeholder ingredient to establish the category
-      const placeholderId = `placeholder-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       const now = new Date().toISOString()
+      const categoryId = `cat-${trimmedName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
       
-      const placeholderIngredient: Ingredient = {
-        id: placeholderId,
-        name: `__PLACEHOLDER_${trimmedName}__`,
-        category: trimmedName,
-        baseUnitCost: 0,
-        baseUnitQuantity: 1,
-        unit: 'placeholder',
-        note: '',
-        isActive: false, // Make it inactive so it doesn't show in normal lists
+      await db.ingredientCategories.add({
+        id: categoryId,
+        name: trimmedName,
+        description: `Category for ${trimmedName}`,
         createdAt: now,
         updatedAt: now
-      }
+      })
 
-      await db.ingredients.add(placeholderIngredient)
       return { success: true }
     } catch (error) {
       console.error('Error creating category:', error)
@@ -237,32 +185,43 @@ export class IngredientService {
   }
 
   /**
-   * Delete a category by updating all ingredients that use it
+   * Delete a category by checking for ingredient usage and removing from categories table
    */
   static async deleteCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
     try {
-      // Check if category is in use
-      const ingredientsUsingCategory = await this.getByCategory(categoryName)
-      if (ingredientsUsingCategory.length > 0) {
-        return {
-          success: false,
-          error: `Cannot delete category "${categoryName}" because it is used by ${ingredientsUsingCategory.length} ingredient(s)`
+      // Check if any ingredients are using this category
+      const activeIngredients = await db.ingredients
+        .where('category')
+        .equals(categoryName)
+        .and(ing => ing.isActive)
+        .count()
+      
+      const inactiveIngredients = await db.ingredients
+        .where('category')
+        .equals(categoryName)
+        .and(ing => !ing.isActive)
+        .count()
+      
+      if (activeIngredients > 0) {
+        return { 
+          success: false, 
+          error: `Cannot delete category "${categoryName}" because it has ${activeIngredients} active ingredient(s)` 
         }
       }
-
-      // Check inactive ingredients too
-      const allIngredients = await this.getAll(true)
-      const inactiveIngredientsUsingCategory = allIngredients.filter(
-        ing => ing.category === categoryName && !ing.isActive
-      )
-
-      if (inactiveIngredientsUsingCategory.length > 0) {
-        return {
-          success: false,
-          error: `Cannot delete category "${categoryName}" because it is used by ${inactiveIngredientsUsingCategory.length} inactive ingredient(s)`
+      
+      if (inactiveIngredients > 0) {
+        return { 
+          success: false, 
+          error: `Cannot delete category "${categoryName}" because it has ${inactiveIngredients} inactive ingredient(s)` 
         }
       }
-
+      
+      // Delete the category from the categories table
+      const category = await db.ingredientCategories.where('name').equals(categoryName).first()
+      if (category) {
+        await db.ingredientCategories.delete(category.id)
+      }
+      
       return { success: true }
     } catch (error) {
       console.error('Error deleting category:', error)
@@ -274,8 +233,11 @@ export class IngredientService {
    * Get ingredients count by category
    */
   static async getCategoryUsageCount(categoryName: string): Promise<number> {
-    const allIngredients = await this.getAll(true) // Include inactive
-    return allIngredients.filter(ing => ing.category === categoryName).length
+    const ingredients = await db.ingredients
+      .where('category')
+      .equals(categoryName)
+      .count()
+    return ingredients
   }
 
   /**

@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -16,6 +16,7 @@ export class FinancialDashboardDB extends Dexie {
   products!: EntityTable<Product, 'id'>
   ingredients!: EntityTable<Ingredient, 'id'>
   productIngredients!: EntityTable<ProductIngredient, 'id'>
+  ingredientCategories!: EntityTable<IngredientCategory, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -34,7 +35,7 @@ export class FinancialDashboardDB extends Dexie {
       appSettings: '++id, &key, value, createdAt, updatedAt'
     }).upgrade(tx => {
       // Migrate existing VARIABLE_COGS items with realistic base values
-      return tx.table('financialItems').toCollection().modify((item: any) => {
+      return tx.table('financialItems').toCollection().modify((item: FinancialItem) => {
         if (item.category === 'variable_cogs') {
           // Set realistic base values based on current cost per cup
           switch (item.name) {
@@ -86,11 +87,11 @@ export class FinancialDashboardDB extends Dexie {
       appSettings: '++id, &key, value, createdAt, updatedAt'
     }).upgrade(tx => {
       // Initialize fixed asset fields for existing items
-      return tx.table('financialItems').toCollection().modify((item: any) => {
+      return tx.table('financialItems').toCollection().modify((item: FinancialItem) => {
         // Set default values for new fields
         item.isFixedAsset = false
-        item.estimatedUsefulLifeYears = null
-        item.sourceAssetId = null
+        item.estimatedUsefulLifeYears = undefined
+        item.sourceAssetId = undefined
 
         // Mark existing depreciation entries with sourceAssetId if we can identify them
         if (item.category === 'fixed_costs' && item.name.toLowerCase().includes('depreciation')) {
@@ -147,7 +148,7 @@ export class FinancialDashboardDB extends Dexie {
       products: 'id, name, description, note, isActive, createdAt, updatedAt',
       ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
       productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
-    }).upgrade(async tx => {
+    }).upgrade(async (tx) => {
       // Migration logic: Convert existing VARIABLE_COGS items to ingredients and create default product
       const now = new Date().toISOString()
 
@@ -161,7 +162,7 @@ export class FinancialDashboardDB extends Dexie {
         console.log('Migrating VARIABLE_COGS items to new product management system...')
 
         // Create ingredients from existing COGS items
-        const ingredients = cogsItems.map((item: any) => ({
+        const ingredients = cogsItems.map((item: FinancialItem) => ({
           id: `ingredient-${item.id}`,
           name: item.name,
           baseUnitCost: item.baseUnitCost || 0,
@@ -187,7 +188,7 @@ export class FinancialDashboardDB extends Dexie {
         }
 
         // Create product-ingredient relationships
-        const productIngredients = cogsItems.map((item: any) => ({
+        const productIngredients = cogsItems.map((item: FinancialItem) => ({
           id: `pi-${item.id}`,
           productId: defaultProduct.id,
           ingredientId: `ingredient-${item.id}`,
@@ -242,7 +243,7 @@ export class FinancialDashboardDB extends Dexie {
         console.log('Re-migrating VARIABLE_COGS items to new product management system...')
 
         // Create ingredients from existing COGS items
-        const ingredients = cogsItems.map((item: any) => ({
+        const ingredients = cogsItems.map((item: FinancialItem) => ({
           id: `ingredient-${item.id}`,
           name: item.name,
           baseUnitCost: item.baseUnitCost || 0,
@@ -268,7 +269,7 @@ export class FinancialDashboardDB extends Dexie {
         }
 
         // Create product-ingredient relationships
-        const productIngredients = cogsItems.map((item: any) => ({
+        const productIngredients = cogsItems.map((item: FinancialItem) => ({
           id: `pi-${item.id}`,
           productId: defaultProduct.id,
           ingredientId: `ingredient-${item.id}`,
@@ -301,7 +302,7 @@ export class FinancialDashboardDB extends Dexie {
       products: 'id, name, description, note, isActive, createdAt, updatedAt',
       ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
       productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt'
-    }).upgrade(async tx => {
+    }).upgrade(async () => {
       console.log('Fixing compound index syntax to prevent IDBKeyRange errors...')
       // No data migration needed, just fixing the index syntax
       // The compound index is now defined as [ingredientName+unit] instead of &[ingredientName+unit]
@@ -367,7 +368,7 @@ export class FinancialDashboardDB extends Dexie {
         console.log(`🔄 Re-migrating ${cogsItems.length} VARIABLE_COGS items to new product management system...`)
 
         // Create ingredients from existing COGS items
-        const ingredients = cogsItems.map((item: any) => ({
+        const ingredients = cogsItems.map((item: FinancialItem) => ({
           id: `ingredient-${item.id}`,
           name: item.name,
           baseUnitCost: item.baseUnitCost || 0,
@@ -393,7 +394,7 @@ export class FinancialDashboardDB extends Dexie {
         }
 
         // Create product-ingredient relationships
-        const productIngredients = cogsItems.map((item: any) => ({
+        const productIngredients = cogsItems.map((item: FinancialItem) => ({
           id: `pi-${item.id}`,
           productId: defaultProduct.id,
           ingredientId: `ingredient-${item.id}`,
@@ -454,6 +455,60 @@ export class FinancialDashboardDB extends Dexie {
 
       console.log('✅ Database reset and seeding complete')
     })
+
+    // Version 13 - Add ingredient categories table
+    this.version(13).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding ingredient categories table...')
+      
+      const now = new Date().toISOString()
+      
+      // Create default categories based on existing ingredient categories
+      const existingIngredients = await tx.table('ingredients').toArray()
+      const existingCategories = new Set(existingIngredients.map((ing: Ingredient) => ing.category).filter(Boolean))
+      
+      const defaultCategories = [
+        { id: 'cat-coffee-ingredients', name: 'Coffee Ingredients', description: 'Basic coffee making ingredients' },
+        { id: 'cat-dairy', name: 'Dairy', description: 'Milk and dairy products' },
+        { id: 'cat-sweeteners', name: 'Sweeteners', description: 'Sugar and sweetening agents' },
+        { id: 'cat-packaging', name: 'Packaging', description: 'Cups, lids, and packaging materials' },
+        { id: 'cat-other', name: 'Other', description: 'Miscellaneous ingredients' }
+      ]
+      
+      // Add existing categories that aren't in defaults
+      existingCategories.forEach(catName => {
+        if (!defaultCategories.some(def => def.name === catName)) {
+          defaultCategories.push({
+            id: `cat-${(catName || 'uncategorized').toLowerCase().replace(/\s+/g, '-')}`,
+            name: catName || 'Uncategorized',
+            description: `Category for ${catName}`
+          })
+        }
+      })
+      
+      const categoriesToAdd = defaultCategories.map(cat => ({
+        ...cat,
+        createdAt: now,
+        updatedAt: now
+      }))
+      
+      await tx.table('ingredientCategories').bulkAdd(categoriesToAdd)
+      
+      console.log(`✅ Added ${categoriesToAdd.length} ingredient categories`)
+    })
   }
 }
 
@@ -467,10 +522,10 @@ export async function initializeDatabase() {
     await db.open()
     console.log('Database initialized successfully')
   } catch (error) {
-    console.error('Failed to initialize database:', error)
+      console.error('Failed to initialize database:', error)
 
-    // Only check for actual IDBKeyRange DataError, not general errors
-    if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+      // Only check for actual IDBKeyRange DataError, not general errors
+      if (error instanceof Error && error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
       console.error('🚨 IDBKeyRange error detected - database corruption likely')
       console.error('💡 A database reset is required to fix this issue')
 
