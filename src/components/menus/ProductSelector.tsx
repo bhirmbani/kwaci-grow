@@ -244,6 +244,7 @@ export function ProductSelector({
             <MenuProductForm
               menuId={menuId}
               productId={selectedProduct.id}
+              product={selectedProduct}
               onSuccess={handleProductAdded}
               onCancel={handleFormCancel}
             />

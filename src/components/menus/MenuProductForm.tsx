@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -37,6 +37,7 @@ type MenuProductFormData = z.infer<typeof menuProductFormSchema>
 interface MenuProductFormProps {
   menuId?: string
   productId?: string
+  product?: Product & { cogsPerCup?: number } // Product with COGS data
   menuProduct?: MenuProduct & { product: Product }
   onSuccess: () => void
   onCancel: () => void
@@ -61,6 +62,7 @@ const PRODUCT_CATEGORIES = [
 export function MenuProductForm({ 
   menuId, 
   productId, 
+  product,
   menuProduct, 
   onSuccess, 
   onCancel 
@@ -77,7 +79,43 @@ export function MenuProductForm({
     },
   })
 
-  const { handleSubmit, formState: { isSubmitting, errors }, reset, watch } = form
+  const { handleSubmit, formState: { isSubmitting, errors }, reset, watch, setValue } = form
+
+  // State for custom pricing inputs
+  const [customPercentage, setCustomPercentage] = useState<string>('')
+  const [customAmount, setCustomAmount] = useState<string>('')
+
+  // Get COGS value
+  const cogsPerCup = product?.cogsPerCup || menuProduct?.product?.cogsPerCup || 0
+
+  // Pricing template functions
+  const applyPercentageMarkup = (percentage: number) => {
+    if (cogsPerCup > 0) {
+      const newPrice = Math.round(cogsPerCup * (1 + percentage / 100))
+      setValue('price', newPrice)
+    }
+  }
+
+  const applyAmountMarkup = (amount: number) => {
+    if (cogsPerCup > 0) {
+      const newPrice = Math.round(cogsPerCup + amount)
+      setValue('price', newPrice)
+    }
+  }
+
+  const applyCustomPercentage = () => {
+    const percentage = parseFloat(customPercentage)
+    if (!isNaN(percentage) && percentage >= 0) {
+      applyPercentageMarkup(percentage)
+    }
+  }
+
+  const applyCustomAmount = () => {
+    const amount = parseFloat(customAmount)
+    if (!isNaN(amount) && amount >= 0) {
+      applyAmountMarkup(amount)
+    }
+  }
 
   // Initialize form data when menuProduct prop changes
   useEffect(() => {
@@ -186,6 +224,118 @@ export function MenuProductForm({
             </FormItem>
           )}
         />
+
+        {/* COGS-Based Pricing Templates */}
+        {cogsPerCup > 0 && (
+          <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-sm">Quick Pricing Templates</h3>
+              <span className="text-xs text-muted-foreground">
+                COGS: {formatPrice(cogsPerCup)}
+              </span>
+            </div>
+            
+            {/* Percentage-based templates */}
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-muted-foreground">Percentage Markup</Label>
+              <div className="flex flex-wrap gap-2">
+                {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50].map((percentage) => (
+                  <Button
+                    key={percentage}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-8"
+                    onClick={() => applyPercentageMarkup(percentage)}
+                  >
+                    +{percentage}%
+                    <span className="ml-1 text-muted-foreground">
+                      ({formatPrice(Math.round(cogsPerCup * (1 + percentage / 100)))})
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Amount-based templates */}
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-muted-foreground">Fixed Amount Markup</Label>
+              <div className="flex flex-wrap gap-2">
+                {[2000, 3000, 5000, 7000, 10000, 15000, 20000].map((amount) => (
+                  <Button
+                    key={amount}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-8"
+                    onClick={() => applyAmountMarkup(amount)}
+                  >
+                    +{formatPrice(amount)}
+                    <span className="ml-1 text-muted-foreground">
+                      ({formatPrice(Math.round(cogsPerCup + amount))})
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom inputs */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-muted-foreground">Custom Percentage</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="%"
+                    value={customPercentage}
+                    onChange={(e) => setCustomPercentage(e.target.value)}
+                    className="text-xs h-8"
+                    min="0"
+                    step="0.1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-8 px-3"
+                    onClick={applyCustomPercentage}
+                    disabled={!customPercentage || isNaN(parseFloat(customPercentage))}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-muted-foreground">Custom Amount</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="IDR"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="text-xs h-8"
+                    min="0"
+                    step="100"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-8 px-3"
+                    onClick={applyCustomAmount}
+                    disabled={!customAmount || isNaN(parseFloat(customAmount))}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              💡 Click any template to automatically set the price based on your COGS
+            </div>
+          </div>
+        )}
 
         {/* Category */}
         <FormField
