@@ -214,6 +214,21 @@ export interface DailyProductSalesTarget {
   updatedAt: string
 }
 
+export interface SalesRecord {
+  id: string
+  menuId: string // Foreign key to Menu
+  productId: string // Foreign key to Product
+  branchId: string // Foreign key to Branch
+  saleDate: string // YYYY-MM-DD format
+  saleTime: string // HH:MM:SS format
+  quantity: number // Actual quantity sold
+  unitPrice: number // Price per unit in IDR
+  totalAmount: number // quantity * unitPrice
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Extended types for UI components
 export interface MenuWithProducts extends Menu {
   products: (MenuProduct & { product: Product })[]
@@ -232,6 +247,12 @@ export interface BranchWithMenus extends Branch {
 }
 
 export interface DailyProductSalesTargetWithDetails extends DailyProductSalesTarget {
+  menu: Menu
+  product: Product
+  branch: Branch
+}
+
+export interface SalesRecordWithDetails extends SalesRecord {
   menu: Menu
   product: Product
   branch: Branch
@@ -264,6 +285,7 @@ export type NewBranch = Omit<Branch, 'createdAt' | 'updatedAt'>
 export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
 export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
+export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

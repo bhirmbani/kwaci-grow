@@ -178,6 +178,41 @@ export class SalesTargetService {
   }
 
   /**
+   * Get all sales targets for a specific date
+   */
+  static async getAllTargetsForDate(date: string): Promise<SalesTargetWithDetails[]> {
+    try {
+      const targets = await db.dailySalesTargets
+        .where('targetDate')
+        .equals(date)
+        .toArray()
+
+      // Get related data for each target
+      const targetsWithDetails: SalesTargetWithDetails[] = []
+
+      for (const target of targets) {
+        const [menu, branch] = await Promise.all([
+          db.menus.get(target.menuId),
+          db.branches.get(target.branchId)
+        ])
+
+        if (menu && branch) {
+          targetsWithDetails.push({
+            ...target,
+            menu,
+            branch
+          })
+        }
+      }
+
+      return targetsWithDetails
+    } catch (error) {
+      console.error('SalesTargetService.getAllTargetsForDate() - Database error:', error)
+      throw error
+    }
+  }
+
+  /**
    * Delete a sales target
    */
   static async deleteTarget(id: string): Promise<void> {

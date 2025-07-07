@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -23,6 +23,7 @@ export class FinancialDashboardDB extends Dexie {
   menuBranches!: EntityTable<MenuBranch, 'id'>
   dailySalesTargets!: EntityTable<DailySalesTarget, 'id'>
   dailyProductSalesTargets!: EntityTable<DailyProductSalesTarget, 'id'>
+  salesRecords!: EntityTable<SalesRecord, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -584,6 +585,33 @@ export class FinancialDashboardDB extends Dexie {
     }).upgrade(async tx => {
       console.log('🔄 Adding daily product sales targets table...')
       console.log('✅ Daily product sales targets table created successfully')
+    })
+
+    // Version 11: Add sales records table for operations tracking
+    this.version(11).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientId, quantity, unit, expiryDate, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientId, currentStock, unit, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientId, transactionType, quantity, unit, reference, note, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, status, targetDate, note, createdAt, updatedAt',
+      productionItems: 'id, batchId, ingredientId, allocatedQuantity, consumedQuantity, unit, purpose, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding sales records table for operations tracking...')
+      console.log('✅ Sales records table created successfully')
     })
   }
 }

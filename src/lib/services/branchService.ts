@@ -22,15 +22,22 @@ export class BranchService {
       }
     } catch (error) {
       console.error('BranchService.getAll() - Database error:', error)
-      
+
       if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
         throw new Error(
           'Database corruption detected (IDBKeyRange error). A database reset is required to fix this issue.'
         )
       }
-      
+
       throw error
     }
+  }
+
+  /**
+   * Alias for getAll() - for consistency with other services
+   */
+  static async getAllBranches(includeInactive: boolean = false): Promise<Branch[]> {
+    return this.getAll(includeInactive)
   }
 
   /**

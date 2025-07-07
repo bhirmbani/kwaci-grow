@@ -52,6 +52,28 @@ export class MenuService {
   }
 
   /**
+   * Get all menus with their products and product details
+   */
+  static async getAllMenusWithProducts(includeInactive: boolean = false): Promise<MenuWithProducts[]> {
+    try {
+      const menus = await this.getAll(includeInactive)
+      const menusWithProducts: MenuWithProducts[] = []
+
+      for (const menu of menus) {
+        const menuWithProducts = await this.getWithProducts(menu.id)
+        if (menuWithProducts) {
+          menusWithProducts.push(menuWithProducts)
+        }
+      }
+
+      return menusWithProducts
+    } catch (error) {
+      console.error('MenuService.getAllMenusWithProducts() - Database error:', error)
+      throw error
+    }
+  }
+
+  /**
    * Get menu with all its products and product details
    */
   static async getWithProducts(id: string): Promise<MenuWithProducts | null> {

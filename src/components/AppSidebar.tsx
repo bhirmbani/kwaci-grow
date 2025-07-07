@@ -18,6 +18,7 @@ import {
   Bug,
   Menu,
   Target,
+  Activity,
 } from "lucide-react"
 
 import {
@@ -69,6 +70,12 @@ const items = [
     url: "/sales-targets",
     icon: Target,
     description: "Set daily sales targets for menu products",
+  },
+  {
+    title: "Operations",
+    url: "/operations",
+    icon: Activity,
+    description: "Sales recording, analytics, and operational tracking",
   },
   {
     title: "Ingredients",
