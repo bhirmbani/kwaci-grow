@@ -16,6 +16,7 @@ import {
 import { MenuCard } from './MenuCard'
 import { MenuList } from './MenuList'
 import { MenuForm } from './MenuForm'
+import { MenuDetailsView } from './MenuDetailsView'
 import { BranchAssignment } from './BranchAssignment'
 import { BranchList } from './BranchList'
 import { BranchForm } from './BranchForm'
@@ -24,7 +25,7 @@ import { SalesTargetForm } from './SalesTargetForm'
 import { MenuService } from '@/lib/services/menuService'
 import { BranchService } from '@/lib/services/branchService'
 import { SalesTargetService, type SalesTargetWithDetails } from '@/lib/services/salesTargetService'
-import type { MenuWithProductCount, Branch, BranchWithMenus } from '@/lib/db/schema'
+import type { MenuWithProductCount, MenuWithProducts, Branch, BranchWithMenus } from '@/lib/db/schema'
 
 type ViewMode = 'grid' | 'list'
 
@@ -39,12 +40,14 @@ export function MenuManagement() {
   // Sheet states
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
+  const [isMenuDetailsSheetOpen, setIsMenuDetailsSheetOpen] = useState(false)
   const [isBranchAssignmentSheetOpen, setIsBranchAssignmentSheetOpen] = useState(false)
   const [isCreateBranchSheetOpen, setIsCreateBranchSheetOpen] = useState(false)
   const [isEditBranchSheetOpen, setIsEditBranchSheetOpen] = useState(false)
   const [isCreateTargetSheetOpen, setIsCreateTargetSheetOpen] = useState(false)
   const [isEditTargetSheetOpen, setIsEditTargetSheetOpen] = useState(false)
   const [editingMenu, setEditingMenu] = useState<MenuWithProductCount | null>(null)
+  const [viewingMenu, setViewingMenu] = useState<MenuWithProducts | null>(null)
   const [assigningMenu, setAssigningMenu] = useState<MenuWithProductCount | null>(null)
   const [editingBranch, setEditingBranch] = useState<BranchWithMenus | null>(null)
   const [editingTarget, setEditingTarget] = useState<SalesTargetWithDetails | null>(null)
@@ -111,9 +114,16 @@ export function MenuManagement() {
     setIsBranchAssignmentSheetOpen(true)
   }
 
-  const handleViewDetails = (menu: MenuWithProductCount) => {
-    // TODO: Implement menu details view
-    console.log('View menu details:', menu.name)
+  const handleViewDetails = async (menu: MenuWithProductCount) => {
+    try {
+      const menuWithProducts = await MenuService.getWithProducts(menu.id)
+      if (menuWithProducts) {
+        setViewingMenu(menuWithProducts)
+        setIsMenuDetailsSheetOpen(true)
+      }
+    } catch (error) {
+      console.error('Failed to load menu details:', error)
+    }
   }
 
   const handleFormSuccess = async () => {
@@ -138,6 +148,22 @@ export function MenuManagement() {
   const handleBranchAssignmentCancel = () => {
     setIsBranchAssignmentSheetOpen(false)
     setAssigningMenu(null)
+  }
+
+  const handleMenuDetailsClose = () => {
+    setIsMenuDetailsSheetOpen(false)
+    setViewingMenu(null)
+  }
+
+  const handleMenuDetailsUpdated = async () => {
+    await loadMenus()
+    // Reload the viewing menu data
+    if (viewingMenu) {
+      const updatedMenu = await MenuService.getWithProducts(viewingMenu.id)
+      if (updatedMenu) {
+        setViewingMenu(updatedMenu)
+      }
+    }
   }
 
   // Branch handlers
@@ -564,6 +590,25 @@ export function MenuManagement() {
               target={editingTarget}
               onSuccess={handleTargetFormSuccess}
               onCancel={handleTargetFormCancel}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Menu Details Sheet */}
+      <Sheet open={isMenuDetailsSheetOpen} onOpenChange={setIsMenuDetailsSheetOpen}>
+        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw]">
+          <SheetHeader>
+            <SheetTitle>Menu Details</SheetTitle>
+            <SheetDescription>
+              Manage products and settings for this menu
+            </SheetDescription>
+          </SheetHeader>
+          {viewingMenu && (
+            <MenuDetailsView
+              menu={viewingMenu}
+              onClose={handleMenuDetailsClose}
+              onMenuUpdated={handleMenuDetailsUpdated}
             />
           )}
         </SheetContent>

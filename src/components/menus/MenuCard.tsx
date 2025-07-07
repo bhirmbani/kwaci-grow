@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Edit, Trash2, MapPin, Package, Users } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, MapPin, Coffee, Building2, BookOpen } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -111,18 +111,18 @@ export function MenuCard({ menu, onEdit, onDelete, onAssignBranches, onViewDetai
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-600">
-                <Package className="h-4 w-4" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-100 text-amber-600">
+                <Coffee className="h-4 w-4" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Products</p>
                 <p className="text-sm font-medium">{menu.productCount}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-600">
-                <Users className="h-4 w-4" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-600">
+                <Building2 className="h-4 w-4" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Branches</p>
@@ -142,23 +142,23 @@ export function MenuCard({ menu, onEdit, onDelete, onAssignBranches, onViewDetai
 
           {/* Action Buttons */}
           <div className="flex gap-2 mt-4 pt-3 border-t">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={(e) => { e.stopPropagation(); onViewDetails(menu); }}
+            >
+              <BookOpen className="h-3 w-3 mr-1" />
+              Manage
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               className="flex-1"
               onClick={(e) => { e.stopPropagation(); onEdit(menu); }}
             >
               <Edit className="h-3 w-3 mr-1" />
               Edit
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1"
-              onClick={(e) => { e.stopPropagation(); onAssignBranches(menu); }}
-            >
-              <MapPin className="h-3 w-3 mr-1" />
-              Branches
             </Button>
           </div>
         </CardContent>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Edit, Trash2, MapPin, ArrowUpDown } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, MapPin, ArrowUpDown, BookOpen } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -179,6 +179,11 @@ export function MenuList({ menus, onEdit, onDelete, onAssignBranches, onViewDeta
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onViewDetails(menu); }}>
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Manage Products
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(menu); }}>
                         <Edit className="mr-2 h-4 w-4" />
                         Edit Menu
@@ -188,7 +193,7 @@ export function MenuList({ menus, onEdit, onDelete, onAssignBranches, onViewDeta
                         Assign Branches
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={(e) => { e.stopPropagation(); setDeleteMenuId(menu.id); }}
                         className="text-red-600 focus:text-red-600"
                       >
