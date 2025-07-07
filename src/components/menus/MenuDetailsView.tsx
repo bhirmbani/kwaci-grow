@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Coffee, Plus, Edit, Trash2, Search, ArrowUpDown, Package } from 'lucide-react'
+import { Coffee, Plus, Edit, Trash2, Search, ArrowUpDown, Package, MoreHorizontal } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -137,6 +137,7 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
   }
 
   const handleEditProduct = (menuProduct: MenuProduct & { product: Product }) => {
+    console.log('Edit product clicked:', menuProduct)
     setEditingMenuProduct(menuProduct)
     setIsEditProductOpen(true)
   }
@@ -325,19 +326,31 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-8 w-8 p-0"
+                              >
                                 <span className="sr-only">Open menu</span>
-                                <Package className="h-4 w-4" />
+                                <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditProduct(menuProduct)}>
+                              <DropdownMenuItem 
+                                onClick={(e) => {
+                                  console.log('Edit menu item clicked', e)
+                                  handleEditProduct(menuProduct)
+                                }}
+                              >
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
-                                onClick={() => handleDeleteProduct(menuProduct)}
+                                onClick={(e) => {
+                                  console.log('Delete menu item clicked', e)
+                                  handleDeleteProduct(menuProduct)
+                                }}
                                 className="text-red-600 focus:text-red-600"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
@@ -376,7 +389,7 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
 
       {/* Edit Product Sheet */}
       <Sheet open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit Menu Product</SheetTitle>
             <SheetDescription>
