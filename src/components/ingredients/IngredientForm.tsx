@@ -5,10 +5,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useIngredients } from '@/hooks/useIngredients'
 import { CategoryCombobox } from './CategoryCombobox'
-import { UNIT_OPTIONS } from '@/utils/cogsCalculations'
+import { UnitCombobox } from './UnitCombobox'
 import { formatCurrency } from '@/utils/formatters'
 import type { Ingredient } from '@/lib/db/schema'
 
@@ -119,10 +118,6 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
   const watchedValues = watch(['baseUnitCost', 'baseUnitQuantity', 'category', 'unit', 'isActive'])
   const [watchedBaseUnitCost, watchedBaseUnitQuantity, watchedCategory, watchedUnit, watchedIsActive] = watchedValues
 
-  const handleUnitChange = (value: string) => {
-    setValue('unit', value)
-  }
-
   const handleIsActiveChange = (checked: boolean) => {
     setValue('isActive', checked)
   }
@@ -231,31 +226,19 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
 
         <div className="space-y-2">
           <Label htmlFor="unit">Unit *</Label>
-          <Select
+          <UnitCombobox
             key={`unit-${ingredient?.id || 'new'}`}
-            value={watchedUnit}
-            onValueChange={handleUnitChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select unit" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__NONE__">
-                <span className="text-muted-foreground">No unit selected</span>
-              </SelectItem>
-              {UNIT_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            value={watchedUnit === '__NONE__' ? '' : watchedUnit}
+            onValueChange={(value) => setValue('unit', value || '__NONE__')}
+            placeholder="Select or enter unit..."
+            disabled={isSubmitting}
+          />
           {/* Hidden input for validation */}
           <input
             type="hidden"
             {...register('unit', {
               required: 'Unit is required',
-              validate: (value) => value !== '__NONE__' || 'Unit is required'
+              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || 'Unit is required'
             })}
           />
           {errors.unit && (
