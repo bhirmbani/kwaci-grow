@@ -195,7 +195,7 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 h-full overflow-y-auto">
         {/* Menu Header */}
         <div className="border-b pb-4">
           <div className="flex items-start justify-between">
