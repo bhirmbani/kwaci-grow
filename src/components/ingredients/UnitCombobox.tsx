@@ -45,7 +45,7 @@ export function UnitCombobox({
         searchPlaceholder="Search units..."
         emptyText="No unit found."
         disabled={disabled}
-        allowCreate={true}
+        allowCreate={false}
       />
     </div>
   )
