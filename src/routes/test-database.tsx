@@ -21,6 +21,7 @@ function DatabaseTest() {
     { name: 'Product Service Test', status: 'pending', message: 'Waiting...' },
     { name: 'Ingredient Service Test', status: 'pending', message: 'Waiting...' },
     { name: 'Product-Ingredient Relationships', status: 'pending', message: 'Waiting...' },
+    { name: 'Ingredient Delete Test', status: 'pending', message: 'Waiting...' },
   ])
   const [isRunning, setIsRunning] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
@@ -68,10 +69,66 @@ function DatabaseTest() {
           ingredients: productIngredients.map(pi => pi.ingredientName)
         })
       }
-      updateTest(3, { 
-        status: 'success', 
+      updateTest(3, {
+        status: 'success',
         message: `Tested relationships for ${products.length} products`,
         data: relationships
+      })
+
+      // Test 5: Ingredient Delete Functionality
+      updateTest(4, { status: 'pending', message: 'Testing ingredient delete functionality...' })
+
+      // Create a test ingredient
+      const testIngredient = await IngredientService.create({
+        name: 'Test Delete Ingredient',
+        baseUnitCost: 1000,
+        baseUnitQuantity: 100,
+        unit: 'ml',
+        category: 'Test Category',
+        note: 'This is a test ingredient for delete functionality'
+      })
+
+      // Verify it exists
+      const beforeDelete = await IngredientService.getAll(true) // Include inactive
+      const foundBefore = beforeDelete.find(i => i.id === testIngredient.id)
+      if (!foundBefore) {
+        throw new Error('Test ingredient was not created properly')
+      }
+
+      // Delete the ingredient (soft delete)
+      await IngredientService.delete(testIngredient.id)
+
+      // Verify it's soft deleted (not in active list, but in inactive list)
+      const activeAfterDelete = await IngredientService.getAll(false) // Active only
+      const allAfterDelete = await IngredientService.getAll(true) // Include inactive
+
+      const foundInActive = activeAfterDelete.find(i => i.id === testIngredient.id)
+      const foundInAll = allAfterDelete.find(i => i.id === testIngredient.id)
+
+      if (foundInActive) {
+        throw new Error('Ingredient still appears in active list after delete')
+      }
+
+      if (!foundInAll) {
+        throw new Error('Ingredient was hard deleted instead of soft deleted')
+      }
+
+      if (foundInAll.isActive !== false) {
+        throw new Error('Ingredient isActive flag was not set to false')
+      }
+
+      updateTest(4, {
+        status: 'success',
+        message: 'Delete functionality working correctly (soft delete)',
+        data: {
+          testIngredientId: testIngredient.id,
+          beforeDelete: { found: !!foundBefore, isActive: foundBefore?.isActive },
+          afterDelete: {
+            foundInActive: !!foundInActive,
+            foundInAll: !!foundInAll,
+            isActive: foundInAll?.isActive
+          }
+        }
       })
 
     } catch (error) {
@@ -96,6 +153,7 @@ function DatabaseTest() {
         { name: 'Product Service Test', status: 'pending', message: 'Waiting...' },
         { name: 'Ingredient Service Test', status: 'pending', message: 'Waiting...' },
         { name: 'Product-Ingredient Relationships', status: 'pending', message: 'Waiting...' },
+        { name: 'Ingredient Delete Test', status: 'pending', message: 'Waiting...' },
       ])
       await loadDbInfo() // Refresh database info
       alert('Database reset successfully! You can now run tests.')
