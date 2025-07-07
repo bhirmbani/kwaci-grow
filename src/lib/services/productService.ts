@@ -288,9 +288,9 @@ export class ProductService {
   }
 
   /**
-   * Get all products with their ingredient counts
+   * Get all products with their ingredient counts and COGS calculations
    */
-  static async getAllWithIngredientCounts(includeInactive: boolean = false): Promise<Array<Product & { ingredientCount: number }>> {
+  static async getAllWithIngredientCounts(includeInactive: boolean = false): Promise<Array<Product & { ingredientCount: number, cogsPerCup: number }>> {
     try {
       const products = await this.getAll(includeInactive)
 
@@ -307,16 +307,34 @@ export class ProductService {
               .equals(product.id)
               .count()
 
+            // Calculate COGS per cup for this product
+            let cogsPerCup = 0
+            try {
+              const productWithIngredients = await this.getWithIngredients(product.id)
+              if (productWithIngredients && productWithIngredients.ingredients.length > 0) {
+                cogsPerCup = productWithIngredients.ingredients.reduce((total, pi) => {
+                  const ingredient = pi.ingredient
+                  const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
+                  return total + costPerCup
+                }, 0)
+              }
+            } catch (cogsError) {
+              console.error(`ProductService.getAllWithIngredientCounts() - Error calculating COGS for product ${product.id}:`, cogsError)
+              // COGS remains 0 if calculation fails
+            }
+
             return {
               ...product,
-              ingredientCount
+              ingredientCount,
+              cogsPerCup: Math.round(cogsPerCup) // Round to nearest IDR
             }
           } catch (error) {
-            console.error(`ProductService.getAllWithIngredientCounts() - Error counting ingredients for product ${product.id}:`, error)
-            // Return product with 0 count if there's an error
+            console.error(`ProductService.getAllWithIngredientCounts() - Error processing product ${product.id}:`, error)
+            // Return product with 0 count and COGS if there's an error
             return {
               ...product,
-              ingredientCount: 0
+              ingredientCount: 0,
+              cogsPerCup: 0
             }
           }
         })

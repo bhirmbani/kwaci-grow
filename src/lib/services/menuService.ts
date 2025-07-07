@@ -239,6 +239,17 @@ export class MenuService {
   }
 
   /**
+   * Update product in menu
+   */
+  static async updateProduct(menuProductId: string, updates: Partial<Omit<MenuProduct, 'id' | 'menuId' | 'productId' | 'createdAt'>>): Promise<void> {
+    const now = new Date().toISOString()
+    await db.menuProducts.update(menuProductId, {
+      ...updates,
+      updatedAt: now,
+    })
+  }
+
+  /**
    * Update product price in menu
    */
   static async updateProductPrice(menuProductId: string, price: number): Promise<void> {

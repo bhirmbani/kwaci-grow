@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { useProducts } from '@/hooks/useProducts'
+import { COGSBreakdown } from './COGSBreakdown'
 import type { Product } from '@/lib/db/schema'
 
 interface ProductFormProps {
@@ -143,13 +144,24 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
         </span>
       </div>
 
+      {/* COGS Display for Existing Products */}
+      {isEditing && product && (
+        <div className="pt-4 border-t">
+          <COGSBreakdown
+            productId={product.id}
+            productName={product.name}
+            showExplanation={false}
+          />
+        </div>
+      )}
+
       <div className="flex items-center gap-3 pt-4">
         <Button
           type="submit"
           disabled={isSubmitting || !formData.name.trim()}
         >
-          {isSubmitting 
-            ? (isEditing ? 'Updating...' : 'Creating...') 
+          {isSubmitting
+            ? (isEditing ? 'Updating...' : 'Creating...')
             : (isEditing ? 'Update Product' : 'Create Product')
           }
         </Button>

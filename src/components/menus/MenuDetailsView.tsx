@@ -151,7 +151,7 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
     if (!deletingMenuProduct) return
 
     try {
-      await MenuService.removeProduct(deletingMenuProduct.id)
+      await MenuService.removeProduct(menuData.id, deletingMenuProduct.productId)
       await loadMenuData()
       onMenuUpdated()
       setShowDeleteDialog(false)

@@ -11,6 +11,7 @@ import { Plus, Trash2, Edit, Package, Calculator } from 'lucide-react'
 import { useProduct, useProducts } from '@/hooks/useProducts'
 import { useIngredients } from '@/hooks/useIngredients'
 import { formatCurrency } from '@/utils/formatters'
+import { COGSBreakdown } from './COGSBreakdown'
 import type { Ingredient } from '@/lib/db/schema'
 
 interface ProductIngredientManagerProps {
@@ -365,6 +366,13 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
           )}
         </CardContent>
       </Card>
+
+      {/* COGS Breakdown */}
+      <COGSBreakdown
+        productId={productId}
+        productName={productName}
+        showExplanation={true}
+      />
     </div>
   )
 }

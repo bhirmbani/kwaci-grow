@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ProductService } from '@/lib/services/productService'
 import type { Product, ProductWithIngredients, NewProduct } from '@/lib/db/schema'
 
@@ -207,8 +207,11 @@ export function useProductCOGS(productId: string) {
     loadCOGS()
   }, [loadCOGS])
 
+  // Memoize the COGS data to prevent unnecessary re-renders
+  const memoizedCOGSData = useMemo(() => cogsData, [cogsData])
+
   return {
-    cogsData,
+    cogsData: memoizedCOGSData,
     loading,
     error,
     loadCOGS
@@ -216,7 +219,7 @@ export function useProductCOGS(productId: string) {
 }
 
 export function useProductsWithCounts(includeInactive: boolean = false) {
-  const [products, setProducts] = useState<Array<Product & { ingredientCount: number }>>([])
+  const [products, setProducts] = useState<Array<Product & { ingredientCount: number, cogsPerCup: number }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

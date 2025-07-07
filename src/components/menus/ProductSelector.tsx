@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet'
 import { ProductService } from '@/lib/services/productService'
 import { MenuProductForm } from './MenuProductForm'
+import { formatCurrency } from '@/utils/formatters'
 import type { Product } from '@/lib/db/schema'
 
 interface ProductSelectorProps {
@@ -28,17 +29,17 @@ export function ProductSelector({
   onProductAdded, 
   onCancel 
 }: ProductSelectorProps) {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Array<Product & { ingredientCount: number, cogsPerCup: number }>>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
 
-  // Load products
+  // Load products with COGS data
   const loadProducts = async () => {
     try {
       setLoading(true)
-      const allProducts = await ProductService.getAll(false) // Only active products
+      const allProducts = await ProductService.getAllWithIngredientCounts(false) // Only active products
       setProducts(allProducts)
     } catch (error) {
       console.error('Failed to load products:', error)
@@ -147,7 +148,19 @@ export function ProductSelector({
                           <Coffee className="h-3 w-3 mr-1" />
                           Product
                         </Badge>
+                        {product.ingredientCount > 0 && (
+                          <Badge variant="secondary" className="text-xs">
+                            {product.ingredientCount} ingredients
+                          </Badge>
+                        )}
                       </div>
+                      {product.cogsPerCup > 0 && (
+                        <div className="mt-2">
+                          <p className="text-sm text-muted-foreground">
+                            COGS: <span className="font-medium text-foreground">{formatCurrency(product.cogsPerCup)}</span> per cup
+                          </p>
+                        </div>
+                      )}
                     </div>
                     <Button 
                       size="sm" 

@@ -6,14 +6,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
-import { Edit, Trash2, Eye, Search, Package } from 'lucide-react'
+import { Edit, Trash2, Eye, Search, Package, Calculator } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import { ProductForm } from './ProductForm'
 import { ProductIngredientManager } from './ProductIngredientManager'
+import { formatCurrency } from '@/utils/formatters'
 import type { Product } from '@/lib/db/schema'
 
 interface ProductListProps {
-  products: Array<Product & { ingredientCount: number }>
+  products: Array<Product & { ingredientCount: number, cogsPerCup: number }>
   onProductsChange: () => void
 }
 
@@ -24,6 +25,13 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
   const [isViewSheetOpen, setIsViewSheetOpen] = useState(false)
   const { deleteProduct } = useProducts()
+
+  // Debug logging to check COGS data
+  console.log('ProductList - Received products:', products.length)
+  if (products.length > 0) {
+    console.log('ProductList - Sample product:', products[0])
+    console.log('ProductList - Sample COGS:', products[0].cogsPerCup)
+  }
 
   // Filter products based on search query
   const filteredProducts = products.filter(product =>
@@ -96,6 +104,7 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Ingredients</TableHead>
+                <TableHead className="text-right">COGS per Cup</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -112,6 +121,16 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
                     <Badge variant="secondary">
                       {product.ingredientCount} ingredients
                     </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <span className="font-medium">
+                        {product.cogsPerCup > 0 ? formatCurrency(product.cogsPerCup) : '-'}
+                      </span>
+                      {product.cogsPerCup > 0 && (
+                        <Calculator className="h-3 w-3 text-muted-foreground" />
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge variant={product.isActive ? 'default' : 'secondary'}>
