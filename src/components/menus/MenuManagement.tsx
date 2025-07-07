@@ -17,6 +17,7 @@ import { MenuCard } from './MenuCard'
 import { MenuList } from './MenuList'
 import { MenuForm } from './MenuForm'
 import { MenuDetailsView } from './MenuDetailsView'
+import { BranchMenuView } from './BranchMenuView'
 import { BranchAssignment } from './BranchAssignment'
 import { BranchList } from './BranchList'
 import { BranchForm } from './BranchForm'
@@ -41,6 +42,7 @@ export function MenuManagement() {
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
   const [isMenuDetailsSheetOpen, setIsMenuDetailsSheetOpen] = useState(false)
+  const [isBranchMenuSheetOpen, setIsBranchMenuSheetOpen] = useState(false)
   const [isBranchAssignmentSheetOpen, setIsBranchAssignmentSheetOpen] = useState(false)
   const [isCreateBranchSheetOpen, setIsCreateBranchSheetOpen] = useState(false)
   const [isEditBranchSheetOpen, setIsEditBranchSheetOpen] = useState(false)
@@ -48,6 +50,7 @@ export function MenuManagement() {
   const [isEditTargetSheetOpen, setIsEditTargetSheetOpen] = useState(false)
   const [editingMenu, setEditingMenu] = useState<MenuWithProductCount | null>(null)
   const [viewingMenu, setViewingMenu] = useState<MenuWithProducts | null>(null)
+  const [viewingBranch, setViewingBranch] = useState<BranchWithMenus | null>(null)
   const [assigningMenu, setAssigningMenu] = useState<MenuWithProductCount | null>(null)
   const [editingBranch, setEditingBranch] = useState<BranchWithMenus | null>(null)
   const [editingTarget, setEditingTarget] = useState<SalesTargetWithDetails | null>(null)
@@ -166,6 +169,22 @@ export function MenuManagement() {
     }
   }
 
+  const handleBranchMenuClose = () => {
+    setIsBranchMenuSheetOpen(false)
+    setViewingBranch(null)
+  }
+
+  const handleBranchMenuUpdated = async () => {
+    await loadBranches()
+    // Reload the viewing branch data
+    if (viewingBranch) {
+      const updatedBranch = await BranchService.getWithMenus(viewingBranch.id)
+      if (updatedBranch) {
+        setViewingBranch(updatedBranch)
+      }
+    }
+  }
+
   // Branch handlers
   const handleCreateBranch = () => {
     setEditingBranch(null)
@@ -186,9 +205,16 @@ export function MenuManagement() {
     }
   }
 
-  const handleViewBranchMenus = (branch: BranchWithMenus) => {
-    // TODO: Implement branch menu view
-    console.log('View menus for branch:', branch.name)
+  const handleViewBranchMenus = async (branch: BranchWithMenus) => {
+    try {
+      const branchWithMenus = await BranchService.getWithMenus(branch.id)
+      if (branchWithMenus) {
+        setViewingBranch(branchWithMenus)
+        setIsBranchMenuSheetOpen(true)
+      }
+    } catch (error) {
+      console.error('Failed to load branch menu details:', error)
+    }
   }
 
   const handleBranchFormSuccess = async () => {
@@ -609,6 +635,25 @@ export function MenuManagement() {
               menu={viewingMenu}
               onClose={handleMenuDetailsClose}
               onMenuUpdated={handleMenuDetailsUpdated}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Branch Menu View Sheet */}
+      <Sheet open={isBranchMenuSheetOpen} onOpenChange={setIsBranchMenuSheetOpen}>
+        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw]">
+          <SheetHeader>
+            <SheetTitle>Branch Menu Management</SheetTitle>
+            <SheetDescription>
+              Manage menu assignments for this branch
+            </SheetDescription>
+          </SheetHeader>
+          {viewingBranch && (
+            <BranchMenuView
+              branch={viewingBranch}
+              onClose={handleBranchMenuClose}
+              onBranchUpdated={handleBranchMenuUpdated}
             />
           )}
         </SheetContent>

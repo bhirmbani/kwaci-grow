@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Edit, Trash2, MapPin, Building } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, MapPin, Building2, BookOpen } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -134,7 +134,7 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
                 {/* Menu Count */}
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-600">
-                    <Building className="h-4 w-4" />
+                    <BookOpen className="h-4 w-4" />
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Assigned Menus</p>
@@ -168,7 +168,7 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
                     className="flex-1"
                     onClick={() => onViewMenus(branch)}
                   >
-                    <MapPin className="h-3 w-3 mr-1" />
+                    <BookOpen className="h-3 w-3 mr-1" />
                     Menus
                   </Button>
                 </div>
@@ -266,8 +266,8 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
                         Edit Branch
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onViewMenus(branch); }}>
-                        <MapPin className="mr-2 h-4 w-4" />
-                        View Menus
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Manage Menus
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem 

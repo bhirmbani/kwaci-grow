@@ -340,7 +340,7 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
 
       {/* Product Selector Sheet */}
       <Sheet open={isProductSelectorOpen} onOpenChange={setIsProductSelectorOpen}>
-        <SheetContent className="w-[800px] sm:w-[800px]">
+        <SheetContent className="w-[800px] sm:w-[800px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl">
           <SheetHeader>
             <SheetTitle>Add Product to Menu</SheetTitle>
             <SheetDescription>

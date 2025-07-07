@@ -220,7 +220,7 @@ export function ProductSelector({
 
       {/* Add Product Form Sheet */}
       <Sheet open={isAddFormOpen} onOpenChange={setIsAddFormOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl">
           <SheetHeader>
             <SheetTitle>Add Product to Menu</SheetTitle>
             <SheetDescription>
