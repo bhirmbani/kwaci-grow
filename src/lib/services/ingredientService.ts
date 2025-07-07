@@ -1,5 +1,5 @@
 import { db } from '../db'
-import type { Ingredient, NewIngredient, IngredientWithUsage, Product, ProductIngredient } from '../db/schema'
+import type { Ingredient, NewIngredient, IngredientWithUsage } from '../db/schema'
 import { v4 as uuidv4 } from 'uuid'
 
 export class IngredientService {
@@ -19,14 +19,15 @@ export class IngredientService {
       console.error('IngredientService.getAll() - Database error:', error)
 
       // Only check for actual IDBKeyRange errors, not general database errors
-      if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+      if (error instanceof Error && error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
         throw new Error(
           'Database corruption detected (IDBKeyRange error). A database reset is required to fix this issue.'
         )
       }
 
       // For other errors, provide a generic message but don't assume corruption
-      throw new Error(`Failed to retrieve ingredients: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      throw new Error(`Failed to retrieve ingredients: ${errorMessage}`)
     }
   }
 
@@ -79,7 +80,27 @@ export class IngredientService {
       updatedAt: now,
     }
 
-    await db.ingredients.add(newIngredient)
+    await db.transaction('rw', db.ingredients, async () => {
+      // Clean up any placeholder ingredients for this category
+      if (ingredientData.category) {
+        const placeholders = await db.ingredients
+          .filter(ing => 
+            ing.category === ingredientData.category && 
+            ing.name.startsWith('__PLACEHOLDER_') &&
+            !ing.isActive
+          )
+          .toArray()
+        
+        // Delete placeholder ingredients
+        for (const placeholder of placeholders) {
+          await db.ingredients.delete(placeholder.id)
+        }
+      }
+      
+      // Add the new ingredient
+      await db.ingredients.add(newIngredient)
+    })
+    
     return newIngredient
   }
 
@@ -89,9 +110,28 @@ export class IngredientService {
   static async update(id: string, updates: Partial<Omit<Ingredient, 'id' | 'createdAt'>>): Promise<Ingredient> {
     const now = new Date().toISOString()
 
-    await db.ingredients.update(id, {
-      ...updates,
-      updatedAt: now,
+    await db.transaction('rw', db.ingredients, async () => {
+      // Clean up any placeholder ingredients for the new category if category is being updated
+      if (updates.category) {
+        const placeholders = await db.ingredients
+          .filter(ing => 
+            ing.category === updates.category && 
+            ing.name.startsWith('__PLACEHOLDER_') &&
+            !ing.isActive
+          )
+          .toArray()
+        
+        // Delete placeholder ingredients
+        for (const placeholder of placeholders) {
+          await db.ingredients.delete(placeholder.id)
+        }
+      }
+      
+      // Update the ingredient
+      await db.ingredients.update(id, {
+        ...updates,
+        updatedAt: now,
+      })
     })
 
     const updated = await this.getById(id)
@@ -148,14 +188,15 @@ export class IngredientService {
     const categories = new Set(
       ingredients
         .map(ing => ing.category)
-        .filter(cat => cat && cat.trim() !== '')
+        .filter((cat): cat is string => cat !== undefined && cat.trim() !== '')
     )
     return Array.from(categories).sort()
   }
 
   /**
    * Create a new category by creating a placeholder ingredient
-   * Note: Categories are derived from ingredients, so we don't store them separately
+   * Note: Categories are derived from ingredients, so we create a placeholder ingredient
+   * that will be automatically cleaned up when a real ingredient with this category is created
    */
   static async createCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
     try {
@@ -170,8 +211,27 @@ export class IngredientService {
         return { success: false, error: 'Category already exists' }
       }
 
+      // Create a placeholder ingredient to establish the category
+      const placeholderId = `placeholder-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      const now = new Date().toISOString()
+      
+      const placeholderIngredient: Ingredient = {
+        id: placeholderId,
+        name: `__PLACEHOLDER_${trimmedName}__`,
+        category: trimmedName,
+        baseUnitCost: 0,
+        baseUnitQuantity: 1,
+        unit: 'placeholder',
+        note: '',
+        isActive: false, // Make it inactive so it doesn't show in normal lists
+        createdAt: now,
+        updatedAt: now
+      }
+
+      await db.ingredients.add(placeholderIngredient)
       return { success: true }
     } catch (error) {
+      console.error('Error creating category:', error)
       return { success: false, error: 'Failed to create category' }
     }
   }
@@ -205,6 +265,7 @@ export class IngredientService {
 
       return { success: true }
     } catch (error) {
+      console.error('Error deleting category:', error)
       return { success: false, error: 'Failed to delete category' }
     }
   }
@@ -269,11 +330,12 @@ export class IngredientService {
       console.error('IngredientService.getAllWithUsageCounts() - Database error:', error)
 
       // Re-throw the error from getAll() if it's already a helpful message
-      if (error.message.includes('Database corruption detected')) {
+      if (error instanceof Error && error.message.includes('Database corruption detected')) {
         throw error
       }
 
-      throw new Error(`Failed to retrieve ingredients with usage counts: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      throw new Error(`Failed to retrieve ingredients with usage counts: ${errorMessage}`)
     }
   }
 
