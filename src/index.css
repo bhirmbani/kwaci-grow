@@ -202,6 +202,49 @@
     border-color: hsl(var(--border)) !important;
   }
 
+  /* Alert Dialog specific styling for theme awareness */
+  [data-radix-alert-dialog-overlay] {
+    background-color: hsl(var(--background) / 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 50 !important;
+  }
+
+  .dark [data-radix-alert-dialog-overlay] {
+    background-color: hsl(var(--background) / 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  /* Alert Dialog content with solid, theme-aware background */
+  [data-radix-alert-dialog-content] {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    z-index: 50 !important;
+    opacity: 1 !important;
+    box-shadow: 0 25px 50px -12px hsl(var(--foreground) / 0.25) !important;
+  }
+
+  /* Ensure all alert dialog content maintains theme consistency */
+  [data-radix-alert-dialog-content] * {
+    opacity: 1 !important;
+  }
+
+  /* Alert dialog buttons with proper theme colors */
+  [data-radix-alert-dialog-content] button {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
+
+  /* Alert dialog title and description styling */
+  [data-radix-alert-dialog-content] [data-radix-alert-dialog-title] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  [data-radix-alert-dialog-content] [data-radix-alert-dialog-description] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+
   /* Enhanced Select dropdown styling for better readability */
   [data-radix-select-content] {
     background-color: hsl(var(--popover)) !important;

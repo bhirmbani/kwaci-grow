@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Trash2, Plus } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Combobox } from '@/components/ui/combobox'
 import { Button } from '@/components/ui/button'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
@@ -119,14 +119,14 @@ export function CategoryCombobox({
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
+            <AlertDialogContent className="max-h-[80vh] flex flex-col">
+              <AlertDialogHeader className="flex-shrink-0">
                 <AlertDialogTitle>Delete Category</AlertDialogTitle>
                 <AlertDialogDescription>
                   Select a category to delete. You can only delete categories that are not in use.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <div className="space-y-2">
+              <div className="flex-1 overflow-y-auto min-h-0 max-h-[50vh] space-y-2 pr-2">
                 {categories.map((category) => (
                   <div key={category} className="flex items-center justify-between p-2 border rounded">
                     <span>{category}</span>
@@ -141,7 +141,7 @@ export function CategoryCombobox({
                   </div>
                 ))}
               </div>
-              <AlertDialogFooter>
+              <AlertDialogFooter className="flex-shrink-0">
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
               </AlertDialogFooter>
             </AlertDialogContent>
