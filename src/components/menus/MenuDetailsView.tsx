@@ -43,19 +43,18 @@ import type { MenuWithProducts, MenuProduct, Product } from '@/lib/db/schema'
 
 interface MenuDetailsViewProps {
   menu: MenuWithProducts
-  onClose: () => void
   onMenuUpdated: () => void
 }
 
 type SortField = 'name' | 'price' | 'category' | 'displayOrder'
 type SortDirection = 'asc' | 'desc'
 
-export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsViewProps) {
+export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
   const [menuData, setMenuData] = useState<MenuWithProducts>(menu)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('displayOrder')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
   
   // Sheet states
   const [isProductSelectorOpen, setIsProductSelectorOpen] = useState(false)
@@ -276,7 +275,7 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
                       <SortableHeader field="category">Category</SortableHeader>
                       <SortableHeader field="price">Price</SortableHeader>
                       <TableHead>COGS</TableHead>
-                      <TableHead>Description</TableHead>
+                      <TableHead>COGS-Price Analysis</TableHead>
                       <TableHead className="w-[70px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -304,9 +303,24 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
                           {formatPrice(menuProduct.product.cogsPerCup || 0)}
                         </TableCell>
                         <TableCell>
-                          <p className="text-sm text-muted-foreground line-clamp-2 max-w-[200px]">
-                            {menuProduct.product.description || '-'}
-                          </p>
+                          {(() => {
+                            const cogs = menuProduct.product.cogsPerCup || 0
+                            const price = menuProduct.price
+                            const profit = price - cogs
+                            const profitPercent = price > 0 ? ((profit / price) * 100) : 0
+                            const isProfit = profit > 0
+                            
+                            return (
+                              <div className="text-sm space-y-1">
+                                <div className={`font-medium ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
+                                  {isProfit ? '+' : ''}{formatPrice(profit)}
+                                </div>
+                                <div className={`text-xs ${isProfit ? 'text-green-500' : 'text-red-500'}`}>
+                                  {isProfit ? '+' : ''}{profitPercent.toFixed(1)}%
+                                </div>
+                              </div>
+                            )
+                          })()} 
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
