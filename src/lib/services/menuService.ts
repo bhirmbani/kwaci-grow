@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
+import { ProductService } from './productService'
 import type { 
   Menu, 
   MenuProduct, 
@@ -64,13 +65,33 @@ export class MenuService {
         .equals(id)
         .toArray()
 
-      // Get product details for each menu product
+      // Get product details for each menu product with COGS data
       const productsWithDetails = await Promise.all(
         menuProducts.map(async (menuProduct) => {
           const product = await db.products.get(menuProduct.productId)
+          
+          // Calculate COGS per cup for this product
+          let cogsPerCup = 0
+          try {
+            const productWithIngredients = await ProductService.getWithIngredients(menuProduct.productId)
+            if (productWithIngredients && productWithIngredients.ingredients.length > 0) {
+              cogsPerCup = productWithIngredients.ingredients.reduce((total, pi) => {
+                const ingredient = pi.ingredient
+                const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
+                return total + costPerCup
+              }, 0)
+            }
+          } catch (cogsError) {
+            console.error(`MenuService.getWithProducts() - Error calculating COGS for product ${menuProduct.productId}:`, cogsError)
+            // COGS remains 0 if calculation fails
+          }
+          
           return {
             ...menuProduct,
-            product: product!
+            product: {
+              ...product!,
+              cogsPerCup: Math.round(cogsPerCup) // Round to nearest IDR
+            }
           }
         })
       )
@@ -96,7 +117,7 @@ export class MenuService {
       }
     } catch (error) {
       console.error('MenuService.getWithProducts() - Database error:', error)
-      throw error
+      throw error instanceof Error ? error : new Error('Unknown error occurred')
     }
   }
 
@@ -161,8 +182,13 @@ export class MenuService {
       updatedAt: now,
     }
 
-    await db.menus.add(newMenu)
-    return newMenu
+    try {
+      await db.menus.add(newMenu)
+      return newMenu
+    } catch (error) {
+      console.error('Error creating menu:', error)
+      throw error instanceof Error ? error : new Error('Unknown error occurred')
+    }
   }
 
   /**

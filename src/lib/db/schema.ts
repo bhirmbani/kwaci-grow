@@ -113,6 +113,7 @@ export interface Product {
   description: string
   note: string
   isActive: boolean // For soft deletion
+  cogsPerCup?: number // Cost of goods sold per cup (calculated)
   createdAt: string
   updatedAt: string
 }

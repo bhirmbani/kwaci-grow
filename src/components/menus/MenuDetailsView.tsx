@@ -275,6 +275,7 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
                       <SortableHeader field="name">Product</SortableHeader>
                       <SortableHeader field="category">Category</SortableHeader>
                       <SortableHeader field="price">Price</SortableHeader>
+                      <TableHead>COGS</TableHead>
                       <TableHead>Description</TableHead>
                       <TableHead className="w-[70px]">Actions</TableHead>
                     </TableRow>
@@ -298,6 +299,9 @@ export function MenuDetailsView({ menu, onClose, onMenuUpdated }: MenuDetailsVie
                         </TableCell>
                         <TableCell className="font-medium">
                           {formatPrice(menuProduct.price)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {formatPrice(menuProduct.product.cogsPerCup || 0)}
                         </TableCell>
                         <TableCell>
                           <p className="text-sm text-muted-foreground line-clamp-2 max-w-[200px]">
