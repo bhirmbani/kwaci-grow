@@ -13,6 +13,7 @@ import { Route as WarehouseRouteImport } from './routes/warehouse'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
 import { Route as MenusRouteImport } from './routes/menus'
@@ -44,6 +45,11 @@ const TestDatabaseRoute = TestDatabaseRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesTargetsRoute = SalesTargetsRouteImport.update({
+  id: '/sales-targets',
+  path: '/sales-targets',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsRoute = ProductsRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/menus'
     | '/production'
     | '/products'
+    | '/sales-targets'
     | '/settings'
     | '/test-database'
     | '/test-menus'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/menus'
     | '/production'
     | '/products'
+    | '/sales-targets'
     | '/settings'
     | '/test-database'
     | '/test-menus'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/menus'
     | '/production'
     | '/products'
+    | '/sales-targets'
     | '/settings'
     | '/test-database'
     | '/test-menus'
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   MenusRoute: typeof MenusRoute
   ProductionRoute: typeof ProductionRoute
   ProductsRoute: typeof ProductsRoute
+  SalesTargetsRoute: typeof SalesTargetsRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
   TestMenusRoute: typeof TestMenusRoute
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales-targets': {
+      id: '/sales-targets'
+      path: '/sales-targets'
+      fullPath: '/sales-targets'
+      preLoaderRoute: typeof SalesTargetsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products': {
@@ -364,6 +384,7 @@ const rootRouteChildren: RootRouteChildren = {
   MenusRoute: MenusRoute,
   ProductionRoute: ProductionRoute,
   ProductsRoute: ProductsRoute,
+  SalesTargetsRoute: SalesTargetsRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
   TestMenusRoute: TestMenusRoute,

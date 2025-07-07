@@ -202,6 +202,18 @@ export interface DailySalesTarget {
   updatedAt: string
 }
 
+export interface DailyProductSalesTarget {
+  id: string
+  menuId: string // Foreign key to Menu
+  productId: string // Foreign key to Product
+  branchId: string // Foreign key to Branch
+  targetDate: string // YYYY-MM-DD format
+  targetQuantity: number // Target quantity to sell
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Extended types for UI components
 export interface MenuWithProducts extends Menu {
   products: (MenuProduct & { product: Product })[]
@@ -217,6 +229,19 @@ export interface MenuWithProductCount extends Menu {
 export interface BranchWithMenus extends Branch {
   menus: Menu[]
   menuCount: number
+}
+
+export interface DailyProductSalesTargetWithDetails extends DailyProductSalesTarget {
+  menu: Menu
+  product: Product
+  branch: Branch
+}
+
+export interface MenuWithProductTargets extends Menu {
+  products: (MenuProduct & {
+    product: Product
+    target?: DailyProductSalesTarget
+  })[]
 }
 
 // Type aliases for new entities (same as the main types for Dexie)
@@ -238,6 +263,7 @@ export type NewMenuProduct = Omit<MenuProduct, 'createdAt' | 'updatedAt'>
 export type NewBranch = Omit<Branch, 'createdAt' | 'updatedAt'>
 export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
 export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
+export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

@@ -17,6 +17,7 @@ import {
   Database,
   Bug,
   Menu,
+  Target,
 } from "lucide-react"
 
 import {
@@ -62,6 +63,12 @@ const items = [
     url: "/menus",
     icon: Menu,
     description: "Create and manage coffee shop menus",
+  },
+  {
+    title: "Sales Targets",
+    url: "/sales-targets",
+    icon: Target,
+    description: "Set daily sales targets for menu products",
   },
   {
     title: "Ingredients",
