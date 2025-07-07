@@ -10,10 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarehouseRouteImport } from './routes/warehouse'
+import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
+import { Route as MenusRouteImport } from './routes/menus'
 import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as CogsRouteImport } from './routes/cogs'
@@ -27,6 +29,11 @@ import { Route as ReportsCostsRouteImport } from './routes/reports/costs'
 const WarehouseRoute = WarehouseRouteImport.update({
   id: '/warehouse',
   path: '/warehouse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestMenusRoute = TestMenusRouteImport.update({
+  id: '/test-menus',
+  path: '/test-menus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestDatabaseRoute = TestDatabaseRouteImport.update({
@@ -47,6 +54,11 @@ const ProductsRoute = ProductsRouteImport.update({
 const ProductionRoute = ProductionRouteImport.update({
   id: '/production',
   path: '/production',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MenusRoute = MenusRouteImport.update({
+  id: '/menus',
+  path: '/menus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IngredientsRoute = IngredientsRouteImport.update({
@@ -101,10 +113,12 @@ export interface FileRoutesByFullPath {
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-menus': typeof TestMenusRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -117,10 +131,12 @@ export interface FileRoutesByTo {
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-menus': typeof TestMenusRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -134,10 +150,12 @@ export interface FileRoutesById {
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/menus': typeof MenusRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-menus': typeof TestMenusRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -152,10 +170,12 @@ export interface FileRouteTypes {
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
+    | '/menus'
     | '/production'
     | '/products'
     | '/settings'
     | '/test-database'
+    | '/test-menus'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -168,10 +188,12 @@ export interface FileRouteTypes {
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
+    | '/menus'
     | '/production'
     | '/products'
     | '/settings'
     | '/test-database'
+    | '/test-menus'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -184,10 +206,12 @@ export interface FileRouteTypes {
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
+    | '/menus'
     | '/production'
     | '/products'
     | '/settings'
     | '/test-database'
+    | '/test-menus'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -201,10 +225,12 @@ export interface RootRouteChildren {
   CogsRoute: typeof CogsRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
   IngredientsRoute: typeof IngredientsRoute
+  MenusRoute: typeof MenusRoute
   ProductionRoute: typeof ProductionRoute
   ProductsRoute: typeof ProductsRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
+  TestMenusRoute: typeof TestMenusRoute
   WarehouseRoute: typeof WarehouseRoute
   ReportsCostsRoute: typeof ReportsCostsRoute
   ReportsFinancialRoute: typeof ReportsFinancialRoute
@@ -219,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/warehouse'
       fullPath: '/warehouse'
       preLoaderRoute: typeof WarehouseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-menus': {
+      id: '/test-menus'
+      path: '/test-menus'
+      fullPath: '/test-menus'
+      preLoaderRoute: typeof TestMenusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-database': {
@@ -247,6 +280,13 @@ declare module '@tanstack/react-router' {
       path: '/production'
       fullPath: '/production'
       preLoaderRoute: typeof ProductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/menus': {
+      id: '/menus'
+      path: '/menus'
+      fullPath: '/menus'
+      preLoaderRoute: typeof MenusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ingredients': {
@@ -321,10 +361,12 @@ const rootRouteChildren: RootRouteChildren = {
   CogsRoute: CogsRoute,
   FixedAssetsRoute: FixedAssetsRoute,
   IngredientsRoute: IngredientsRoute,
+  MenusRoute: MenusRoute,
   ProductionRoute: ProductionRoute,
   ProductsRoute: ProductsRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
+  TestMenusRoute: TestMenusRoute,
   WarehouseRoute: WarehouseRoute,
   ReportsCostsRoute: ReportsCostsRoute,
   ReportsFinancialRoute: ReportsFinancialRoute,

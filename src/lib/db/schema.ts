@@ -149,6 +149,75 @@ export interface IngredientCategory {
   updatedAt: string
 }
 
+// Menu Management Interfaces
+export interface Menu {
+  id: string
+  name: string
+  description: string
+  status: 'active' | 'inactive'
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MenuProduct {
+  id: string
+  menuId: string // Foreign key to Menu
+  productId: string // Foreign key to Product
+  price: number // Price for this product in this menu (in IDR)
+  category: string // e.g., 'Coffee', 'Tea', 'Pastry'
+  displayOrder: number // For sorting products in menu
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Branch {
+  id: string
+  name: string
+  location: string
+  note: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MenuBranch {
+  id: string
+  menuId: string // Foreign key to Menu
+  branchId: string // Foreign key to Branch
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DailySalesTarget {
+  id: string
+  menuId: string // Foreign key to Menu
+  branchId: string // Foreign key to Branch
+  targetDate: string // YYYY-MM-DD format
+  targetAmount: number // Target sales amount in IDR
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+// Extended types for UI components
+export interface MenuWithProducts extends Menu {
+  products: (MenuProduct & { product: Product })[]
+  productCount: number
+  branches: Branch[]
+}
+
+export interface MenuWithProductCount extends Menu {
+  productCount: number
+  branchCount: number
+}
+
+export interface BranchWithMenus extends Branch {
+  menus: Menu[]
+  menuCount: number
+}
+
 // Type aliases for new entities (same as the main types for Dexie)
 export type NewFinancialItem = Omit<FinancialItem, 'createdAt' | 'updatedAt'>
 export type NewBonusScheme = Omit<BonusScheme, 'id' | 'createdAt' | 'updatedAt'>
@@ -163,6 +232,11 @@ export type NewProduct = Omit<Product, 'createdAt' | 'updatedAt'>
 export type NewIngredient = Omit<Ingredient, 'createdAt' | 'updatedAt'>
 export type NewProductIngredient = Omit<ProductIngredient, 'createdAt' | 'updatedAt'>
 export type NewIngredientCategory = Omit<IngredientCategory, 'createdAt' | 'updatedAt'>
+export type NewMenu = Omit<Menu, 'createdAt' | 'updatedAt'>
+export type NewMenuProduct = Omit<MenuProduct, 'createdAt' | 'updatedAt'>
+export type NewBranch = Omit<Branch, 'createdAt' | 'updatedAt'>
+export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
+export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

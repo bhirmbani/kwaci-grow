@@ -16,6 +16,7 @@ import {
   Beaker,
   Database,
   Bug,
+  Menu,
 } from "lucide-react"
 
 import {
@@ -55,6 +56,12 @@ const items = [
     url: "/products",
     icon: Package,
     description: "Manage products and their compositions",
+  },
+  {
+    title: "Menus",
+    url: "/menus",
+    icon: Menu,
+    description: "Create and manage coffee shop menus",
   },
   {
     title: "Ingredients",

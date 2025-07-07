@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -17,6 +17,11 @@ export class FinancialDashboardDB extends Dexie {
   ingredients!: EntityTable<Ingredient, 'id'>
   productIngredients!: EntityTable<ProductIngredient, 'id'>
   ingredientCategories!: EntityTable<IngredientCategory, 'id'>
+  menus!: EntityTable<Menu, 'id'>
+  menuProducts!: EntityTable<MenuProduct, 'id'>
+  branches!: EntityTable<Branch, 'id'>
+  menuBranches!: EntityTable<MenuBranch, 'id'>
+  dailySalesTargets!: EntityTable<DailySalesTarget, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -508,6 +513,50 @@ export class FinancialDashboardDB extends Dexie {
       await tx.table('ingredientCategories').bulkAdd(categoriesToAdd)
       
       console.log(`✅ Added ${categoriesToAdd.length} ingredient categories`)
+    })
+
+    // Version 14 - Add menu management tables
+    this.version(14).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding menu management tables...')
+
+      const now = new Date().toISOString()
+
+      // Create default branches
+      const defaultBranches = [
+        {
+          id: 'branch-main',
+          name: 'Main Location',
+          location: 'Primary coffee cart location',
+          note: 'Default branch for menu assignments',
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }
+      ]
+
+      await tx.table('branches').bulkAdd(defaultBranches)
+
+      console.log(`✅ Added ${defaultBranches.length} default branches`)
+      console.log('✅ Menu management tables created successfully')
     })
   }
 }
