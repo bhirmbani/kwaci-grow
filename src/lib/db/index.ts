@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -24,6 +24,16 @@ export class FinancialDashboardDB extends Dexie {
   dailySalesTargets!: EntityTable<DailySalesTarget, 'id'>
   dailyProductSalesTargets!: EntityTable<DailyProductSalesTarget, 'id'>
   salesRecords!: EntityTable<SalesRecord, 'id'>
+
+  // Planning tables
+  operationalPlans!: EntityTable<OperationalPlan, 'id'>
+  planGoals!: EntityTable<PlanGoal, 'id'>
+  planTasks!: EntityTable<PlanTask, 'id'>
+  planMetrics!: EntityTable<PlanMetric, 'id'>
+  planTemplates!: EntityTable<PlanTemplate, 'id'>
+  planGoalTemplates!: EntityTable<PlanGoalTemplate, 'id'>
+  planTaskTemplates!: EntityTable<PlanTaskTemplate, 'id'>
+  planMetricTemplates!: EntityTable<PlanMetricTemplate, 'id'>
   productTargetDefaults!: EntityTable<ProductTargetDefault, 'id'>
 
   constructor() {
@@ -670,6 +680,80 @@ export class FinancialDashboardDB extends Dexie {
     }).upgrade(async tx => {
       console.log('🔄 Adding production output tracking and journey progress...')
       console.log('✅ Production output tracking and journey progress added successfully')
+    })
+
+    // Version 18 - Add planning tables for operational planning features
+    this.version(18).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, productName, outputQuantity, outputUnit, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, cogsPerCup, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      operationalPlans: 'id, name, type, status, startDate, endDate, branchId, templateId, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, completed, dueDate, note, createdAt, updatedAt',
+      planTasks: 'id, planId, title, category, priority, status, assignedTo, dueDate, completedAt, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastUpdated, note, createdAt, updatedAt',
+      planTemplates: 'id, name, description, type, category, isDefault, estimatedDuration, difficulty, tags, note, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding planning tables for operational planning features...')
+      console.log('✅ Planning tables created successfully')
+    })
+
+    // Version 19 - Fix planning template schema to include missing fields
+    this.version(19).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, productName, outputQuantity, outputUnit, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, cogsPerCup, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      operationalPlans: 'id, name, type, status, startDate, endDate, branchId, templateId, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, completed, dueDate, note, createdAt, updatedAt',
+      planTasks: 'id, planId, title, category, priority, status, assignedTo, dueDate, completedAt, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastUpdated, note, createdAt, updatedAt',
+      planTemplates: 'id, name, description, type, category, isDefault, estimatedDuration, difficulty, tags, note, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note'
+    }).upgrade(async tx => {
+      console.log('🔄 Fixing planning template schema to include missing fields...')
+      console.log('✅ Planning template schema fixed successfully')
     })
   }
 }

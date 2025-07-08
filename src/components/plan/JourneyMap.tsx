@@ -3,11 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { 
-  CheckCircle, 
-  Circle, 
-  Lock, 
-  Play, 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  CheckCircle,
+  Circle,
+  Lock,
+  Play,
   RotateCcw,
   Package,
   Coffee,
@@ -17,11 +18,14 @@ import {
   Warehouse,
   Factory,
   Settings,
-  TrendingUp
+  TrendingUp,
+  Map,
+  List
 } from 'lucide-react'
 import { useJourney } from '@/hooks/useJourney'
 import { JOURNEY_STEP_INFO, JOURNEY_STEPS, type JourneyStepId } from '@/lib/services/journeyService'
 import { JourneyStepModal } from './JourneyStepModal'
+import { GuidedStepInterface } from './GuidedStepInterface'
 
 // Icon mapping for each journey step
 const STEP_ICONS: Record<JourneyStepId, React.ComponentType<{ className?: string }>> = {
@@ -218,73 +222,112 @@ export function JourneyMap() {
         </CardContent>
       </Card>
 
-      {/* Journey Steps Map */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Journey Steps</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Click on any unlocked step to view instructions and get started
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {orderedSteps.map((step, index) => {
+      {/* Journey Steps Interface */}
+      <Tabs defaultValue="map" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="map" className="flex items-center gap-2">
+            <Map className="h-4 w-4" />
+            Journey Map
+          </TabsTrigger>
+          <TabsTrigger value="guided" className="flex items-center gap-2">
+            <List className="h-4 w-4" />
+            Guided Steps
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="map">
+          <Card>
+            <CardHeader>
+              <CardTitle>Journey Steps Map</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Click on any unlocked step to view instructions and get started
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {orderedSteps.map((step, index) => {
+                  const status = getStepStatus(step.id)
+                  const isClickable = status !== 'locked'
+
+                  return (
+                    <div
+                      key={step.id}
+                      className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
+                        isClickable
+                          ? 'cursor-pointer hover:shadow-md'
+                          : 'cursor-not-allowed opacity-60'
+                      } ${getStepColor(step.id)}`}
+                      onClick={() => isClickable && setSelectedStep(step.id)}
+                    >
+                      {/* Step Number */}
+                      <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-background border-2 border-current flex items-center justify-center text-xs font-bold">
+                        {step.order}
+                      </div>
+
+                      {/* Step Content */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0">
+                            {getStepIcon(step.id)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium truncate">{step.title}</h3>
+                          </div>
+                        </div>
+
+                        <p className="text-sm opacity-90 line-clamp-2">
+                          {step.description}
+                        </p>
+
+                        {/* Status Badge */}
+                        <div className="flex items-center justify-between">
+                          <Badge
+                            variant={status === 'completed' ? 'default' : 'secondary'}
+                            className={`text-xs ${
+                              status === 'completed'
+                                ? 'bg-white/20 text-current'
+                                : status === 'unlocked'
+                                ? 'bg-white/20 text-current'
+                                : 'bg-gray-500 text-white'
+                            }`}
+                          >
+                            {status === 'completed' ? 'Completed' :
+                             status === 'unlocked' ? 'Ready' : 'Locked'}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="guided">
+          <div className="space-y-4">
+            {orderedSteps.map((step) => {
               const status = getStepStatus(step.id)
-              const isClickable = status !== 'locked'
-              
+
+              // Only show current step and next few steps to avoid overwhelming
+              if (status === 'locked' && step.order > (nextStep?.order || 1) + 2) {
+                return null
+              }
+
               return (
-                <div
+                <GuidedStepInterface
                   key={step.id}
-                  className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
-                    isClickable 
-                      ? 'cursor-pointer hover:shadow-md' 
-                      : 'cursor-not-allowed opacity-60'
-                  } ${getStepColor(step.id)}`}
-                  onClick={() => isClickable && setSelectedStep(step.id)}
-                >
-                  {/* Step Number */}
-                  <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-background border-2 border-current flex items-center justify-center text-xs font-bold">
-                    {step.order}
-                  </div>
-
-                  {/* Step Content */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">
-                        {getStepIcon(step.id)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate">{step.title}</h3>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm opacity-90 line-clamp-2">
-                      {step.description}
-                    </p>
-
-                    {/* Status Badge */}
-                    <div className="flex items-center justify-between">
-                      <Badge 
-                        variant={status === 'completed' ? 'default' : 'secondary'}
-                        className={`text-xs ${
-                          status === 'completed' 
-                            ? 'bg-white/20 text-current' 
-                            : status === 'unlocked'
-                            ? 'bg-white/20 text-current'
-                            : 'bg-gray-500 text-white'
-                        }`}
-                      >
-                        {status === 'completed' ? 'Completed' : 
-                         status === 'unlocked' ? 'Ready' : 'Locked'}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
+                  stepId={step.id}
+                  onStepComplete={() => {
+                    // Refresh the journey state
+                    handleAutoCheck()
+                  }}
+                />
               )
             })}
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Journey Step Modal */}
       {selectedStep && (

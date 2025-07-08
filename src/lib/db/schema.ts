@@ -309,6 +309,9 @@ export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
 export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
+
+// Re-export planning schema types
+export * from './planningSchema'
 export type NewProductTargetDefault = Omit<ProductTargetDefault, 'createdAt' | 'updatedAt'>
 export type NewJourneyProgress = Omit<JourneyProgress, 'createdAt' | 'updatedAt'>
 

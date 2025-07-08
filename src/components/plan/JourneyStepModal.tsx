@@ -88,7 +88,7 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl backdrop-blur-3xl">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="space-y-1">
