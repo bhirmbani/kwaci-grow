@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Package, Calendar, List, TrendingUp, Factory, ShoppingCart } from 'lucide-react'
+import { Package, Calendar, List, TrendingUp, Factory, ShoppingCart, Plus } from 'lucide-react'
 import { useWarehouse, useWarehouseStats } from '@/hooks/useWarehouse'
 import { formatCurrency } from '@/utils/formatters'
 import { WarehouseBatchList } from './WarehouseBatchList'
@@ -10,13 +10,22 @@ import { WarehouseCalendar } from './WarehouseCalendar'
 import { WarehouseStats } from './WarehouseStats'
 import { StockLevels } from './StockLevels'
 import { ProductionAllocation } from '../production/ProductionAllocation'
+import { AddToWarehouseSheet } from './AddToWarehouseSheet'
 import { useStockLevels } from '@/hooks/useStock'
 
 export function WarehouseManagement() {
   const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'production'>('overview')
-  const { batches, loading, error } = useWarehouse()
-  const { stats, loading: statsLoading } = useWarehouseStats()
+  const { batches, loading, error, loadBatches } = useWarehouse()
+  const { stats, loading: statsLoading, loadStats } = useWarehouseStats()
   const { loadStockLevels } = useStockLevels()
+
+  // Handle successful warehouse addition
+  const handleWarehouseSuccess = () => {
+    // Refresh all warehouse data
+    loadBatches?.()
+    loadStats?.()
+    loadStockLevels()
+  }
 
   if (loading || statsLoading) {
     return (
@@ -185,6 +194,11 @@ export function WarehouseManagement() {
           <WarehouseCalendar batches={batches} />
         </TabsContent>
       </Tabs>
+
+      {/* Floating Action Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <AddToWarehouseSheet onSuccess={handleWarehouseSuccess} />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Edit, Trash2, MapPin, Building2, BookOpen } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, MapPin, BookOpen, Building2 } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -58,7 +58,7 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Building className="h-12 w-12 text-muted-foreground mb-4" />
+          <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">No branches found</h3>
           <p className="text-muted-foreground mb-4 text-center">
             Create your first branch to start assigning menus to locations
