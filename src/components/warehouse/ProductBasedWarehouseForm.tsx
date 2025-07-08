@@ -9,8 +9,9 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Package, Calculator, Plus } from 'lucide-react'
+import { Package, Calculator, Plus, Zap } from 'lucide-react'
 import { ProductService } from '@/lib/services/productService'
 import { WarehouseService } from '@/lib/services/warehouseService'
 import { useStockLevels } from '@/hooks/useStock'
@@ -21,6 +22,7 @@ import type { Product, ProductWithIngredients } from '@/lib/db/schema'
 const warehouseFormSchema = z.object({
   productId: z.string().min(1, 'Please select a product'),
   numberOfCups: z.number().min(1, 'Number of cups must be at least 1'),
+  smartStockCalculation: z.boolean().default(false),
   batchNote: z.string().optional()
 })
 
@@ -35,7 +37,9 @@ interface CalculatedIngredient {
   ingredientName: string
   unit: string
   usagePerCup: number
-  calculatedQuantity: number
+  requiredQuantity: number
+  currentStock: number
+  quantityToAdd: number
   costPerUnit: number
   totalCost: number
 }
@@ -53,6 +57,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
     defaultValues: {
       productId: '',
       numberOfCups: 1,
+      smartStockCalculation: false,
       batchNote: ''
     }
   })
@@ -96,39 +101,46 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
     }
   }
 
+  // Get current stock for an ingredient
+  const getCurrentStock = (ingredientName: string, unit: string) => {
+    const stock = stockLevels.find(s => s.ingredientName === ingredientName && s.unit === unit)
+    return stock ? stock.currentStock - stock.reservedStock : 0
+  }
+
   // Calculate ingredient quantities and costs based on number of cups
   const numberOfCups = form.watch('numberOfCups') || 1
+  const smartStockCalculation = form.watch('smartStockCalculation') || false
   const calculatedIngredients = useMemo((): CalculatedIngredient[] => {
     if (!selectedProduct) return []
 
     return selectedProduct.ingredients.map(pi => {
       const ingredient = pi.ingredient
-      const calculatedQuantity = numberOfCups * pi.usagePerCup
+      const requiredQuantity = numberOfCups * pi.usagePerCup
+      const currentStock = getCurrentStock(ingredient.name, ingredient.unit)
+      const quantityToAdd = smartStockCalculation
+        ? Math.max(0, requiredQuantity - currentStock)
+        : requiredQuantity
       const costPerUnit = ingredient.baseUnitCost / ingredient.baseUnitQuantity
-      const totalCost = calculatedQuantity * costPerUnit
+      const totalCost = quantityToAdd * costPerUnit
 
       return {
         ingredientId: ingredient.id,
         ingredientName: ingredient.name,
         unit: ingredient.unit,
         usagePerCup: pi.usagePerCup,
-        calculatedQuantity,
+        requiredQuantity,
+        currentStock,
+        quantityToAdd,
         costPerUnit,
         totalCost
       }
     })
-  }, [selectedProduct, numberOfCups])
+  }, [selectedProduct, numberOfCups, smartStockCalculation, stockLevels])
 
   // Calculate total batch cost
   const totalBatchCost = useMemo(() => {
     return calculatedIngredients.reduce((sum, ing) => sum + ing.totalCost, 0)
   }, [calculatedIngredients])
-
-  // Get current stock for an ingredient
-  const getCurrentStock = (ingredientName: string, unit: string) => {
-    const stock = stockLevels.find(s => s.ingredientName === ingredientName && s.unit === unit)
-    return stock ? stock.currentStock - stock.reservedStock : 0
-  }
 
   const onSubmit = async (data: WarehouseFormData) => {
     try {
@@ -140,20 +152,36 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
         return
       }
 
+      // Filter ingredients that need to be added (quantity > 0)
+      const itemsToAdd = calculatedIngredients.filter(ing => ing.quantityToAdd > 0)
+
+      if (itemsToAdd.length === 0) {
+        setMessage({
+          type: 'error',
+          text: 'Current stock levels are sufficient for the selected quantity. No items need to be added.'
+        })
+        return
+      }
+
       // Create warehouse batch
+      const batchNote = data.batchNote ||
+        `${data.numberOfCups} cups of ${selectedProduct?.name} - ${data.smartStockCalculation ? 'Smart stock calculation' : 'Auto-calculated from product recipe'}`
+
       const batch = await WarehouseService.createBatch({
         dateAdded: new Date().toISOString(),
-        note: data.batchNote || `${data.numberOfCups} cups of ${selectedProduct?.name} - Auto-calculated from product recipe`
+        note: batchNote
       })
 
-      // Prepare warehouse items from calculated ingredients
-      const warehouseItems = calculatedIngredients.map(ing => ({
+      // Prepare warehouse items from ingredients that need to be added
+      const warehouseItems = itemsToAdd.map(ing => ({
         ingredientName: ing.ingredientName,
-        quantity: ing.calculatedQuantity,
+        quantity: ing.quantityToAdd,
         unit: ing.unit,
         costPerUnit: ing.costPerUnit,
         totalCost: ing.totalCost,
-        note: `Auto-calculated: ${data.numberOfCups} cups × ${ing.usagePerCup} ${ing.unit}/cup`
+        note: data.smartStockCalculation
+          ? `Smart calculation: ${ing.quantityToAdd} ${ing.unit} needed (${ing.requiredQuantity} required - ${ing.currentStock} current)`
+          : `Auto-calculated: ${data.numberOfCups} cups × ${ing.usagePerCup} ${ing.unit}/cup`
       }))
 
       // Add items to batch
@@ -161,7 +189,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
 
       setMessage({
         type: 'success',
-        text: `Successfully added ${calculatedIngredients.length} ingredients to warehouse batch #${batch.batchNumber} for ${data.numberOfCups} cups of ${selectedProduct?.name}`
+        text: `Successfully added ${itemsToAdd.length} ingredients to warehouse batch #${batch.batchNumber} for ${data.numberOfCups} cups of ${selectedProduct?.name}`
       })
 
       // Reset form
@@ -254,6 +282,30 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
 
               <FormField
                 control={form.control}
+                name="smartStockCalculation"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="flex items-center gap-2">
+                        <Zap className="h-4 w-4" />
+                        Smart Stock Calculation
+                      </FormLabel>
+                      <p className="text-xs text-muted-foreground">
+                        Only add the deficit amount needed to reach target quantities based on current stock levels
+                      </p>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="batchNote"
                 render={({ field }) => (
                   <FormItem>
@@ -276,11 +328,14 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
             <Card>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Calculator className="h-4 w-4" />
-                  Calculated Ingredients for {numberOfCups} cups of {selectedProduct.name}
+                  {smartStockCalculation ? <Zap className="h-4 w-4" /> : <Calculator className="h-4 w-4" />}
+                  {smartStockCalculation ? 'Smart Stock Calculation' : 'Calculated Ingredients'} for {numberOfCups} cups of {selectedProduct.name}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Quantities and costs are automatically calculated based on the product recipe
+                  {smartStockCalculation
+                    ? 'Only deficit amounts needed to reach target quantities will be added'
+                    : 'Quantities and costs are automatically calculated based on the product recipe'
+                  }
                 </p>
               </CardHeader>
               <CardContent>
@@ -290,15 +345,14 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                       <TableHead>Ingredient</TableHead>
                       <TableHead>Current Stock</TableHead>
                       <TableHead>Usage per Cup</TableHead>
-                      <TableHead>Calculated Quantity</TableHead>
+                      <TableHead>Required Quantity</TableHead>
+                      <TableHead>Quantity to Add</TableHead>
                       <TableHead>Cost per Unit</TableHead>
                       <TableHead>Total Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {calculatedIngredients.map((ingredient) => {
-                      const currentStock = getCurrentStock(ingredient.ingredientName, ingredient.unit)
-
                       return (
                         <TableRow key={ingredient.ingredientId}>
                           <TableCell>
@@ -308,8 +362,8 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                             </div>
                           </TableCell>
                           <TableCell>
-                            <span className={currentStock <= 10 ? 'text-orange-600' : 'text-green-600'}>
-                              {currentStock} {ingredient.unit}
+                            <span className={ingredient.currentStock <= 10 ? 'text-orange-600' : 'text-green-600'}>
+                              {ingredient.currentStock} {ingredient.unit}
                             </span>
                           </TableCell>
                           <TableCell>
@@ -319,7 +373,15 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                           </TableCell>
                           <TableCell>
                             <span className="font-medium">
-                              {ingredient.calculatedQuantity.toFixed(2)} {ingredient.unit}
+                              {ingredient.requiredQuantity.toFixed(2)} {ingredient.unit}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span className={`font-medium ${ingredient.quantityToAdd === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                              {ingredient.quantityToAdd.toFixed(2)} {ingredient.unit}
+                              {ingredient.quantityToAdd === 0 && smartStockCalculation && (
+                                <span className="text-xs text-green-600 ml-1">✓ Sufficient</span>
+                              )}
                             </span>
                           </TableCell>
                           <TableCell>
@@ -345,8 +407,17 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                     <span className="text-lg font-bold">{formatCurrency(totalBatchCost)}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Cost for {numberOfCups} cups of {selectedProduct.name}
+                    {smartStockCalculation
+                      ? `Cost for deficit amounts to reach ${numberOfCups} cups of ${selectedProduct.name}`
+                      : `Cost for ${numberOfCups} cups of ${selectedProduct.name}`
+                    }
                   </p>
+                  {smartStockCalculation && totalBatchCost === 0 && (
+                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                      <span>✓</span>
+                      Current stock levels are sufficient for the selected quantity
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -355,12 +426,23 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={submitting || !selectedProduct || loading || calculatedIngredients.length === 0}
+            disabled={
+              submitting ||
+              !selectedProduct ||
+              loading ||
+              calculatedIngredients.length === 0 ||
+              (smartStockCalculation && calculatedIngredients.every(ing => ing.quantityToAdd === 0))
+            }
             className="w-full"
             size="lg"
           >
             <Plus className="h-4 w-4 mr-2" />
-            {submitting ? 'Adding to Warehouse...' : `Add ${calculatedIngredients.length} Ingredients to Warehouse`}
+            {submitting
+              ? 'Adding to Warehouse...'
+              : smartStockCalculation && calculatedIngredients.every(ing => ing.quantityToAdd === 0)
+                ? 'No Items Need to be Added'
+                : `Add ${calculatedIngredients.filter(ing => ing.quantityToAdd > 0).length} Ingredients to Warehouse`
+            }
           </Button>
 
           {/* Message Display */}
