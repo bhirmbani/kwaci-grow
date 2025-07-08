@@ -466,10 +466,11 @@ export class PlanTemplateService {
         console.warn('⚠️ Cleanup failed, continuing with initialization:', cleanupError)
       }
 
-      // Check if default templates already exist
+      // Check if default templates already exist (direct query to avoid circular dependency)
       console.log('🔍 Step 2: Check for existing default templates...')
       try {
-        const existingDefaults = await this.getDefaultTemplates()
+        const allTemplates = await db.planTemplates.toArray()
+        const existingDefaults = allTemplates.filter(template => template && template.isDefault === true)
         if (existingDefaults.length > 0) {
           console.log(`✅ Found ${existingDefaults.length} existing default templates, skipping initialization`)
           return // Already initialized
@@ -538,6 +539,42 @@ export class PlanTemplateService {
       console.log('✅ Default planning templates initialized successfully')
     } catch (error) {
       console.error('PlanTemplateService.initializeDefaultTemplates() - Error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get goal templates for a specific template
+   */
+  static async getGoalTemplates(templateId: string): Promise<PlanGoalTemplate[]> {
+    try {
+      return await db.planGoalTemplates.where('templateId').equals(templateId).toArray()
+    } catch (error) {
+      console.error('PlanTemplateService.getGoalTemplates() - Database error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get task templates for a specific template
+   */
+  static async getTaskTemplates(templateId: string): Promise<PlanTaskTemplate[]> {
+    try {
+      return await db.planTaskTemplates.where('templateId').equals(templateId).toArray()
+    } catch (error) {
+      console.error('PlanTemplateService.getTaskTemplates() - Database error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get metric templates for a specific template
+   */
+  static async getMetricTemplates(templateId: string): Promise<PlanMetricTemplate[]> {
+    try {
+      return await db.planMetricTemplates.where('templateId').equals(templateId).toArray()
+    } catch (error) {
+      console.error('PlanTemplateService.getMetricTemplates() - Database error:', error)
       throw error
     }
   }

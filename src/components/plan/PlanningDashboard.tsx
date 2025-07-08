@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ import { PlanningService } from '@/lib/services/planningService'
 import { PlanTemplateService } from '@/lib/services/planTemplateService'
 import { useJourney } from '@/hooks/useJourney'
 import { CreatePlanSheet } from './CreatePlanSheet'
+import { TemplatePreviewSheet } from './TemplatePreviewSheet'
 import type { PlanAnalytics, PlanTemplate, OperationalPlan } from '@/lib/db/planningSchema'
 
 export function PlanningDashboard() {
@@ -15,9 +17,12 @@ export function PlanningDashboard() {
   const [templates, setTemplates] = useState<PlanTemplate[]>([])
   const [recentPlans, setRecentPlans] = useState<OperationalPlan[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedTemplate, setSelectedTemplate] = useState<PlanTemplate | null>(null)
+  const [isTemplatePreviewOpen, setIsTemplatePreviewOpen] = useState(false)
   const { getCompletionPercentage } = useJourney()
+  const navigate = useNavigate()
 
-  const journeyCompletion = getCompletionPercentage()
+  const journeyCompletion = useMemo(() => getCompletionPercentage(), [getCompletionPercentage])
 
   const loadDashboardData = async () => {
     try {
@@ -45,6 +50,20 @@ export function PlanningDashboard() {
   useEffect(() => {
     loadDashboardData()
   }, [])
+
+  const handleUseTemplate = (template: PlanTemplate) => {
+    setSelectedTemplate(template)
+    setIsTemplatePreviewOpen(true)
+  }
+
+  const handleViewPlan = (plan: OperationalPlan) => {
+    navigate({ to: `/plan-detail/${plan.id}` })
+  }
+
+  const handleTemplatePreviewClose = () => {
+    setIsTemplatePreviewOpen(false)
+    setSelectedTemplate(null)
+  }
 
   if (loading) {
     return (
@@ -195,7 +214,7 @@ export function PlanningDashboard() {
                       <div className="text-xs text-muted-foreground">
                         Est. {Math.round(template.estimatedDuration / 60)}h duration
                       </div>
-                      <Button size="sm" className="w-full">
+                      <Button size="sm" className="w-full" onClick={() => handleUseTemplate(template)}>
                         Use Template
                       </Button>
                     </div>
@@ -300,7 +319,7 @@ export function PlanningDashboard() {
                         </span>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleViewPlan(plan)}>
                       View Plan
                     </Button>
                   </div>
@@ -388,6 +407,14 @@ export function PlanningDashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Template Preview Sheet */}
+      <TemplatePreviewSheet
+        template={selectedTemplate}
+        isOpen={isTemplatePreviewOpen}
+        onClose={handleTemplatePreviewClose}
+        onPlanCreated={loadDashboardData}
+      />
     </div>
   )
 }

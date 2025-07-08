@@ -40,11 +40,12 @@ const createPlanSchema = z.object({
 type CreatePlanData = z.infer<typeof createPlanSchema>
 
 interface CreatePlanFormProps {
-  onSuccess: () => void
+  onSuccess: (planData?: any) => void
   onCancel: () => void
+  preselectedTemplate?: PlanTemplate
 }
 
-export function CreatePlanForm({ onSuccess, onCancel }: CreatePlanFormProps) {
+export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: CreatePlanFormProps) {
   const [branches, setBranches] = useState<Branch[]>([])
   const [templates, setTemplates] = useState<PlanTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<PlanTemplate | null>(null)
@@ -55,13 +56,13 @@ export function CreatePlanForm({ onSuccess, onCancel }: CreatePlanFormProps) {
     defaultValues: {
       name: '',
       description: '',
-      type: 'daily',
+      type: preselectedTemplate?.type || 'daily',
       startDate: format(new Date(), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
       branchId: 'no-branch',
-      templateId: 'no-templates',
+      templateId: preselectedTemplate?.id || 'no-templates',
       note: '',
-      useTemplate: false,
+      useTemplate: !!preselectedTemplate,
     },
   })
 
@@ -120,9 +121,10 @@ export function CreatePlanForm({ onSuccess, onCancel }: CreatePlanFormProps) {
       // Handle special values for branch selection
       const branchId = data.branchId === 'no-branch' ? undefined : data.branchId || undefined
 
+      let createdPlan
       if (data.useTemplate && data.templateId && data.templateId !== 'no-templates') {
         // Create plan from template
-        await PlanTemplateService.createPlanFromTemplate(data.templateId, {
+        createdPlan = await PlanTemplateService.createPlanFromTemplate(data.templateId, {
           name: data.name.trim(),
           description: data.description.trim(),
           startDate: data.startDate,
@@ -132,7 +134,7 @@ export function CreatePlanForm({ onSuccess, onCancel }: CreatePlanFormProps) {
         })
       } else {
         // Create plan from scratch
-        await PlanningService.createPlan({
+        createdPlan = await PlanningService.createPlan({
           name: data.name.trim(),
           description: data.description.trim(),
           type: data.type,
@@ -147,7 +149,7 @@ export function CreatePlanForm({ onSuccess, onCancel }: CreatePlanFormProps) {
 
       // Reset form and close
       reset()
-      onSuccess()
+      onSuccess(createdPlan)
     } catch (error) {
       console.error('Failed to create plan:', error)
       // TODO: Add toast notification for better user feedback

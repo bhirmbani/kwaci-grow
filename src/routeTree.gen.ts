@@ -30,6 +30,7 @@ import { Route as ReportsIndexRouteImport } from './routes/reports/index'
 import { Route as ReportsProfitRouteImport } from './routes/reports/profit'
 import { Route as ReportsFinancialRouteImport } from './routes/reports/financial'
 import { Route as ReportsCostsRouteImport } from './routes/reports/costs'
+import { Route as PlanDetailPlanIdRouteImport } from './routes/plan-detail.$planId'
 
 const WarehouseRoute = WarehouseRouteImport.update({
   id: '/warehouse',
@@ -136,6 +137,11 @@ const ReportsCostsRoute = ReportsCostsRouteImport.update({
   path: '/reports/costs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlanDetailPlanIdRoute = PlanDetailPlanIdRouteImport.update({
+  id: '/plan-detail/$planId',
+  path: '/plan-detail/$planId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
+  '/plan-detail/$planId': typeof PlanDetailPlanIdRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
   '/reports/profit': typeof ReportsProfitRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
+  '/plan-detail/$planId': typeof PlanDetailPlanIdRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
   '/reports/profit': typeof ReportsProfitRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
+  '/plan-detail/$planId': typeof PlanDetailPlanIdRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
   '/reports/profit': typeof ReportsProfitRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
+    | '/plan-detail/$planId'
     | '/reports/costs'
     | '/reports/financial'
     | '/reports/profit'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
+    | '/plan-detail/$planId'
     | '/reports/costs'
     | '/reports/financial'
     | '/reports/profit'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
+    | '/plan-detail/$planId'
     | '/reports/costs'
     | '/reports/financial'
     | '/reports/profit'
@@ -297,6 +309,7 @@ export interface RootRouteChildren {
   TestMenusRoute: typeof TestMenusRoute
   TestTargetsRoute: typeof TestTargetsRoute
   WarehouseRoute: typeof WarehouseRoute
+  PlanDetailPlanIdRoute: typeof PlanDetailPlanIdRoute
   ReportsCostsRoute: typeof ReportsCostsRoute
   ReportsFinancialRoute: typeof ReportsFinancialRoute
   ReportsProfitRoute: typeof ReportsProfitRoute
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsCostsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plan-detail/$planId': {
+      id: '/plan-detail/$planId'
+      path: '/plan-detail/$planId'
+      fullPath: '/plan-detail/$planId'
+      preLoaderRoute: typeof PlanDetailPlanIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -473,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestMenusRoute: TestMenusRoute,
   TestTargetsRoute: TestTargetsRoute,
   WarehouseRoute: WarehouseRoute,
+  PlanDetailPlanIdRoute: PlanDetailPlanIdRoute,
   ReportsCostsRoute: ReportsCostsRoute,
   ReportsFinancialRoute: ReportsFinancialRoute,
   ReportsProfitRoute: ReportsProfitRoute,
