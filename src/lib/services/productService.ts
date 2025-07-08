@@ -1,6 +1,7 @@
 import { db } from '../db'
 import type { Product, NewProduct, ProductWithIngredients, Ingredient, ProductIngredient } from '../db/schema'
 import { v4 as uuidv4 } from 'uuid'
+import { productEvents } from '../events/productEvents'
 
 export class ProductService {
   /**
@@ -102,6 +103,10 @@ export class ProductService {
     }
 
     await db.products.add(newProduct)
+
+    // Emit product created event
+    productEvents.productCreated(newProduct.id, newProduct.name)
+
     return newProduct
   }
 
@@ -121,6 +126,9 @@ export class ProductService {
       throw new Error('Product not found')
     }
 
+    // Emit product updated event
+    productEvents.productUpdated(id, updated.name)
+
     return updated
   }
 
@@ -139,6 +147,9 @@ export class ProductService {
       isActive: false,
       updatedAt: now,
     })
+
+    // Emit product deleted event
+    productEvents.productDeleted(id)
   }
 
   /**
@@ -182,6 +193,10 @@ export class ProductService {
     }
 
     await db.productIngredients.add(productIngredient)
+
+    // Emit product ingredients changed event
+    productEvents.productIngredientsChanged(productId)
+
     return productIngredient
   }
 
@@ -221,6 +236,9 @@ export class ProductService {
       throw new Error('Failed to update product ingredient')
     }
 
+    // Emit product ingredients changed event
+    productEvents.productIngredientsChanged(productId)
+
     return updated
   }
 
@@ -239,6 +257,9 @@ export class ProductService {
     }
 
     await db.productIngredients.delete(existing.id)
+
+    // Emit product ingredients changed event
+    productEvents.productIngredientsChanged(productId)
   }
 
   /**

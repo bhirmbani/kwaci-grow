@@ -78,6 +78,12 @@ const items = [
     description: "Sales recording, analytics, and operational tracking",
   },
   {
+    title: "Analytics",
+    url: "/analytics",
+    icon: BarChart3,
+    description: "Product-specific income projections and profit analysis",
+  },
+  {
     title: "Ingredients",
     url: "/ingredients",
     icon: Beaker,

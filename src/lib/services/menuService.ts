@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
 import { ProductService } from './productService'
+import { productEvents } from '../events/productEvents'
 import type { 
   Menu, 
   MenuProduct, 
@@ -206,6 +207,10 @@ export class MenuService {
 
     try {
       await db.menus.add(newMenu)
+
+      // Emit menu created event
+      productEvents.menuCreated(newMenu.id, newMenu.name)
+
       return newMenu
     } catch (error) {
       console.error('Error creating menu:', error)
@@ -229,6 +234,9 @@ export class MenuService {
       throw new Error('Menu not found')
     }
 
+    // Emit menu updated event
+    productEvents.menuUpdated(id, updated.name)
+
     return updated
   }
 
@@ -241,6 +249,9 @@ export class MenuService {
       status: 'inactive',
       updatedAt: now,
     })
+
+    // Emit menu deleted event
+    productEvents.menuDeleted(id)
   }
 
   /**
@@ -302,10 +313,19 @@ export class MenuService {
    */
   static async updateProductPrice(menuProductId: string, price: number): Promise<void> {
     const now = new Date().toISOString()
+
+    // Get the menu product to find the productId
+    const menuProduct = await db.menuProducts.get(menuProductId)
+
     await db.menuProducts.update(menuProductId, {
       price,
       updatedAt: now,
     })
+
+    // Emit pricing changed event if we found the product
+    if (menuProduct) {
+      productEvents.menuProductPricingChanged(menuProduct.productId)
+    }
   }
 
   /**

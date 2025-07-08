@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarehouseRouteImport } from './routes/warehouse'
+import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -21,6 +22,7 @@ import { Route as MenusRouteImport } from './routes/menus'
 import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as CogsRouteImport } from './routes/cogs'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
@@ -31,6 +33,11 @@ import { Route as ReportsCostsRouteImport } from './routes/reports/costs'
 const WarehouseRoute = WarehouseRouteImport.update({
   id: '/warehouse',
   path: '/warehouse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestTargetsRoute = TestTargetsRouteImport.update({
+  id: '/test-targets',
+  path: '/test-targets',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestMenusRoute = TestMenusRouteImport.update({
@@ -88,6 +95,11 @@ const CogsRoute = CogsRouteImport.update({
   path: '/cogs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -122,6 +134,7 @@ const ReportsCostsRoute = ReportsCostsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
@@ -133,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
+  '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -142,6 +156,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
@@ -153,6 +168,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
+  '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -163,6 +179,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
@@ -174,6 +191,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-menus': typeof TestMenusRoute
+  '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
   '/reports/costs': typeof ReportsCostsRoute
   '/reports/financial': typeof ReportsFinancialRoute
@@ -185,6 +203,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/analytics'
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
@@ -196,6 +215,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-database'
     | '/test-menus'
+    | '/test-targets'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -205,6 +225,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/analytics'
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
@@ -216,6 +237,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-database'
     | '/test-menus'
+    | '/test-targets'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -225,6 +247,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/account'
+    | '/analytics'
     | '/cogs'
     | '/fixed-assets'
     | '/ingredients'
@@ -236,6 +259,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-database'
     | '/test-menus'
+    | '/test-targets'
     | '/warehouse'
     | '/reports/costs'
     | '/reports/financial'
@@ -246,6 +270,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   CogsRoute: typeof CogsRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
   IngredientsRoute: typeof IngredientsRoute
@@ -257,6 +282,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
   TestMenusRoute: typeof TestMenusRoute
+  TestTargetsRoute: typeof TestTargetsRoute
   WarehouseRoute: typeof WarehouseRoute
   ReportsCostsRoute: typeof ReportsCostsRoute
   ReportsFinancialRoute: typeof ReportsFinancialRoute
@@ -271,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/warehouse'
       fullPath: '/warehouse'
       preLoaderRoute: typeof WarehouseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-targets': {
+      id: '/test-targets'
+      path: '/test-targets'
+      fullPath: '/test-targets'
+      preLoaderRoute: typeof TestTargetsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-menus': {
@@ -350,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CogsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account': {
       id: '/account'
       path: '/account'
@@ -398,6 +438,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
+  AnalyticsRoute: AnalyticsRoute,
   CogsRoute: CogsRoute,
   FixedAssetsRoute: FixedAssetsRoute,
   IngredientsRoute: IngredientsRoute,
@@ -409,6 +450,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
   TestMenusRoute: TestMenusRoute,
+  TestTargetsRoute: TestTargetsRoute,
   WarehouseRoute: WarehouseRoute,
   ReportsCostsRoute: ReportsCostsRoute,
   ReportsFinancialRoute: ReportsFinancialRoute,

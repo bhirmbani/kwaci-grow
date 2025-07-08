@@ -229,6 +229,15 @@ export interface SalesRecord {
   updatedAt: string
 }
 
+export interface ProductTargetDefault {
+  id: string
+  productId: string // Foreign key to Product
+  defaultTargetQuantityPerDay: number // Default target quantity per day
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 // Extended types for UI components
 export interface MenuWithProducts extends Menu {
   products: (MenuProduct & { product: Product })[]
@@ -286,6 +295,7 @@ export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
 export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
+export type NewProductTargetDefault = Omit<ProductTargetDefault, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {
