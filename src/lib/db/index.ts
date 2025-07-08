@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -24,6 +24,7 @@ export class FinancialDashboardDB extends Dexie {
   dailySalesTargets!: EntityTable<DailySalesTarget, 'id'>
   dailyProductSalesTargets!: EntityTable<DailyProductSalesTarget, 'id'>
   salesRecords!: EntityTable<SalesRecord, 'id'>
+  journeyProgress!: EntityTable<JourneyProgress, 'id'>
 
   // Planning tables
   operationalPlans!: EntityTable<OperationalPlan, 'id'>

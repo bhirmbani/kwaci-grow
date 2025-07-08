@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
@@ -32,6 +31,21 @@ interface ProductBasedWarehouseFormProps {
   onSuccess?: () => void
 }
 
+// Utility functions for minimum purchase quantity calculations
+function calculateActualQuantityToAdd(quantityToAdd: number, baseUnitQuantity: number): number {
+  if (quantityToAdd <= 0 || baseUnitQuantity <= 0) {
+    return quantityToAdd
+  }
+  return Math.ceil(quantityToAdd / baseUnitQuantity) * baseUnitQuantity
+}
+
+function calculatePurchaseUnits(quantityToAdd: number, baseUnitQuantity: number): number {
+  if (quantityToAdd <= 0 || baseUnitQuantity <= 0) {
+    return 0
+  }
+  return Math.ceil(quantityToAdd / baseUnitQuantity)
+}
+
 interface CalculatedIngredient {
   ingredientId: string
   ingredientName: string
@@ -40,6 +54,9 @@ interface CalculatedIngredient {
   requiredQuantity: number
   currentStock: number
   quantityToAdd: number
+  baseUnitQuantity: number
+  actualQuantityToAdd: number
+  purchaseUnits: number
   costPerUnit: number
   totalCost: number
 }
@@ -120,8 +137,13 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       const quantityToAdd = smartStockCalculation
         ? Math.max(0, requiredQuantity - currentStock)
         : requiredQuantity
+
+      // Calculate actual quantity to add based on minimum purchase quantity
+      const actualQuantityToAdd = calculateActualQuantityToAdd(quantityToAdd, ingredient.baseUnitQuantity)
+      const purchaseUnits = calculatePurchaseUnits(quantityToAdd, ingredient.baseUnitQuantity)
+
       const costPerUnit = ingredient.baseUnitCost / ingredient.baseUnitQuantity
-      const totalCost = quantityToAdd * costPerUnit
+      const totalCost = actualQuantityToAdd * costPerUnit
 
       return {
         ingredientId: ingredient.id,
@@ -131,6 +153,9 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
         requiredQuantity,
         currentStock,
         quantityToAdd,
+        baseUnitQuantity: ingredient.baseUnitQuantity,
+        actualQuantityToAdd,
+        purchaseUnits,
         costPerUnit,
         totalCost
       }
@@ -152,8 +177,8 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
         return
       }
 
-      // Filter ingredients that need to be added (quantity > 0)
-      const itemsToAdd = calculatedIngredients.filter(ing => ing.quantityToAdd > 0)
+      // Filter ingredients that need to be added (actual quantity > 0)
+      const itemsToAdd = calculatedIngredients.filter(ing => ing.actualQuantityToAdd > 0)
 
       if (itemsToAdd.length === 0) {
         setMessage({
@@ -175,13 +200,13 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       // Prepare warehouse items from ingredients that need to be added
       const warehouseItems = itemsToAdd.map(ing => ({
         ingredientName: ing.ingredientName,
-        quantity: ing.quantityToAdd,
+        quantity: ing.actualQuantityToAdd,
         unit: ing.unit,
         costPerUnit: ing.costPerUnit,
         totalCost: ing.totalCost,
         note: data.smartStockCalculation
-          ? `Smart calculation: ${ing.quantityToAdd} ${ing.unit} needed (${ing.requiredQuantity} required - ${ing.currentStock} current)`
-          : `Auto-calculated: ${data.numberOfCups} cups × ${ing.usagePerCup} ${ing.unit}/cup`
+          ? `Smart calculation: ${ing.actualQuantityToAdd} ${ing.unit} purchased (${ing.quantityToAdd} ${ing.unit} needed, ${ing.purchaseUnits} units of ${ing.baseUnitQuantity}${ing.unit} each)`
+          : `Auto-calculated: ${ing.actualQuantityToAdd} ${ing.unit} purchased (${data.numberOfCups} cups × ${ing.usagePerCup} ${ing.unit}/cup, ${ing.purchaseUnits} units of ${ing.baseUnitQuantity}${ing.unit} each)`
       }))
 
       // Add items to batch
@@ -333,9 +358,10 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   {smartStockCalculation
-                    ? 'Only deficit amounts needed to reach target quantities will be added'
-                    : 'Quantities and costs are automatically calculated based on the product recipe'
+                    ? 'Only deficit amounts needed to reach target quantities will be added. '
+                    : 'Quantities and costs are automatically calculated based on the product recipe. '
                   }
+                  Actual quantities are rounded up to minimum purchase units based on ingredient packaging.
                 </p>
               </CardHeader>
               <CardContent>
@@ -346,7 +372,9 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                       <TableHead>Current Stock</TableHead>
                       <TableHead>Usage per Cup</TableHead>
                       <TableHead>Required Quantity</TableHead>
-                      <TableHead>Quantity to Add</TableHead>
+                      <TableHead>Theoretical Need</TableHead>
+                      <TableHead>Actual Quantity to Add</TableHead>
+                      <TableHead>Purchase Info</TableHead>
                       <TableHead>Cost per Unit</TableHead>
                       <TableHead>Total Cost</TableHead>
                     </TableRow>
@@ -377,12 +405,38 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                             </span>
                           </TableCell>
                           <TableCell>
-                            <span className={`font-medium ${ingredient.quantityToAdd === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                            <span className={`text-sm ${ingredient.quantityToAdd === 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
                               {ingredient.quantityToAdd.toFixed(2)} {ingredient.unit}
                               {ingredient.quantityToAdd === 0 && smartStockCalculation && (
                                 <span className="text-xs text-green-600 ml-1">✓ Sufficient</span>
                               )}
                             </span>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <span className={`font-medium ${ingredient.actualQuantityToAdd === 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                                {ingredient.actualQuantityToAdd.toFixed(2)} {ingredient.unit}
+                              </span>
+                              {ingredient.actualQuantityToAdd !== ingredient.quantityToAdd && ingredient.actualQuantityToAdd > 0 && (
+                                <p className="text-xs text-orange-600">
+                                  Rounded up from {ingredient.quantityToAdd.toFixed(2)} {ingredient.unit}
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              {ingredient.purchaseUnits > 0 ? (
+                                <>
+                                  <span className="font-medium">{ingredient.purchaseUnits}</span>
+                                  <span className="text-muted-foreground"> units of </span>
+                                  <span className="font-medium">{ingredient.baseUnitQuantity}{ingredient.unit}</span>
+                                  <span className="text-muted-foreground"> each</span>
+                                </>
+                              ) : (
+                                <span className="text-green-600">No purchase needed</span>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <span className="text-sm">
@@ -431,7 +485,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
               !selectedProduct ||
               loading ||
               calculatedIngredients.length === 0 ||
-              (smartStockCalculation && calculatedIngredients.every(ing => ing.quantityToAdd === 0))
+              (smartStockCalculation && calculatedIngredients.every(ing => ing.actualQuantityToAdd === 0))
             }
             className="w-full"
             size="lg"
@@ -439,9 +493,9 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
             <Plus className="h-4 w-4 mr-2" />
             {submitting
               ? 'Adding to Warehouse...'
-              : smartStockCalculation && calculatedIngredients.every(ing => ing.quantityToAdd === 0)
+              : smartStockCalculation && calculatedIngredients.every(ing => ing.actualQuantityToAdd === 0)
                 ? 'No Items Need to be Added'
-                : `Add ${calculatedIngredients.filter(ing => ing.quantityToAdd > 0).length} Ingredients to Warehouse`
+                : `Add ${calculatedIngredients.filter(ing => ing.actualQuantityToAdd > 0).length} Ingredients to Warehouse`
             }
           </Button>
 

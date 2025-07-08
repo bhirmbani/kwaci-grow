@@ -1,18 +1,19 @@
 import { v4 as uuidv4 } from 'uuid'
-import db from '../db'
+import { db } from '../db'
 import type { JourneyProgress, NewJourneyProgress } from '../db/schema'
 
 // Journey step definitions
 export const JOURNEY_STEPS = {
   CREATE_INGREDIENT: 'create-ingredient',
-  CREATE_PRODUCT: 'create-product', 
+  CREATE_PRODUCT: 'create-product',
   CREATE_MENU: 'create-menu',
   CREATE_BRANCH: 'create-branch',
   ADD_PRODUCT_TO_MENU: 'add-product-to-menu',
   ADD_ITEM_TO_WAREHOUSE: 'add-item-to-warehouse',
   CREATE_PRODUCTION_ALLOCATION: 'create-production-allocation',
   CHANGE_PRODUCTION_BATCH_STATUS: 'change-production-batch-status',
-  RECORD_SALES: 'record-sales'
+  RECORD_SALES: 'record-sales',
+  CREATE_SALES_TARGET: 'create-sales-target'
 } as const
 
 export type JourneyStepId = typeof JOURNEY_STEPS[keyof typeof JOURNEY_STEPS]
@@ -125,6 +126,17 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     validationFn: async () => {
       const salesRecords = await db.salesRecords.toArray()
       return salesRecords.length > 0
+    }
+  },
+  [JOURNEY_STEPS.CREATE_SALES_TARGET]: {
+    id: JOURNEY_STEPS.CREATE_SALES_TARGET,
+    title: 'Create Sales Target',
+    description: 'Set daily sales targets for your products (Bonus Step)',
+    instructions: 'Use the calendar-based interface to set daily sales targets for your products. This helps track performance and plan operations.',
+    order: 10,
+    validationFn: async () => {
+      const salesTargets = await db.dailyProductSalesTargets.toArray()
+      return salesTargets.length > 0
     }
   }
 }

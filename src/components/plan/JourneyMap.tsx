@@ -20,7 +20,8 @@ import {
   Settings,
   TrendingUp,
   Map,
-  List
+  List,
+  Target
 } from 'lucide-react'
 import { useJourney } from '@/hooks/useJourney'
 import { JOURNEY_STEP_INFO, JOURNEY_STEPS, type JourneyStepId } from '@/lib/services/journeyService'
@@ -37,7 +38,8 @@ const STEP_ICONS: Record<JourneyStepId, React.ComponentType<{ className?: string
   [JOURNEY_STEPS.ADD_ITEM_TO_WAREHOUSE]: Warehouse,
   [JOURNEY_STEPS.CREATE_PRODUCTION_ALLOCATION]: Factory,
   [JOURNEY_STEPS.CHANGE_PRODUCTION_BATCH_STATUS]: Settings,
-  [JOURNEY_STEPS.RECORD_SALES]: TrendingUp
+  [JOURNEY_STEPS.RECORD_SALES]: TrendingUp,
+  [JOURNEY_STEPS.CREATE_SALES_TARGET]: Target
 }
 
 export function JourneyMap() {
@@ -74,13 +76,21 @@ export function JourneyMap() {
 
   const getStepColor = (stepId: JourneyStepId) => {
     const status = getStepStatus(stepId)
+    const isBonusStep = stepId === JOURNEY_STEPS.CREATE_SALES_TARGET
+
     switch (status) {
       case 'completed':
-        return 'bg-green-500 text-white border-green-500'
+        return isBonusStep
+          ? 'bg-purple-500 text-white border-purple-500'
+          : 'bg-green-500 text-white border-green-500'
       case 'unlocked':
-        return 'bg-blue-500 text-white border-blue-500'
+        return isBonusStep
+          ? 'bg-purple-400 text-white border-purple-400'
+          : 'bg-blue-500 text-white border-blue-500'
       case 'locked':
-        return 'bg-gray-300 text-gray-600 border-gray-300'
+        return isBonusStep
+          ? 'bg-purple-200 text-purple-600 border-purple-200'
+          : 'bg-gray-300 text-gray-600 border-gray-300'
       default:
         return 'bg-gray-300 text-gray-600 border-gray-300'
     }
@@ -244,10 +254,11 @@ export function JourneyMap() {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {orderedSteps.map((step, index) => {
                   const status = getStepStatus(step.id)
                   const isClickable = status !== 'locked'
+                  const isBonusStep = step.id === JOURNEY_STEPS.CREATE_SALES_TARGET
 
                   return (
                     <div
@@ -256,9 +267,20 @@ export function JourneyMap() {
                         isClickable
                           ? 'cursor-pointer hover:shadow-md'
                           : 'cursor-not-allowed opacity-60'
-                      } ${getStepColor(step.id)}`}
+                      } ${getStepColor(step.id)} ${
+                        isBonusStep ? 'ring-2 ring-purple-300 ring-offset-2' : ''
+                      }`}
                       onClick={() => isClickable && setSelectedStep(step.id)}
                     >
+                      {/* Bonus Badge */}
+                      {isBonusStep && (
+                        <div className="absolute -top-1 -right-1">
+                          <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-300">
+                            Bonus
+                          </Badge>
+                        </div>
+                      )}
+
                       {/* Step Number */}
                       <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-background border-2 border-current flex items-center justify-center text-xs font-bold">
                         {step.order}

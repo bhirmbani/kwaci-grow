@@ -43,7 +43,8 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
     'add-item-to-warehouse': '/warehouse',
     'create-production-allocation': '/warehouse',
     'change-production-batch-status': '/production',
-    'record-sales': '/operations'
+    'record-sales': '/operations',
+    'create-sales-target': '/operations'
   }
 
   // Enhanced validation logic for each step

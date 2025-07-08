@@ -24,7 +24,8 @@ const STEP_ROUTES: Record<JourneyStepId, string> = {
   'add-item-to-warehouse': '/warehouse',
   'create-production-allocation': '/warehouse',
   'change-production-batch-status': '/production',
-  'record-sales': '/operations'
+  'record-sales': '/operations',
+  'create-sales-target': '/sales-targets'
 }
 
 export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalProps) {
