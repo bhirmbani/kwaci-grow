@@ -42,15 +42,26 @@ export function useProduction() {
 
   const updateBatchStatus = useCallback(async (
     batchId: string,
-    status: ProductionBatchStatus
+    status: ProductionBatchStatus,
+    onStockLevelsChanged?: () => void,
+    outputData?: {
+      productName: string
+      outputQuantity: number
+      outputUnit: string
+    }
   ): Promise<{ success: boolean; error?: string }> => {
     try {
       setError(null)
-      await ProductionService.updateBatchStatus(batchId, status)
-      
+      await ProductionService.updateBatchStatus(batchId, status, outputData)
+
       // Reload batches to reflect the status change
       await loadBatches()
-      
+
+      // If batch was completed and callback provided, trigger stock levels refresh
+      if (status === 'Completed' && onStockLevelsChanged) {
+        onStockLevelsChanged()
+      }
+
       return { success: true }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update batch status'
@@ -171,15 +182,26 @@ export function useProductionBatch(batchId: string) {
   }, [batchId])
 
   const updateStatus = useCallback(async (
-    status: ProductionBatchStatus
+    status: ProductionBatchStatus,
+    onStockLevelsChanged?: () => void,
+    outputData?: {
+      productName: string
+      outputQuantity: number
+      outputUnit: string
+    }
   ): Promise<{ success: boolean; error?: string }> => {
     try {
       setError(null)
-      await ProductionService.updateBatchStatus(batchId, status)
-      
+      await ProductionService.updateBatchStatus(batchId, status, outputData)
+
       // Reload batch to reflect the status change
       await loadBatch()
-      
+
+      // If batch was completed and callback provided, trigger stock levels refresh
+      if (status === 'Completed' && onStockLevelsChanged) {
+        onStockLevelsChanged()
+      }
+
       return { success: true }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update batch status'

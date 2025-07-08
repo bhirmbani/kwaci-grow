@@ -17,6 +17,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
+import { Route as PlanRouteImport } from './routes/plan'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as MenusRouteImport } from './routes/menus'
 import { Route as IngredientsRouteImport } from './routes/ingredients'
@@ -68,6 +69,11 @@ const ProductsRoute = ProductsRouteImport.update({
 const ProductionRoute = ProductionRouteImport.update({
   id: '/production',
   path: '/production',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanRoute = PlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OperationsRoute = OperationsRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/ingredients': typeof IngredientsRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/sales-targets': typeof SalesTargetsRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/ingredients': typeof IngredientsRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/sales-targets': typeof SalesTargetsRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/ingredients': typeof IngredientsRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
   '/sales-targets': typeof SalesTargetsRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/ingredients'
     | '/menus'
     | '/operations'
+    | '/plan'
     | '/production'
     | '/products'
     | '/sales-targets'
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
     | '/ingredients'
     | '/menus'
     | '/operations'
+    | '/plan'
     | '/production'
     | '/products'
     | '/sales-targets'
@@ -253,6 +264,7 @@ export interface FileRouteTypes {
     | '/ingredients'
     | '/menus'
     | '/operations'
+    | '/plan'
     | '/production'
     | '/products'
     | '/sales-targets'
@@ -276,6 +288,7 @@ export interface RootRouteChildren {
   IngredientsRoute: typeof IngredientsRoute
   MenusRoute: typeof MenusRoute
   OperationsRoute: typeof OperationsRoute
+  PlanRoute: typeof PlanRoute
   ProductionRoute: typeof ProductionRoute
   ProductsRoute: typeof ProductsRoute
   SalesTargetsRoute: typeof SalesTargetsRoute
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/production'
       fullPath: '/production'
       preLoaderRoute: typeof ProductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan': {
+      id: '/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof PlanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/operations': {
@@ -444,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   IngredientsRoute: IngredientsRoute,
   MenusRoute: MenusRoute,
   OperationsRoute: OperationsRoute,
+  PlanRoute: PlanRoute,
   ProductionRoute: ProductionRoute,
   ProductsRoute: ProductsRoute,
   SalesTargetsRoute: SalesTargetsRoute,

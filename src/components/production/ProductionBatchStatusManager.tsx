@@ -16,6 +16,7 @@ interface ProductionBatchStatusManagerProps {
   batches?: ProductionBatchWithItems[]
   loading?: boolean
   error?: string | null
+  onStockLevelsChanged?: () => void
 }
 
 export function ProductionBatchStatusManager({
@@ -24,7 +25,8 @@ export function ProductionBatchStatusManager({
   compact = false,
   batches: propBatches,
   loading: propLoading,
-  error: propError
+  error: propError,
+  onStockLevelsChanged
 }: ProductionBatchStatusManagerProps) {
   const { batches: hookBatches, updateBatchStatus, loading: hookLoading, error: hookError } = useProduction()
   const [updatingBatch, setUpdatingBatch] = useState<string | null>(null)
@@ -97,7 +99,7 @@ export function ProductionBatchStatusManager({
     )
 
     try {
-      const result = await updateBatchStatus(batchId, newStatus)
+      const result = await updateBatchStatus(batchId, newStatus, onStockLevelsChanged)
       if (!result.success) {
         console.error('Failed to update batch status:', result.error)
         // Revert optimistic update on failure

@@ -15,9 +15,10 @@ import type { ProductionBatchWithItems, ProductionBatchStatus } from '@/lib/db/s
 
 interface ProductionBatchListProps {
   batches: ProductionBatchWithItems[]
+  onStockLevelsChanged?: () => void
 }
 
-export function ProductionBatchList({ batches }: ProductionBatchListProps) {
+export function ProductionBatchList({ batches, onStockLevelsChanged }: ProductionBatchListProps) {
   const [selectedBatch, setSelectedBatch] = useState<ProductionBatchWithItems | null>(null)
   const [editingBatch, setEditingBatch] = useState<ProductionBatchWithItems | null>(null)
   const [editNote, setEditNote] = useState('')
@@ -82,7 +83,7 @@ export function ProductionBatchList({ batches }: ProductionBatchListProps) {
       setSelectedBatch(updatedBatch)
     }
 
-    const result = await updateBatchStatus(batchId, newStatus)
+    const result = await updateBatchStatus(batchId, newStatus, onStockLevelsChanged)
 
     if (!result.success) {
       console.error('Failed to update batch status:', result.error)

@@ -16,7 +16,11 @@ import { convertProductToFinancialItems } from '@/utils/cogsCalculations'
 import type { FinancialItem } from '@/types'
 import { ProductionBatchStatusManager } from './ProductionBatchStatusManager'
 
-export function ProductionAllocation() {
+interface ProductionAllocationProps {
+  onStockLevelsChanged?: () => void
+}
+
+export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocationProps = {}) {
   const [cupsToAllocate, setCupsToAllocate] = useState<number>(0)
   const [note, setNote] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
@@ -405,6 +409,7 @@ export function ProductionAllocation() {
       batches={batches}
       loading={productionLoading}
       error={productionError}
+      onStockLevelsChanged={onStockLevelsChanged}
     />
   </div>
   )

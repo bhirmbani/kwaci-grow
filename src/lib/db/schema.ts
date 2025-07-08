@@ -92,6 +92,10 @@ export interface ProductionBatch {
   dateCreated: string // ISO date string
   status: 'Pending' | 'In Progress' | 'Completed' // Production batch status
   note: string
+  // Production output tracking (set when batch is completed)
+  productName?: string // Name of the product being produced (e.g., "Espresso")
+  outputQuantity?: number // Quantity produced (e.g., 10)
+  outputUnit?: string // Unit of output (e.g., "cups")
   createdAt: string
   updatedAt: string
 }
@@ -238,6 +242,16 @@ export interface ProductTargetDefault {
   updatedAt: string
 }
 
+export interface JourneyProgress {
+  id: string
+  stepId: string // Journey step identifier (e.g., "create-ingredient", "create-product")
+  completed: boolean
+  completedAt?: string // ISO date string when step was completed
+  userId?: string // For future multi-user support
+  createdAt: string
+  updatedAt: string
+}
+
 // Extended types for UI components
 export interface MenuWithProducts extends Menu {
   products: (MenuProduct & { product: Product })[]
@@ -296,6 +310,7 @@ export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedA
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
 export type NewProductTargetDefault = Omit<ProductTargetDefault, 'createdAt' | 'updatedAt'>
+export type NewJourneyProgress = Omit<JourneyProgress, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

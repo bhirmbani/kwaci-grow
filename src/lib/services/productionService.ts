@@ -168,15 +168,33 @@ export class ProductionService {
   /**
    * Update production batch status
    */
-  static async updateBatchStatus(batchId: string, status: ProductionBatchStatus): Promise<void> {
+  static async updateBatchStatus(
+    batchId: string,
+    status: ProductionBatchStatus,
+    outputData?: {
+      productName: string
+      outputQuantity: number
+      outputUnit: string
+    }
+  ): Promise<void> {
     try {
       const now = new Date().toISOString()
 
-      // Update batch status
-      await db.productionBatches.update(batchId, {
+      // Prepare update data
+      const updateData: any = {
         status,
         updatedAt: now
-      })
+      }
+
+      // If completing the batch and output data provided, add production output
+      if (status === 'Completed' && outputData) {
+        updateData.productName = outputData.productName
+        updateData.outputQuantity = outputData.outputQuantity
+        updateData.outputUnit = outputData.outputUnit
+      }
+
+      // Update batch status and output data
+      await db.productionBatches.update(batchId, updateData)
 
       // If status is 'Completed', convert reservations to actual deductions
       if (status === 'Completed') {

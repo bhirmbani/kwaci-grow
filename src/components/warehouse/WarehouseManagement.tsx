@@ -10,11 +10,13 @@ import { WarehouseCalendar } from './WarehouseCalendar'
 import { WarehouseStats } from './WarehouseStats'
 import { StockLevels } from './StockLevels'
 import { ProductionAllocation } from '../production/ProductionAllocation'
+import { useStockLevels } from '@/hooks/useStock'
 
 export function WarehouseManagement() {
   const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'production'>('overview')
   const { batches, loading, error } = useWarehouse()
   const { stats, loading: statsLoading } = useWarehouseStats()
+  const { loadStockLevels } = useStockLevels()
 
   if (loading || statsLoading) {
     return (
@@ -172,7 +174,7 @@ export function WarehouseManagement() {
         </TabsContent>
 
         <TabsContent value="production">
-          <ProductionAllocation />
+          <ProductionAllocation onStockLevelsChanged={loadStockLevels} />
         </TabsContent>
 
         <TabsContent value="batches">

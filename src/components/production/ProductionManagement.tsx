@@ -7,11 +7,13 @@ import { useProduction, useProductionStats } from '@/hooks/useProduction'
 import { formatCurrency } from '@/utils/formatters'
 import { ProductionBatchList } from './ProductionBatchList'
 import { ReservedOperationsList } from './ReservedOperationsList'
+import { useStockLevels } from '@/hooks/useStock'
 
 export function ProductionManagement() {
   const [activeTab, setActiveTab] = useState<'overview' | 'batches' | 'reservations'>('overview')
   const { batches, loading, error } = useProduction()
   const { stats, loading: statsLoading } = useProductionStats()
+  const { loadStockLevels } = useStockLevels()
 
   if (loading || statsLoading) {
     return (
@@ -194,7 +196,7 @@ export function ProductionManagement() {
         </TabsContent>
 
         <TabsContent value="batches">
-          <ProductionBatchList batches={batches} />
+          <ProductionBatchList batches={batches} onStockLevelsChanged={loadStockLevels} />
         </TabsContent>
 
         <TabsContent value="reservations">

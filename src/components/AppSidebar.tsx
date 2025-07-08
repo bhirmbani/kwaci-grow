@@ -19,6 +19,7 @@ import {
   Menu,
   Target,
   Activity,
+  Map,
 } from "lucide-react"
 
 import {
@@ -52,6 +53,12 @@ const items = [
     url: "/",
     icon: Home,
     description: "Main financial dashboard",
+  },
+  {
+    title: "Plan",
+    url: "/plan",
+    icon: Map,
+    description: "Guided onboarding and operational planning",
   },
   {
     title: "Products",
