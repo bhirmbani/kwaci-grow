@@ -217,7 +217,7 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
 
         {/* Edit Ingredient Sheet */}
         <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-          <SheetContent className="w-[600px] sm:w-[600px]">
+          <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Edit Ingredient</SheetTitle>
               <SheetDescription>
@@ -236,7 +236,7 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
 
         {/* View Ingredient Usage Sheet */}
         <Sheet open={isViewSheetOpen} onOpenChange={setIsViewSheetOpen}>
-          <SheetContent className="w-[800px] sm:w-[800px]">
+          <SheetContent className="w-[800px] sm:w-[800px] h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Ingredient Usage</SheetTitle>
               <SheetDescription>

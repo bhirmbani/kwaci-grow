@@ -195,7 +195,7 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
 
         {/* Edit Product Sheet */}
         <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-          <SheetContent className="w-[600px] sm:w-[600px]">
+          <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Edit Product</SheetTitle>
               <SheetDescription>
@@ -214,7 +214,7 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
 
         {/* View Product Sheet */}
         <Sheet open={isViewSheetOpen} onOpenChange={setIsViewSheetOpen}>
-          <SheetContent className="w-[800px] sm:w-[800px]">
+          <SheetContent className="w-[800px] sm:w-[800px] h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Product Details</SheetTitle>
               <SheetDescription>

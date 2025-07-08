@@ -371,7 +371,7 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
 
       {/* Product Selector Sheet */}
       <Sheet open={isProductSelectorOpen} onOpenChange={setIsProductSelectorOpen}>
-        <SheetContent className="w-[800px] sm:w-[800px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl">
+        <SheetContent className="w-[800px] sm:w-[800px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Add Product to Menu</SheetTitle>
             <SheetDescription>

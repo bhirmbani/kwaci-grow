@@ -339,7 +339,7 @@ export function BranchMenuView({ branch, onClose, onBranchUpdated }: BranchMenuV
 
       {/* Menu Assignment Selector Sheet */}
       <Sheet open={isMenuSelectorOpen} onOpenChange={setIsMenuSelectorOpen}>
-        <SheetContent className="w-[800px] sm:w-[800px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl">
+        <SheetContent className="w-[800px] sm:w-[800px] bg-background/20 dark:bg-background/80 backdrop-blur-3xl h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Assign Menu to Branch</SheetTitle>
             <SheetDescription>

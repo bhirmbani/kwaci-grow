@@ -63,7 +63,7 @@ export function IngredientManagement() {
               Create Ingredient
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[600px] sm:w-[600px]">
+          <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Create New Ingredient</SheetTitle>
               <SheetDescription>

@@ -503,7 +503,7 @@ export function MenuManagement() {
 
       {/* Create Menu Sheet */}
       <Sheet open={isCreateSheetOpen} onOpenChange={setIsCreateSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Create New Menu</SheetTitle>
             <SheetDescription>
@@ -519,7 +519,7 @@ export function MenuManagement() {
 
       {/* Edit Menu Sheet */}
       <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit Menu</SheetTitle>
             <SheetDescription>
@@ -536,7 +536,7 @@ export function MenuManagement() {
 
       {/* Branch Assignment Sheet */}
       <Sheet open={isBranchAssignmentSheetOpen} onOpenChange={setIsBranchAssignmentSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Assign Branches</SheetTitle>
             <SheetDescription>
@@ -555,7 +555,7 @@ export function MenuManagement() {
 
       {/* Create Branch Sheet */}
       <Sheet open={isCreateBranchSheetOpen} onOpenChange={setIsCreateBranchSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Create New Branch</SheetTitle>
             <SheetDescription>
@@ -571,7 +571,7 @@ export function MenuManagement() {
 
       {/* Edit Branch Sheet */}
       <Sheet open={isEditBranchSheetOpen} onOpenChange={setIsEditBranchSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit Branch</SheetTitle>
             <SheetDescription>
@@ -588,7 +588,7 @@ export function MenuManagement() {
 
       {/* Create Sales Target Sheet */}
       <Sheet open={isCreateTargetSheetOpen} onOpenChange={setIsCreateTargetSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Create Sales Target</SheetTitle>
             <SheetDescription>
@@ -604,7 +604,7 @@ export function MenuManagement() {
 
       {/* Edit Sales Target Sheet */}
       <Sheet open={isEditTargetSheetOpen} onOpenChange={setIsEditTargetSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px]">
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit Sales Target</SheetTitle>
             <SheetDescription>
@@ -623,7 +623,7 @@ export function MenuManagement() {
 
       {/* Menu Details Sheet */}
       <Sheet open={isMenuDetailsSheetOpen} onOpenChange={setIsMenuDetailsSheetOpen}>
-        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw]">
+        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Menu Details</SheetTitle>
             <SheetDescription>
@@ -642,7 +642,7 @@ export function MenuManagement() {
 
       {/* Branch Menu View Sheet */}
       <Sheet open={isBranchMenuSheetOpen} onOpenChange={setIsBranchMenuSheetOpen}>
-        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw]">
+        <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw] h-full overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Branch Menu Management</SheetTitle>
             <SheetDescription>

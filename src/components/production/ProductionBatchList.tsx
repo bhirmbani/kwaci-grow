@@ -228,7 +228,7 @@ export function ProductionBatchList({ batches }: ProductionBatchListProps) {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </SheetTrigger>
-                          <SheetContent className="w-[600px] sm:w-[600px]">
+                          <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
                             <SheetHeader>
                               <SheetTitle>Production Batch #{selectedBatch?.batchNumber}</SheetTitle>
                               <SheetDescription>

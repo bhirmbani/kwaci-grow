@@ -273,7 +273,7 @@ export function SalesRecordingInterface() {
               <Plus className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+          <SheetContent className="w-full sm:max-w-2xl h-full overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Record New Sale</SheetTitle>
               <SheetDescription>
