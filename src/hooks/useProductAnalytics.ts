@@ -99,16 +99,15 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
             targetQuantityPerDay
           }
 
-            menuProductProjections.push(projection)
+          menuProductProjections.push(projection)
 
-            // Add to menu totals
-            totalDailyRevenue += dailyRevenue
-            totalWeeklyRevenue += weeklyRevenue
-            totalMonthlyRevenue += monthlyRevenue
-            totalDailyProfit += dailyProfit
-            totalWeeklyProfit += weeklyProfit
-            totalMonthlyProfit += monthlyProfit
-          }
+          // Add to menu totals
+          totalDailyRevenue += dailyRevenue
+          totalWeeklyRevenue += weeklyRevenue
+          totalMonthlyRevenue += monthlyRevenue
+          totalDailyProfit += dailyProfit
+          totalWeeklyProfit += weeklyProfit
+          totalMonthlyProfit += monthlyProfit
         }
 
         // Only include menus that have products
