@@ -56,6 +56,100 @@ export function calculateBusinessTimeProgress(
 }
 
 /**
+ * Get current time display information for sales target tracking
+ */
+export function getCurrentTimeInfo(
+  date: string,
+  businessHoursStart: string = '06:00',
+  businessHoursEnd: string = '22:00'
+): {
+  currentTime: string
+  timeDisplay: string
+  isAfterBusinessHours: boolean
+  timeRemaining: string | null
+} {
+  const now = new Date()
+  const targetDate = new Date(date)
+  const isToday = targetDate.toDateString() === now.toDateString()
+
+  // Format current time
+  const currentTime = now.toTimeString().substring(0, 5) // HH:MM format
+
+  if (!isToday) {
+    return {
+      currentTime,
+      timeDisplay: targetDate < now ? 'Business day ended' : 'Future date',
+      isAfterBusinessHours: targetDate < now,
+      timeRemaining: null
+    }
+  }
+
+  // Parse business hours
+  const [startHour, startMin] = businessHoursStart.split(':').map(Number)
+  const [endHour, endMin] = businessHoursEnd.split(':').map(Number)
+
+  const businessStartMinutes = startHour * 60 + startMin
+  const businessEndMinutes = endHour * 60 + endMin
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+  const isAfterBusinessHours = currentMinutes > businessEndMinutes
+
+  let timeDisplay: string
+  let timeRemaining: string | null = null
+
+  if (currentMinutes < businessStartMinutes) {
+    // Before business hours
+    const minutesUntilOpen = businessStartMinutes - currentMinutes
+    const hoursUntilOpen = Math.floor(minutesUntilOpen / 60)
+    const minsUntilOpen = minutesUntilOpen % 60
+    timeDisplay = `Opens in ${hoursUntilOpen}h ${minsUntilOpen}m`
+  } else if (isAfterBusinessHours) {
+    // After business hours
+    timeDisplay = 'Business hours ended'
+  } else {
+    // During business hours
+    const minutesRemaining = businessEndMinutes - currentMinutes
+    const hoursRemaining = Math.floor(minutesRemaining / 60)
+    const minsRemaining = minutesRemaining % 60
+
+    timeDisplay = `Current time: ${currentTime}`
+    timeRemaining = `${hoursRemaining}h ${minsRemaining}m until close`
+  }
+
+  return {
+    currentTime,
+    timeDisplay,
+    isAfterBusinessHours,
+    timeRemaining
+  }
+}
+
+/**
+ * Determine sales target status with business hours awareness
+ */
+export function getSalesTargetStatus(
+  progressPercentage: number,
+  expectedProgress: number,
+  isAfterBusinessHours: boolean
+): 'ahead' | 'on-track' | 'behind' | 'at-risk' | 'target-failed' {
+  // If business hours have ended and target not met, it's failed
+  if (isAfterBusinessHours && progressPercentage < 100) {
+    return 'target-failed'
+  }
+
+  // Normal status logic during business hours
+  if (progressPercentage >= expectedProgress + 10) {
+    return 'ahead'
+  } else if (progressPercentage < expectedProgress - 20) {
+    return 'at-risk'
+  } else if (progressPercentage < expectedProgress - 10) {
+    return 'behind'
+  } else {
+    return 'on-track'
+  }
+}
+
+/**
  * Calculate time-based progress percentage (legacy function for 24-hour calculation)
  * @deprecated Use calculateBusinessTimeProgress instead
  */

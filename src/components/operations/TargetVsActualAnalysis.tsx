@@ -19,7 +19,7 @@ import { SalesRecordService } from '@/lib/services/salesRecordService'
 import { DailyProductSalesTargetService, type ProductTargetForDate } from '@/lib/services/dailyProductSalesTargetService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
-import { calculateBusinessTimeProgress, calculateExpectedProgress } from '@/lib/utils/operationsUtils'
+import { calculateBusinessTimeProgress, calculateExpectedProgress, getCurrentTimeInfo, getSalesTargetStatus } from '@/lib/utils/operationsUtils'
 import type { Branch, Menu } from '@/lib/db/schema'
 
 // Menu-level target aggregated from product targets
@@ -40,9 +40,15 @@ interface TargetAnalysis {
   variance: number
   variancePercentage: number
   progressPercentage: number
-  status: 'ahead' | 'on-track' | 'behind' | 'at-risk'
+  status: 'ahead' | 'on-track' | 'behind' | 'at-risk' | 'target-failed'
   timeProgress: number // Percentage of day elapsed
   expectedProgress: number // Expected progress based on time
+  timeInfo: {
+    currentTime: string
+    timeDisplay: string
+    isAfterBusinessHours: boolean
+    timeRemaining: string | null
+  }
 }
 
 // Helper function to aggregate product targets into menu-level targets
@@ -165,15 +171,15 @@ export function TargetVsActualAnalysis() {
           // Calculate expected progress using realistic coffee shop curve
           const expectedProgress = calculateExpectedProgress(timeProgress, 'coffee-shop')
 
-          // Determine status
-          let status: TargetAnalysis['status'] = 'on-track'
-          if (progressPercentage >= expectedProgress + 10) {
-            status = 'ahead'
-          } else if (progressPercentage < expectedProgress - 20) {
-            status = 'at-risk'
-          } else if (progressPercentage < expectedProgress - 10) {
-            status = 'behind'
-          }
+          // Get time information for display
+          const timeInfo = getCurrentTimeInfo(selectedDate, businessHoursStart, businessHoursEnd)
+
+          // Determine status with business hours awareness
+          const status = getSalesTargetStatus(
+            progressPercentage,
+            expectedProgress,
+            timeInfo.isAfterBusinessHours
+          )
 
           return {
             target,
@@ -184,7 +190,8 @@ export function TargetVsActualAnalysis() {
             progressPercentage,
             status,
             timeProgress,
-            expectedProgress
+            expectedProgress,
+            timeInfo
           }
         })
 
@@ -210,6 +217,8 @@ export function TargetVsActualAnalysis() {
         return <Clock className="h-5 w-5 text-yellow-500" />
       case 'at-risk':
         return <AlertTriangle className="h-5 w-5 text-red-500" />
+      case 'target-failed':
+        return <AlertTriangle className="h-5 w-5 text-red-700" />
     }
   }
 
@@ -218,14 +227,16 @@ export function TargetVsActualAnalysis() {
       ahead: 'default',
       'on-track': 'secondary',
       behind: 'outline',
-      'at-risk': 'destructive'
+      'at-risk': 'destructive',
+      'target-failed': 'destructive'
     } as const
 
     const labels = {
       ahead: 'Ahead',
       'on-track': 'On Track',
       behind: 'Behind',
-      'at-risk': 'At Risk'
+      'at-risk': 'At Risk',
+      'target-failed': 'Target Failed'
     }
 
     return (
@@ -328,9 +339,16 @@ export function TargetVsActualAnalysis() {
                     <span>{analysis.progressPercentage.toFixed(1)}%</span>
                   </div>
                   <Progress value={analysis.progressPercentage} className="h-2" />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Expected: {analysis.expectedProgress.toFixed(1)}%</span>
-                    <span>Time: {analysis.timeProgress.toFixed(1)}%</span>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{analysis.timeInfo.timeDisplay}</span>
+                      <span>Expected: {analysis.expectedProgress.toFixed(1)}%</span>
+                    </div>
+                    {analysis.timeInfo.timeRemaining && (
+                      <div className="text-xs text-muted-foreground">
+                        <span>Time remaining: {analysis.timeInfo.timeRemaining}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -365,7 +383,6 @@ export function TargetVsActualAnalysis() {
                 {/* Additional Info */}
                 <div className="text-xs text-muted-foreground">
                   <p>Sales Count: {analysis.actualSales} items</p>
-                  {analysis.target.note && <p>Note: {analysis.target.note}</p>}
                 </div>
               </CardContent>
             </Card>
