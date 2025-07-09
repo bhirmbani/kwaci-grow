@@ -62,10 +62,25 @@ export class PlanningService {
         plan.templateId ? db.planTemplates.get(plan.templateId) : Promise.resolve(undefined)
       ])
 
-      // Calculate progress for goals
-      const goalsWithProgress = goals.map(goal => ({
-        ...goal,
-        progressPercentage: goal.targetValue > 0 ? Math.min((goal.currentValue / goal.targetValue) * 100, 100) : 0
+      // Calculate progress for goals with branch and task information
+      const goalsWithProgress = await Promise.all(goals.map(async goal => {
+        // Ensure backward compatibility for goals without linkedTaskIds
+        const safeLinkedTaskIds = goal.linkedTaskIds || []
+
+        const [goalBranch, linkedTasks] = await Promise.all([
+          goal.branchId ? db.branches.get(goal.branchId) : Promise.resolve(undefined),
+          safeLinkedTaskIds.length > 0
+            ? Promise.all(safeLinkedTaskIds.map(taskId => db.planTasks.get(taskId)))
+            : Promise.resolve([])
+        ])
+
+        return {
+          ...goal,
+          linkedTaskIds: safeLinkedTaskIds, // Ensure the field exists
+          progressPercentage: goal.targetValue > 0 ? Math.min((goal.currentValue / goal.targetValue) * 100, 100) : 0,
+          branch: goalBranch,
+          linkedTasks: linkedTasks.filter(Boolean) as PlanTask[]
+        }
       }))
 
       // Calculate task dependencies
@@ -110,15 +125,16 @@ export class PlanningService {
    */
   static async addGoalToPlan(planId: string, goalData: Omit<NewPlanGoal, 'id' | 'planId'>): Promise<PlanGoal> {
     const now = new Date().toISOString()
-    
+
     const newGoal: PlanGoal = {
       id: uuidv4(),
       planId,
+      linkedTaskIds: [], // Default to empty array
       ...goalData,
       createdAt: now,
       updatedAt: now,
     }
-    
+
     await db.planGoals.add(newGoal)
     return newGoal
   }
@@ -128,16 +144,34 @@ export class PlanningService {
    */
   static async updateGoalProgress(goalId: string, currentValue: number, completed?: boolean): Promise<void> {
     const now = new Date().toISOString()
-    const updates: Partial<PlanGoal> = { 
-      currentValue, 
-      updatedAt: now 
+    const updates: Partial<PlanGoal> = {
+      currentValue,
+      updatedAt: now
     }
-    
+
     if (completed !== undefined) {
       updates.completed = completed
     }
-    
+
     await db.planGoals.update(goalId, updates)
+  }
+
+  /**
+   * Update goal
+   */
+  static async updateGoal(goalId: string, updates: Partial<Omit<PlanGoal, 'id' | 'planId' | 'createdAt'>>): Promise<void> {
+    const now = new Date().toISOString()
+    await db.planGoals.update(goalId, {
+      ...updates,
+      updatedAt: now
+    })
+  }
+
+  /**
+   * Delete goal
+   */
+  static async deleteGoal(goalId: string): Promise<void> {
+    await db.planGoals.delete(goalId)
   }
 
   /**

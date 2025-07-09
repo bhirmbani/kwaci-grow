@@ -27,6 +27,8 @@ export interface PlanGoal {
   priority: 'low' | 'medium' | 'high'
   dueDate?: string
   completed: boolean
+  branchId?: string // Optional foreign key to Branch for sales target integration
+  linkedTaskIds: string[] // Array of task IDs that are linked to this goal
   note: string
   createdAt: string
   updatedAt: string
@@ -126,7 +128,11 @@ export interface OperationalPlanWithDetails extends OperationalPlan {
   metrics: PlanMetric[]
   branch?: import('./schema').Branch
   template?: PlanTemplate
-  goalsWithProgress: (PlanGoal & { progressPercentage: number })[]
+  goalsWithProgress: (PlanGoal & {
+    progressPercentage: number
+    branch?: import('./schema').Branch
+    linkedTasks: PlanTask[]
+  })[]
   tasksWithStatus: (PlanTask & { canStart: boolean })[]
   metricsWithProgress: (PlanMetric & { progressPercentage: number })[]
 }

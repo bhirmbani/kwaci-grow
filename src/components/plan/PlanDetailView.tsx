@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { PlanningService } from '@/lib/services/planningService'
 import { TaskManagement } from './TaskManagement'
+import { GoalManagement } from './GoalManagement'
 import type { OperationalPlanWithDetails } from '@/lib/db/planningSchema'
 
 interface PlanDetailViewProps {
@@ -211,51 +212,12 @@ export function PlanDetailView({ planId, onBack }: PlanDetailViewProps) {
         </TabsList>
 
         <TabsContent value="goals">
-          <div className="space-y-4">
-            {plan.goalsWithProgress.length === 0 ? (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <Target className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Goals</h3>
-                  <p className="text-muted-foreground">This plan doesn't have any goals yet.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              plan.goalsWithProgress.map((goal) => (
-                <Card key={goal.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{goal.title}</CardTitle>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{goal.category}</Badge>
-                        <Badge variant={goal.priority === 'high' ? 'destructive' : goal.priority === 'medium' ? 'default' : 'secondary'}>
-                          {goal.priority}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">{goal.description}</p>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Progress</span>
-                        <span>{goal.currentValue} / {goal.targetValue} {goal.unit}</span>
-                      </div>
-                      <Progress value={goal.progressPercentage} className="h-2" />
-                      <div className="text-xs text-muted-foreground">
-                        {Math.round(goal.progressPercentage)}% complete
-                      </div>
-                    </div>
-                    {goal.note && (
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-sm text-muted-foreground">{goal.note}</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+          <GoalManagement
+            planId={planId}
+            goals={plan.goalsWithProgress}
+            tasks={plan.tasksWithStatus}
+            onGoalsChange={loadPlanDetails}
+          />
         </TabsContent>
 
         <TabsContent value="tasks">
