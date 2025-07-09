@@ -32,8 +32,8 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
   // Filter ingredients based on search query and category
   const filteredIngredients = ingredients.filter(ingredient => {
     const matchesSearch = ingredient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (ingredient.category || '').toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = categoryFilter === 'all' || ingredient.category === categoryFilter
+                         (ingredient.categoryName || '').toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = categoryFilter === 'all' || ingredient.categoryName === categoryFilter
     return matchesSearch && matchesCategory
   })
 

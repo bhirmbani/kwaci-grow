@@ -88,16 +88,16 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
             productId: product.id,
             productName: product.name,
             cogsPerCup: Math.round(cogsPerCup),
-              menuPrice,
-              grossProfitPerCup,
-              dailyRevenue,
-              weeklyRevenue,
-              monthlyRevenue,
-              dailyProfit,
-              weeklyProfit,
-              monthlyProfit,
-              targetQuantityPerDay
-            }
+            menuPrice,
+            grossProfitPerCup,
+            dailyRevenue,
+            weeklyRevenue,
+            monthlyRevenue,
+            dailyProfit,
+            weeklyProfit,
+            monthlyProfit,
+            targetQuantityPerDay
+          }
 
             menuProductProjections.push(projection)
 

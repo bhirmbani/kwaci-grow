@@ -1265,57 +1265,80 @@ export class ComprehensiveSeeder {
 
   private async seedHistoricalSales(): Promise<void> {
     this.currentStep++
-    this.updateProgress('Historical Sales', 'Creating historical sales data...')
+    this.updateProgress('Historical Sales', 'Creating comprehensive historical sales data...')
 
-    // Get menus, products, branches, and menu products for reference
+    // Get all necessary data for comprehensive sales generation
     const menus = await db.menus.toArray()
     const products = await db.products.toArray()
     const branches = await db.branches.toArray()
     const menuProducts = await db.menuProducts.toArray()
-    const allDayMenu = menus.find(m => m.name === 'All Day Menu')
-
-    if (!allDayMenu) return
+    const salesTargets = await db.dailyProductSalesTargets.toArray()
 
     const now = new Date().toISOString()
     const salesRecords: SalesRecord[] = []
 
-    // Create historical sales for the past 30 days
-    for (let i = 1; i <= 30; i++) {
+    // Create comprehensive historical sales for the past 30 days AND future 7 days
+    // Past data for analytics, future data for target analysis
+    for (let i = -7; i <= 30; i++) {
       const saleDate = new Date()
       saleDate.setDate(saleDate.getDate() - i)
       const dateStr = saleDate.toISOString().split('T')[0]
+      const dayOfWeek = saleDate.getDay()
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      const isToday = i === 0
+      const isFuture = i < 0
 
       branches.forEach(branch => {
-        // Generate sales throughout the day with realistic patterns
-        const salesTimes = this.generateRealisticSalesTimes(saleDate, branch)
+        // Get business hours for this branch
+        const businessHours = this.getBranchBusinessHours(branch)
 
-        salesTimes.forEach(saleTime => {
-          // Randomly select a product based on popularity
-          const selectedProduct = this.selectRandomProduct(products)
-          const menuProduct = menuProducts.find(mp =>
-            mp.menuId === allDayMenu.id && mp.productId === selectedProduct.id
+        // Generate sales for each menu that operates during different times
+        menus.forEach(menu => {
+          const menuProductsForMenu = menuProducts.filter(mp => mp.menuId === menu.id)
+          if (menuProductsForMenu.length === 0) return
+
+          // Determine menu operating hours
+          const menuHours = this.getMenuOperatingHours(menu, businessHours)
+          if (!menuHours) return
+
+          // Generate realistic sales throughout the menu's operating hours
+          const salesTimes = this.generateMenuSpecificSalesTimes(
+            saleDate,
+            branch,
+            menu,
+            menuHours,
+            isWeekend,
+            isToday,
+            isFuture
           )
 
-          if (menuProduct) {
-            // Random quantity (mostly 1, sometimes 2-3)
-            const quantity = Math.random() < 0.8 ? 1 : Math.random() < 0.7 ? 2 : 3
-            const totalAmount = menuProduct.price * quantity
+          salesTimes.forEach(saleTime => {
+            // Select products based on menu and time-based popularity
+            const selectedProducts = this.selectProductsForTimeSlot(
+              menuProductsForMenu,
+              saleTime,
+              menu.name
+            )
 
-            salesRecords.push({
-              id: uuidv4(),
-              menuId: allDayMenu.id,
-              productId: selectedProduct.id,
-              branchId: branch.id,
-              saleDate: dateStr,
-              saleTime: saleTime,
-              quantity: quantity,
-              unitPrice: menuProduct.price,
-              totalAmount: totalAmount,
-              note: `Historical sale at ${branch.name}`,
-              createdAt: now,
-              updatedAt: now
+            selectedProducts.forEach(({ menuProduct, quantity }) => {
+              const totalAmount = menuProduct.price * quantity
+
+              salesRecords.push({
+                id: uuidv4(),
+                menuId: menu.id,
+                productId: menuProduct.productId,
+                branchId: branch.id,
+                saleDate: dateStr,
+                saleTime: saleTime,
+                quantity: quantity,
+                unitPrice: menuProduct.price,
+                totalAmount: totalAmount,
+                note: `${isFuture ? 'Projected' : 'Historical'} sale at ${branch.name} - ${menu.name}`,
+                createdAt: now,
+                updatedAt: now
+              })
             })
-          }
+          })
         })
       })
     }
@@ -1394,6 +1417,199 @@ export class ComprehensiveSeeder {
     }
 
     return products[0] // Fallback
+  }
+
+  private getBranchBusinessHours(branch: Branch): { start: string; end: string } {
+    return {
+      start: branch.businessHoursStart || '07:00',
+      end: branch.businessHoursEnd || '21:00'
+    }
+  }
+
+  private getMenuOperatingHours(menu: Menu, businessHours: { start: string; end: string }): { start: string; end: string } | null {
+    // Define menu-specific operating hours
+    switch (menu.name) {
+      case 'Morning Rush':
+        return { start: businessHours.start, end: '11:00' }
+      case 'All Day Menu':
+        return { start: '11:00', end: '18:00' }
+      case 'Evening Special':
+        return { start: '18:00', end: businessHours.end }
+      default:
+        return businessHours // Default to full business hours
+    }
+  }
+
+  private generateMenuSpecificSalesTimes(
+    date: Date,
+    branch: Branch,
+    menu: Menu,
+    menuHours: { start: string; end: string },
+    isWeekend: boolean,
+    isToday: boolean,
+    isFuture: boolean
+  ): string[] {
+    const times: string[] = []
+
+    // Calculate base sales volume for this menu and branch
+    let baseSales = this.calculateBaseSalesVolume(branch, menu, isWeekend)
+
+    // Adjust for today (partial day) or future (projected)
+    if (isToday) {
+      const currentHour = new Date().getHours()
+      const menuEndHour = parseInt(menuHours.end.split(':')[0])
+      if (currentHour < menuEndHour) {
+        baseSales = Math.floor(baseSales * 0.6) // Partial day
+      }
+    } else if (isFuture) {
+      baseSales = Math.floor(baseSales * (0.8 + Math.random() * 0.4)) // 80-120% of normal
+    }
+
+    // Generate sales times within menu operating hours
+    const startHour = parseInt(menuHours.start.split(':')[0])
+    const endHour = parseInt(menuHours.end.split(':')[0])
+
+    for (let i = 0; i < baseSales; i++) {
+      const hour = this.selectRandomHourForMenu(startHour, endHour, menu.name)
+      const minute = Math.floor(Math.random() * 60)
+      const second = Math.floor(Math.random() * 60)
+      const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`
+      times.push(timeStr)
+    }
+
+    return times.sort()
+  }
+
+  private calculateBaseSalesVolume(branch: Branch, menu: Menu, isWeekend: boolean): number {
+    // Base sales per menu per day
+    let baseSales = 0
+
+    // Menu-specific base volumes
+    switch (menu.name) {
+      case 'Morning Rush': baseSales = 40; break
+      case 'All Day Menu': baseSales = 60; break
+      case 'Evening Special': baseSales = 25; break
+      default: baseSales = 30
+    }
+
+    // Branch multipliers
+    switch (branch.name) {
+      case 'Downtown Cafe': baseSales *= 1.5; break
+      case 'Mall Kiosk': baseSales *= 1.2; break
+      case 'University Campus': baseSales *= 1.3; break
+      case 'Airport Terminal': baseSales *= 1.1; break
+    }
+
+    // Weekend adjustment
+    if (isWeekend) {
+      baseSales *= (menu.name === 'Mall Kiosk' ? 1.3 : 0.8)
+    }
+
+    return Math.floor(baseSales)
+  }
+
+  private selectRandomHourForMenu(startHour: number, endHour: number, menuName: string): number {
+    // Different hour distributions for different menus
+    const hours: number[] = []
+
+    for (let hour = startHour; hour < endHour; hour++) {
+      let weight = 1
+
+      // Menu-specific hour weighting
+      if (menuName === 'Morning Rush') {
+        // Peak at 8-9 AM
+        weight = hour >= 8 && hour <= 9 ? 3 : hour >= 7 && hour <= 10 ? 2 : 1
+      } else if (menuName === 'All Day Menu') {
+        // Peak at lunch (12-14) and mid-afternoon (15-16)
+        weight = (hour >= 12 && hour <= 14) || (hour >= 15 && hour <= 16) ? 2 : 1
+      } else if (menuName === 'Evening Special') {
+        // Peak at early evening (18-19)
+        weight = hour >= 18 && hour <= 19 ? 2 : 1
+      }
+
+      // Add hour multiple times based on weight
+      for (let w = 0; w < weight; w++) {
+        hours.push(hour)
+      }
+    }
+
+    return hours[Math.floor(Math.random() * hours.length)]
+  }
+
+  private selectProductsForTimeSlot(
+    menuProducts: MenuProduct[],
+    saleTime: string,
+    menuName: string
+  ): Array<{ menuProduct: MenuProduct; quantity: number }> {
+    const hour = parseInt(saleTime.split(':')[0])
+    const selections: Array<{ menuProduct: MenuProduct; quantity: number }> = []
+
+    // Number of products in this sale (usually 1, sometimes 2-3)
+    const numProducts = Math.random() < 0.7 ? 1 : Math.random() < 0.8 ? 2 : 3
+
+    for (let i = 0; i < numProducts; i++) {
+      // Select product based on time and menu
+      const selectedMenuProduct = this.selectProductForTimeAndMenu(menuProducts, hour, menuName)
+      if (selectedMenuProduct) {
+        const quantity = Math.random() < 0.8 ? 1 : Math.random() < 0.7 ? 2 : 3
+        selections.push({ menuProduct: selectedMenuProduct, quantity })
+      }
+    }
+
+    return selections
+  }
+
+  private selectProductForTimeAndMenu(menuProducts: MenuProduct[], hour: number, menuName: string): MenuProduct | null {
+    if (menuProducts.length === 0) return null
+
+    // Time-based product preferences
+    const timePreferences: { [key: string]: number } = {}
+
+    if (hour >= 6 && hour <= 10) {
+      // Morning preferences
+      timePreferences['Espresso'] = 3
+      timePreferences['Americano'] = 3
+      timePreferences['Latte'] = 2
+      timePreferences['Cappuccino'] = 2
+    } else if (hour >= 11 && hour <= 14) {
+      // Lunch preferences
+      timePreferences['Latte'] = 3
+      timePreferences['Cappuccino'] = 2
+      timePreferences['Vanilla Latte'] = 2
+      timePreferences['Americano'] = 2
+    } else if (hour >= 15 && hour <= 17) {
+      // Afternoon preferences
+      timePreferences['Caramel Macchiato'] = 3
+      timePreferences['Vanilla Latte'] = 3
+      timePreferences['Latte'] = 2
+    } else {
+      // Evening preferences
+      timePreferences['Caramel Macchiato'] = 2
+      timePreferences['Vanilla Latte'] = 2
+      timePreferences['Latte'] = 1
+    }
+
+    // Create weighted array of menu products
+    const weightedProducts: MenuProduct[] = []
+
+    menuProducts.forEach(mp => {
+      // Find the product to get its name
+      const productName = this.getProductNameById(mp.productId)
+      const weight = timePreferences[productName] || 1
+
+      for (let w = 0; w < weight; w++) {
+        weightedProducts.push(mp)
+      }
+    })
+
+    return weightedProducts[Math.floor(Math.random() * weightedProducts.length)]
+  }
+
+  private getProductNameById(productId: string): string {
+    // This is a simplified lookup - in a real implementation, you'd cache the products
+    // For now, we'll use a simple mapping based on common product names
+    const productNames = ['Espresso', 'Americano', 'Latte', 'Cappuccino', 'Vanilla Latte', 'Caramel Macchiato']
+    return productNames[Math.floor(Math.random() * productNames.length)]
   }
 
   private async seedWarehouseData(): Promise<void> {
