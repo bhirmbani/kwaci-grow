@@ -49,7 +49,7 @@ export function CreatePlanSheet({
           {triggerText}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-lg">
+      <SheetContent side="right" className="w-full sm:max-w-lg h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Create New Operational Plan</SheetTitle>
           <SheetDescription>

@@ -119,7 +119,7 @@ export function GoalItem({ goal, allTasks, index, onUpdate, onDelete }: GoalItem
                       <Edit className="h-4 w-4" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+                  <SheetContent className="w-full sm:max-w-2xl h-full overflow-y-auto">
                     <SheetHeader>
                       <SheetTitle>Edit Goal</SheetTitle>
                     </SheetHeader>

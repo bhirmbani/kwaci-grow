@@ -223,7 +223,7 @@ export function ReservedOperationsList() {
                   Create Reservation
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="h-full overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>Create Manual Reservation</SheetTitle>
                   <SheetDescription>

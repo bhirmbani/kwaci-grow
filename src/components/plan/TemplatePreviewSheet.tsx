@@ -100,7 +100,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-2xl h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             {getTemplateIcon()}

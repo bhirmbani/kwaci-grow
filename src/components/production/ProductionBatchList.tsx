@@ -313,7 +313,7 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                               <Edit className="h-4 w-4" />
                             </Button>
                           </SheetTrigger>
-                          <SheetContent>
+                          <SheetContent className="h-full overflow-y-auto">
                             <SheetHeader>
                               <SheetTitle>Edit Batch #{editingBatch?.batchNumber}</SheetTitle>
                               <SheetDescription>

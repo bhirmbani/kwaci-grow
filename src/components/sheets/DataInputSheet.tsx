@@ -47,7 +47,7 @@ export function DataInputSheet({
           <span className="truncate">{triggerLabel}</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side={side} className="flex flex-col h-full">
+      <SheetContent side={side} className="flex flex-col h-full overflow-y-auto">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle>{title}</SheetTitle>
           {description && (

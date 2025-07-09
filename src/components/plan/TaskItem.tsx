@@ -354,7 +354,7 @@ export function TaskItem({ task, allTasks, index, onUpdate, onDelete, onDuplicat
 
     {/* Edit Task Sheet */}
     <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-      <SheetContent side="right" className="w-full sm:max-w-lg">
+      <SheetContent side="right" className="w-full sm:max-w-lg h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Edit Task</SheetTitle>
           <SheetDescription>
