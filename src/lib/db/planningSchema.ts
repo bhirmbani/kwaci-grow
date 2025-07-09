@@ -46,6 +46,7 @@ export interface PlanTask {
   dependencies: string[] // Array of task IDs that must be completed first
   dueDate?: string
   completedAt?: string
+  taskType?: 'warehouse-batches' | 'ingredient-purchases' | 'production-batches' | 'sales-records' | 'product-creation' // Optional task type for internal linking
   note: string
   createdAt: string
   updatedAt: string

@@ -163,20 +163,40 @@ export class PlanningService {
    */
   static async updateTaskStatus(taskId: string, status: PlanTask['status'], actualDuration?: number): Promise<void> {
     const now = new Date().toISOString()
-    const updates: Partial<PlanTask> = { 
-      status, 
-      updatedAt: now 
+    const updates: Partial<PlanTask> = {
+      status,
+      updatedAt: now
     }
-    
+
     if (status === 'completed') {
       updates.completedAt = now
     }
-    
+
     if (actualDuration !== undefined) {
       updates.actualDuration = actualDuration
     }
-    
+
     await db.planTasks.update(taskId, updates)
+  }
+
+  /**
+   * Update task details
+   */
+  static async updateTask(taskId: string, updates: Partial<PlanTask>): Promise<void> {
+    const now = new Date().toISOString()
+    const taskUpdates = {
+      ...updates,
+      updatedAt: now
+    }
+
+    await db.planTasks.update(taskId, taskUpdates)
+  }
+
+  /**
+   * Delete task
+   */
+  static async deleteTask(taskId: string): Promise<void> {
+    await db.planTasks.delete(taskId)
   }
 
   /**

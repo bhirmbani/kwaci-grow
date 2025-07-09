@@ -5,13 +5,13 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Calendar, 
-  Clock, 
-  TrendingUp, 
-  Target, 
-  CheckSquare, 
-  BarChart3, 
+import {
+  Calendar,
+  Clock,
+  TrendingUp,
+  Target,
+  CheckSquare,
+  BarChart3,
   ArrowLeft,
   Edit,
   Play,
@@ -21,6 +21,7 @@ import {
   Loader2
 } from 'lucide-react'
 import { PlanningService } from '@/lib/services/planningService'
+import { TaskManagement } from './TaskManagement'
 import type { OperationalPlanWithDetails } from '@/lib/db/planningSchema'
 
 interface PlanDetailViewProps {
@@ -258,68 +259,11 @@ export function PlanDetailView({ planId, onBack }: PlanDetailViewProps) {
         </TabsContent>
 
         <TabsContent value="tasks">
-          <div className="space-y-4">
-            {plan.tasksWithStatus.length === 0 ? (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <CheckSquare className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Tasks</h3>
-                  <p className="text-muted-foreground">This plan doesn't have any tasks yet.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              plan.tasksWithStatus.map((task) => (
-                <Card key={task.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{task.title}</CardTitle>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{task.category}</Badge>
-                        <Badge variant={task.status === 'completed' ? 'default' : task.status === 'in-progress' ? 'secondary' : 'outline'}>
-                          {task.status}
-                        </Badge>
-                        <Badge variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}>
-                          {task.priority}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">{task.description}</p>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium">Estimated Duration:</span>
-                        <span className="ml-2 text-muted-foreground">{task.estimatedDuration} minutes</span>
-                      </div>
-                      {task.actualDuration && (
-                        <div>
-                          <span className="font-medium">Actual Duration:</span>
-                          <span className="ml-2 text-muted-foreground">{task.actualDuration} minutes</span>
-                        </div>
-                      )}
-                      {task.dueDate && (
-                        <div>
-                          <span className="font-medium">Due Date:</span>
-                          <span className="ml-2 text-muted-foreground">{formatDate(task.dueDate)}</span>
-                        </div>
-                      )}
-                      {task.assignedTo && (
-                        <div>
-                          <span className="font-medium">Assigned To:</span>
-                          <span className="ml-2 text-muted-foreground">{task.assignedTo}</span>
-                        </div>
-                      )}
-                    </div>
-                    {task.note && (
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-sm text-muted-foreground">{task.note}</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+          <TaskManagement
+            planId={planId}
+            tasks={plan.tasksWithStatus || []}
+            onTasksChange={loadPlanDetails}
+          />
         </TabsContent>
 
         <TabsContent value="metrics">

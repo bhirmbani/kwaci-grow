@@ -756,6 +756,43 @@ export class FinancialDashboardDB extends Dexie {
       console.log('🔄 Fixing planning template schema to include missing fields...')
       console.log('✅ Planning template schema fixed successfully')
     })
+
+    // Version 20 - Add taskType field to planTasks for internal linking
+    this.version(20).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, productName, outputQuantity, outputUnit, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, cogsPerCup, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      operationalPlans: 'id, name, type, status, startDate, endDate, branchId, templateId, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, completed, dueDate, note, createdAt, updatedAt',
+      planTasks: 'id, planId, title, category, priority, status, assignedTo, dueDate, completedAt, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastUpdated, note, createdAt, updatedAt',
+      planTemplates: 'id, name, description, type, category, isDefault, estimatedDuration, difficulty, tags, note, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding taskType field to planTasks for internal linking...')
+      console.log('✅ TaskType field added successfully')
+    })
   }
 }
 
