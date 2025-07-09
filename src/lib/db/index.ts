@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate } from './schema'
+import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate, RecurringExpense } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -36,6 +36,9 @@ export class FinancialDashboardDB extends Dexie {
   planTaskTemplates!: EntityTable<PlanTaskTemplate, 'id'>
   planMetricTemplates!: EntityTable<PlanMetricTemplate, 'id'>
   productTargetDefaults!: EntityTable<ProductTargetDefault, 'id'>
+
+  // Recurring expenses table
+  recurringExpenses!: EntityTable<RecurringExpense, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')
@@ -923,6 +926,138 @@ export class FinancialDashboardDB extends Dexie {
     }).upgrade(async tx => {
       console.log('🔄 Fixing plan template schemas to include missing fields (description, unit, dependencies)...')
       console.log('✅ Plan template schemas fixed successfully')
+    })
+
+    // Version 24 - Add recurring expenses table (fixed index with required fields)
+    this.version(24).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt',
+      // New recurring expenses table
+      recurringExpenses: 'id, name, amount, frequency, category, startDate, isActive, createdAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding recurring expenses table...')
+      console.log('✅ Recurring expenses table added successfully')
+    })
+
+    // Version 25 - Fix recurring expenses table schema to match interface definition
+    this.version(25).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt',
+      // Fixed recurring expenses table with all required fields
+      recurringExpenses: 'id, name, description, amount, frequency, category, startDate, endDate, note, isActive, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Fixing recurring expenses table schema to match interface definition...')
+      console.log('✅ Recurring expenses table schema fixed successfully')
+    })
+
+    // Version 26 - Force complete database reset to fix persistent IDBKeyRange errors
+    this.version(26).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt',
+      // Properly defined recurring expenses table with all required fields
+      recurringExpenses: 'id, name, description, amount, frequency, category, startDate, endDate, note, isActive, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Force resetting database to fix IDBKeyRange errors...')
+
+      // Clear the recurring expenses table to ensure clean state
+      try {
+        await tx.table('recurringExpenses').clear()
+        console.log('✅ Recurring expenses table cleared')
+      } catch (error) {
+        console.log('ℹ️ Recurring expenses table does not exist yet, will be created')
+      }
+
+      console.log('✅ Database reset completed - recurring expenses table properly configured')
     })
   }
 }

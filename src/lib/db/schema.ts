@@ -309,6 +309,7 @@ export type NewMenuBranch = Omit<MenuBranch, 'createdAt' | 'updatedAt'>
 export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedAt'>
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
+export type NewRecurringExpense = Omit<RecurringExpense, 'createdAt' | 'updatedAt'>
 
 // Fixed Assets Management Schema
 export interface FixedAsset {
@@ -334,6 +335,22 @@ export interface AssetCategory {
 
 export type NewFixedAsset = Omit<FixedAsset, 'createdAt' | 'updatedAt' | 'currentValue'>
 export type NewAssetCategory = Omit<AssetCategory, 'createdAt' | 'updatedAt'>
+
+// Recurring Expenses Management Schema
+export interface RecurringExpense {
+  id: string
+  name: string
+  description?: string
+  amount: number // Amount in IDR
+  frequency: 'monthly' | 'yearly'
+  category: string
+  startDate: string // ISO date string
+  endDate?: string // ISO date string, optional for expenses with known end dates
+  note: string
+  isActive: boolean // For soft deletion
+  createdAt: string
+  updatedAt: string
+}
 
 // Re-export planning schema types
 export * from './planningSchema'

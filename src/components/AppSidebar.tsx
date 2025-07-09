@@ -20,6 +20,7 @@ import {
   Target,
   Activity,
   Map,
+  CreditCard,
 } from "lucide-react"
 
 import {
@@ -83,6 +84,12 @@ const items = [
     url: "/operations",
     icon: Activity,
     description: "Sales recording, analytics, and operational tracking",
+  },
+  {
+    title: "Recurring Expenses",
+    url: "/recurring-expenses",
+    icon: CreditCard,
+    description: "Manage monthly and yearly recurring operational expenses",
   },
   {
     title: "Analytics",

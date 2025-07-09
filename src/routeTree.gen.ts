@@ -15,6 +15,7 @@ import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
+import { Route as RecurringExpensesRouteImport } from './routes/recurring-expenses'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
 import { Route as PlanRouteImport } from './routes/plan'
@@ -60,6 +61,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SalesTargetsRoute = SalesTargetsRouteImport.update({
   id: '/sales-targets',
   path: '/sales-targets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecurringExpensesRoute = RecurringExpensesRouteImport.update({
+  id: '/recurring-expenses',
+  path: '/recurring-expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsRoute = ProductsRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
+  '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/production'
     | '/products'
+    | '/recurring-expenses'
     | '/sales-targets'
     | '/settings'
     | '/test-database'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/production'
     | '/products'
+    | '/recurring-expenses'
     | '/sales-targets'
     | '/settings'
     | '/test-database'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/production'
     | '/products'
+    | '/recurring-expenses'
     | '/sales-targets'
     | '/settings'
     | '/test-database'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   ProductionRoute: typeof ProductionRoute
   ProductsRoute: typeof ProductsRoute
+  RecurringExpensesRoute: typeof RecurringExpensesRoute
   SalesTargetsRoute: typeof SalesTargetsRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
@@ -358,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/sales-targets'
       fullPath: '/sales-targets'
       preLoaderRoute: typeof SalesTargetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recurring-expenses': {
+      id: '/recurring-expenses'
+      path: '/recurring-expenses'
+      fullPath: '/recurring-expenses'
+      preLoaderRoute: typeof RecurringExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products': {
@@ -487,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   ProductionRoute: ProductionRoute,
   ProductsRoute: ProductsRoute,
+  RecurringExpensesRoute: RecurringExpensesRoute,
   SalesTargetsRoute: SalesTargetsRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
