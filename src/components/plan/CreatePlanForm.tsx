@@ -18,7 +18,8 @@ import { BranchService } from '@/lib/services/branchService'
 import type { Branch } from '@/lib/db/schema'
 import type { PlanTemplate } from '@/lib/db/planningSchema'
 
-const createPlanSchema = z.object({
+// Create a dynamic schema function that takes templateHasGoals as parameter
+const createPlanSchemaFactory = (templateHasGoals: boolean) => z.object({
   name: z.string().min(1, 'Plan name is required').max(100, 'Plan name must be less than 100 characters'),
   description: z.string().min(1, 'Description is required').max(500, 'Description must be less than 500 characters'),
   type: z.enum(['daily', 'weekly', 'monthly']),
@@ -35,7 +36,19 @@ const createPlanSchema = z.object({
 }, {
   message: "End date must be after or equal to start date",
   path: ["endDate"]
+}).refine((data) => {
+  // Require branch selection when using templates with goals
+  if (data.useTemplate && templateHasGoals && (!data.branchId || data.branchId === 'no-branch')) {
+    return false
+  }
+  return true
+}, {
+  message: "Branch selection is required when using templates that include goals",
+  path: ["branchId"]
 })
+
+// Default schema for initial form setup
+const createPlanSchema = createPlanSchemaFactory(false)
 
 type CreatePlanData = z.infer<typeof createPlanSchema>
 
@@ -49,6 +62,12 @@ export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: Cre
   const [branches, setBranches] = useState<Branch[]>([])
   const [templates, setTemplates] = useState<PlanTemplate[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<PlanTemplate | null>(null)
+  const [templateHasGoals, setTemplateHasGoals] = useState(false)
+  const [templateDetails, setTemplateDetails] = useState<{
+    goalCount: number
+    taskCount: number
+    metricCount: number
+  } | null>(null)
   const [loading, setLoading] = useState(true)
 
   const form = useForm<CreatePlanData>({
@@ -94,30 +113,82 @@ export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: Cre
 
   // Update selected template when templateId changes
   useEffect(() => {
-    if (selectedTemplateId) {
-      const template = templates.find(t => t.id === selectedTemplateId)
-      setSelectedTemplate(template || null)
-      
-      // Auto-populate fields from template
-      if (template) {
-        setValue('type', template.type)
-        if (!watch('name')) {
-          setValue('name', `${template.name} - ${format(new Date(), 'MMM dd, yyyy')}`)
+    const checkTemplateGoals = async () => {
+      if (selectedTemplateId && selectedTemplateId !== 'no-templates') {
+        const template = templates.find(t => t.id === selectedTemplateId)
+        setSelectedTemplate(template || null)
+
+        // Check template details (goals, tasks, metrics)
+        try {
+          const [goalTemplates, taskTemplates, metricTemplates] = await Promise.all([
+            PlanTemplateService.getGoalTemplates(selectedTemplateId),
+            PlanTemplateService.getTaskTemplates(selectedTemplateId),
+            PlanTemplateService.getMetricTemplates(selectedTemplateId)
+          ])
+
+          setTemplateHasGoals(goalTemplates.length > 0)
+          setTemplateDetails({
+            goalCount: goalTemplates.length,
+            taskCount: taskTemplates.length,
+            metricCount: metricTemplates.length
+          })
+        } catch (error) {
+          console.error('Failed to check template details:', error)
+          setTemplateHasGoals(false)
+          setTemplateDetails(null)
         }
-        if (!watch('description')) {
-          setValue('description', template.description)
+
+        // Auto-populate fields from template
+        if (template) {
+          setValue('type', template.type)
+          if (!watch('name')) {
+            setValue('name', `${template.name} - ${format(new Date(), 'MMM dd, yyyy')}`)
+          }
+          if (!watch('description')) {
+            setValue('description', template.description)
+          }
         }
+      } else {
+        setSelectedTemplate(null)
+        setTemplateHasGoals(false)
+        setTemplateDetails(null)
       }
-    } else {
-      setSelectedTemplate(null)
     }
+
+    checkTemplateGoals()
   }, [selectedTemplateId, templates, setValue, watch])
+
+  // Update form resolver when templateHasGoals changes
+  useEffect(() => {
+    const currentSchema = createPlanSchemaFactory(templateHasGoals)
+    form.clearErrors() // Clear any existing validation errors
+    // Note: react-hook-form doesn't have a direct way to update resolver
+    // The validation will be handled in the onSubmit function
+  }, [templateHasGoals, form])
 
   // Filter templates by selected plan type
   const filteredTemplates = templates.filter(template => template.type === planType)
 
   const onSubmit = async (data: CreatePlanData) => {
     try {
+      // Validate with dynamic schema
+      const currentSchema = createPlanSchemaFactory(templateHasGoals)
+      const validationResult = currentSchema.safeParse(data)
+
+      if (!validationResult.success) {
+        // Set form errors for validation failures
+        const errors = validationResult.error.flatten().fieldErrors
+        Object.entries(errors).forEach(([field, messages]) => {
+          if (messages && messages.length > 0) {
+            form.setError(field as keyof CreatePlanData, {
+              type: 'manual',
+              message: messages[0]
+            })
+          }
+        })
+        return
+      }
+
       // Handle special values for branch selection
       const branchId = data.branchId === 'no-branch' ? undefined : data.branchId || undefined
 
@@ -300,6 +371,30 @@ export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: Cre
                 <div className="text-xs text-muted-foreground">
                   Estimated duration: {Math.round(selectedTemplate.estimatedDuration / 60)}h
                 </div>
+                {templateDetails && (
+                  <div className="pt-2 border-t">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">This template will create:</p>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="text-center">
+                        <div className="font-medium text-blue-600">{templateDetails.goalCount}</div>
+                        <div className="text-muted-foreground">Goals</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-green-600">{templateDetails.taskCount}</div>
+                        <div className="text-muted-foreground">Tasks</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-purple-600">{templateDetails.metricCount}</div>
+                        <div className="text-muted-foreground">Metrics</div>
+                      </div>
+                    </div>
+                    {templateHasGoals && (
+                      <p className="text-xs text-amber-600 mt-2 font-medium">
+                        ⚠️ Branch selection required for goals
+                      </p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -367,16 +462,20 @@ export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: Cre
 
       {/* Branch Selection */}
       <div className="space-y-2">
-        <Label htmlFor="branchId">Branch (Optional)</Label>
+        <Label htmlFor="branchId">
+          Branch {useTemplate && templateHasGoals ? '*' : '(Optional)'}
+        </Label>
         <Select
           value={watch('branchId')}
           onValueChange={(value) => setValue('branchId', value)}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a branch (optional)" />
+          <SelectTrigger className={useTemplate && templateHasGoals && (!watch('branchId') || watch('branchId') === 'no-branch') ? 'border-red-500' : ''}>
+            <SelectValue placeholder={useTemplate && templateHasGoals ? "Select a branch (required)" : "Select a branch (optional)"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="no-branch">No specific branch</SelectItem>
+            {!(useTemplate && templateHasGoals) && (
+              <SelectItem value="no-branch">No specific branch</SelectItem>
+            )}
             {branches.map((branch) => (
               <SelectItem key={branch.id} value={branch.id}>
                 <div>
@@ -390,8 +489,14 @@ export function CreatePlanForm({ onSuccess, onCancel, preselectedTemplate }: Cre
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">
-          Assign this plan to a specific branch or leave blank for all branches
+          {useTemplate && templateHasGoals
+            ? "Branch selection is required when using templates that include goals"
+            : "Assign this plan to a specific branch or leave blank for all branches"
+          }
         </p>
+        {errors.branchId && (
+          <p className="text-sm text-red-600">{errors.branchId.message}</p>
+        )}
       </div>
 
       {/* Note */}

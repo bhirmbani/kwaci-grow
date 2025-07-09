@@ -793,6 +793,36 @@ export class FinancialDashboardDB extends Dexie {
       console.log('🔄 Adding taskType field to planTasks for internal linking...')
       console.log('✅ TaskType field added successfully')
     })
+
+    // Version 19: Fix plan template schemas to include missing fields
+    this.version(19).stores({
+      branches: 'id, name, location, isActive, note, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, category, isActive, note, createdAt, updatedAt',
+      products: 'id, name, description, category, isActive, note, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      menus: 'id, name, description, branchId, isActive, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, isAvailable, note, createdAt, updatedAt',
+      salesTargets: 'id, branchId, menuId, date, targetCups, note, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, branchId, status, totalCost, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientId, quantity, unitCost, totalCost, expiryDate, note, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, branchId, status, totalQuantity, totalCost, note, createdAt, updatedAt',
+      productionItems: 'id, batchId, productId, quantity, unitCost, totalCost, note, createdAt, updatedAt',
+      stockReservations: 'id, batchId, warehouseItemId, reservedQuantity, purpose, status, note, createdAt, updatedAt',
+      salesRecords: 'id, branchId, menuId, productId, timestamp, quantity, unitPrice, totalRevenue, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, description, category, purchasePrice, purchaseDate, depreciationMethod, usefulLifeYears, salvageValue, branchId, isActive, note, createdAt, updatedAt',
+      fixedCosts: 'id, assetId, month, depreciationAmount, accumulatedDepreciation, bookValue, note, createdAt, updatedAt',
+      operationalPlans: 'id, name, type, status, startDate, endDate, branchId, templateId, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, completed, dueDate, branchId, linkedTaskIds, note, createdAt, updatedAt',
+      planTasks: 'id, planId, title, category, priority, status, assignedTo, estimatedDuration, actualDuration, dependencies, dueDate, completedAt, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastUpdated, note, createdAt, updatedAt',
+      planTemplates: 'id, name, description, type, category, isDefault, estimatedDuration, difficulty, tags, note, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, description, defaultTargetValue, unit, category, priority, note',
+      planTaskTemplates: 'id, templateId, title, description, category, priority, estimatedDuration, dependencies, note',
+      planMetricTemplates: 'id, templateId, name, description, defaultTargetValue, unit, category, trackingFrequency, note'
+    }).upgrade(async tx => {
+      console.log('🔄 Fixing plan template schemas to include missing fields (description, unit, dependencies)...')
+      console.log('✅ Plan template schemas fixed successfully')
+    })
   }
 }
 

@@ -51,6 +51,13 @@ export class PlanTemplateService {
       const template = await db.planTemplates.get(templateId)
       if (!template) return null
 
+      // Get template components
+      const [goalTemplates, taskTemplates, metricTemplates] = await Promise.all([
+        db.planGoalTemplates.where('templateId').equals(templateId).toArray(),
+        db.planTaskTemplates.where('templateId').equals(templateId).toArray(),
+        db.planMetricTemplates.where('templateId').equals(templateId).toArray()
+      ])
+
       // Get usage statistics
       const plansUsingTemplate = await db.operationalPlans
         .where('templateId')
@@ -66,6 +73,9 @@ export class PlanTemplateService {
 
       return {
         ...template,
+        goalTemplates,
+        taskTemplates,
+        metricTemplates,
         usageCount,
         lastUsed
       }
@@ -118,10 +128,10 @@ export class PlanTemplateService {
   }
 
   /**
-   * Create plan from template
+   * Create plan from template with enhanced goal and task integration
    */
   static async createPlanFromTemplate(
-    templateId: string, 
+    templateId: string,
     planData: {
       name: string
       description: string
@@ -142,6 +152,11 @@ export class PlanTemplateService {
         db.planTaskTemplates.where('templateId').equals(templateId).toArray(),
         db.planMetricTemplates.where('templateId').equals(templateId).toArray()
       ])
+
+      // Validate branch requirement for goals
+      if (goalTemplates.length > 0 && !planData.branchId) {
+        throw new Error('Branch selection is required when creating plans from templates that include goals')
+      }
 
       const now = new Date().toISOString()
       const planId = uuidv4()
@@ -164,10 +179,58 @@ export class PlanTemplateService {
 
       await db.operationalPlans.add(newPlan)
 
-      // Create goals from templates
-      const goalPromises = goalTemplates.map(goalTemplate => 
-        db.planGoals.add({
-          id: uuidv4(),
+      // Step 1: Create tasks first to establish ID mapping for dependencies
+      const templateToActualTaskIdMap = new Map<string, string>()
+      const createdTasks: any[] = []
+
+      for (const taskTemplate of taskTemplates) {
+        const actualTaskId = uuidv4()
+        templateToActualTaskIdMap.set(taskTemplate.id, actualTaskId)
+
+        const newTask = {
+          id: actualTaskId,
+          planId,
+          title: taskTemplate.title,
+          description: taskTemplate.description,
+          category: taskTemplate.category,
+          priority: taskTemplate.priority,
+          status: 'pending' as const,
+          estimatedDuration: taskTemplate.estimatedDuration,
+          dependencies: [], // Will be updated in step 2
+          note: taskTemplate.note,
+          createdAt: now,
+          updatedAt: now,
+        }
+
+        createdTasks.push({ task: newTask, templateDependencies: taskTemplate.dependencies })
+        await db.planTasks.add(newTask)
+      }
+
+      // Step 2: Update task dependencies with actual task IDs
+      for (const { task, templateDependencies } of createdTasks) {
+        if (templateDependencies && templateDependencies.length > 0) {
+          const actualDependencies = templateDependencies
+            .map((templateId: string) => templateToActualTaskIdMap.get(templateId))
+            .filter(Boolean) as string[] // Filter out undefined values
+
+          if (actualDependencies.length > 0) {
+            await db.planTasks.update(task.id, { dependencies: actualDependencies })
+          }
+        }
+      }
+
+      // Step 3: Create goals with branchId and linkedTaskIds
+      const createdGoals: any[] = []
+      for (const goalTemplate of goalTemplates) {
+        const goalId = uuidv4()
+
+        // Find tasks that match this goal's category for linking
+        const linkedTaskIds = createdTasks
+          .filter(({ task }) => task.category === goalTemplate.category)
+          .map(({ task }) => task.id)
+
+        const newGoal = {
+          id: goalId,
           planId,
           title: goalTemplate.title,
           description: goalTemplate.description,
@@ -177,32 +240,19 @@ export class PlanTemplateService {
           category: goalTemplate.category,
           priority: goalTemplate.priority,
           completed: false,
+          branchId: planData.branchId, // Use plan's branchId for all goals
+          linkedTaskIds,
           note: goalTemplate.note,
           createdAt: now,
           updatedAt: now,
-        })
-      )
+        }
 
-      // Create tasks from templates
-      const taskPromises = taskTemplates.map(taskTemplate => 
-        db.planTasks.add({
-          id: uuidv4(),
-          planId,
-          title: taskTemplate.title,
-          description: taskTemplate.description,
-          category: taskTemplate.category,
-          priority: taskTemplate.priority,
-          status: 'pending',
-          estimatedDuration: taskTemplate.estimatedDuration,
-          dependencies: taskTemplate.dependencies,
-          note: taskTemplate.note,
-          createdAt: now,
-          updatedAt: now,
-        })
-      )
+        createdGoals.push(newGoal)
+        await db.planGoals.add(newGoal)
+      }
 
-      // Create metrics from templates
-      const metricPromises = metricTemplates.map(metricTemplate => 
+      // Step 4: Create metrics from templates
+      const metricPromises = metricTemplates.map(metricTemplate =>
         db.planMetrics.add({
           id: uuidv4(),
           planId,
@@ -220,7 +270,7 @@ export class PlanTemplateService {
         })
       )
 
-      await Promise.all([...goalPromises, ...taskPromises, ...metricPromises])
+      await Promise.all(metricPromises)
 
       return newPlan
     } catch (error) {
@@ -272,7 +322,7 @@ export class PlanTemplateService {
 
         // Ensure isDefault is a proper boolean
         const isDefaultValue = template.isDefault
-        const isDefault = isDefaultValue === true || isDefaultValue === 'true'
+        const isDefault = isDefaultValue === true || (typeof isDefaultValue === 'string' && isDefaultValue === 'true')
 
         if (isDefault) {
           console.log(`✅ Template "${template.name}" is default`)
@@ -472,8 +522,46 @@ export class PlanTemplateService {
         const allTemplates = await db.planTemplates.toArray()
         const existingDefaults = allTemplates.filter(template => template && template.isDefault === true)
         if (existingDefaults.length > 0) {
-          console.log(`✅ Found ${existingDefaults.length} existing default templates, skipping initialization`)
-          return // Already initialized
+          console.log(`🔍 Found ${existingDefaults.length} existing default templates, checking if they have goals and tasks...`)
+
+          // Check if existing templates have goals and tasks
+          let needsEnhancement = false
+          for (const template of existingDefaults) {
+            const [goals, tasks] = await Promise.all([
+              this.getGoalTemplates(template.id),
+              this.getTaskTemplates(template.id)
+            ])
+
+            if (goals.length === 0 && tasks.length === 0) {
+              console.log(`⚠️ Template "${template.name}" has no goals or tasks, needs enhancement`)
+              needsEnhancement = true
+            } else {
+              console.log(`✅ Template "${template.name}" has ${goals.length} goals and ${tasks.length} tasks`)
+            }
+          }
+
+          if (!needsEnhancement) {
+            console.log(`✅ All existing templates have goals and tasks, skipping initialization`)
+            return
+          } else {
+            console.log(`🔄 Some templates need enhancement, adding goals and tasks to existing templates...`)
+
+            // Add goals and tasks to existing templates that don't have them
+            for (const template of existingDefaults) {
+              const [goals, tasks] = await Promise.all([
+                this.getGoalTemplates(template.id),
+                this.getTaskTemplates(template.id)
+              ])
+
+              if (goals.length === 0 && tasks.length === 0) {
+                console.log(`🎯 Enhancing template "${template.name}" with goals and tasks...`)
+                await this.createDefaultGoalsAndTasks(template.id, template.type)
+              }
+            }
+
+            console.log(`✅ Enhanced existing templates with goals and tasks`)
+            return
+          }
         }
         console.log('ℹ️ No existing default templates found, proceeding with initialization')
       } catch (checkError) {
@@ -536,9 +624,160 @@ export class PlanTemplateService {
         db.planTemplates.add(monthlyTemplate)
       ])
 
-      console.log('✅ Default planning templates initialized successfully')
+      console.log('✅ Default planning templates created, now adding goals and tasks...')
+
+      // Add goals and tasks for Daily Operations Template
+      await this.createDefaultGoalsAndTasks(dailyTemplate.id, 'daily')
+
+      // Add goals and tasks for Weekly Planning Template
+      await this.createDefaultGoalsAndTasks(weeklyTemplate.id, 'weekly')
+
+      // Add goals and tasks for Monthly Strategy Template
+      await this.createDefaultGoalsAndTasks(monthlyTemplate.id, 'monthly')
+
+      console.log('✅ Default planning templates with goals and tasks initialized successfully')
     } catch (error) {
       console.error('PlanTemplateService.initializeDefaultTemplates() - Error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Create default goals and tasks for a template
+   */
+  private static async createDefaultGoalsAndTasks(templateId: string, templateType: 'daily' | 'weekly' | 'monthly'): Promise<void> {
+    try {
+      console.log(`🎯 Creating default goals and tasks for ${templateType} template (ID: ${templateId})...`)
+
+      if (templateType === 'daily') {
+        // Daily template goals
+        void await this.addGoalTemplate(templateId, {
+          title: 'Daily Sales Target',
+          description: 'Achieve daily revenue target',
+          defaultTargetValue: 2000000, // 2M IDR
+          unit: 'IDR',
+          category: 'sales',
+          priority: 'high',
+          note: 'Daily sales revenue goal'
+        })
+
+        void await this.addGoalTemplate(templateId, {
+          title: 'Daily Production Target',
+          description: 'Complete daily coffee production quota',
+          defaultTargetValue: 100,
+          unit: 'cups',
+          category: 'production',
+          priority: 'high',
+          note: 'Daily coffee production goal'
+        })
+
+        // Daily template tasks
+        const setupTask = await this.addTaskTemplate(templateId, {
+          title: 'Morning Setup',
+          description: 'Prepare equipment, check inventory, and open shop',
+          category: 'setup',
+          priority: 'high',
+          estimatedDuration: 30,
+          dependencies: [],
+          note: 'Essential morning preparation tasks'
+        })
+
+        const productionTask = await this.addTaskTemplate(templateId, {
+          title: 'Coffee Production',
+          description: 'Prepare coffee beans, maintain quality standards',
+          category: 'production',
+          priority: 'high',
+          estimatedDuration: 120,
+          dependencies: [setupTask.id],
+          note: 'Core coffee production activities'
+        })
+
+        const salesTask = await this.addTaskTemplate(templateId, {
+          title: 'Customer Service',
+          description: 'Serve customers, process orders, maintain service quality',
+          category: 'sales',
+          priority: 'high',
+          estimatedDuration: 300,
+          dependencies: [setupTask.id],
+          note: 'Customer-facing sales activities'
+        })
+
+        void await this.addTaskTemplate(templateId, {
+          title: 'Daily Closing',
+          description: 'Clean equipment, count cash, secure premises',
+          category: 'maintenance',
+          priority: 'medium',
+          estimatedDuration: 45,
+          dependencies: [productionTask.id, salesTask.id],
+          note: 'End-of-day closing procedures'
+        })
+
+      } else if (templateType === 'weekly') {
+        // Weekly template goals
+        void await this.addGoalTemplate(templateId, {
+          title: 'Weekly Inventory Management',
+          description: 'Maintain optimal inventory levels',
+          defaultTargetValue: 95,
+          unit: 'percentage',
+          category: 'efficiency',
+          priority: 'medium',
+          note: 'Weekly inventory optimization goal'
+        })
+
+        // Weekly template tasks
+        const inventoryTask = await this.addTaskTemplate(templateId, {
+          title: 'Inventory Review',
+          description: 'Review stock levels, identify reorder needs',
+          category: 'inventory',
+          priority: 'high',
+          estimatedDuration: 60,
+          dependencies: [],
+          note: 'Weekly inventory assessment'
+        })
+
+        void await this.addTaskTemplate(templateId, {
+          title: 'Weekly Planning',
+          description: 'Plan production schedules and staff assignments',
+          category: 'setup',
+          priority: 'medium',
+          estimatedDuration: 45,
+          dependencies: [inventoryTask.id],
+          note: 'Strategic weekly planning'
+        })
+
+      } else if (templateType === 'monthly') {
+        // Monthly template goals
+        void await this.addGoalTemplate(templateId, {
+          title: 'Monthly Growth Target',
+          description: 'Achieve monthly revenue growth',
+          defaultTargetValue: 10,
+          unit: 'percentage',
+          category: 'sales',
+          priority: 'high',
+          note: 'Monthly business growth goal'
+        })
+
+        // Monthly template tasks
+        void await this.addTaskTemplate(templateId, {
+          title: 'Strategy Review',
+          description: 'Review business performance and plan improvements',
+          category: 'setup',
+          priority: 'high',
+          estimatedDuration: 120,
+          dependencies: [],
+          note: 'Monthly strategic planning'
+        })
+      }
+
+      // Verify goals and tasks were created
+      const [createdGoals, createdTasks] = await Promise.all([
+        this.getGoalTemplates(templateId),
+        this.getTaskTemplates(templateId)
+      ])
+
+      console.log(`✅ Default goals and tasks created for ${templateType} template: ${createdGoals.length} goals, ${createdTasks.length} tasks`)
+    } catch (error) {
+      console.error(`❌ Failed to create default goals and tasks for ${templateType} template:`, error)
       throw error
     }
   }

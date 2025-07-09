@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { ProductService } from '@/lib/services/productService'
 import { IngredientService } from '@/lib/services/ingredientService'
+import { PlanTemplateService } from '@/lib/services/planTemplateService'
+import { PlanningService } from '@/lib/services/planningService'
+import { BranchService } from '@/lib/services/branchService'
 import { ensureDatabaseInitialized } from '@/lib/db/init'
 import { resetDatabase, getDatabaseInfo } from '@/lib/db/reset'
 
@@ -22,6 +25,7 @@ function DatabaseTest() {
     { name: 'Ingredient Service Test', status: 'pending', message: 'Waiting...' },
     { name: 'Product-Ingredient Relationships', status: 'pending', message: 'Waiting...' },
     { name: 'Ingredient Delete Test', status: 'pending', message: 'Waiting...' },
+    { name: 'Enhanced Plan Template Test', status: 'pending', message: 'Waiting...' },
   ])
   const [isRunning, setIsRunning] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
@@ -131,6 +135,146 @@ function DatabaseTest() {
         }
       })
 
+      // Test 6: Enhanced Plan Template Functionality
+      updateTest(5, { status: 'pending', message: 'Testing enhanced plan template functionality...' })
+
+      // First, ensure we have a branch for testing
+      const branches = await BranchService.getAll()
+      let testBranch = branches.find(b => b.isActive)
+
+      if (!testBranch) {
+        // Create a test branch if none exists
+        testBranch = await BranchService.create({
+          name: 'Test Branch',
+          location: 'Test Location',
+          isActive: true,
+          note: 'Test branch for plan template testing'
+        })
+      }
+
+      // Create a test template with goals and tasks
+      const testTemplate = await PlanTemplateService.createTemplate({
+        name: 'Enhanced Test Template',
+        description: 'Test template for enhanced functionality',
+        type: 'daily',
+        category: 'operations',
+        isDefault: false,
+        estimatedDuration: 120,
+        difficulty: 'beginner',
+        tags: 'test,enhanced',
+        note: 'Test template with goals and tasks'
+      })
+
+      // Add goal templates
+      const goalTemplate1 = await PlanTemplateService.addGoalTemplate(testTemplate.id, {
+        title: 'Test Sales Goal',
+        description: 'Achieve daily sales target',
+        defaultTargetValue: 1000000,
+        unit: 'IDR',
+        category: 'sales',
+        priority: 'high',
+        note: 'Test goal for sales'
+      })
+
+      const goalTemplate2 = await PlanTemplateService.addGoalTemplate(testTemplate.id, {
+        title: 'Test Production Goal',
+        description: 'Complete production tasks',
+        defaultTargetValue: 50,
+        unit: 'cups',
+        category: 'production',
+        priority: 'medium',
+        note: 'Test goal for production'
+      })
+
+      // Add task templates
+      const taskTemplate1 = await PlanTemplateService.addTaskTemplate(testTemplate.id, {
+        title: 'Setup Equipment',
+        description: 'Prepare coffee machines and equipment',
+        category: 'setup',
+        priority: 'high',
+        estimatedDuration: 30,
+        dependencies: [],
+        note: 'Setup task'
+      })
+
+      const taskTemplate2 = await PlanTemplateService.addTaskTemplate(testTemplate.id, {
+        title: 'Prepare Ingredients',
+        description: 'Prepare coffee beans and other ingredients',
+        category: 'production',
+        priority: 'medium',
+        estimatedDuration: 45,
+        dependencies: [taskTemplate1.id], // Depends on setup
+        note: 'Production task'
+      })
+
+      // Test creating plan from template
+      const createdPlan = await PlanTemplateService.createPlanFromTemplate(testTemplate.id, {
+        name: 'Test Enhanced Plan',
+        description: 'Plan created from enhanced template',
+        startDate: '2024-01-01',
+        endDate: '2024-01-01',
+        branchId: testBranch.id,
+        note: 'Test plan'
+      })
+
+      // Verify the plan was created with goals and tasks
+      const planDetails = await PlanningService.getPlanWithDetails(createdPlan.id)
+
+      if (!planDetails) {
+        throw new Error('Created plan not found')
+      }
+
+      if (planDetails.goals.length !== 2) {
+        throw new Error(`Expected 2 goals, got ${planDetails.goals.length}`)
+      }
+
+      if (planDetails.tasks.length !== 2) {
+        throw new Error(`Expected 2 tasks, got ${planDetails.tasks.length}`)
+      }
+
+      // Verify goals have branchId
+      const goalsWithoutBranch = planDetails.goals.filter(g => !g.branchId)
+      if (goalsWithoutBranch.length > 0) {
+        throw new Error('Some goals were created without branchId')
+      }
+
+      // Verify task dependencies were mapped correctly
+      const setupTask = planDetails.tasks.find(t => t.title === 'Setup Equipment')
+      const prepTask = planDetails.tasks.find(t => t.title === 'Prepare Ingredients')
+
+      if (!setupTask || !prepTask) {
+        throw new Error('Tasks not created correctly')
+      }
+
+      if (prepTask.dependencies.length !== 1 || prepTask.dependencies[0] !== setupTask.id) {
+        throw new Error('Task dependencies not mapped correctly')
+      }
+
+      // Verify goal-task linking
+      const salesGoal = planDetails.goals.find(g => g.category === 'sales')
+      const productionGoal = planDetails.goals.find(g => g.category === 'production')
+
+      if (!salesGoal || !productionGoal) {
+        throw new Error('Goals not created correctly')
+      }
+
+      if (productionGoal.linkedTaskIds.length === 0) {
+        throw new Error('Production goal should be linked to production tasks')
+      }
+
+      updateTest(5, {
+        status: 'success',
+        message: 'Enhanced plan template functionality working correctly',
+        data: {
+          templateId: testTemplate.id,
+          planId: createdPlan.id,
+          goalsCreated: planDetails.goals.length,
+          tasksCreated: planDetails.tasks.length,
+          dependenciesMapped: prepTask.dependencies.length,
+          goalsWithBranch: planDetails.goals.filter(g => g.branchId).length
+        }
+      })
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       // Find the first pending test and mark it as error
@@ -154,6 +298,7 @@ function DatabaseTest() {
         { name: 'Ingredient Service Test', status: 'pending', message: 'Waiting...' },
         { name: 'Product-Ingredient Relationships', status: 'pending', message: 'Waiting...' },
         { name: 'Ingredient Delete Test', status: 'pending', message: 'Waiting...' },
+        { name: 'Enhanced Plan Template Test', status: 'pending', message: 'Waiting...' },
       ])
       await loadDbInfo() // Refresh database info
       alert('Database reset successfully! You can now run tests.')
