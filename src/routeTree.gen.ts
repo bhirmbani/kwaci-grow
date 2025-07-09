@@ -15,6 +15,7 @@ import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SeedDatabaseRouteImport } from './routes/seed-database'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
 import { Route as RecurringExpensesRouteImport } from './routes/recurring-expenses'
 import { Route as ProductsRouteImport } from './routes/products'
@@ -62,6 +63,11 @@ const TestDatabaseRoute = TestDatabaseRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeedDatabaseRoute = SeedDatabaseRouteImport.update({
+  id: '/seed-database',
+  path: '/seed-database',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SalesTargetsRoute = SalesTargetsRouteImport.update({
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
+  '/seed-database': typeof SeedDatabaseRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
+  '/seed-database': typeof SeedDatabaseRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
+  '/seed-database': typeof SeedDatabaseRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
+    | '/seed-database'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
+    | '/seed-database'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
+    | '/seed-database'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -329,6 +341,7 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   RecurringExpensesRoute: typeof RecurringExpensesRoute
   SalesTargetsRoute: typeof SalesTargetsRoute
+  SeedDatabaseRoute: typeof SeedDatabaseRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seed-database': {
+      id: '/seed-database'
+      path: '/seed-database'
+      fullPath: '/seed-database'
+      preLoaderRoute: typeof SeedDatabaseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sales-targets': {
@@ -529,6 +549,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   RecurringExpensesRoute: RecurringExpensesRoute,
   SalesTargetsRoute: SalesTargetsRoute,
+  SeedDatabaseRoute: SeedDatabaseRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,
