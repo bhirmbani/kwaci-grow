@@ -310,6 +310,31 @@ export type NewDailySalesTarget = Omit<DailySalesTarget, 'createdAt' | 'updatedA
 export type NewDailyProductSalesTarget = Omit<DailyProductSalesTarget, 'createdAt' | 'updatedAt'>
 export type NewSalesRecord = Omit<SalesRecord, 'createdAt' | 'updatedAt'>
 
+// Fixed Assets Management Schema
+export interface FixedAsset {
+  id: string
+  name: string
+  categoryId: string // Foreign key to AssetCategory
+  purchaseDate: string // ISO date string
+  purchaseCost: number // Cost in IDR
+  depreciationMonths: number // Depreciation period in months
+  currentValue: number // Calculated current value
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AssetCategory {
+  id: string
+  name: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type NewFixedAsset = Omit<FixedAsset, 'createdAt' | 'updatedAt' | 'currentValue'>
+export type NewAssetCategory = Omit<AssetCategory, 'createdAt' | 'updatedAt'>
+
 // Re-export planning schema types
 export * from './planningSchema'
 export type NewProductTargetDefault = Omit<ProductTargetDefault, 'createdAt' | 'updatedAt'>

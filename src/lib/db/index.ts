@@ -599,6 +599,54 @@ export class FinancialDashboardDB extends Dexie {
       console.log('✅ Daily product sales targets table created successfully')
     })
 
+    // Version 16 - Add fixed assets management tables
+    this.version(16).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding fixed assets management tables...')
+
+      // Create default asset categories
+      const defaultCategories = [
+        { id: 'cat-equipment', name: 'Equipment', description: 'Coffee machines, grinders, and other equipment' },
+        { id: 'cat-furniture', name: 'Furniture', description: 'Tables, chairs, and other furniture' },
+        { id: 'cat-technology', name: 'Technology', description: 'POS systems, computers, and technology' },
+        { id: 'cat-kitchen', name: 'Kitchen Equipment', description: 'Kitchen appliances and tools' },
+        { id: 'cat-improvements', name: 'Building Improvements', description: 'Renovations and building improvements' },
+        { id: 'cat-vehicles', name: 'Vehicles', description: 'Delivery vehicles and transportation' }
+      ]
+
+      const now = new Date().toISOString()
+      for (const category of defaultCategories) {
+        await tx.table('assetCategories').put({
+          ...category,
+          createdAt: now,
+          updatedAt: now
+        })
+      }
+
+      console.log('✅ Fixed assets management tables created successfully')
+    })
+
     // Version 11: Add sales records table for operations tracking
     this.version(11).stores({
       financialItems: 'id, name, category, value, note, createdAt, updatedAt',
