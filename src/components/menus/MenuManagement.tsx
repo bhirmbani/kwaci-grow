@@ -11,7 +11,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-
+  SheetTrigger,
 } from '@/components/ui/sheet'
 import { MenuCard } from './MenuCard'
 import { MenuList } from './MenuList'
@@ -76,10 +76,6 @@ export function MenuManagement() {
   }, [includeInactive])
 
   // Event handlers
-  const handleCreateMenu = () => {
-    setEditingMenu(null)
-    setIsCreateSheetOpen(true)
-  }
 
   const handleEditMenu = (menu: MenuWithProductCount) => {
     setEditingMenu(menu)
@@ -230,7 +226,7 @@ export function MenuManagement() {
             Create and manage your coffee shop menus with products and pricing
           </p>
         </div>
-        <Button onClick={handleCreateMenu}>
+        <Button onClick={() => setIsCreateSheetOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Create Menu
         </Button>
@@ -294,7 +290,7 @@ export function MenuManagement() {
                     <p className="text-muted-foreground mb-4">
                       Get started by creating your first menu
                     </p>
-                    <Button onClick={handleCreateMenu}>
+                    <Button onClick={() => setIsCreateSheetOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
                       Create Menu
                     </Button>
@@ -396,21 +392,7 @@ export function MenuManagement() {
 
       </Tabs>
 
-      {/* Create Menu Sheet */}
-      <Sheet open={isCreateSheetOpen} onOpenChange={setIsCreateSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Create New Menu</SheetTitle>
-            <SheetDescription>
-              Add a new menu to your coffee shop catalog
-            </SheetDescription>
-          </SheetHeader>
-          <MenuForm
-            onSuccess={handleFormSuccess}
-            onCancel={handleFormCancel}
-          />
-        </SheetContent>
-      </Sheet>
+
 
       {/* Edit Menu Sheet */}
       <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
@@ -521,15 +503,28 @@ export function MenuManagement() {
       </Sheet>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={handleCreateMenu}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <Plus className="h-6 w-6" />
-          <span className="sr-only">Create Menu</span>
-        </Button>
+      <div className="fixed right-6 bottom-6">
+        <Sheet open={isCreateSheetOpen} onOpenChange={setIsCreateSheetOpen}>
+          <SheetTrigger
+            className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            aria-label="Create Menu"
+            onClick={() => setIsCreateSheetOpen(true)}
+          >
+            <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
+          </SheetTrigger>
+        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Create New Menu</SheetTitle>
+              <SheetDescription>
+                Add a new menu to your coffee shop catalog
+              </SheetDescription>
+            </SheetHeader>
+            <MenuForm
+              onSuccess={handleFormSuccess}
+              onCancel={handleFormCancel}
+            />
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   )

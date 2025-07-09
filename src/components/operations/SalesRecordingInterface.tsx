@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Plus, Calendar, Filter, TrendingUp, DollarSign, Package, Award } from 'lucide-react'
+import { Plus, Filter, TrendingUp, DollarSign, Package, Award } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Sheet,
@@ -42,7 +41,7 @@ export function SalesRecordingInterface() {
     totalSales: 0,
     totalRevenue: 0,
     averageOrderValue: 0,
-    topProduct: null
+    topProduct: null,
   })
   const [branches, setBranches] = useState<Branch[]>([])
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
@@ -55,7 +54,7 @@ export function SalesRecordingInterface() {
     const loadBranches = async () => {
       try {
         const branchesData = await BranchService.getAllBranches()
-        setBranches(branchesData.filter(branch => branch.isActive))
+        setBranches(branchesData.filter((branch) => branch.isActive))
       } catch (error) {
         console.error('Failed to load branches:', error)
       }
@@ -71,7 +70,7 @@ export function SalesRecordingInterface() {
       try {
         const [records, summary] = await Promise.all([
           SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined),
-          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined)
+          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined),
         ])
 
         setSalesRecords(records)
@@ -93,7 +92,7 @@ export function SalesRecordingInterface() {
       try {
         const [records, summary] = await Promise.all([
           SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined),
-          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined)
+          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined),
         ])
 
         setSalesRecords(records)
@@ -117,7 +116,7 @@ export function SalesRecordingInterface() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="date-filter">Date</Label>
               <Input
@@ -130,7 +129,10 @@ export function SalesRecordingInterface() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="branch-filter">Branch</Label>
-              <Select value={selectedBranch || "all"} onValueChange={(value) => setSelectedBranch(value === "all" ? "" : value)}>
+              <Select
+                value={selectedBranch || 'all'}
+                onValueChange={(value) => setSelectedBranch(value === 'all' ? '' : value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All branches" />
                 </SelectTrigger>
@@ -149,12 +151,12 @@ export function SalesRecordingInterface() {
       </Card>
 
       {/* Sales Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Sales</p>
+                <p className="text-muted-foreground text-sm font-medium">Total Sales</p>
                 <p className="text-2xl font-bold">{salesSummary.totalSales}</p>
               </div>
               <Package className="h-8 w-8 text-blue-500" />
@@ -166,7 +168,7 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <p className="text-muted-foreground text-sm font-medium">Total Revenue</p>
                 <p className="text-2xl font-bold">{formatCurrency(salesSummary.totalRevenue)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-green-500" />
@@ -178,8 +180,10 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Order Value</p>
-                <p className="text-2xl font-bold">{formatCurrency(salesSummary.averageOrderValue)}</p>
+                <p className="text-muted-foreground text-sm font-medium">Avg Order Value</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(salesSummary.averageOrderValue)}
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-orange-500" />
             </div>
@@ -190,12 +194,12 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Top Product</p>
+                <p className="text-muted-foreground text-sm font-medium">Top Product</p>
                 <p className="text-lg font-bold">
                   {salesSummary.topProduct ? salesSummary.topProduct.name : 'None'}
                 </p>
                 {salesSummary.topProduct && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {salesSummary.topProduct.quantity} sold
                   </p>
                 )}
@@ -212,7 +216,7 @@ export function SalesRecordingInterface() {
           <CardTitle>Sales Records</CardTitle>
           <CardDescription>
             Recent sales for {format(new Date(selectedDate), 'PPP')}
-            {selectedBranch && ` at ${branches.find(b => b.id === selectedBranch)?.name}`}
+            {selectedBranch && ` at ${branches.find((b) => b.id === selectedBranch)?.name}`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -241,12 +245,8 @@ export function SalesRecordingInterface() {
                 <TableBody>
                   {salesRecords.map((record) => (
                     <TableRow key={record.id}>
-                      <TableCell className="font-mono">
-                        {record.saleTime.substring(0, 5)}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {record.product.name}
-                      </TableCell>
+                      <TableCell className="font-mono">{record.saleTime.substring(0, 5)}</TableCell>
+                      <TableCell className="font-medium">{record.product.name}</TableCell>
                       <TableCell>{record.menu.name}</TableCell>
                       <TableCell>{record.branch.name}</TableCell>
                       <TableCell className="text-right">{record.quantity}</TableCell>
@@ -266,14 +266,15 @@ export function SalesRecordingInterface() {
       </Card>
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6">
+      <div className="fixed right-6 bottom-6">
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button size="lg" className="rounded-full h-14 w-14 shadow-lg">
-              <Plus className="h-6 w-6" />
-            </Button>
+          <SheetTrigger
+            className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            aria-label="Add sales"
+          >
+            <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
           </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-2xl h-full overflow-y-auto">
+          <SheetContent className="h-full w-full overflow-y-auto sm:max-w-2xl">
             <SheetHeader>
               <SheetTitle>Record New Sale</SheetTitle>
               <SheetDescription>

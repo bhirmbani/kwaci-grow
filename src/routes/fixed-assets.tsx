@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useCallback, useMemo } from 'react'
 import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { FixedAssetSummary, DepreciationExplanation } from '@/components/fixed-assets/FixedAssetSummary'
 import { FixedAssetTable } from '@/components/fixed-assets/FixedAssetTable'
@@ -94,41 +93,40 @@ function FixedAssets() {
         {memoizedTable}
       </div>
 
-      {/* Asset Form Sheet */}
-      <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>
-              {editingAsset ? 'Edit Fixed Asset' : 'Add New Fixed Asset'}
-            </SheetTitle>
-            <SheetDescription>
-              {editingAsset
-                ? 'Update the asset information and depreciation settings.'
-                : 'Add a new fixed asset with automatic depreciation tracking.'
-              }
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <FixedAssetForm
-              asset={editingAsset || undefined}
-              onSuccess={handleFormSuccess}
-              onCancel={handleFormCancel}
-              onSubmit={handleFormSubmit}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
+
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={handleCreateAsset}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <Plus className="h-6 w-6" />
-          <span className="sr-only">Add Fixed Asset</span>
-        </Button>
+      <div className="fixed right-6 bottom-6">
+        <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <SheetTrigger
+            className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            aria-label="Add fixed asset"
+            onClick={handleCreateAsset}
+          >
+            <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>
+                {editingAsset ? 'Edit Fixed Asset' : 'Add New Fixed Asset'}
+              </SheetTitle>
+              <SheetDescription>
+                {editingAsset
+                  ? 'Update the asset information and depreciation settings.'
+                  : 'Add a new fixed asset with automatic depreciation tracking.'
+                }
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-6">
+              <FixedAssetForm
+                asset={editingAsset || undefined}
+                onSuccess={handleFormSuccess}
+                onCancel={handleFormCancel}
+                onSubmit={handleFormSubmit}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   )

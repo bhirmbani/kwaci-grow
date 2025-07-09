@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Plus, CheckCircle, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -20,7 +19,7 @@ export function RecurringExpenseManagement() {
     expenses,
     loading,
     error,
-    categories,
+    // categories,
     monthlyTotal,
     yearlyTotal,
     categoryTotals,
@@ -29,7 +28,7 @@ export function RecurringExpenseManagement() {
     deleteExpense,
     softDeleteExpense,
     restoreExpense,
-    refresh,
+    // refresh,
   } = useRecurringExpenses(showInactive)
 
   const handleCreateExpense = () => {
@@ -60,7 +59,7 @@ export function RecurringExpenseManagement() {
     setEditingExpense(null)
   }
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: NewRecurringExpense) => {
     try {
       if (editingExpense) {
         await updateExpense(editingExpense.id, {
@@ -90,9 +89,9 @@ export function RecurringExpenseManagement() {
         await createExpense(newExpense)
       }
       handleFormSuccess()
-    } catch (error) {
-      console.error('Form submission error:', error)
-      throw error // Re-throw to let the form handle the error display
+    } catch (err) {
+      console.error('Form submission error:', err)
+      throw err // Re-throw to let the form handle the error display
     }
   }
 
@@ -104,7 +103,7 @@ export function RecurringExpenseManagement() {
         text: 'The recurring expense has been permanently deleted.',
       })
       setTimeout(() => setMessage(null), 5000)
-    } catch (error) {
+    } catch (err) {
       setMessage({
         type: 'error',
         text: 'Failed to delete the expense. Please try again.',
@@ -129,7 +128,7 @@ export function RecurringExpenseManagement() {
         })
       }
       setTimeout(() => setMessage(null), 5000)
-    } catch (error) {
+    } catch (err) {
       setMessage({
         type: 'error',
         text: 'Failed to update the expense status. Please try again.',
@@ -206,41 +205,38 @@ export function RecurringExpenseManagement() {
       />
 
       {/* Floating Action Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={handleCreateExpense}
-          size="lg"
-          className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <Plus className="h-6 w-6" />
-          <span className="sr-only">Add Recurring Expense</span>
-        </Button>
+      <div className="fixed right-6 bottom-6">
+        <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <SheetTrigger
+            className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            aria-label="Add recurring expense"
+            onClick={handleCreateExpense}
+          >
+            <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background !important">
+            <SheetHeader>
+              <SheetTitle>
+                {editingExpense ? 'Edit Recurring Expense' : 'Add New Recurring Expense'}
+              </SheetTitle>
+              <SheetDescription>
+                {editingExpense
+                  ? 'Update the expense information and settings.'
+                  : 'Add a new recurring expense to track your operational costs.'
+                }
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-6">
+              <RecurringExpenseForm
+                expense={editingExpense || undefined}
+                onSuccess={handleFormSuccess}
+                onCancel={handleFormCancel}
+                onSubmit={handleFormSubmit}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
-
-      {/* Form Sheet */}
-      <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background !important">
-          <SheetHeader>
-            <SheetTitle>
-              {editingExpense ? 'Edit Recurring Expense' : 'Add New Recurring Expense'}
-            </SheetTitle>
-            <SheetDescription>
-              {editingExpense
-                ? 'Update the expense information and settings.'
-                : 'Add a new recurring expense to track your operational costs.'
-              }
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <RecurringExpenseForm
-              expense={editingExpense || undefined}
-              onSuccess={handleFormSuccess}
-              onCancel={handleFormCancel}
-              onSubmit={handleFormSubmit}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
     </div>
   )
 }
