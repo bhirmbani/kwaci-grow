@@ -94,6 +94,7 @@ export const FixedAssetTable = memo(function FixedAssetTable({
             <TableHead>Purchase Date</TableHead>
             <TableHead className="text-right">Purchase Cost</TableHead>
             <TableHead className="text-right">Current Value</TableHead>
+            <TableHead className="text-center">Depreciation Period</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-10"></TableHead>
           </TableRow>
@@ -114,7 +115,7 @@ export const FixedAssetTable = memo(function FixedAssetTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="text-xs px-2 py-1 whitespace-nowrap min-w-[80px] justify-center">
                     {getCategoryName(asset.categoryId)}
                   </Badge>
                 </TableCell>
@@ -127,20 +128,32 @@ export const FixedAssetTable = memo(function FixedAssetTable({
                 <TableCell className="text-right font-mono">
                   {formatCurrency(asset.currentValue)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   <div className="space-y-1">
-                    <Badge variant={status.variant}>
+                    <p className="font-medium">
+                      {asset.depreciationMonths} months
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {Math.round(asset.depreciationMonths / 12 * 10) / 10} years
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-2 min-w-[140px]">
+                    <Badge variant={status.variant} className="text-xs px-2 py-1 whitespace-nowrap">
                       {status.label}
                     </Badge>
-                    <div className="w-full bg-muted rounded-full h-1.5">
-                      <div 
-                        className="bg-primary h-1.5 rounded-full transition-all duration-300" 
-                        style={{ width: `${status.progress}%` }}
-                      />
+                    <div className="space-y-1">
+                      <div className="w-full bg-muted rounded-full h-1.5">
+                        <div 
+                          className="bg-primary h-1.5 rounded-full transition-all duration-300" 
+                          style={{ width: `${status.progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center">
+                        {Math.round(status.progress)}% depreciated
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {Math.round(status.progress)}% depreciated
-                    </p>
                   </div>
                 </TableCell>
                 <TableCell>

@@ -110,9 +110,15 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
         note: asset.note || '',
       })
 
-      // Check if using custom duration
-      const isCustom = !DEPRECIATION_PRESETS.some(preset => preset.value === asset.depreciationMonths)
-      setUseCustomDuration(isCustom)
+      // Check if using custom duration by seeing if the asset's depreciation months matches any preset
+      const matchingPreset = DEPRECIATION_PRESETS.find(preset => preset.value === asset.depreciationMonths && preset.value !== 0)
+      console.log('Asset depreciation months:', asset.depreciationMonths)
+      console.log('Matching preset:', matchingPreset)
+      console.log('Setting useCustomDuration to:', !matchingPreset)
+      setUseCustomDuration(!matchingPreset)
+    } else {
+      // Reset to default when not editing
+      setUseCustomDuration(false)
     }
   }, [asset, form])
 
@@ -275,7 +281,9 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
         <div className="space-y-4">
           <FormLabel>Depreciation Period</FormLabel>
           <Select
-            value={useCustomDuration ? '0' : form.getValues('depreciationMonths').toString()}
+            value={useCustomDuration ? '0' : (
+              DEPRECIATION_PRESETS.find(preset => preset.value === form.getValues('depreciationMonths'))?.value.toString() || '0'
+            )}
             onValueChange={handleDepreciationPresetChange}
           >
             <SelectTrigger>
