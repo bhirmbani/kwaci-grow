@@ -128,7 +128,7 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
             totalMonthlyProfit
           })
         }
-      }
+      } // Close the outer for loop
 
       // Sort menus by name
       calculatedMenuAnalytics.sort((a, b) => a.menuName.localeCompare(b.menuName))
