@@ -22,12 +22,60 @@ export interface ProductTargetForDate {
   menuProduct: MenuProduct
 }
 
+export interface MenuTargetSummary {
+  menuId: string
+  branchId: string
+  targetDate: string
+  targetAmount: number
+  menu: Menu
+  branch: Branch
+}
+
 export class DailyProductSalesTargetService {
+  /**
+   * Get all product targets for a specific date (all branches)
+   */
+  static async getAllTargetsForDate(
+    targetDate: string
+  ): Promise<DailyProductSalesTargetWithDetails[]> {
+    try {
+      const targets = await db.dailyProductSalesTargets
+        .where('targetDate')
+        .equals(targetDate)
+        .toArray()
+
+      // Get related data for each target
+      const targetsWithDetails: DailyProductSalesTargetWithDetails[] = []
+
+      for (const target of targets) {
+        const [menu, product, branch] = await Promise.all([
+          db.menus.get(target.menuId),
+          db.products.get(target.productId),
+          db.branches.get(target.branchId)
+        ])
+
+        if (menu && product && branch) {
+          targetsWithDetails.push({
+            ...target,
+            menu,
+            product,
+            branch
+          })
+        }
+      }
+
+      return targetsWithDetails
+    } catch (error) {
+      console.error('Failed to get all targets for date:', error)
+      return []
+    }
+  }
+
   /**
    * Get all product targets for a specific date and branch
    */
   static async getTargetsForDate(
-    targetDate: string, 
+    targetDate: string,
     branchId: string
   ): Promise<DailyProductSalesTargetWithDetails[]> {
     try {
@@ -277,6 +325,55 @@ export class DailyProductSalesTargetService {
     } catch (error) {
       console.error('Error bulk creating/updating targets:', error)
       throw error
+    }
+  }
+
+  /**
+   * Convert product-level targets to menu-level summaries for analytics
+   */
+  static async getMenuTargetSummariesForDate(
+    targetDate: string,
+    branchId?: string
+  ): Promise<MenuTargetSummary[]> {
+    try {
+      const productTargets = branchId
+        ? await this.getTargetsForDate(targetDate, branchId)
+        : await this.getAllTargetsForDate(targetDate)
+
+      // Group by menu and branch, then calculate total target amount
+      const menuTargetMap = new Map<string, MenuTargetSummary>()
+
+      for (const target of productTargets) {
+        const key = `${target.menuId}-${target.branchId}`
+
+        if (!menuTargetMap.has(key)) {
+          menuTargetMap.set(key, {
+            menuId: target.menuId,
+            branchId: target.branchId,
+            targetDate: target.targetDate,
+            targetAmount: 0,
+            menu: target.menu,
+            branch: target.branch
+          })
+        }
+
+        const menuTarget = menuTargetMap.get(key)!
+
+        // Get the menu product to find the price
+        const menuProduct = await db.menuProducts
+          .where({ menuId: target.menuId, productId: target.productId })
+          .first()
+
+        if (menuProduct) {
+          // Calculate target amount: quantity * price
+          menuTarget.targetAmount += target.targetQuantity * menuProduct.price
+        }
+      }
+
+      return Array.from(menuTargetMap.values())
+    } catch (error) {
+      console.error('Failed to get menu target summaries:', error)
+      return []
     }
   }
 }

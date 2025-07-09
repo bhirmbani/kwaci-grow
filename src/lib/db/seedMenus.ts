@@ -178,6 +178,8 @@ export async function seedMenuData() {
 
   // Create sample sales targets
   const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
   
@@ -224,27 +226,111 @@ export async function seedMenuData() {
       createdAt: now,
       updatedAt: now,
     },
+    // Yesterday's targets for testing historical data
+    {
+      id: uuidv4(),
+      menuId: 'menu-morning',
+      branchId: 'branch-main',
+      targetDate: yesterday.toISOString().split('T')[0],
+      targetAmount: 450000, // 450k IDR
+      note: 'Yesterday morning target',
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: uuidv4(),
+      menuId: 'menu-afternoon',
+      branchId: 'branch-main',
+      targetDate: yesterday.toISOString().split('T')[0],
+      targetAmount: 280000, // 280k IDR
+      note: 'Yesterday afternoon target',
+      createdAt: now,
+      updatedAt: now,
+    },
+  ]
+
+  // Create product-level targets for the new system
+  const productTargets = [
+    // Today's product targets for Main Branch
+    {
+      id: uuidv4(),
+      menuId: 'menu-morning',
+      productId: 'product-espresso',
+      branchId: 'branch-main',
+      targetDate: today.toISOString().split('T')[0],
+      targetQuantity: 20,
+      note: 'Morning espresso target',
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: uuidv4(),
+      menuId: 'menu-morning',
+      productId: 'product-americano',
+      branchId: 'branch-main',
+      targetDate: today.toISOString().split('T')[0],
+      targetQuantity: 15,
+      note: 'Morning americano target',
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: uuidv4(),
+      menuId: 'menu-afternoon',
+      productId: 'product-latte',
+      branchId: 'branch-main',
+      targetDate: today.toISOString().split('T')[0],
+      targetQuantity: 12,
+      note: 'Afternoon latte target',
+      createdAt: now,
+      updatedAt: now,
+    },
+    // Yesterday's product targets for testing historical data
+    {
+      id: uuidv4(),
+      menuId: 'menu-morning',
+      productId: 'product-espresso',
+      branchId: 'branch-main',
+      targetDate: yesterday.toISOString().split('T')[0],
+      targetQuantity: 18,
+      note: 'Yesterday espresso target',
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: uuidv4(),
+      menuId: 'menu-morning',
+      productId: 'product-americano',
+      branchId: 'branch-main',
+      targetDate: yesterday.toISOString().split('T')[0],
+      targetQuantity: 14,
+      note: 'Yesterday americano target',
+      createdAt: now,
+      updatedAt: now,
+    },
   ]
 
   try {
     // Clear existing menu data
-    await db.transaction('rw', [db.branches, db.menus, db.menuProducts, db.menuBranches, db.dailySalesTargets], async () => {
+    await db.transaction('rw', [db.branches, db.menus, db.menuProducts, db.menuBranches, db.dailySalesTargets, db.dailyProductSalesTargets], async () => {
       await db.branches.clear()
       await db.menus.clear()
       await db.menuProducts.clear()
       await db.menuBranches.clear()
       await db.dailySalesTargets.clear()
+      await db.dailyProductSalesTargets.clear()
 
       // Add new data
       await db.branches.bulkAdd(branches)
       await db.menus.bulkAdd(menus)
-      
+
       if (menuProducts.length > 0) {
         await db.menuProducts.bulkAdd(menuProducts)
       }
-      
+
       await db.menuBranches.bulkAdd(menuBranches)
       await db.dailySalesTargets.bulkAdd(salesTargets)
+      await db.dailyProductSalesTargets.bulkAdd(productTargets)
     })
 
     console.log(`✅ Menu data seeded successfully:`)
@@ -252,7 +338,8 @@ export async function seedMenuData() {
     console.log(`   - ${menus.length} menus`)
     console.log(`   - ${menuProducts.length} menu products`)
     console.log(`   - ${menuBranches.length} menu-branch assignments`)
-    console.log(`   - ${salesTargets.length} sales targets`)
+    console.log(`   - ${salesTargets.length} menu-level sales targets (legacy)`)
+    console.log(`   - ${productTargets.length} product-level sales targets (new system)`)
 
   } catch (error) {
     console.error('❌ Failed to seed menu data:', error)

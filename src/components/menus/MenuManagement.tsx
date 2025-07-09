@@ -21,23 +21,19 @@ import { BranchMenuView } from './BranchMenuView'
 import { BranchAssignment } from './BranchAssignment'
 import { BranchList } from './BranchList'
 import { BranchForm } from './BranchForm'
-import { SalesTargetList } from './SalesTargetList'
-import { SalesTargetForm } from './SalesTargetForm'
 import { MenuService } from '@/lib/services/menuService'
 import { BranchService } from '@/lib/services/branchService'
-import { SalesTargetService, type SalesTargetWithDetails } from '@/lib/services/salesTargetService'
-import type { MenuWithProductCount, MenuWithProducts, Branch, BranchWithMenus } from '@/lib/db/schema'
+import type { MenuWithProductCount, MenuWithProducts, BranchWithMenus } from '@/lib/db/schema'
 
 type ViewMode = 'grid' | 'list'
 
 export function MenuManagement() {
   const [menus, setMenus] = useState<MenuWithProductCount[]>([])
   const [branches, setBranches] = useState<BranchWithMenus[]>([])
-  const [salesTargets, setSalesTargets] = useState<SalesTargetWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [includeInactive, setIncludeInactive] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  
+
   // Sheet states
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
@@ -46,14 +42,11 @@ export function MenuManagement() {
   const [isBranchAssignmentSheetOpen, setIsBranchAssignmentSheetOpen] = useState(false)
   const [isCreateBranchSheetOpen, setIsCreateBranchSheetOpen] = useState(false)
   const [isEditBranchSheetOpen, setIsEditBranchSheetOpen] = useState(false)
-  const [isCreateTargetSheetOpen, setIsCreateTargetSheetOpen] = useState(false)
-  const [isEditTargetSheetOpen, setIsEditTargetSheetOpen] = useState(false)
   const [editingMenu, setEditingMenu] = useState<MenuWithProductCount | null>(null)
   const [viewingMenu, setViewingMenu] = useState<MenuWithProducts | null>(null)
   const [viewingBranch, setViewingBranch] = useState<BranchWithMenus | null>(null)
   const [assigningMenu, setAssigningMenu] = useState<MenuWithProductCount | null>(null)
   const [editingBranch, setEditingBranch] = useState<BranchWithMenus | null>(null)
-  const [editingTarget, setEditingTarget] = useState<SalesTargetWithDetails | null>(null)
 
   // Load data
   const loadMenus = async () => {
@@ -77,19 +70,9 @@ export function MenuManagement() {
     }
   }
 
-  const loadSalesTargets = async () => {
-    try {
-      const targetsData = await SalesTargetService.getAllWithDetails()
-      setSalesTargets(targetsData)
-    } catch (error) {
-      console.error('Failed to load sales targets:', error)
-    }
-  }
-
   useEffect(() => {
     loadMenus()
     loadBranches()
-    loadSalesTargets()
   }, [includeInactive])
 
   // Event handlers
@@ -153,10 +136,7 @@ export function MenuManagement() {
     setAssigningMenu(null)
   }
 
-  const handleMenuDetailsClose = () => {
-    setIsMenuDetailsSheetOpen(false)
-    setViewingMenu(null)
-  }
+
 
   const handleMenuDetailsUpdated = async () => {
     await loadMenus()
@@ -230,38 +210,7 @@ export function MenuManagement() {
     setEditingBranch(null)
   }
 
-  // Sales target handlers
-  const handleCreateTarget = () => {
-    setEditingTarget(null)
-    setIsCreateTargetSheetOpen(true)
-  }
 
-  const handleEditTarget = (target: SalesTargetWithDetails) => {
-    setEditingTarget(target)
-    setIsEditTargetSheetOpen(true)
-  }
-
-  const handleDeleteTarget = async (targetId: string) => {
-    try {
-      await SalesTargetService.deleteTarget(targetId)
-      await loadSalesTargets()
-    } catch (error) {
-      console.error('Failed to delete sales target:', error)
-    }
-  }
-
-  const handleTargetFormSuccess = async () => {
-    setIsCreateTargetSheetOpen(false)
-    setIsEditTargetSheetOpen(false)
-    setEditingTarget(null)
-    await loadSalesTargets()
-  }
-
-  const handleTargetFormCancel = () => {
-    setIsCreateTargetSheetOpen(false)
-    setIsEditTargetSheetOpen(false)
-    setEditingTarget(null)
-  }
 
   if (loading) {
     return (
@@ -292,7 +241,6 @@ export function MenuManagement() {
         <TabsList>
           <TabsTrigger value="menus">Menus</TabsTrigger>
           <TabsTrigger value="branches">Branches</TabsTrigger>
-          <TabsTrigger value="targets">Sales Targets</TabsTrigger>
         </TabsList>
 
         <TabsContent value="menus">
@@ -445,60 +393,7 @@ export function MenuManagement() {
           </div>
         </TabsContent>
 
-        <TabsContent value="targets">
-          <div className="space-y-4">
-            {/* Sales Target Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Sales Target Management</h2>
-                <p className="text-muted-foreground">
-                  Set and track daily sales targets for your menus and branches
-                </p>
-              </div>
-              <Button onClick={handleCreateTarget}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Target
-              </Button>
-            </div>
 
-            {/* Sales Target Filter Controls */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Target Filters & View</CardTitle>
-                  <div className="flex items-center space-x-4">
-                    {/* View Mode Toggle */}
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant={viewMode === 'grid' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setViewMode('grid')}
-                      >
-                        <Grid className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant={viewMode === 'list' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setViewMode('list')}
-                      >
-                        <List className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* Sales Target Display */}
-            <SalesTargetList
-              targets={salesTargets}
-              onEdit={handleEditTarget}
-              onDelete={handleDeleteTarget}
-              onCreateNew={handleCreateTarget}
-              viewMode={viewMode}
-            />
-          </div>
-        </TabsContent>
       </Tabs>
 
       {/* Create Menu Sheet */}
@@ -586,40 +481,7 @@ export function MenuManagement() {
         </SheetContent>
       </Sheet>
 
-      {/* Create Sales Target Sheet */}
-      <Sheet open={isCreateTargetSheetOpen} onOpenChange={setIsCreateTargetSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Create Sales Target</SheetTitle>
-            <SheetDescription>
-              Set a daily sales target for a specific menu and branch
-            </SheetDescription>
-          </SheetHeader>
-          <SalesTargetForm
-            onSuccess={handleTargetFormSuccess}
-            onCancel={handleTargetFormCancel}
-          />
-        </SheetContent>
-      </Sheet>
 
-      {/* Edit Sales Target Sheet */}
-      <Sheet open={isEditTargetSheetOpen} onOpenChange={setIsEditTargetSheetOpen}>
-        <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Edit Sales Target</SheetTitle>
-            <SheetDescription>
-              Update sales target amount and details
-            </SheetDescription>
-          </SheetHeader>
-          {editingTarget && (
-            <SalesTargetForm
-              target={editingTarget}
-              onSuccess={handleTargetFormSuccess}
-              onCancel={handleTargetFormCancel}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
 
       {/* Menu Details Sheet */}
       <Sheet open={isMenuDetailsSheetOpen} onOpenChange={setIsMenuDetailsSheetOpen}>
@@ -633,7 +495,6 @@ export function MenuManagement() {
           {viewingMenu && (
             <MenuDetailsView
               menu={viewingMenu}
-              onClose={handleMenuDetailsClose}
               onMenuUpdated={handleMenuDetailsUpdated}
             />
           )}

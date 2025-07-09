@@ -24,9 +24,10 @@ import {
   type ProgressData
 } from '@/components/charts'
 import { SalesRecordService } from '@/lib/services/salesRecordService'
-import { SalesTargetService } from '@/lib/services/salesTargetService'
+import { DailyProductSalesTargetService, type MenuTargetSummary } from '@/lib/services/dailyProductSalesTargetService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
+import { calculateBusinessTimeProgress, calculateExpectedProgress, getCurrentTimeInfo, getSalesTargetStatus } from '@/lib/utils/operationsUtils'
 import type { Branch, SalesRecordWithDetails } from '@/lib/db/schema'
 
 interface AnalyticsFilters {
@@ -156,25 +157,29 @@ export function AnalyticsDashboard() {
           .sort((a, b) => b.quantity - a.quantity)
           .slice(0, 10) // Top 10 products
 
-        // Process progress data (for today only)
+        // Process progress data (for any single date)
         let progressChartData: ProgressData[] = []
-        if (filters.startDate === filters.endDate && filters.startDate === format(new Date(), 'yyyy-MM-dd')) {
-          // Get target for today
-          const targets = await SalesTargetService.getAllTargetsForDate(filters.startDate)
-          const relevantTarget = filters.branchId 
-            ? targets.find(t => t.branchId === filters.branchId)
-            : targets[0] // Use first target if no branch filter
+        if (filters.startDate === filters.endDate) {
+          // Get menu target summaries for the selected date
+          const menuTargets = await DailyProductSalesTargetService.getMenuTargetSummariesForDate(
+            filters.startDate,
+            filters.branchId || undefined
+          )
+
+          const relevantTarget = filters.branchId
+            ? menuTargets.find(t => t.branchId === filters.branchId)
+            : menuTargets[0] // Use first target if no branch filter
 
           if (relevantTarget) {
-            const todayRecords = salesRecords.filter(r => r.saleDate === filters.startDate)
-            
+            const dateRecords = salesRecords.filter(r => r.saleDate === filters.startDate)
+
             // Group by hour and calculate cumulative progress
             const hourlyProgress = new Map<string, number>()
             let cumulativeRevenue = 0
-            
+
             for (let hour = 0; hour < 24; hour++) {
               const hourStr = hour.toString().padStart(2, '0') + ':00'
-              const hourRecords = todayRecords.filter(r => r.saleTime.startsWith(hour.toString().padStart(2, '0')))
+              const hourRecords = dateRecords.filter(r => r.saleTime.startsWith(hour.toString().padStart(2, '0')))
               cumulativeRevenue += hourRecords.reduce((sum, r) => sum + r.totalAmount, 0)
               hourlyProgress.set(hourStr, cumulativeRevenue)
             }
@@ -183,7 +188,7 @@ export function AnalyticsDashboard() {
               const hour = parseInt(time.split(':')[0])
               const expectedProgress = (hour / 24) * relevantTarget.targetAmount
               const percentage = relevantTarget.targetAmount > 0 ? (actual / relevantTarget.targetAmount) * 100 : 0
-              
+
               return {
                 time,
                 actual,
@@ -379,8 +384,19 @@ export function AnalyticsDashboard() {
                 </div>
               ) : progressData.length === 0 ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-muted-foreground">
-                    Progress tracking is only available for today with active targets
+                  <div className="text-center text-muted-foreground space-y-2">
+                    <div>
+                      {filters.startDate !== filters.endDate
+                        ? "Progress tracking requires a single date selection"
+                        : "No sales targets found for this date"
+                      }
+                    </div>
+                    <div className="text-sm">
+                      {filters.startDate !== filters.endDate
+                        ? "Please select a specific date to view daily progress"
+                        : `Create sales targets for ${filters.startDate} to track progress`
+                      }
+                    </div>
                   </div>
                 </div>
               ) : (

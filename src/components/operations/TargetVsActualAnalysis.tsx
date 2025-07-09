@@ -16,21 +16,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { SalesRecordService } from '@/lib/services/salesRecordService'
-import { DailyProductSalesTargetService, type ProductTargetForDate } from '@/lib/services/dailyProductSalesTargetService'
+import { DailyProductSalesTargetService, type MenuTargetSummary } from '@/lib/services/dailyProductSalesTargetService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
 import { calculateBusinessTimeProgress, calculateExpectedProgress, getCurrentTimeInfo, getSalesTargetStatus } from '@/lib/utils/operationsUtils'
-import type { Branch, Menu } from '@/lib/db/schema'
+import type { Branch } from '@/lib/db/schema'
 
-// Menu-level target aggregated from product targets
-interface MenuTarget {
-  id: string
-  menuId: string
-  branchId: string
-  targetDate: string
-  targetAmount: number
-  menu: Menu
-  branch: Branch
+// Use MenuTargetSummary from the service
+type MenuTarget = MenuTargetSummary & {
+  id: string // Add id for compatibility
 }
 
 interface TargetAnalysis {
@@ -51,33 +45,7 @@ interface TargetAnalysis {
   }
 }
 
-// Helper function to aggregate product targets into menu-level targets
-function aggregateProductTargetsToMenuTargets(productTargets: ProductTargetForDate[]): MenuTarget[] {
-  const menuTargetsMap = new Map<string, MenuTarget>()
 
-  productTargets.forEach(productTarget => {
-    const key = `${productTarget.menuId}-${productTarget.branchId}`
-
-    if (!menuTargetsMap.has(key)) {
-      // Create new menu target
-      menuTargetsMap.set(key, {
-        id: `menu-${productTarget.menuId}-${productTarget.branchId}-${productTarget.targetDate}`,
-        menuId: productTarget.menuId,
-        branchId: productTarget.branchId,
-        targetDate: productTarget.targetDate,
-        targetAmount: 0,
-        menu: productTarget.menu,
-        branch: productTarget.branch
-      })
-    }
-
-    // Add this product's target amount to the menu total
-    const menuTarget = menuTargetsMap.get(key)!
-    menuTarget.targetAmount += productTarget.targetQuantity * productTarget.menuProduct.price
-  })
-
-  return Array.from(menuTargetsMap.values())
-}
 
 export function TargetVsActualAnalysis() {
   const [analyses, setAnalyses] = useState<TargetAnalysis[]>([])
@@ -105,33 +73,11 @@ export function TargetVsActualAnalysis() {
     const loadAnalysisData = async () => {
       setLoading(true)
       try {
-        // Get all product targets for the selected date
-        // We need to get targets for all branches first, then filter
-        const allBranches = await BranchService.getAllBranches()
-        const activeBranches = allBranches.filter(branch => branch.isActive)
-
-        let allProductTargets: ProductTargetForDate[] = []
-
-        // Get product targets for each branch
-        for (const branch of activeBranches) {
-          try {
-            const branchTargets = await DailyProductSalesTargetService.getMenusWithProductTargets(
-              selectedDate,
-              branch.id
-            )
-            allProductTargets.push(...branchTargets)
-          } catch (error) {
-            console.warn(`Failed to load targets for branch ${branch.id}:`, error)
-          }
-        }
-
-        // Filter by branch if selected
-        const filteredProductTargets = selectedBranch
-          ? allProductTargets.filter(target => target.branchId === selectedBranch)
-          : allProductTargets
-
-        // Aggregate product targets into menu-level targets
-        const targets = aggregateProductTargetsToMenuTargets(filteredProductTargets)
+        // Get menu target summaries for the selected date
+        const targets = await DailyProductSalesTargetService.getMenuTargetSummariesForDate(
+          selectedDate,
+          selectedBranch || undefined
+        )
 
         const analysisPromises = targets.map(async (target) => {
           // Get actual sales for this target
@@ -182,7 +128,10 @@ export function TargetVsActualAnalysis() {
           )
 
           return {
-            target,
+            target: {
+              ...target,
+              id: `menu-${target.menuId}-${target.branchId}-${target.targetDate}`
+            },
             actualSales,
             actualRevenue,
             variance,
