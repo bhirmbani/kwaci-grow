@@ -235,7 +235,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             control={form.control}
             name="startDate"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>Start Date</FormLabel>
                 <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                   <PopoverTrigger asChild>
@@ -243,7 +243,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-full justify-start text-left font-normal h-10",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -271,6 +271,8 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
+                {/* Add invisible spacer to match end date field height */}
+                <div className="h-5" />
               </FormItem>
             )}
           />
@@ -279,7 +281,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             control={form.control}
             name="endDate"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>End Date (Optional)</FormLabel>
                 <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                   <PopoverTrigger asChild>
@@ -287,7 +289,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-full justify-start text-left font-normal h-10",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -301,6 +303,19 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
+                    <div className="p-3 border-b">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          field.onChange('')
+                          setEndDateOpen(false)
+                        }}
+                      >
+                        Clear Date
+                      </Button>
+                    </div>
                     <Calendar
                       mode="single"
                       selected={field.value ? new Date(field.value) : undefined}
@@ -320,7 +335,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                     />
                   </PopoverContent>
                 </Popover>
-                <FormDescription>
+                <FormDescription className="text-xs text-muted-foreground">
                   Leave empty for ongoing expenses
                 </FormDescription>
                 <FormMessage />
