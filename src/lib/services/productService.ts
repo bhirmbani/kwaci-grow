@@ -76,9 +76,12 @@ export class ProductService {
     const ingredientsWithDetails = await Promise.all(
       productIngredients.map(async (pi) => {
         const ingredient = await db.ingredients.get(pi.ingredientId)
+        if (!ingredient) {
+          console.warn(`Missing ingredient record for ingredientId: ${pi.ingredientId} in product: ${id}`)
+        }
         return {
           ...pi,
-          ingredient: ingredient!
+          ingredient: ingredient || null
         }
       })
     )
@@ -263,6 +266,38 @@ export class ProductService {
   }
 
   /**
+   * Clean up orphaned product-ingredient relationships
+   */
+  static async cleanupOrphanedRelationships(): Promise<void> {
+    try {
+      console.log('🧹 Cleaning up orphaned product-ingredient relationships...')
+
+      const productIngredients = await db.productIngredients.toArray()
+      const orphanedRelationships = []
+
+      for (const pi of productIngredients) {
+        const ingredient = await db.ingredients.get(pi.ingredientId)
+        if (!ingredient) {
+          orphanedRelationships.push(pi)
+        }
+      }
+
+      if (orphanedRelationships.length > 0) {
+        console.log(`Found ${orphanedRelationships.length} orphaned relationships, removing...`)
+        for (const orphaned of orphanedRelationships) {
+          await db.productIngredients.delete(orphaned.id)
+          console.log(`Removed orphaned relationship: ${orphaned.id} (ingredient ${orphaned.ingredientId} not found)`)
+        }
+        console.log('✅ Cleanup completed')
+      } else {
+        console.log('✅ No orphaned relationships found')
+      }
+    } catch (error) {
+      console.error('❌ Error during cleanup:', error)
+    }
+  }
+
+  /**
    * Get COGS breakdown for a product
    */
   static async getCOGSBreakdown(productId: string): Promise<{
@@ -283,14 +318,32 @@ export class ProductService {
 
     const ingredients = productWithIngredients.ingredients.map(pi => {
       const ingredient = pi.ingredient
-      const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
-      
+
+      // Add null checks for ingredient and its properties
+      if (!ingredient) {
+        console.warn('Missing ingredient data for product ingredient:', pi)
+        return {
+          id: 'unknown',
+          name: 'Unknown Ingredient',
+          costPerCup: 0,
+          usagePerCup: pi.usagePerCup,
+          unit: '',
+          percentage: 0
+        }
+      }
+
+      // Calculate cost with null checks
+      const hasValidCostData = ingredient.baseUnitCost && ingredient.baseUnitQuantity && ingredient.baseUnitQuantity > 0
+      const costPerCup = hasValidCostData
+        ? (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
+        : 0
+
       return {
         id: ingredient.id,
         name: ingredient.name,
         costPerCup,
         usagePerCup: pi.usagePerCup,
-        unit: ingredient.unit,
+        unit: ingredient.unit || '',
         percentage: 0 // Will be calculated below
       }
     })
@@ -335,6 +388,16 @@ export class ProductService {
               if (productWithIngredients && productWithIngredients.ingredients.length > 0) {
                 cogsPerCup = productWithIngredients.ingredients.reduce((total, pi) => {
                   const ingredient = pi.ingredient
+
+                  // Add null checks for ingredient and its properties
+                  if (!ingredient || !ingredient.baseUnitCost || !ingredient.baseUnitQuantity || ingredient.baseUnitQuantity === 0) {
+                    // Only warn if ingredient is completely missing, not just missing cost data
+                    if (!ingredient) {
+                      console.warn('Missing ingredient record for product ingredient:', pi)
+                    }
+                    return total
+                  }
+
                   const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
                   return total + costPerCup
                 }, 0)

@@ -13,8 +13,20 @@ import type { Branch } from '@/lib/db/schema'
 const branchFormSchema = z.object({
   name: z.string().min(1, 'Branch name is required').max(100, 'Branch name must be less than 100 characters'),
   location: z.string().max(500, 'Location must be less than 500 characters').optional(),
+  businessHoursStart: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Start time must be in HH:MM format'),
+  businessHoursEnd: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'End time must be in HH:MM format'),
   isActive: z.boolean(),
   note: z.string().max(1000, 'Note must be less than 1000 characters').optional(),
+}).refine((data) => {
+  // Validate that end time is after start time
+  const [startHour, startMin] = data.businessHoursStart.split(':').map(Number)
+  const [endHour, endMin] = data.businessHoursEnd.split(':').map(Number)
+  const startMinutes = startHour * 60 + startMin
+  const endMinutes = endHour * 60 + endMin
+  return endMinutes > startMinutes
+}, {
+  message: 'End time must be after start time',
+  path: ['businessHoursEnd']
 })
 
 type BranchFormData = z.infer<typeof branchFormSchema>
@@ -33,6 +45,8 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
     defaultValues: {
       name: '',
       location: '',
+      businessHoursStart: '06:00',
+      businessHoursEnd: '22:00',
       isActive: true,
       note: '',
     },
@@ -46,6 +60,8 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
       reset({
         name: branch.name,
         location: branch.location || '',
+        businessHoursStart: branch.businessHoursStart || '06:00',
+        businessHoursEnd: branch.businessHoursEnd || '22:00',
         isActive: branch.isActive,
         note: branch.note || '',
       })
@@ -53,6 +69,8 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
       reset({
         name: '',
         location: '',
+        businessHoursStart: '06:00',
+        businessHoursEnd: '22:00',
         isActive: true,
         note: '',
       })
@@ -65,6 +83,8 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
         await BranchService.update(branch.id, {
           name: data.name.trim(),
           location: data.location?.trim() || '',
+          businessHoursStart: data.businessHoursStart,
+          businessHoursEnd: data.businessHoursEnd,
           isActive: data.isActive,
           note: data.note?.trim() || '',
         })
@@ -72,6 +92,8 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
         await BranchService.create({
           name: data.name.trim(),
           location: data.location?.trim() || '',
+          businessHoursStart: data.businessHoursStart,
+          businessHoursEnd: data.businessHoursEnd,
           note: data.note?.trim() || '',
         })
       }
@@ -127,6 +149,48 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
         {errors.location && (
           <p className="text-sm text-red-600">{errors.location.message}</p>
         )}
+      </div>
+
+      {/* Business Hours */}
+      <div className="space-y-4">
+        <div>
+          <Label className="text-base">Business Hours</Label>
+          <p className="text-sm text-muted-foreground">
+            Set the operating hours for this branch
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Start Time */}
+          <div className="space-y-2">
+            <Label htmlFor="businessHoursStart">Start Time *</Label>
+            <Input
+              id="businessHoursStart"
+              type="time"
+              {...register('businessHoursStart')}
+            />
+            {errors.businessHoursStart && (
+              <p className="text-sm text-red-600">{errors.businessHoursStart.message}</p>
+            )}
+          </div>
+
+          {/* End Time */}
+          <div className="space-y-2">
+            <Label htmlFor="businessHoursEnd">End Time *</Label>
+            <Input
+              id="businessHoursEnd"
+              type="time"
+              {...register('businessHoursEnd')}
+            />
+            {errors.businessHoursEnd && (
+              <p className="text-sm text-red-600">{errors.businessHoursEnd.message}</p>
+            )}
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          Business hours are used for calculating time-based progress in target analysis
+        </p>
       </div>
 
       {/* Active Status */}

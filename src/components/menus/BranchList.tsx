@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MoreHorizontal, Edit, Trash2, MapPin, BookOpen, Building2 } from 'lucide-react'
+import { MoreHorizontal, Edit, Trash2, MapPin, BookOpen, Building2, Clock } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -52,6 +52,21 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
     return isActive
       ? 'bg-green-100 text-green-800 border-green-200'
       : 'bg-gray-100 text-gray-800 border-gray-200'
+  }
+
+  const formatBusinessHours = (start: string, end: string) => {
+    if (!start || !end) return 'Not set'
+
+    // Convert 24-hour format to 12-hour format
+    const formatTime = (time: string) => {
+      const [hours, minutes] = time.split(':')
+      const hour = parseInt(hours)
+      const ampm = hour >= 12 ? 'PM' : 'AM'
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+      return `${displayHour}:${minutes} ${ampm}`
+    }
+
+    return `${formatTime(start)} - ${formatTime(end)}`
   }
 
   if (branches.length === 0) {
@@ -131,6 +146,17 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
                   </div>
                 )}
 
+                {/* Business Hours */}
+                <div className="flex items-start gap-2 mb-3">
+                  <Clock className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Business Hours</p>
+                    <p className="text-sm font-medium">
+                      {formatBusinessHours(branch.businessHoursStart, branch.businessHoursEnd)}
+                    </p>
+                  </div>
+                </div>
+
                 {/* Menu Count */}
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-600">
@@ -208,6 +234,7 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Location</TableHead>
+              <TableHead>Business Hours</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Menus</TableHead>
               <TableHead>Created</TableHead>
@@ -237,8 +264,13 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
                   </p>
                 </TableCell>
                 <TableCell>
-                  <Badge 
-                    variant="outline" 
+                  <p className="text-sm text-muted-foreground">
+                    {formatBusinessHours(branch.businessHoursStart, branch.businessHoursEnd)}
+                  </p>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
                     className={`text-xs ${getStatusColor(branch.isActive)}`}
                   >
                     {branch.isActive ? 'Active' : 'Inactive'}

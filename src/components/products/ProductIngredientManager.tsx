@@ -139,6 +139,14 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
   // Calculate total COGS
   const totalCOGS = product.ingredients.reduce((sum, pi) => {
     const ingredient = pi.ingredient
+    // Add null checks for ingredient and its properties
+    if (!ingredient || !ingredient.baseUnitCost || !ingredient.baseUnitQuantity || ingredient.baseUnitQuantity === 0) {
+      // Only warn if ingredient is completely missing, not just missing cost data
+      if (!ingredient) {
+        console.warn('Missing ingredient record for product ingredient:', pi)
+      }
+      return sum
+    }
     const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
     return sum + costPerCup
   }, 0)
@@ -264,8 +272,43 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
               <TableBody>
                 {product.ingredients.map((pi) => {
                   const ingredient = pi.ingredient
-                  const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
-                  const unitCost = ingredient.baseUnitCost / ingredient.baseUnitQuantity
+
+                  // Add null checks for ingredient and its properties
+                  if (!ingredient) {
+                    console.warn('Missing ingredient data for product ingredient:', pi)
+                    return (
+                      <TableRow key={pi.id}>
+                        <TableCell className="font-medium text-red-500">
+                          Missing Ingredient (ID: {pi.ingredientId})
+                        </TableCell>
+                        <TableCell>{pi.usagePerCup}</TableCell>
+                        <TableCell>N/A</TableCell>
+                        <TableCell>N/A</TableCell>
+                        <TableCell>{pi.note || '-'}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveIngredient(pi.ingredientId)}
+                              className="text-red-500"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  }
+
+                  // Calculate costs with null checks
+                  const hasValidCostData = ingredient.baseUnitCost && ingredient.baseUnitQuantity && ingredient.baseUnitQuantity > 0
+                  const costPerCup = hasValidCostData
+                    ? (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
+                    : 0
+                  const unitCost = hasValidCostData
+                    ? ingredient.baseUnitCost / ingredient.baseUnitQuantity
+                    : 0
                   const isEditing = editingIngredient === pi.ingredientId
 
                   return (
@@ -287,11 +330,15 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                             className="w-24"
                           />
                         ) : (
-                          `${pi.usagePerCup} ${ingredient.unit}`
+                          `${pi.usagePerCup} ${ingredient.unit || ''}`
                         )}
                       </TableCell>
-                      <TableCell>{formatCurrency(costPerCup)}</TableCell>
-                      <TableCell>{formatCurrency(unitCost)}</TableCell>
+                      <TableCell>
+                        {hasValidCostData ? formatCurrency(costPerCup) : 'N/A'}
+                      </TableCell>
+                      <TableCell>
+                        {hasValidCostData ? formatCurrency(unitCost) : 'N/A'}
+                      </TableCell>
                       <TableCell>
                         {isEditing ? (
                           <Input

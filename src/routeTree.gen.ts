@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarehouseRouteImport } from './routes/warehouse'
 import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
+import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
@@ -46,6 +47,11 @@ const TestTargetsRoute = TestTargetsRouteImport.update({
 const TestMenusRoute = TestMenusRouteImport.update({
   id: '/test-menus',
   path: '/test-menus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestIngredientFixRoute = TestIngredientFixRouteImport.update({
+  id: '/test-ingredient-fix',
+  path: '/test-ingredient-fix',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestDatabaseRoute = TestDatabaseRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/sales-targets': typeof SalesTargetsRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
+  '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
   '/warehouse': typeof WarehouseRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/settings'
     | '/test-database'
+    | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/settings'
     | '/test-database'
+    | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/settings'
     | '/test-database'
+    | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
     | '/warehouse'
@@ -319,6 +331,7 @@ export interface RootRouteChildren {
   SalesTargetsRoute: typeof SalesTargetsRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
+  TestIngredientFixRoute: typeof TestIngredientFixRoute
   TestMenusRoute: typeof TestMenusRoute
   TestTargetsRoute: typeof TestTargetsRoute
   WarehouseRoute: typeof WarehouseRoute
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/test-menus'
       fullPath: '/test-menus'
       preLoaderRoute: typeof TestMenusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-ingredient-fix': {
+      id: '/test-ingredient-fix'
+      path: '/test-ingredient-fix'
+      fullPath: '/test-ingredient-fix'
+      preLoaderRoute: typeof TestIngredientFixRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-database': {
@@ -511,6 +531,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalesTargetsRoute: SalesTargetsRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
+  TestIngredientFixRoute: TestIngredientFixRoute,
   TestMenusRoute: TestMenusRoute,
   TestTargetsRoute: TestTargetsRoute,
   WarehouseRoute: WarehouseRoute,

@@ -16,13 +16,25 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { SalesRecordService } from '@/lib/services/salesRecordService'
-import { SalesTargetService, type SalesTargetWithDetails } from '@/lib/services/salesTargetService'
+import { DailyProductSalesTargetService, type ProductTargetForDate } from '@/lib/services/dailyProductSalesTargetService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
-import type { Branch } from '@/lib/db/schema'
+import { calculateBusinessTimeProgress, calculateExpectedProgress } from '@/lib/utils/operationsUtils'
+import type { Branch, Menu } from '@/lib/db/schema'
+
+// Menu-level target aggregated from product targets
+interface MenuTarget {
+  id: string
+  menuId: string
+  branchId: string
+  targetDate: string
+  targetAmount: number
+  menu: Menu
+  branch: Branch
+}
 
 interface TargetAnalysis {
-  target: SalesTargetWithDetails
+  target: MenuTarget
   actualSales: number
   actualRevenue: number
   variance: number
@@ -31,6 +43,34 @@ interface TargetAnalysis {
   status: 'ahead' | 'on-track' | 'behind' | 'at-risk'
   timeProgress: number // Percentage of day elapsed
   expectedProgress: number // Expected progress based on time
+}
+
+// Helper function to aggregate product targets into menu-level targets
+function aggregateProductTargetsToMenuTargets(productTargets: ProductTargetForDate[]): MenuTarget[] {
+  const menuTargetsMap = new Map<string, MenuTarget>()
+
+  productTargets.forEach(productTarget => {
+    const key = `${productTarget.menuId}-${productTarget.branchId}`
+
+    if (!menuTargetsMap.has(key)) {
+      // Create new menu target
+      menuTargetsMap.set(key, {
+        id: `menu-${productTarget.menuId}-${productTarget.branchId}-${productTarget.targetDate}`,
+        menuId: productTarget.menuId,
+        branchId: productTarget.branchId,
+        targetDate: productTarget.targetDate,
+        targetAmount: 0,
+        menu: productTarget.menu,
+        branch: productTarget.branch
+      })
+    }
+
+    // Add this product's target amount to the menu total
+    const menuTarget = menuTargetsMap.get(key)!
+    menuTarget.targetAmount += productTarget.targetQuantity * productTarget.menuProduct.price
+  })
+
+  return Array.from(menuTargetsMap.values())
 }
 
 export function TargetVsActualAnalysis() {
@@ -59,13 +99,33 @@ export function TargetVsActualAnalysis() {
     const loadAnalysisData = async () => {
       setLoading(true)
       try {
-        // Get all targets for the selected date
-        const allTargets = await SalesTargetService.getAllTargetsForDate(selectedDate)
-        
+        // Get all product targets for the selected date
+        // We need to get targets for all branches first, then filter
+        const allBranches = await BranchService.getAllBranches()
+        const activeBranches = allBranches.filter(branch => branch.isActive)
+
+        let allProductTargets: ProductTargetForDate[] = []
+
+        // Get product targets for each branch
+        for (const branch of activeBranches) {
+          try {
+            const branchTargets = await DailyProductSalesTargetService.getMenusWithProductTargets(
+              selectedDate,
+              branch.id
+            )
+            allProductTargets.push(...branchTargets)
+          } catch (error) {
+            console.warn(`Failed to load targets for branch ${branch.id}:`, error)
+          }
+        }
+
         // Filter by branch if selected
-        const targets = selectedBranch 
-          ? allTargets.filter(target => target.branchId === selectedBranch)
-          : allTargets
+        const filteredProductTargets = selectedBranch
+          ? allProductTargets.filter(target => target.branchId === selectedBranch)
+          : allProductTargets
+
+        // Aggregate product targets into menu-level targets
+        const targets = aggregateProductTargetsToMenuTargets(filteredProductTargets)
 
         const analysisPromises = targets.map(async (target) => {
           // Get actual sales for this target
@@ -89,15 +149,21 @@ export function TargetVsActualAnalysis() {
             ? Math.min((actualRevenue / target.targetAmount) * 100, 100)
             : 0
 
-          // Calculate time progress (percentage of day elapsed)
+          // Calculate time progress based on business hours
           const now = new Date()
           const isToday = selectedDate === format(now, 'yyyy-MM-dd')
-          const timeProgress = isToday 
-            ? (now.getHours() * 60 + now.getMinutes()) / (24 * 60) * 100
+
+          // Use business hours from the branch if available, otherwise use defaults
+          const businessHoursStart = target.branch?.businessHoursStart || '06:00'
+          const businessHoursEnd = target.branch?.businessHoursEnd || '22:00'
+
+          // Calculate time progress based on business hours
+          const timeProgress = isToday
+            ? calculateBusinessTimeProgress(selectedDate, businessHoursStart, businessHoursEnd)
             : 100 // If not today, consider full day
 
-          // Expected progress should match time progress for linear targets
-          const expectedProgress = timeProgress
+          // Calculate expected progress using realistic coffee shop curve
+          const expectedProgress = calculateExpectedProgress(timeProgress, 'coffee-shop')
 
           // Determine status
           let status: TargetAnalysis['status'] = 'on-track'

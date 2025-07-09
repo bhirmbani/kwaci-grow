@@ -183,6 +183,8 @@ export interface Branch {
   location: string
   note: string
   isActive: boolean
+  businessHoursStart: string // Business start time in HH:MM format (e.g., "06:00")
+  businessHoursEnd: string // Business end time in HH:MM format (e.g., "22:00")
   createdAt: string
   updatedAt: string
 }
@@ -391,7 +393,7 @@ export interface ProductionBatchWithItems extends ProductionBatch {
 
 // Helper type for product with ingredients
 export interface ProductWithIngredients extends Product {
-  ingredients: (ProductIngredient & { ingredient: Ingredient })[]
+  ingredients: (ProductIngredient & { ingredient: Ingredient | null })[]
 }
 
 // Helper type for ingredient with usage info

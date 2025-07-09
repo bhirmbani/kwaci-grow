@@ -14,22 +14,136 @@ export function calculateVariance(actual: number, target: number): {
 }
 
 /**
- * Calculate time-based progress percentage
+ * Calculate time-based progress percentage based on business hours
  */
-export function calculateTimeProgress(date: string): number {
+export function calculateBusinessTimeProgress(
+  date: string,
+  businessHoursStart: string = '06:00',
+  businessHoursEnd: string = '22:00'
+): number {
   const now = new Date()
   const targetDate = new Date(date)
-  
+
   // If not today, return 100% (full day elapsed)
   if (targetDate.toDateString() !== now.toDateString()) {
     return targetDate < now ? 100 : 0
   }
-  
+
+  // Parse business hours
+  const [startHour, startMin] = businessHoursStart.split(':').map(Number)
+  const [endHour, endMin] = businessHoursEnd.split(':').map(Number)
+
+  const businessStartMinutes = startHour * 60 + startMin
+  const businessEndMinutes = endHour * 60 + endMin
+  const totalBusinessMinutes = businessEndMinutes - businessStartMinutes
+
+  // Current time in minutes since midnight
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+  // If before business hours, return 0%
+  if (currentMinutes < businessStartMinutes) {
+    return 0
+  }
+
+  // If after business hours, return 100%
+  if (currentMinutes > businessEndMinutes) {
+    return 100
+  }
+
+  // Calculate percentage of business day elapsed
+  const elapsedBusinessMinutes = currentMinutes - businessStartMinutes
+  return (elapsedBusinessMinutes / totalBusinessMinutes) * 100
+}
+
+/**
+ * Calculate time-based progress percentage (legacy function for 24-hour calculation)
+ * @deprecated Use calculateBusinessTimeProgress instead
+ */
+export function calculateTimeProgress(date: string): number {
+  const now = new Date()
+  const targetDate = new Date(date)
+
+  // If not today, return 100% (full day elapsed)
+  if (targetDate.toDateString() !== now.toDateString()) {
+    return targetDate < now ? 100 : 0
+  }
+
   // Calculate percentage of day elapsed
   const totalMinutesInDay = 24 * 60
   const elapsedMinutes = now.getHours() * 60 + now.getMinutes()
-  
+
   return (elapsedMinutes / totalMinutesInDay) * 100
+}
+
+/**
+ * Calculate realistic expected progress based on business type and time elapsed
+ */
+export function calculateExpectedProgress(
+  timeProgress: number,
+  businessType: 'coffee-shop' | 'restaurant' | 'retail' | 'linear' = 'coffee-shop'
+): number {
+  switch (businessType) {
+    case 'coffee-shop':
+      // Coffee shop sales curve (front-loaded due to morning rush)
+      if (timeProgress <= 25) {
+        // Morning rush: 60% of sales by 25% of business day
+        return timeProgress * 2.4
+      } else if (timeProgress <= 50) {
+        // Lunch period: 90% of sales by 50% of business day
+        return 60 + (timeProgress - 25) * 1.2
+      } else {
+        // Afternoon/evening: remaining 10% over latter half
+        return Math.min(100, 90 + (timeProgress - 50) * 0.2)
+      }
+
+    case 'restaurant':
+      // Restaurant sales curve (lunch and dinner peaks)
+      if (timeProgress <= 20) {
+        // Early hours: 15% of sales
+        return timeProgress * 0.75
+      } else if (timeProgress <= 40) {
+        // Lunch rush: 50% of sales by 40% of day
+        return 15 + (timeProgress - 20) * 1.75
+      } else if (timeProgress <= 60) {
+        // Afternoon lull: 65% of sales by 60% of day
+        return 50 + (timeProgress - 40) * 0.75
+      } else {
+        // Dinner rush: remaining 35% over last 40%
+        return 65 + (timeProgress - 60) * 0.875
+      }
+
+    case 'retail':
+      // Retail sales curve (steady throughout day with evening peak)
+      if (timeProgress <= 70) {
+        // Steady sales: 70% by 70% of day
+        return timeProgress
+      } else {
+        // Evening peak: remaining 30% over last 30%
+        return 70 + (timeProgress - 70)
+      }
+
+    case 'linear':
+    default:
+      // Linear progression (original behavior)
+      return timeProgress
+  }
+}
+
+/**
+ * Format business hours for display (converts 24-hour to 12-hour format)
+ */
+export function formatBusinessHours(start: string, end: string): string {
+  if (!start || !end) return 'Not set'
+
+  const formatTime = (time: string): string => {
+    const [hours, minutes] = time.split(':')
+    const hour = parseInt(hours)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+    return `${displayHour}:${minutes} ${ampm}`
+  }
+
+  return `${formatTime(start)} - ${formatTime(end)}`
 }
 
 /**

@@ -1,6 +1,7 @@
 import { initializeDatabase } from './index'
 import { AppSettingsService } from '../services/appSettingsService'
 import { seedDatabase } from './seed'
+import { ProductService } from '../services/productService'
 
 let isInitialized = false
 
@@ -14,6 +15,9 @@ export async function ensureDatabaseInitialized(): Promise<void> {
 
     // Seed the database with default data (seeder functions check for existing data)
     await seedDatabase()
+
+    // Clean up any orphaned product-ingredient relationships
+    await ProductService.cleanupOrphanedRelationships()
 
     await AppSettingsService.ensureDefaults()
     isInitialized = true

@@ -100,6 +100,16 @@ export class MenuService {
             if (productWithIngredients && productWithIngredients.ingredients.length > 0) {
               cogsPerCup = productWithIngredients.ingredients.reduce((total, pi) => {
                 const ingredient = pi.ingredient
+
+                // Add null checks for ingredient and its properties
+                if (!ingredient || !ingredient.baseUnitCost || !ingredient.baseUnitQuantity || ingredient.baseUnitQuantity === 0) {
+                  // Only warn if ingredient is completely missing, not just missing cost data
+                  if (!ingredient) {
+                    console.warn('Missing ingredient record for product ingredient:', pi)
+                  }
+                  return total
+                }
+
                 const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
                 return total + costPerCup
               }, 0)

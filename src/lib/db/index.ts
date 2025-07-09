@@ -1059,6 +1059,57 @@ export class FinancialDashboardDB extends Dexie {
 
       console.log('✅ Database reset completed - recurring expenses table properly configured')
     })
+
+    // Version 27 - Add business hours to branches table
+    this.version(27).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, businessHoursStart, businessHoursEnd, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt',
+      recurringExpenses: 'id, name, description, amount, frequency, category, startDate, endDate, note, isActive, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding business hours to branches table...')
+
+      // Update existing branches with default business hours (6:00 AM - 10:00 PM)
+      const branches = await tx.table('branches').toArray()
+      for (const branch of branches) {
+        await tx.table('branches').update(branch.id, {
+          businessHoursStart: '06:00',
+          businessHoursEnd: '22:00',
+          updatedAt: new Date().toISOString()
+        })
+      }
+
+      console.log('✅ Business hours added to branches table successfully')
+    })
   }
 }
 
