@@ -177,7 +177,7 @@ export function IngredientManagement() {
                         <div>
                           <h4 className="font-medium">{ingredient.name}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {ingredient.category || 'No category'} • {ingredient.unit}
+                            {ingredient.categoryName || 'No category'} • {ingredient.unit}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Used in {ingredient.usageCount} products

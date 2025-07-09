@@ -15,7 +15,7 @@ import { formatCurrency } from '@/utils/formatters'
 import type { Ingredient } from '@/lib/db/schema'
 
 interface IngredientListProps {
-  ingredients: Array<Ingredient & { usageCount: number }>
+  ingredients: Array<Ingredient & { usageCount: number; categoryName?: string }>
   onIngredientsChange: () => void
 }
 
@@ -135,8 +135,8 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
                   <TableRow key={ingredient.id}>
                     <TableCell className="font-medium">{ingredient.name}</TableCell>
                     <TableCell>
-                      {ingredient.category ? (
-                        <Badge variant="outline">{ingredient.category}</Badge>
+                      {ingredient.categoryName ? (
+                        <Badge variant="outline">{ingredient.categoryName}</Badge>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}

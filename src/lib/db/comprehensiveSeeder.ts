@@ -659,6 +659,99 @@ export class ComprehensiveSeeder {
       )
     }
 
+    // Cappuccino ingredients
+    if (cappuccino && arabica && milk && cups && lids) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: cappuccino.id,
+          ingredientId: arabica.id,
+          usagePerCup: 18, // 18g coffee per shot
+          note: 'Single shot espresso base',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cappuccino.id,
+          ingredientId: milk.id,
+          usagePerCup: 150, // 150ml steamed milk (less than latte)
+          note: 'Steamed milk with foam',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cappuccino.id,
+          ingredientId: cups.id,
+          usagePerCup: 1, // 1 cup
+          note: 'Serving cup',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cappuccino.id,
+          ingredientId: lids.id,
+          usagePerCup: 1, // 1 lid
+          note: 'Cup lid',
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Caramel Macchiato ingredients
+    if (caramelMacchiato && arabica && milk && caramelSyrup && cups && lids) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: caramelMacchiato.id,
+          ingredientId: arabica.id,
+          usagePerCup: 18, // 18g coffee per shot
+          note: 'Single shot espresso base',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: caramelMacchiato.id,
+          ingredientId: milk.id,
+          usagePerCup: 200, // 200ml steamed milk
+          note: 'Steamed milk',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: caramelMacchiato.id,
+          ingredientId: caramelSyrup.id,
+          usagePerCup: 20, // 20ml caramel syrup (more than vanilla)
+          note: 'Caramel flavoring',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: caramelMacchiato.id,
+          ingredientId: cups.id,
+          usagePerCup: 1, // 1 cup
+          note: 'Serving cup',
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: caramelMacchiato.id,
+          ingredientId: lids.id,
+          usagePerCup: 1, // 1 lid
+          note: 'Cup lid',
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
     await db.productIngredients.bulkAdd(productIngredients)
   }
 
@@ -1410,21 +1503,21 @@ export class ComprehensiveSeeder {
     this.currentStep++
     this.updateProgress('Production Data', 'Creating production batches...')
 
-    const products = await db.products.toArray()
+    const ingredients = await db.ingredients.toArray()
     const now = new Date().toISOString()
 
     const productionBatches: ProductionBatch[] = []
     const productionItems: ProductionItem[] = []
 
-    // Create production batches in various statuses
-    const statuses: Array<'pending' | 'in-progress' | 'completed' | 'cancelled'> =
-      ['completed', 'completed', 'in-progress', 'pending', 'cancelled']
+    // Create production batches in various statuses (using correct capitalized status values)
+    const statuses: Array<'Pending' | 'In Progress' | 'Completed'> =
+      ['Completed', 'Completed', 'In Progress', 'Pending', 'Completed']
 
     statuses.forEach((status, index) => {
       const batchDate = new Date()
-      if (status === 'completed') {
+      if (status === 'Completed') {
         batchDate.setDate(batchDate.getDate() - (index + 1)) // Past dates for completed
-      } else if (status === 'in-progress') {
+      } else if (status === 'In Progress') {
         // Today for in-progress
       } else {
         batchDate.setDate(batchDate.getDate() + 1) // Future for pending
@@ -1432,39 +1525,38 @@ export class ComprehensiveSeeder {
 
       const batch: ProductionBatch = {
         id: uuidv4(),
-        batchNumber: `PB-${batchDate.getFullYear()}${(batchDate.getMonth() + 1).toString().padStart(2, '0')}${batchDate.getDate().toString().padStart(2, '0')}-${(index + 1).toString().padStart(3, '0')}`,
-        productionDate: batchDate.toISOString().split('T')[0],
+        batchNumber: index + 1, // Numeric batch number starting from 1
+        dateCreated: batchDate.toISOString().split('T')[0], // Use dateCreated field
         status: status,
-        totalQuantity: 0, // Will be calculated
-        note: `${status.charAt(0).toUpperCase() + status.slice(1)} production batch`,
+        note: `${status} production batch`,
+        // Set output data for completed batches
+        productName: status === 'Completed' ? 'Coffee Products' : undefined,
+        outputQuantity: status === 'Completed' ? Math.floor(Math.random() * 100) + 50 : undefined,
+        outputUnit: status === 'Completed' ? 'cups' : undefined,
         createdAt: now,
         updatedAt: now
       }
 
-      let totalQuantity = 0
-
-      // Add 2-4 random products to each batch
-      const selectedProducts = products
+      // Add 3-5 random ingredients to each batch
+      const selectedIngredients = ingredients
         .sort(() => Math.random() - 0.5)
-        .slice(0, Math.floor(Math.random() * 3) + 2)
+        .slice(0, Math.floor(Math.random() * 3) + 3)
 
-      selectedProducts.forEach(product => {
-        const quantity = Math.floor(Math.random() * 50) + 20 // 20-70 units
-        totalQuantity += quantity
+      selectedIngredients.forEach(ingredient => {
+        const quantity = Math.floor(Math.random() * 500) + 100 // 100-600 units
 
         productionItems.push({
           id: uuidv4(),
-          batchId: batch.id,
-          productId: product.id,
-          plannedQuantity: quantity,
-          actualQuantity: status === 'completed' ? quantity : (status === 'in-progress' ? Math.floor(quantity * 0.6) : 0),
-          note: `${quantity} units of ${product.name}`,
+          productionBatchId: batch.id, // Use correct field name
+          ingredientName: ingredient.name, // Use ingredient name as expected by schema
+          quantity: quantity,
+          unit: ingredient.unit,
+          note: `${quantity} ${ingredient.unit} of ${ingredient.name}`,
           createdAt: now,
           updatedAt: now
         })
       })
 
-      batch.totalQuantity = totalQuantity
       productionBatches.push(batch)
     })
 

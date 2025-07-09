@@ -134,7 +134,7 @@ export function useIngredient(id: string) {
 }
 
 export function useIngredientsWithCounts(includeInactive: boolean = false) {
-  const [ingredients, setIngredients] = useState<Array<Ingredient & { usageCount: number }>>([])
+  const [ingredients, setIngredients] = useState<Array<Ingredient & { usageCount: number; categoryName?: string }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

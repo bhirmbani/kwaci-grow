@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ProductService } from '@/lib/services/productService'
 import { MenuService } from '@/lib/services/menuService'
 import { useProductEvents } from '@/lib/events/productEvents'
 
@@ -64,54 +63,31 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
         for (const menuProduct of menu.products) {
           const product = menuProduct.product
 
-          // Get COGS data for this product
-          let cogsPerCup = 0
-          try {
-            const productWithIngredients = await ProductService.getWithIngredients(product.id)
-            if (productWithIngredients && productWithIngredients.ingredients.length > 0) {
-              cogsPerCup = productWithIngredients.ingredients.reduce((total, pi) => {
-                const ingredient = pi.ingredient
+          // Use COGS data already calculated by MenuService
+          const cogsPerCup = product.cogsPerCup || 0
 
-                // Add null checks for ingredient and its properties
-                if (!ingredient || !ingredient.baseUnitCost || !ingredient.baseUnitQuantity || ingredient.baseUnitQuantity === 0) {
-                  // Only warn if ingredient is completely missing, not just missing cost data
-                  if (!ingredient) {
-                    console.warn('Missing ingredient record for product ingredient:', pi)
-                  }
-                  return total
-                }
+          // Include all products that are in the menu, regardless of COGS
+          // This ensures analytics dropdown matches what's shown in menus route
+          const menuPrice = menuProduct.price
+          const grossProfitPerCup = menuPrice - cogsPerCup
 
-                const costPerCup = (ingredient.baseUnitCost / ingredient.baseUnitQuantity) * pi.usagePerCup
-                return total + costPerCup
-              }, 0)
-            }
-          } catch (cogsError) {
-            console.error(`Error calculating COGS for product ${product.id}:`, cogsError)
-            // COGS remains 0 if calculation fails
-          }
+          // Get target quantity for this product (default to 10 if not set)
+          const targetQuantityPerDay = targetQuantities.get(product.id) || 10
 
-          // Only include products with valid COGS data
-          if (cogsPerCup > 0) {
-            const menuPrice = menuProduct.price
-            const grossProfitPerCup = menuPrice - cogsPerCup
+          // Calculate projections
+          const dailyRevenue = targetQuantityPerDay * menuPrice
+          const dailyProfit = targetQuantityPerDay * grossProfitPerCup
+          const weeklyRevenue = dailyRevenue * 7
+          const weeklyProfit = dailyProfit * 7
+          const monthlyRevenue = dailyRevenue * daysPerMonth
+          const monthlyProfit = dailyProfit * daysPerMonth
 
-            // Get target quantity for this product (default to 10 if not set)
-            const targetQuantityPerDay = targetQuantities.get(product.id) || 10
-
-            // Calculate projections
-            const dailyRevenue = targetQuantityPerDay * menuPrice
-            const dailyProfit = targetQuantityPerDay * grossProfitPerCup
-            const weeklyRevenue = dailyRevenue * 7
-            const weeklyProfit = dailyProfit * 7
-            const monthlyRevenue = dailyRevenue * daysPerMonth
-            const monthlyProfit = dailyProfit * daysPerMonth
-
-            const projection: MenuProductProjection = {
-              menuId: menu.id,
-              menuName: menu.name,
-              productId: product.id,
-              productName: product.name,
-              cogsPerCup: Math.round(cogsPerCup),
+          const projection: MenuProductProjection = {
+            menuId: menu.id,
+            menuName: menu.name,
+            productId: product.id,
+            productName: product.name,
+            cogsPerCup: Math.round(cogsPerCup),
               menuPrice,
               grossProfitPerCup,
               dailyRevenue,
@@ -135,7 +111,7 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
           }
         }
 
-        // Only include menus that have products with valid data
+        // Only include menus that have products
         if (menuProductProjections.length > 0) {
           // Sort products by name within each menu
           menuProductProjections.sort((a, b) => a.productName.localeCompare(b.productName))

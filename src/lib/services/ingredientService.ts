@@ -253,9 +253,9 @@ export class IngredientService {
   }
 
   /**
-   * Get ingredients with their usage counts
+   * Get ingredients with their usage counts and resolved category names
    */
-  static async getAllWithUsageCounts(includeInactive: boolean = false): Promise<Array<Ingredient & { usageCount: number }>> {
+  static async getAllWithUsageCounts(includeInactive: boolean = false): Promise<Array<Ingredient & { usageCount: number; categoryName?: string }>> {
     try {
       const ingredients = await this.getAll(includeInactive)
 
@@ -263,6 +263,10 @@ export class IngredientService {
       if (ingredients.length === 0) {
         return []
       }
+
+      // Get all categories for name resolution
+      const categories = await db.ingredientCategories.toArray()
+      const categoryMap = new Map(categories.map(cat => [cat.id, cat.name]))
 
       const ingredientsWithCounts = await Promise.all(
         ingredients.map(async (ingredient) => {
@@ -272,16 +276,22 @@ export class IngredientService {
               .equals(ingredient.id)
               .count()
 
+            // Resolve category name from category ID
+            const categoryName = ingredient.category ? categoryMap.get(ingredient.category) : undefined
+
             return {
               ...ingredient,
-              usageCount
+              usageCount,
+              categoryName
             }
           } catch (error) {
             console.error(`IngredientService.getAllWithUsageCounts() - Error counting usage for ingredient ${ingredient.id}:`, error)
             // Return ingredient with 0 count if there's an error
+            const categoryName = ingredient.category ? categoryMap.get(ingredient.category) : undefined
             return {
               ...ingredient,
-              usageCount: 0
+              usageCount: 0,
+              categoryName
             }
           }
         })
