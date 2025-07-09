@@ -6,9 +6,10 @@ interface TaskListProps {
   tasks: PlanTask[]
   onUpdateTask: (taskId: string, updates: Partial<PlanTask>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onDuplicateTask: (taskId: string) => Promise<void>
 }
 
-export function TaskList({ tasks, onUpdateTask, onDeleteTask }: TaskListProps) {
+export function TaskList({ tasks, onUpdateTask, onDeleteTask, onDuplicateTask }: TaskListProps) {
   // Sort tasks by dependencies to show them in logical order
   const sortedTasks = sortTasksByDependencies(tasks)
 
@@ -22,6 +23,7 @@ export function TaskList({ tasks, onUpdateTask, onDeleteTask }: TaskListProps) {
           index={index}
           onUpdate={onUpdateTask}
           onDelete={onDeleteTask}
+          onDuplicate={onDuplicateTask}
         />
       ))}
     </div>

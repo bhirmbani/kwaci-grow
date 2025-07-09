@@ -55,6 +55,36 @@ export function TaskManagement({ planId, tasks = [], onTasksChange }: TaskManage
     }
   }, [onTasksChange])
 
+  const handleDuplicateTask = useCallback(async (taskId: string) => {
+    try {
+      const taskToDuplicate = tasks.find(t => t.id === taskId)
+      if (!taskToDuplicate) {
+        throw new Error('Task not found')
+      }
+
+      // Create duplicate with modified title and reset status
+      const duplicateData = {
+        ...taskToDuplicate,
+        title: `${taskToDuplicate.title} (Copy)`,
+        status: 'pending' as const,
+        completedAt: undefined,
+        actualDuration: undefined,
+        dependencies: [], // Reset dependencies to avoid circular references
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      // Remove fields that shouldn't be copied
+      const { id, planId, ...taskDataWithoutIds } = duplicateData
+
+      await PlanningService.addTaskToPlan(planId, taskDataWithoutIds)
+      onTasksChange()
+    } catch (error) {
+      console.error('Failed to duplicate task:', error)
+      throw error
+    }
+  }, [planId, tasks, onTasksChange])
+
   if (tasks.length === 0 && !showCreationForm) {
     return (
       <div className="space-y-4">
@@ -104,6 +134,7 @@ export function TaskManagement({ planId, tasks = [], onTasksChange }: TaskManage
           tasks={tasks}
           onUpdateTask={handleUpdateTask}
           onDeleteTask={handleDeleteTask}
+          onDuplicateTask={handleDuplicateTask}
         />
       )}
 
