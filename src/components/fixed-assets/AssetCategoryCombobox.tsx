@@ -65,10 +65,18 @@ export function AssetCategoryCombobox({
   }
 
   const handleDeleteCategory = async (categoryId: string) => {
-    // Get usage count first
-    const usageCount = await getCategoryUsageCount(categoryId)
-    setDeleteUsageCount(usageCount)
-    setCategoryToDelete(categoryId)
+    try {
+      // Get usage count first
+      const usageCount = await getCategoryUsageCount(categoryId)
+      setDeleteUsageCount(usageCount)
+      setCategoryToDelete(categoryId)
+    } catch (error) {
+      console.error('Error checking category usage:', error)
+      // Show error message but still allow the delete dialog to show
+      // The actual deletion will handle the error properly
+      setDeleteUsageCount(0)
+      setCategoryToDelete(categoryId)
+    }
   }
 
   const confirmDeleteCategory = async () => {

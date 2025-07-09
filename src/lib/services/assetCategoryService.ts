@@ -63,18 +63,45 @@ export class AssetCategoryService {
 
   // Delete a category
   static async delete(id: string): Promise<void> {
-    // Check if category is in use
-    const usageCount = await this.getUsageCount(id)
-    if (usageCount > 0) {
-      throw new Error(`Cannot delete category. It is used by ${usageCount} asset(s).`)
-    }
+    try {
+      // Get category name for better error messages
+      const category = await this.getById(id)
+      const categoryName = category?.name || 'Unknown Category'
 
-    await db.assetCategories.delete(id)
+      // Check if category is in use
+      const usageCount = await this.getUsageCount(id)
+      if (usageCount > 0) {
+        throw new Error(`Cannot delete "${categoryName}". It is currently used by ${usageCount} asset(s). Please reassign or delete those assets first.`)
+      }
+
+      await db.assetCategories.delete(id)
+    } catch (error) {
+      // Re-throw with more context if it's our custom error
+      if (error instanceof Error && error.message.includes('Cannot delete')) {
+        throw error
+      }
+
+      // Handle database-level errors
+      if (error instanceof Error && error.message.includes('KeyPath')) {
+        throw new Error('Database indexing error. Please refresh the page and try again.')
+      }
+
+      // Generic fallback
+      throw new Error(`Failed to delete category: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 
   // Get usage count for a category (number of assets using it)
   static async getUsageCount(categoryId: string): Promise<number> {
-    return await db.fixedAssets.where('categoryId').equals(categoryId).count()
+    try {
+      // Try using the indexed query first
+      return await db.fixedAssets.where('categoryId').equals(categoryId).count()
+    } catch (error) {
+      // Fallback to manual filtering if index is not available
+      console.warn('CategoryId index not available, using fallback method:', error)
+      const allAssets = await db.fixedAssets.toArray()
+      return allAssets.filter(asset => asset.categoryId === categoryId).length
+    }
   }
 
   // Get categories with usage counts

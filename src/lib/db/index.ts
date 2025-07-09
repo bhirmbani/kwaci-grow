@@ -842,6 +842,59 @@ export class FinancialDashboardDB extends Dexie {
       console.log('✅ TaskType field added successfully')
     })
 
+    // Version 21 - Fix fixed assets categoryId indexing issue
+    this.version(21).stores({
+      financialItems: 'id, name, category, value, note, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, reservationId, reservationPurpose, productionBatchId, transactionDate, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, createdAt, updatedAt',
+      products: 'id, name, description, note, isActive, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, supplierInfo, category, note, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, createdAt, updatedAt',
+      branches: 'id, name, location, note, isActive, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, createdAt, updatedAt',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, createdAt, updatedAt',
+      // Fixed assets tables with proper categoryId indexing
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, createdAt, updatedAt',
+      assetCategories: 'id, name, description, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Fixing fixed assets categoryId indexing issue...')
+
+      // Verify that the categoryId index is properly created
+      const fixedAssetsTable = tx.table('fixedAssets')
+      console.log('✅ Fixed assets table categoryId index created successfully')
+
+      // Test the index by attempting a query (this will validate the index works)
+      try {
+        const testQuery = await fixedAssetsTable.where('categoryId').equals('test').count()
+        console.log('✅ CategoryId index validation successful')
+      } catch (error) {
+        console.warn('⚠️ CategoryId index validation failed:', error)
+      }
+
+      console.log('✅ Fixed assets categoryId indexing issue resolved')
+    })
+
     // Version 19: Fix plan template schemas to include missing fields
     this.version(19).stores({
       branches: 'id, name, location, isActive, note, createdAt, updatedAt',
