@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Plus, Grid, List } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,18 +21,34 @@ import { BranchMenuView } from './BranchMenuView'
 import { BranchAssignment } from './BranchAssignment'
 import { BranchList } from './BranchList'
 import { BranchForm } from './BranchForm'
-import { MenuService } from '@/lib/services/menuService'
-import { BranchService } from '@/lib/services/branchService'
+import { useMenus } from '@/hooks/useMenus'
+import { useBranches } from '@/hooks/useBranches'
 import type { MenuWithProductCount, MenuWithProducts, BranchWithMenus } from '@/lib/db/schema'
 
 type ViewMode = 'grid' | 'list'
 
 export function MenuManagement() {
-  const [menus, setMenus] = useState<MenuWithProductCount[]>([])
-  const [branches, setBranches] = useState<BranchWithMenus[]>([])
-  const [loading, setLoading] = useState(true)
   const [includeInactive, setIncludeInactive] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  
+  // Use business-reactive hooks
+  const { 
+    menus, 
+    loading: menusLoading, 
+    deleteMenu, 
+    getMenuWithProducts, 
+    refetch: refetchMenus 
+  } = useMenus(includeInactive)
+  
+  const { 
+    branches, 
+    loading: branchesLoading, 
+    deleteBranch, 
+    getBranchWithMenus,
+    refetch: refetchBranches 
+  } = useBranches(includeInactive)
+  
+  const loading = menusLoading || branchesLoading
 
   // Sheet states
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
@@ -48,32 +64,7 @@ export function MenuManagement() {
   const [assigningMenu, setAssigningMenu] = useState<MenuWithProductCount | null>(null)
   const [editingBranch, setEditingBranch] = useState<BranchWithMenus | null>(null)
 
-  // Load data
-  const loadMenus = async () => {
-    try {
-      setLoading(true)
-      const menusData = await MenuService.getAllWithProductCounts(includeInactive)
-      setMenus(menusData)
-    } catch (error) {
-      console.error('Failed to load menus:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadBranches = async () => {
-    try {
-      const branchesData = await BranchService.getAllWithMenuCounts(includeInactive)
-      setBranches(branchesData)
-    } catch (error) {
-      console.error('Failed to load branches:', error)
-    }
-  }
-
-  useEffect(() => {
-    loadMenus()
-    loadBranches()
-  }, [includeInactive])
+  // No need for manual data loading - hooks handle this automatically
 
   // Event handlers
 
@@ -84,8 +75,7 @@ export function MenuManagement() {
 
   const handleDeleteMenu = async (menuId: string) => {
     try {
-      await MenuService.delete(menuId)
-      await loadMenus()
+      await deleteMenu(menuId)
     } catch (error) {
       console.error('Failed to delete menu:', error)
     }
@@ -98,7 +88,7 @@ export function MenuManagement() {
 
   const handleViewDetails = async (menu: MenuWithProductCount) => {
     try {
-      const menuWithProducts = await MenuService.getWithProducts(menu.id)
+      const menuWithProducts = await getMenuWithProducts(menu.id)
       if (menuWithProducts) {
         setViewingMenu(menuWithProducts)
         setIsMenuDetailsSheetOpen(true)
@@ -112,7 +102,7 @@ export function MenuManagement() {
     setIsCreateSheetOpen(false)
     setIsEditSheetOpen(false)
     setEditingMenu(null)
-    await loadMenus()
+    await refetchMenus()
   }
 
   const handleFormCancel = () => {
@@ -124,7 +114,7 @@ export function MenuManagement() {
   const handleBranchAssignmentSuccess = async () => {
     setIsBranchAssignmentSheetOpen(false)
     setAssigningMenu(null)
-    await loadMenus()
+    await refetchMenus()
   }
 
   const handleBranchAssignmentCancel = () => {
@@ -135,10 +125,10 @@ export function MenuManagement() {
 
 
   const handleMenuDetailsUpdated = async () => {
-    await loadMenus()
+    await refetchMenus()
     // Reload the viewing menu data
     if (viewingMenu) {
-      const updatedMenu = await MenuService.getWithProducts(viewingMenu.id)
+      const updatedMenu = await getMenuWithProducts(viewingMenu.id)
       if (updatedMenu) {
         setViewingMenu(updatedMenu)
       }
@@ -151,10 +141,10 @@ export function MenuManagement() {
   }
 
   const handleBranchMenuUpdated = async () => {
-    await loadBranches()
+    await refetchBranches()
     // Reload the viewing branch data
     if (viewingBranch) {
-      const updatedBranch = await BranchService.getWithMenus(viewingBranch.id)
+      const updatedBranch = await getBranchWithMenus(viewingBranch.id)
       if (updatedBranch) {
         setViewingBranch(updatedBranch)
       }
@@ -174,8 +164,7 @@ export function MenuManagement() {
 
   const handleDeleteBranch = async (branchId: string) => {
     try {
-      await BranchService.delete(branchId)
-      await loadBranches()
+      await deleteBranch(branchId)
     } catch (error) {
       console.error('Failed to delete branch:', error)
     }
@@ -183,7 +172,7 @@ export function MenuManagement() {
 
   const handleViewBranchMenus = async (branch: BranchWithMenus) => {
     try {
-      const branchWithMenus = await BranchService.getWithMenus(branch.id)
+      const branchWithMenus = await getBranchWithMenus(branch.id)
       if (branchWithMenus) {
         setViewingBranch(branchWithMenus)
         setIsBranchMenuSheetOpen(true)
@@ -197,7 +186,7 @@ export function MenuManagement() {
     setIsCreateBranchSheetOpen(false)
     setIsEditBranchSheetOpen(false)
     setEditingBranch(null)
-    await loadBranches()
+    await refetchBranches()
   }
 
   const handleBranchFormCancel = () => {
