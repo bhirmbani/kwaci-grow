@@ -416,7 +416,7 @@ export class MultiBusinessSeeder {
                
                if (isValidId) {
                  try {
-                   await table.update(record.id, { businessId })
+                   await table.update(record.id as string | number | Date | Array<string | number | Date>, { businessId })
                  } catch (updateError) {
                    // Log individual record update failures but continue with others
                    console.warn(`Failed to update record with ID ${record.id} in ${tableName}:`, updateError)
@@ -524,6 +524,105 @@ export class MultiBusinessSeeder {
   }
 
   /**
+   * Seed products for a specific business (used for /products route)
+   */
+  async seedProductsForBusiness(businessId: string): Promise<void> {
+    try {
+      this.updateProgress(
+        'Products',
+        'Creating coffee products...',
+        0,
+        1
+      )
+
+      const now = new Date().toISOString()
+      const products = [
+        {
+          id: uuidv4(),
+          name: 'Espresso',
+          description: 'Classic single shot espresso',
+          note: 'Strong and bold coffee shot',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          name: 'Americano',
+          description: 'Espresso with hot water',
+          note: 'Simple black coffee',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          name: 'Latte',
+          description: 'Espresso with steamed milk',
+          note: 'Creamy and smooth coffee',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          name: 'Cappuccino',
+          description: 'Espresso with steamed milk and foam',
+          note: 'Traditional Italian coffee',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          name: 'Vanilla Latte',
+          description: 'Latte with vanilla syrup',
+          note: 'Sweet and aromatic coffee',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          name: 'Caramel Macchiato',
+          description: 'Espresso with caramel and steamed milk',
+          note: 'Sweet caramel flavored coffee',
+          businessId,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now
+        }
+      ]
+
+      await db.products.bulkAdd(products)
+
+      this.updateProgress(
+        'Products',
+        'Coffee products created successfully',
+        1,
+        1,
+        true
+      )
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      this.updateProgress(
+        'Products',
+        `Failed to create products: ${errorMessage}`,
+        1,
+        1,
+        true,
+        errorMessage
+      )
+      throw error
+    }
+  }
+
+  /**
    * Get business statistics
    */
   async getBusinessStats(): Promise<{
@@ -575,4 +674,12 @@ export const seedSingleBusiness = async (
 ): Promise<BusinessSeedingResult> => {
   const seeder = new MultiBusinessSeeder(progressCallback)
   return await seeder.seedSingleBusiness(businessType, clearFirst)
+}
+
+export const seedProductsForBusiness = async (
+  businessId: string,
+  progressCallback?: MultiBusinessProgressCallback
+): Promise<void> => {
+  const seeder = new MultiBusinessSeeder(progressCallback)
+  return await seeder.seedProductsForBusiness(businessId)
 }
