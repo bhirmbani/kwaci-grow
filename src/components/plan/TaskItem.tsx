@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
@@ -45,6 +45,10 @@ interface TaskItemProps {
 
 const StatusIcon = ({ status }: { status: PlanTask['status'] }) => {
   const config = STATUS_CONFIG[status]
+  
+  if (!config) {
+    return <Circle className="h-4 w-4" />
+  }
   
   switch (config.icon) {
     case 'Circle':
@@ -210,7 +214,7 @@ export function TaskItem({ task, allTasks, index, onUpdate, onDelete, onDuplicat
                         ) : (
                           <StatusIcon status={task.status} />
                         )}
-                        <span className="text-xs">{statusConfig.label}</span>
+                        <span className="text-xs">{statusConfig?.label || task.status}</span>
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
@@ -283,13 +287,13 @@ export function TaskItem({ task, allTasks, index, onUpdate, onDelete, onDuplicat
             {/* Badges Row */}
             <div className="flex flex-wrap items-center gap-2">
               {/* Priority Badge */}
-              <Badge variant={priorityConfig.variant} className="text-xs">
-                {priorityConfig.label}
+              <Badge variant={priorityConfig?.variant || 'outline'} className="text-xs">
+                {priorityConfig?.label || task.priority}
               </Badge>
 
               {/* Category Badge */}
               <Badge variant="outline" className="text-xs">
-                {categoryConfig.label}
+                {categoryConfig?.label || task.category}
               </Badge>
 
               {/* Task Type Badge with Link */}
@@ -403,7 +407,7 @@ export function TaskItem({ task, allTasks, index, onUpdate, onDelete, onDuplicat
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
             <AlertDialogDescription>
-              Changing this task from "Completed" to "{STATUS_CONFIG[showStatusChangeConfirm.newStatus].label}" will affect {showStatusChangeConfirm.dependentTasks.length} dependent task(s):
+              Changing this task from "Completed" to "{STATUS_CONFIG[showStatusChangeConfirm.newStatus]?.label || showStatusChangeConfirm.newStatus}" will affect {showStatusChangeConfirm.dependentTasks.length} dependent task(s):
               <div className="mt-2 font-medium">
                 {showStatusChangeConfirm.dependentTasks.map(t => t.title).join(', ')}
               </div>
