@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { Target, Calendar as CalendarIcon, AlertCircle, RefreshCw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,7 @@ import { MenuTargetSection } from "./MenuTargetSection"
 import { DailyProductSalesTargetService, type ProductTargetForDate } from "@/lib/services/dailyProductSalesTargetService"
 import { BranchService } from "@/lib/services/branchService"
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessId } from "@/lib/stores/businessStore"
 import type { Branch } from "@/lib/db/schema"
 
 export default function DailySalesTargetsPage() {
@@ -29,41 +30,61 @@ export default function DailySalesTargetsPage() {
   const [loading, setLoading] = useState(false)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   // Format date for API calls
   const formatDateForAPI = (date: Date): string => {
     return date.toISOString().split('T')[0] // YYYY-MM-DD format
   }
 
-  // Load branches on component mount
-  useEffect(() => {
-    const loadBranches = async () => {
-      try {
-        const branchList = await BranchService.getAll()
-        setBranches(branchList)
-        
-        // Set default branch (first active branch)
-        const activeBranch = branchList.find(b => b.isActive)
-        if (activeBranch && !selectedBranchId) {
-          setSelectedBranchId(activeBranch.id)
-        }
-      } catch (err) {
-        console.error('Error loading branches:', err)
-        setError('Failed to load branches. Please refresh the page.')
+  // Load branches when business context changes
+  const loadBranches = useCallback(async () => {
+    if (!currentBusinessId) {
+      // Clear state when no business is selected
+      setBranches([])
+      setSelectedBranchId("")
+      setProductTargets([])
+      setError(null)
+      return
+    }
+
+    try {
+      const branchList = await BranchService.getAll()
+      setBranches(branchList)
+
+      // Clear previous state first to prevent race conditions
+      setSelectedBranchId("")
+      setProductTargets([])
+      setError(null)
+
+      // Reset selected branch when business changes and set default branch (first active branch)
+      const activeBranch = branchList.find(b => b.isActive)
+      if (activeBranch) {
+        setSelectedBranchId(activeBranch.id)
       }
+    } catch (err) {
+      console.error('Error loading branches:', err)
+      setError('Failed to load branches. Please refresh the page.')
+      setSelectedBranchId("")
+      setProductTargets([])
     }
+  }, [currentBusinessId])
 
-    loadBranches()
-  }, [])
-
-  // Load targets when date or branch changes
   useEffect(() => {
-    if (selectedDate && selectedBranchId) {
-      loadTargetsForDate(selectedDate, selectedBranchId)
-    }
-  }, [selectedDate, selectedBranchId])
+    loadBranches()
+  }, [loadBranches])
 
-  const loadTargetsForDate = async (date: Date, branchId: string) => {
+  const loadTargetsForDate = useCallback(async (date: Date, branchId: string) => {
+    if (!currentBusinessId || !branchId) return
+
+    // Validate that the branch belongs to the current business before making API call
+    const branch = branches.find(b => b.id === branchId)
+    if (!branch || branch.businessId !== currentBusinessId) {
+      // Branch doesn't belong to current business, clear targets silently
+      setProductTargets([])
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -79,7 +100,14 @@ export default function DailySalesTargetsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentBusinessId, branches])
+
+  // Load targets when date or branch changes
+  useEffect(() => {
+    if (selectedDate && selectedBranchId && branches.length > 0) {
+      loadTargetsForDate(selectedDate, selectedBranchId)
+    }
+  }, [selectedDate, selectedBranchId, loadTargetsForDate, branches])
 
   // Group targets by menu
   const targetsByMenu = useMemo(() => {

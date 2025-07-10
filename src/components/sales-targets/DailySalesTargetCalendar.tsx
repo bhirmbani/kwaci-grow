@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { PlusIcon, Target, Calendar as CalendarIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -9,31 +9,69 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 import { DailyProductSalesTargetService, type ProductTargetForDate } from "@/lib/services/dailyProductSalesTargetService"
+import { BranchService } from "@/lib/services/branchService"
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessId } from "@/lib/stores/businessStore"
 
 interface DailySalesTargetCalendarProps {
   branchId: string
   onAddTarget?: (date: Date) => void
 }
 
-export default function DailySalesTargetCalendar({ 
-  branchId, 
-  onAddTarget 
+export default function DailySalesTargetCalendar({
+  branchId,
+  onAddTarget
 }: DailySalesTargetCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [productTargets, setProductTargets] = useState<ProductTargetForDate[]>([])
   const [monthlyTargets, setMonthlyTargets] = useState<Map<string, ProductTargetForDate[]>>(new Map())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isValidBranch, setIsValidBranch] = useState<boolean>(false)
+  const currentBusinessId = useCurrentBusinessId()
 
   // Format date for API calls
   const formatDateForAPI = (date: Date): string => {
     return date.toISOString().split('T')[0] // YYYY-MM-DD format
   }
 
+  // Validate that the branchId belongs to the current business
+  const validateBranch = useCallback(async () => {
+    if (!branchId || !currentBusinessId) {
+      setIsValidBranch(false)
+      setProductTargets([])
+      setMonthlyTargets(new Map())
+      setError(null)
+      return
+    }
+
+    try {
+      const branch = await BranchService.getById(branchId)
+      const isValid = branch && branch.businessId === currentBusinessId
+      setIsValidBranch(isValid)
+
+      if (!isValid) {
+        // Clear data when branch is invalid
+        setProductTargets([])
+        setMonthlyTargets(new Map())
+        setError(null)
+      }
+    } catch (err) {
+      console.error('Error validating branch:', err)
+      setIsValidBranch(false)
+      setProductTargets([])
+      setMonthlyTargets(new Map())
+      setError(null)
+    }
+  }, [branchId, currentBusinessId])
+
   // Load targets for selected date
-  const loadTargetsForDate = async (date: Date) => {
-    if (!date) return
+  const loadTargetsForDate = useCallback(async (date: Date) => {
+    if (!date || !currentBusinessId || !branchId || !isValidBranch) {
+      setProductTargets([])
+      setLoading(false)
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -46,15 +84,22 @@ export default function DailySalesTargetCalendar({
       setProductTargets(targets)
     } catch (err) {
       console.error('Error loading targets:', err)
-      setError('Failed to load sales targets. Please try again.')
+      // Only show error if the branch is still valid (not during business switching)
+      if (isValidBranch) {
+        setError('Failed to load sales targets. Please try again.')
+      }
+      setProductTargets([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [branchId, currentBusinessId, isValidBranch])
 
   // Load monthly targets for calendar display
-  const loadMonthlyTargets = async (date: Date) => {
-    if (!date) return
+  const loadMonthlyTargets = useCallback(async (date: Date) => {
+    if (!date || !currentBusinessId || !branchId || !isValidBranch) {
+      setMonthlyTargets(new Map())
+      return
+    }
 
     setError(null)
 
@@ -62,10 +107,10 @@ export default function DailySalesTargetCalendar({
       const year = date.getFullYear()
       const month = date.getMonth()
       const lastDay = new Date(year, month + 1, 0)
-      
+
       // Load targets for each day of the month
       const monthlyData = new Map<string, ProductTargetForDate[]>()
-      
+
       for (let day = 1; day <= lastDay.getDate(); day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
         try {
@@ -78,24 +123,35 @@ export default function DailySalesTargetCalendar({
           }
         } catch (err) {
           // Continue loading other days even if one fails
-          console.warn(`Failed to load targets for ${dateStr}:`, err)
+          // Only log warning if the branch is still valid (not during business switching)
+          if (isValidBranch) {
+            console.warn(`Failed to load targets for ${dateStr}:`, err)
+          }
         }
       }
       
       setMonthlyTargets(monthlyData)
     } catch (err) {
       console.error('Error loading monthly targets:', err)
-      setError('Failed to load monthly targets. Please try again.')
+      // Only show error if the branch is still valid (not during business switching)
+      if (isValidBranch) {
+        setError('Failed to load monthly targets. Please try again.')
+      }
     }
-  }
+  }, [branchId, currentBusinessId, isValidBranch])
 
-  // Load targets when date changes
+  // Validate branch when business context or branchId changes
   useEffect(() => {
-    if (selectedDate) {
+    validateBranch()
+  }, [validateBranch])
+
+  // Load targets when date changes and branch is valid
+  useEffect(() => {
+    if (selectedDate && isValidBranch) {
       loadTargetsForDate(selectedDate)
       loadMonthlyTargets(selectedDate)
     }
-  }, [selectedDate, branchId])
+  }, [selectedDate, loadTargetsForDate, loadMonthlyTargets, isValidBranch])
 
   // Group targets by menu
   const targetsByMenu = useMemo(() => {
@@ -132,6 +188,34 @@ export default function DailySalesTargetCalendar({
     if (selectedDate && onAddTarget) {
       onAddTarget(selectedDate)
     }
+  }
+
+  // Show message when branch is invalid
+  if (!currentBusinessId || !branchId || !isValidBranch) {
+    return (
+      <div className="space-y-4">
+        <Card className="w-full max-w-2xl">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Target className="h-4 w-4" />
+              Daily Sales Targets
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-3">
+            <div className="text-center py-8">
+              <CalendarIcon className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">
+                {!currentBusinessId
+                  ? "Please select a business to view sales targets"
+                  : !branchId
+                  ? "Please select a branch to view sales targets"
+                  : "Selected branch is not available in the current business"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

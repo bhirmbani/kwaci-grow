@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
+import { getCurrentBusinessId } from './businessContext'
 import type {
   DailyProductSalesTarget,
   DailyProductSalesTargetWithDetails,
@@ -36,18 +37,33 @@ export class DailyProductSalesTargetService {
    * Get all product targets for a specific date (all branches)
    */
   static async getAllTargetsForDate(
-    targetDate: string
+    targetDate: string,
+    businessId?: string
   ): Promise<DailyProductSalesTargetWithDetails[]> {
     try {
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
       const targets = await db.dailyProductSalesTargets
         .where('targetDate')
         .equals(targetDate)
         .toArray()
 
+      // Filter by business ID through related entities
+      const businessFilteredTargets = []
+      for (const target of targets) {
+        const branch = await db.branches.get(target.branchId)
+        if (branch && branch.businessId === currentBusinessId) {
+          businessFilteredTargets.push(target)
+        }
+      }
+
       // Get related data for each target
       const targetsWithDetails: DailyProductSalesTargetWithDetails[] = []
 
-      for (const target of targets) {
+      for (const target of businessFilteredTargets) {
         const [menu, product, branch] = await Promise.all([
           db.menus.get(target.menuId),
           db.products.get(target.productId),
@@ -76,9 +92,21 @@ export class DailyProductSalesTargetService {
    */
   static async getTargetsForDate(
     targetDate: string,
-    branchId: string
+    branchId: string,
+    businessId?: string
   ): Promise<DailyProductSalesTargetWithDetails[]> {
     try {
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      // Verify branch belongs to current business
+      const branch = await db.branches.get(branchId)
+      if (!branch || branch.businessId !== currentBusinessId) {
+        throw new Error('Branch not found or does not belong to current business.')
+      }
+
       const targets = await db.dailyProductSalesTargets
         .where({ targetDate, branchId })
         .toArray()
@@ -111,24 +139,50 @@ export class DailyProductSalesTargetService {
   }
 
   /**
+   * Alias for getTargetsForDate - for backward compatibility
+   */
+  static async getTargetsForDateAndBranch(
+    targetDate: string,
+    branchId: string,
+    businessId?: string
+  ): Promise<DailyProductSalesTargetWithDetails[]> {
+    return this.getTargetsForDate(targetDate, branchId, businessId)
+  }
+
+  /**
    * Get all menus with their products and targets for a specific date and branch
    */
   static async getMenusWithProductTargets(
     targetDate: string,
-    branchId: string
+    branchId: string,
+    businessId?: string
   ): Promise<ProductTargetForDate[]> {
     try {
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      // Verify branch belongs to current business
+      const branch = await db.branches.get(branchId)
+      if (!branch) {
+        throw new Error(`Branch with ID '${branchId}' not found.`)
+      }
+      if (branch.businessId !== currentBusinessId) {
+        throw new Error(`Branch '${branch.name}' does not belong to the current business.`)
+      }
+
       // Get all active menus for the branch
       const menuBranches = await db.menuBranches
         .where({ branchId })
         .toArray()
 
       const menuIds = menuBranches.map(mb => mb.menuId)
-      
+
       const menus = await db.menus
         .where('id')
         .anyOf(menuIds)
-        .and(menu => menu.status === 'active')
+        .and(menu => menu.status === 'active' && menu.businessId === currentBusinessId)
         .toArray()
 
       const results: ProductTargetForDate[] = []
@@ -186,9 +240,32 @@ export class DailyProductSalesTargetService {
     branchId: string,
     targetDate: string,
     targetQuantity: number,
-    note: string = ''
+    note: string = '',
+    businessId?: string
   ): Promise<DailyProductSalesTarget> {
     try {
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      // Verify all entities belong to current business
+      const [menu, product, branch] = await Promise.all([
+        db.menus.get(menuId),
+        db.products.get(productId),
+        db.branches.get(branchId)
+      ])
+
+      if (!menu || menu.businessId !== currentBusinessId) {
+        throw new Error('Menu not found or does not belong to current business.')
+      }
+      if (!product || product.businessId !== currentBusinessId) {
+        throw new Error('Product not found or does not belong to current business.')
+      }
+      if (!branch || branch.businessId !== currentBusinessId) {
+        throw new Error('Branch not found or does not belong to current business.')
+      }
+
       const now = new Date().toISOString()
 
       // Check if target already exists
