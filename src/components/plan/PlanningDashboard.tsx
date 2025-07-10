@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Calendar, Clock, TrendingUp, Users, Coffee, Target, Plus, BarChart3, Ch
 import { PlanningService } from '@/lib/services/planningService'
 import { PlanTemplateService } from '@/lib/services/planTemplateService'
 import { useJourney } from '@/hooks/useJourney'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import { CreatePlanSheet } from './CreatePlanSheet'
 import { TemplatePreviewSheet } from './TemplatePreviewSheet'
 import type { PlanAnalytics, PlanTemplate, OperationalPlan } from '@/lib/db/planningSchema'
@@ -21,35 +22,80 @@ export function PlanningDashboard() {
   const [isTemplatePreviewOpen, setIsTemplatePreviewOpen] = useState(false)
   const { getCompletionPercentage } = useJourney()
   const navigate = useNavigate()
+  const currentBusinessId = useCurrentBusinessId()
 
   const journeyCompletion = useMemo(() => getCompletionPercentage(), [getCompletionPercentage])
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true)
+
+      // Don't load data if no business is selected
+      if (!currentBusinessId) {
+        setAnalytics(null)
+        setTemplates([])
+        setRecentPlans([])
+        setLoading(false)
+        return
+      }
 
       // Initialize default templates if needed
       await PlanTemplateService.initializeDefaultTemplates()
 
-      const [analyticsData, templatesData, plansData] = await Promise.all([
+      // Load data with error handling for each service
+      const [analyticsResult, templatesResult, plansResult] = await Promise.allSettled([
         PlanningService.getPlanAnalytics(),
         PlanTemplateService.getDefaultTemplates(),
         PlanningService.getAllPlans()
       ])
 
-      setAnalytics(analyticsData)
-      setTemplates(templatesData)
-      setRecentPlans(plansData.slice(0, 5)) // Show only 5 most recent
+      // Handle analytics result
+      if (analyticsResult.status === 'fulfilled') {
+        setAnalytics(analyticsResult.value)
+      } else {
+        console.error('Failed to load analytics:', analyticsResult.reason)
+        // Set empty analytics as fallback
+        setAnalytics({
+          totalPlans: 0,
+          activePlans: 0,
+          completedPlans: 0,
+          averageCompletionRate: 0,
+          totalGoalsAchieved: 0,
+          totalTasksCompleted: 0,
+          averageTaskDuration: 0,
+          mostUsedTemplate: 'None',
+          plansByType: { daily: 0, weekly: 0, monthly: 0 },
+          plansByStatus: { draft: 0, active: 0, completed: 0, archived: 0 },
+          goalsByCategory: { sales: 0, production: 0, efficiency: 0, quality: 0, cost: 0 },
+          tasksByCategory: { setup: 0, production: 0, sales: 0, inventory: 0, maintenance: 0, training: 0 }
+        })
+      }
+
+      // Handle templates result
+      if (templatesResult.status === 'fulfilled') {
+        setTemplates(templatesResult.value)
+      } else {
+        console.error('Failed to load templates:', templatesResult.reason)
+        setTemplates([])
+      }
+
+      // Handle plans result
+      if (plansResult.status === 'fulfilled') {
+        setRecentPlans(plansResult.value.slice(0, 5)) // Show only 5 most recent
+      } else {
+        console.error('Failed to load plans:', plansResult.reason)
+        setRecentPlans([])
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [currentBusinessId])
 
   useEffect(() => {
     loadDashboardData()
-  }, [])
+  }, [loadDashboardData])
 
   const handleUseTemplate = (template: PlanTemplate) => {
     setSelectedTemplate(template)

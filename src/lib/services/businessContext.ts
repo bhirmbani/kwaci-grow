@@ -8,6 +8,8 @@
 
 import { setBusinessIdProvider as setIngredientBusinessId } from './ingredientService'
 import { setBusinessIdProvider as setProductBusinessId } from './productService'
+import { setBusinessIdProvider as setPlanningBusinessId } from './planningService'
+import { setBusinessIdProvider as setPlanTemplateBusinessId } from './planTemplateService'
 // Note: MenuService and BranchService don't export setBusinessIdProvider yet,
 // they use getCurrentBusinessId directly from businessContext
 
@@ -27,13 +29,14 @@ export function initializeBusinessContext(provider: BusinessIdProvider) {
   // Set up all service providers
   setIngredientBusinessId(provider)
   setProductBusinessId(provider)
-  
+  setPlanningBusinessId(provider)
+  setPlanTemplateBusinessId(provider)
+
   // TODO: Add other services as they are updated:
   // setMenuBusinessId(provider)
   // setBranchBusinessId(provider)
   // setSalesBusinessId(provider)
   // setWarehouseBusinessId(provider)
-  // setPlanningBusinessId(provider)
   // setJourneyBusinessId(provider) - JourneyService now uses getCurrentBusinessId directly
   // etc.
 }
@@ -59,15 +62,37 @@ export function requireBusinessId(): string {
 
 /**
  * Helper function to add business filtering to a query
- * Usage: filterByBusiness(db.someTable.where('someField').equals(value), businessId)
+ * Usage: filterByBusiness(db.someTable, businessId) - for simple table queries
+ * or: filterByBusiness(db.someTable.where('someField').equals(value), businessId) - for complex queries
  */
 export function filterByBusiness<T>(query: any, businessId?: string): any {
   const currentBusinessId = businessId || getCurrentBusinessId()
   if (!currentBusinessId) {
     throw new Error('No business selected. Please select a business first.')
   }
-  
-  return query.and((item: any) => item.businessId === currentBusinessId)
+
+  // For simple table queries (like db.someTable)
+  if (query.where && typeof query.where === 'function') {
+    return query.where('businessId').equals(currentBusinessId)
+  }
+
+  // For queries that already have a where clause and support and()
+  if (query.and && typeof query.and === 'function') {
+    return query.and((item: any) => item.businessId === currentBusinessId)
+  }
+
+  // For collection queries, try to filter directly
+  if (query.filter && typeof query.filter === 'function') {
+    return query.filter((item: any) => item.businessId === currentBusinessId)
+  }
+
+  // Fallback: assume it's a table and add where clause
+  try {
+    return query.where('businessId').equals(currentBusinessId)
+  } catch (error) {
+    console.error('filterByBusiness: Unable to apply business filter to query:', error)
+    throw new Error('Unable to apply business filter to the provided query')
+  }
 }
 
 /**

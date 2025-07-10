@@ -1,5 +1,17 @@
 import { db } from '@/lib/db'
 import { v4 as uuidv4 } from 'uuid'
+import { getCurrentBusinessId, filterByBusiness, withBusinessId } from './businessContext'
+
+// Business ID provider for dependency injection
+let businessIdProvider: (() => string | null) | null = null
+
+/**
+ * Set the business ID provider function
+ * This allows the service to get the current business ID without direct store dependency
+ */
+export function setBusinessIdProvider(provider: () => string | null) {
+  businessIdProvider = provider
+}
 import type {
   OperationalPlan,
   NewOperationalPlan,
@@ -25,7 +37,7 @@ export class PlanningService {
 
     const newPlan: OperationalPlan = {
       id: uuidv4(),
-      ...planData,
+      ...withBusinessId(planData),
       createdAt: now,
       updatedAt: now,
     }
@@ -35,11 +47,19 @@ export class PlanningService {
   }
 
   /**
-   * Get all operational plans
+   * Get all operational plans for current business
    */
   static async getAllPlans(): Promise<OperationalPlan[]> {
     try {
-      return await db.operationalPlans.orderBy('createdAt').reverse().toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) {
+        return []
+      }
+
+      return await filterByBusiness(
+        db.operationalPlans.orderBy('createdAt').reverse(),
+        businessId
+      ).toArray()
     } catch (error) {
       console.error('PlanningService.getAllPlans() - Database error:', error)
       throw error
@@ -265,14 +285,33 @@ export class PlanningService {
   }
 
   /**
-   * Get plan analytics
+   * Get plan analytics for current business
    */
   static async getPlanAnalytics(): Promise<PlanAnalytics> {
     try {
+      const businessId = getCurrentBusinessId()
+      if (!businessId) {
+        // Return empty analytics if no business selected
+        return {
+          totalPlans: 0,
+          activePlans: 0,
+          completedPlans: 0,
+          averageCompletionRate: 0,
+          totalGoalsAchieved: 0,
+          totalTasksCompleted: 0,
+          averageTaskDuration: 0,
+          mostUsedTemplate: 'None',
+          plansByType: { daily: 0, weekly: 0, monthly: 0 },
+          plansByStatus: { draft: 0, active: 0, completed: 0, archived: 0 },
+          goalsByCategory: { sales: 0, production: 0, efficiency: 0, quality: 0, cost: 0 },
+          tasksByCategory: { setup: 0, production: 0, sales: 0, inventory: 0, maintenance: 0, training: 0 }
+        }
+      }
+
       const [plans, goals, tasks] = await Promise.all([
-        db.operationalPlans.toArray(),
-        db.planGoals.toArray(),
-        db.planTasks.toArray()
+        filterByBusiness(db.operationalPlans, businessId).toArray(),
+        filterByBusiness(db.planGoals, businessId).toArray(),
+        filterByBusiness(db.planTasks, businessId).toArray()
       ])
 
       const totalPlans = plans.length

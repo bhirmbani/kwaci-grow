@@ -1,5 +1,17 @@
 import { db } from '@/lib/db'
 import { v4 as uuidv4 } from 'uuid'
+import { getCurrentBusinessId, filterByBusiness, withBusinessId } from './businessContext'
+
+// Business ID provider for dependency injection
+let businessIdProvider: (() => string | null) | null = null
+
+/**
+ * Set the business ID provider function
+ * This allows the service to get the current business ID without direct store dependency
+ */
+export function setBusinessIdProvider(provider: () => string | null) {
+  businessIdProvider = provider
+}
 import type {
   PlanTemplate,
   NewPlanTemplate,
@@ -298,15 +310,21 @@ export class PlanTemplateService {
       // Try manual filtering first (more reliable)
       console.log('🔄 Using manual filtering approach for reliability...')
 
-      const allTemplates = await db.planTemplates.toArray()
-      console.log('📊 Retrieved all templates for filtering:', allTemplates.length)
+      const businessId = getCurrentBusinessId()
+      if (!businessId) {
+        console.log('⚠️ No business selected, returning empty templates')
+        return []
+      }
+
+      const allTemplates = await filterByBusiness(db.planTemplates, businessId).toArray()
+      console.log('📊 Retrieved business-specific templates for filtering:', allTemplates.length)
 
       if (allTemplates.length === 0) {
-        console.log('ℹ️ No templates found in database, initializing defaults...')
+        console.log('ℹ️ No templates found for business, initializing defaults...')
         await this.initializeDefaultTemplates()
 
         // Try again after initialization
-        const newTemplates = await db.planTemplates.toArray()
+        const newTemplates = await filterByBusiness(db.planTemplates, businessId).toArray()
         console.log('📊 Retrieved templates after initialization:', newTemplates.length)
 
         return newTemplates.filter(template => {
@@ -455,10 +473,20 @@ export class PlanTemplateService {
             console.log(`🔧 Adding missing estimatedDuration: ${updates.estimatedDuration}`)
           }
 
-          if (!template.tags || template.tags.trim() === '') {
+          // Handle tags that could be string or array
+          if (!template.tags ||
+              (typeof template.tags === 'string' && template.tags.trim() === '') ||
+              (Array.isArray(template.tags) && template.tags.length === 0)) {
             updates.tags = 'template'
             needsUpdate = true
             console.log(`🔧 Adding missing tags: "${updates.tags}"`)
+          }
+
+          // Convert array tags to string if needed
+          if (Array.isArray(template.tags)) {
+            updates.tags = template.tags.join(',')
+            needsUpdate = true
+            console.log(`🔧 Converting tags array to string: "${updates.tags}"`)
           }
 
           // Ensure timestamps exist
@@ -571,7 +599,7 @@ export class PlanTemplateService {
       const now = new Date().toISOString()
 
       // Daily Operations Template
-      const dailyTemplate = {
+      const dailyTemplate = withBusinessId({
         id: uuidv4(),
         name: 'Daily Operations',
         description: 'Standard daily operational plan for coffee shop management',
@@ -584,10 +612,10 @@ export class PlanTemplateService {
         note: 'Comprehensive daily operations template covering all essential activities',
         createdAt: now,
         updatedAt: now,
-      }
+      })
 
       // Weekly Planning Template
-      const weeklyTemplate = {
+      const weeklyTemplate = withBusinessId({
         id: uuidv4(),
         name: 'Weekly Planning',
         description: 'Weekly inventory, production schedules, and staff planning',
@@ -600,10 +628,10 @@ export class PlanTemplateService {
         note: 'Strategic weekly planning for inventory and resource management',
         createdAt: now,
         updatedAt: now,
-      }
+      })
 
       // Monthly Strategy Template
-      const monthlyTemplate = {
+      const monthlyTemplate = withBusinessId({
         id: uuidv4(),
         name: 'Monthly Strategy',
         description: 'Long-term planning, menu updates, and growth strategies',
@@ -616,7 +644,7 @@ export class PlanTemplateService {
         note: 'Strategic monthly planning for business growth and optimization',
         createdAt: now,
         updatedAt: now,
-      }
+      })
 
       await Promise.all([
         db.planTemplates.add(dailyTemplate),
