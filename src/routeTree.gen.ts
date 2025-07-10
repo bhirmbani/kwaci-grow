@@ -16,7 +16,6 @@ import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SeedMultiBusinessRouteImport } from './routes/seed-multi-business'
-import { Route as SeedDatabaseRouteImport } from './routes/seed-database'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
 import { Route as RecurringExpensesRouteImport } from './routes/recurring-expenses'
 import { Route as ProductsRouteImport } from './routes/products'
@@ -69,11 +68,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const SeedMultiBusinessRoute = SeedMultiBusinessRouteImport.update({
   id: '/seed-multi-business',
   path: '/seed-multi-business',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SeedDatabaseRoute = SeedDatabaseRouteImport.update({
-  id: '/seed-database',
-  path: '/seed-database',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SalesTargetsRoute = SalesTargetsRouteImport.update({
@@ -181,7 +175,6 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
-  '/seed-database': typeof SeedDatabaseRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -209,7 +202,6 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
-  '/seed-database': typeof SeedDatabaseRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -238,7 +230,6 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
-  '/seed-database': typeof SeedDatabaseRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
@@ -268,7 +259,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
-    | '/seed-database'
     | '/seed-multi-business'
     | '/settings'
     | '/test-database'
@@ -296,7 +286,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
-    | '/seed-database'
     | '/seed-multi-business'
     | '/settings'
     | '/test-database'
@@ -324,7 +313,6 @@ export interface FileRouteTypes {
     | '/products'
     | '/recurring-expenses'
     | '/sales-targets'
-    | '/seed-database'
     | '/seed-multi-business'
     | '/settings'
     | '/test-database'
@@ -353,7 +341,6 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   RecurringExpensesRoute: typeof RecurringExpensesRoute
   SalesTargetsRoute: typeof SalesTargetsRoute
-  SeedDatabaseRoute: typeof SeedDatabaseRoute
   SeedMultiBusinessRoute: typeof SeedMultiBusinessRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
@@ -417,13 +404,6 @@ declare module '@tanstack/react-router' {
       path: '/seed-multi-business'
       fullPath: '/seed-multi-business'
       preLoaderRoute: typeof SeedMultiBusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/seed-database': {
-      id: '/seed-database'
-      path: '/seed-database'
-      fullPath: '/seed-database'
-      preLoaderRoute: typeof SeedDatabaseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sales-targets': {
@@ -569,7 +549,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   RecurringExpensesRoute: RecurringExpensesRoute,
   SalesTargetsRoute: SalesTargetsRoute,
-  SeedDatabaseRoute: SeedDatabaseRoute,
   SeedMultiBusinessRoute: SeedMultiBusinessRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
