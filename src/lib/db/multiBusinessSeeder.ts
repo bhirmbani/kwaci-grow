@@ -1,7 +1,7 @@
 import { db } from './index'
 import { v4 as uuidv4 } from 'uuid'
 import { ComprehensiveSeeder } from './comprehensiveSeeder'
-import { BakerySeeder } from './bakerySeeder'
+import { seedComprehensiveBakeryBusiness } from './comprehensiveBakerySeeder'
 import type { Business } from './schema'
 import type { SeedingProgress, ProgressCallback } from './comprehensiveSeeder'
 
@@ -325,14 +325,14 @@ export class MultiBusinessSeeder {
         )
       }
       
-      const bakerySeeder = new BakerySeeder(progressWrapper)
-      const businessId = await bakerySeeder.seedBakeryBusiness()
+      // Use comprehensive bakery seeder instead of basic bakery seeder
+      const businessId = await seedComprehensiveBakeryBusiness(progressWrapper)
       
       this.updateProgress(
          'Bakery: Complete',
-         `${this.currentBusinessName} - Bakery business seeding completed successfully!`,
-         8,
-         8,
+         `${this.currentBusinessName} - Comprehensive bakery business seeding completed successfully!`,
+         18,
+         18,
          true
        )
       
@@ -342,9 +342,9 @@ export class MultiBusinessSeeder {
       const errorMessage = error instanceof Error ? error.message : String(error)
       this.updateProgress(
          'Bakery: Error',
-         `${this.currentBusinessName} - Bakery business seeding failed: ${errorMessage}`,
+         `${this.currentBusinessName} - Comprehensive bakery business seeding failed: ${errorMessage}`,
          0,
-         8,
+         18,
          true,
          errorMessage
        )

@@ -1,0 +1,1660 @@
+import { db } from './index'
+import { v4 as uuidv4 } from 'uuid'
+import type {
+  Business, Branch, Ingredient, IngredientCategory, Product, ProductIngredient,
+  Menu, MenuProduct, MenuBranch, DailyProductSalesTarget,
+  SalesRecord, WarehouseBatch, WarehouseItem, StockLevel,
+  ProductionBatch, ProductionItem, FixedAsset, AssetCategory, RecurringExpense,
+  OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate,
+  AppSetting, FinancialItem
+} from './schema'
+import { FINANCIAL_ITEM_CATEGORIES, APP_SETTING_KEYS } from './schema'
+
+export interface SeedingProgress {
+  step: string
+  progress: number
+  total: number
+  message: string
+  completed: boolean
+  error?: string
+}
+
+export type ProgressCallback = (progress: SeedingProgress) => void
+
+/**
+ * Comprehensive bakery business seeder that creates realistic test data
+ * for a bakery business with all the comprehensive data that coffee business has
+ */
+export class ComprehensiveBakerySeeder {
+  private progressCallback?: ProgressCallback
+  private currentStep = 0
+  private totalSteps = 18 // Same as ComprehensiveSeeder
+  private businessId: string
+
+  constructor(progressCallback?: ProgressCallback) {
+    this.progressCallback = progressCallback
+    this.businessId = uuidv4() // Generate business ID for this seeder
+  }
+
+  private updateProgress(step: string, message: string, completed = false, error?: string) {
+    if (this.progressCallback) {
+      this.progressCallback({
+        step,
+        progress: this.currentStep,
+        total: this.totalSteps,
+        message,
+        completed,
+        error
+      })
+    }
+  }
+
+  /**
+   * Get the business ID for this seeder
+   */
+  getBusinessId(): string {
+    return this.businessId
+  }
+
+  /**
+   * Seed the comprehensive bakery business data
+   */
+  async seedBakeryBusiness(): Promise<string> {
+    try {
+      this.currentStep = 0
+
+      // Seed in dependency order - same as ComprehensiveSeeder
+      await this.seedBusiness()
+      await this.seedAppSettings()
+      await this.seedFinancialItems()
+      await this.seedIngredientCategories()
+      await this.seedIngredients()
+      await this.seedProducts()
+      await this.seedProductIngredients()
+      await this.seedBranches()
+      await this.seedMenus()
+      await this.seedMenuProducts()
+      await this.seedMenuBranches()
+      await this.seedAssetCategories()
+      await this.seedFixedAssets()
+      await this.seedRecurringExpenses()
+      await this.seedSalesTargets()
+      await this.seedHistoricalSales()
+      await this.seedWarehouseData()
+      await this.seedProductionData()
+      await this.seedPlanningData()
+
+      this.updateProgress('Complete', 'Comprehensive bakery business seeding completed successfully!', true)
+      return this.businessId
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      this.updateProgress('Error', `Bakery seeding failed: ${errorMessage}`, true, errorMessage)
+      throw error
+    }
+  }
+
+  private async seedBusiness(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Business', 'Creating bakery business...')
+
+    const now = new Date().toISOString()
+    const business: Business = {
+      id: this.businessId,
+      name: 'Sweet Dreams Bakery',
+      description: 'Artisan bakery specializing in fresh breads, pastries, and custom cakes',
+      note: 'Family-owned bakery serving the community since 2020',
+      createdAt: now,
+      updatedAt: now
+    }
+
+    await db.businesses.add(business)
+  }
+
+  private async seedAppSettings(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('App Settings', 'Creating bakery app settings...')
+
+    // Check if app settings already exist (they are global, not business-specific)
+    const existingSettings = await db.appSettings.toArray()
+    if (existingSettings.length > 0) {
+      // App settings already exist, skip creation
+      return
+    }
+
+    const now = new Date().toISOString()
+    const appSettings: AppSetting[] = [
+      {
+        key: APP_SETTING_KEYS.DAYS_PER_MONTH,
+        value: '30',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        key: APP_SETTING_KEYS.PRICE_PER_CUP,
+        value: '35000', // Higher average price for bakery items
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        key: APP_SETTING_KEYS.DAILY_TARGET_CUPS,
+        value: '80', // Lower volume but higher value items
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.appSettings.bulkAdd(appSettings)
+  }
+
+  private async seedFinancialItems(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Financial Items', 'Creating bakery financial items...')
+
+    const now = new Date().toISOString()
+    const financialItems: FinancialItem[] = [
+      {
+        id: uuidv4(),
+        name: 'Bakery Rent',
+        value: 18000000, // 18M IDR per month (higher for bakery space)
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: 'Monthly rent for bakery with kitchen facilities',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Baker & Staff Salary',
+        value: 30000000, // 30M IDR per month (skilled bakers cost more)
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: 'Total monthly salaries for bakers and staff',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Utilities & Gas',
+        value: 4500000, // 4.5M IDR per month (ovens use more energy)
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: 'Electricity, water, gas for ovens',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Insurance',
+        value: 2000000, // 2M IDR per month
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: 'Business and equipment insurance',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.financialItems.bulkAdd(financialItems)
+  }
+
+  private async seedIngredientCategories(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Ingredient Categories', 'Creating bakery ingredient categories...')
+
+    const now = new Date().toISOString()
+    const categories: IngredientCategory[] = [
+      {
+        id: uuidv4(),
+        name: 'Flours & Grains',
+        description: 'Various types of flour and grain products',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Dairy & Eggs',
+        description: 'Milk, butter, eggs, and other dairy products',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Sweeteners & Sugars',
+        description: 'Various types of sugar and sweetening agents',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Fats & Oils',
+        description: 'Butter, oils, and other fats for baking',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Leavening Agents',
+        description: 'Yeast, baking powder, and other rising agents',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Flavorings & Extracts',
+        description: 'Vanilla, chocolate, spices, and flavor extracts',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Packaging & Containers',
+        description: 'Boxes, bags, and packaging materials',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.ingredientCategories.bulkAdd(categories)
+  }
+
+  private async seedIngredients(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Ingredients', 'Creating bakery ingredients...')
+
+    // Get categories for reference
+    const categories = await db.ingredientCategories.where('businessId').equals(this.businessId).toArray()
+    const flourCat = categories.find(c => c.name === 'Flours & Grains')?.id
+    const dairyCat = categories.find(c => c.name === 'Dairy & Eggs')?.id
+    const sweetenerCat = categories.find(c => c.name === 'Sweeteners & Sugars')?.id
+    const leavenCat = categories.find(c => c.name === 'Leavening Agents')?.id
+    const flavorCat = categories.find(c => c.name === 'Flavorings & Extracts')?.id
+    const packagingCat = categories.find(c => c.name === 'Packaging & Containers')?.id
+
+    const now = new Date().toISOString()
+    const ingredients: Ingredient[] = [
+      // Flours & Grains
+      {
+        id: uuidv4(),
+        name: 'All-Purpose Flour',
+        baseUnitCost: 25000, // 25k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: flourCat,
+        supplierInfo: 'Premium Flour Mills',
+        note: 'High-quality all-purpose flour for general baking',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Bread Flour',
+        baseUnitCost: 30000, // 30k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: flourCat,
+        supplierInfo: 'Premium Flour Mills',
+        note: 'High-protein flour for bread making',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Cake Flour',
+        baseUnitCost: 35000, // 35k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: flourCat,
+        supplierInfo: 'Premium Flour Mills',
+        note: 'Low-protein flour for tender cakes',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      // Dairy & Eggs
+      {
+        id: uuidv4(),
+        name: 'Fresh Eggs',
+        baseUnitCost: 30000, // 30k IDR per dozen
+        baseUnitQuantity: 12, // 12 pieces
+        unit: 'piece',
+        category: dairyCat,
+        supplierInfo: 'Local Farm Fresh',
+        note: 'Grade A fresh eggs for baking',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Unsalted Butter',
+        baseUnitCost: 45000, // 45k IDR per 500g
+        baseUnitQuantity: 500, // 500g
+        unit: 'g',
+        category: dairyCat,
+        supplierInfo: 'Premium Dairy Co.',
+        note: 'High-quality unsalted butter for baking',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Whole Milk',
+        baseUnitCost: 15000, // 15k IDR per liter
+        baseUnitQuantity: 1000, // 1000ml
+        unit: 'ml',
+        category: dairyCat,
+        supplierInfo: 'Fresh Dairy Co.',
+        note: 'Fresh whole milk for baking and glazes',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Heavy Cream',
+        baseUnitCost: 25000, // 25k IDR per 500ml
+        baseUnitQuantity: 500, // 500ml
+        unit: 'ml',
+        category: dairyCat,
+        supplierInfo: 'Premium Dairy Co.',
+        note: 'Heavy cream for whipping and rich pastries',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      // Sweeteners & Sugars
+      {
+        id: uuidv4(),
+        name: 'Granulated Sugar',
+        baseUnitCost: 15000, // 15k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: sweetenerCat,
+        supplierInfo: 'Sweet Supply Co.',
+        note: 'Regular white granulated sugar',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Brown Sugar',
+        baseUnitCost: 20000, // 20k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: sweetenerCat,
+        supplierInfo: 'Sweet Supply Co.',
+        note: 'Light brown sugar for rich flavor',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Powdered Sugar',
+        baseUnitCost: 18000, // 18k IDR per kg
+        baseUnitQuantity: 1000, // 1000g
+        unit: 'g',
+        category: sweetenerCat,
+        supplierInfo: 'Sweet Supply Co.',
+        note: 'Confectioners sugar for icings and dusting',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      // Leavening Agents
+      {
+        id: uuidv4(),
+        name: 'Active Dry Yeast',
+        baseUnitCost: 15000, // 15k IDR per 100g
+        baseUnitQuantity: 100, // 100g
+        unit: 'g',
+        category: leavenCat,
+        supplierInfo: 'Baking Essentials',
+        note: 'Active dry yeast for bread making',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Baking Powder',
+        baseUnitCost: 12000, // 12k IDR per 200g
+        baseUnitQuantity: 200, // 200g
+        unit: 'g',
+        category: leavenCat,
+        supplierInfo: 'Baking Essentials',
+        note: 'Double-acting baking powder',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      // Flavorings & Extracts
+      {
+        id: uuidv4(),
+        name: 'Pure Vanilla Extract',
+        baseUnitCost: 50000, // 50k IDR per 100ml
+        baseUnitQuantity: 100, // 100ml
+        unit: 'ml',
+        category: flavorCat,
+        supplierInfo: 'Flavor Masters',
+        note: 'Pure vanilla extract for premium flavor',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Dark Chocolate Chips',
+        baseUnitCost: 60000, // 60k IDR per 500g
+        baseUnitQuantity: 500, // 500g
+        unit: 'g',
+        category: flavorCat,
+        supplierInfo: 'Premium Chocolate Co.',
+        note: 'High-quality dark chocolate chips',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Cinnamon Powder',
+        baseUnitCost: 40000, // 40k IDR per 200g
+        baseUnitQuantity: 200, // 200g
+        unit: 'g',
+        category: flavorCat,
+        supplierInfo: 'Spice Masters',
+        note: 'Ground cinnamon for baking',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      // Packaging
+      {
+        id: uuidv4(),
+        name: 'Bakery Boxes (Small)',
+        baseUnitCost: 5000, // 5k IDR per 10 boxes
+        baseUnitQuantity: 10, // 10 pieces
+        unit: 'piece',
+        category: packagingCat,
+        supplierInfo: 'Packaging Solutions',
+        note: 'Small boxes for individual pastries',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Bakery Boxes (Large)',
+        baseUnitCost: 8000, // 8k IDR per 10 boxes
+        baseUnitQuantity: 10, // 10 pieces
+        unit: 'piece',
+        category: packagingCat,
+        supplierInfo: 'Packaging Solutions',
+        note: 'Large boxes for cakes and bread',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Paper Bags',
+        baseUnitCost: 3000, // 3k IDR per 50 bags
+        baseUnitQuantity: 50, // 50 pieces
+        unit: 'piece',
+        category: packagingCat,
+        supplierInfo: 'Packaging Solutions',
+        note: 'Paper bags for takeaway items',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.ingredients.bulkAdd(ingredients)
+  }
+
+  private async seedProducts(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Products', 'Creating bakery products...')
+
+    const now = new Date().toISOString()
+    const products: Product[] = [
+      {
+        id: uuidv4(),
+        name: 'Artisan Sourdough Bread',
+        description: 'Traditional sourdough bread with crispy crust',
+        note: 'Made with natural sourdough starter, 24-hour fermentation',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Chocolate Chip Cookies',
+        description: 'Classic chocolate chip cookies (dozen)',
+        note: 'Soft and chewy with premium dark chocolate chips',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Vanilla Cupcakes',
+        description: 'Fluffy vanilla cupcakes with buttercream frosting',
+        note: 'Made with pure vanilla extract and topped with vanilla buttercream',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Cinnamon Rolls',
+        description: 'Warm cinnamon rolls with cream cheese glaze',
+        note: 'Soft yeast dough rolled with cinnamon sugar filling',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Blueberry Muffins',
+        description: 'Fresh blueberry muffins with streusel topping',
+        note: 'Bursting with fresh blueberries and a crunchy top',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Croissants',
+        description: 'Buttery, flaky French croissants',
+        note: 'Laminated dough with multiple butter layers for perfect flakiness',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Chocolate Brownies',
+        description: 'Rich, fudgy chocolate brownies',
+        note: 'Dense and chocolatey with a perfect chewy texture',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Apple Pie Slice',
+        description: 'Classic apple pie with cinnamon and flaky crust',
+        note: 'Made with fresh apples and our signature pie crust',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.products.bulkAdd(products)
+  }
+
+  private async seedProductIngredients(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Product Ingredients', 'Linking bakery products with ingredients...')
+
+    // Get products and ingredients for reference
+    const products = await db.products.where('businessId').equals(this.businessId).toArray()
+    const ingredients = await db.ingredients.where('businessId').equals(this.businessId).toArray()
+
+    const sourdoughBread = products.find(p => p.name === 'Artisan Sourdough Bread')
+    const chocolateChipCookies = products.find(p => p.name === 'Chocolate Chip Cookies')
+
+    const breadFlour = ingredients.find(i => i.name === 'Bread Flour')
+    const allPurposeFlour = ingredients.find(i => i.name === 'All-Purpose Flour')
+    const eggs = ingredients.find(i => i.name === 'Fresh Eggs')
+    const butter = ingredients.find(i => i.name === 'Unsalted Butter')
+    const sugar = ingredients.find(i => i.name === 'Granulated Sugar')
+    const brownSugar = ingredients.find(i => i.name === 'Brown Sugar')
+    const yeast = ingredients.find(i => i.name === 'Active Dry Yeast')
+    const chocolateChips = ingredients.find(i => i.name === 'Dark Chocolate Chips')
+    const smallBoxes = ingredients.find(i => i.name === 'Bakery Boxes (Small)')
+    const largeBoxes = ingredients.find(i => i.name === 'Bakery Boxes (Large)')
+
+    const now = new Date().toISOString()
+    const productIngredients: ProductIngredient[] = []
+
+    // Artisan Sourdough Bread ingredients
+    if (sourdoughBread && breadFlour && yeast && largeBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: sourdoughBread.id,
+          ingredientId: breadFlour.id,
+          usagePerCup: 500, // 500g flour per loaf
+          note: 'High-protein bread flour for structure',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: sourdoughBread.id,
+          ingredientId: yeast.id,
+          usagePerCup: 5, // 5g yeast per loaf
+          note: 'Active dry yeast for fermentation',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: sourdoughBread.id,
+          ingredientId: largeBoxes.id,
+          usagePerCup: 1, // 1 box per loaf
+          note: 'Large bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Chocolate Chip Cookies ingredients (per dozen)
+    if (chocolateChipCookies && allPurposeFlour && butter && eggs && sugar && brownSugar && chocolateChips && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 250, // 250g flour per dozen cookies
+          note: 'All-purpose flour for cookie base',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: butter.id,
+          usagePerCup: 150, // 150g butter per dozen
+          note: 'Unsalted butter for rich flavor',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: eggs.id,
+          usagePerCup: 2, // 2 eggs per dozen
+          note: 'Fresh eggs for binding',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: sugar.id,
+          usagePerCup: 100, // 100g granulated sugar
+          note: 'Granulated sugar for sweetness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: brownSugar.id,
+          usagePerCup: 100, // 100g brown sugar
+          note: 'Brown sugar for moisture and flavor',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: chocolateChips.id,
+          usagePerCup: 200, // 200g chocolate chips
+          note: 'Dark chocolate chips for rich flavor',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateChipCookies.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box per dozen
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    await db.productIngredients.bulkAdd(productIngredients)
+  }
+
+  private async seedBranches(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Branches', 'Creating bakery branches...')
+
+    const now = new Date().toISOString()
+    const branches: Branch[] = [
+      {
+        id: uuidv4(),
+        name: 'Main Bakery',
+        location: 'Sweet Dreams Bakery - Downtown Location',
+        note: 'Main production facility and storefront with full kitchen',
+        businessId: this.businessId,
+        isActive: true,
+        businessHoursStart: '05:00',
+        businessHoursEnd: '20:00',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Mall Kiosk',
+        location: 'Sweet Dreams Express - Central Mall Food Court',
+        note: 'Smaller retail location focusing on grab-and-go items',
+        businessId: this.businessId,
+        isActive: true,
+        businessHoursStart: '09:00',
+        businessHoursEnd: '21:00',
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.branches.bulkAdd(branches)
+  }
+
+  private async seedMenus(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Menus', 'Creating bakery menus...')
+
+    const now = new Date().toISOString()
+    const menus: Menu[] = [
+      {
+        id: uuidv4(),
+        name: 'Main Bakery Menu',
+        description: 'Complete menu for main bakery location',
+        status: 'active',
+        note: 'Full selection of fresh baked goods and custom orders',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Express Menu',
+        description: 'Limited menu for mall kiosk location',
+        status: 'active',
+        note: 'Quick grab-and-go items for busy shoppers',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.menus.bulkAdd(menus)
+  }
+
+  private async seedMenuProducts(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Menu Products', 'Adding products to bakery menus...')
+
+    // Get menus and products for reference
+    const menus = await db.menus.where('businessId').equals(this.businessId).toArray()
+    const products = await db.products.where('businessId').equals(this.businessId).toArray()
+
+    const mainMenu = menus.find(m => m.name === 'Main Bakery Menu')
+    const expressMenu = menus.find(m => m.name === 'Express Menu')
+
+    const now = new Date().toISOString()
+    const menuProducts: MenuProduct[] = []
+
+    // Add all products to main menu with full pricing
+    if (mainMenu) {
+      const mainMenuProducts = [
+        { product: 'Artisan Sourdough Bread', price: 45000, category: 'Breads', order: 1 },
+        { product: 'Chocolate Chip Cookies', price: 35000, category: 'Cookies', order: 2 },
+        { product: 'Vanilla Cupcakes', price: 40000, category: 'Cupcakes', order: 3 },
+        { product: 'Cinnamon Rolls', price: 38000, category: 'Pastries', order: 4 },
+        { product: 'Blueberry Muffins', price: 32000, category: 'Muffins', order: 5 },
+        { product: 'Croissants', price: 25000, category: 'Pastries', order: 6 },
+        { product: 'Chocolate Brownies', price: 30000, category: 'Desserts', order: 7 },
+        { product: 'Apple Pie Slice', price: 28000, category: 'Pies', order: 8 }
+      ]
+
+      for (const item of mainMenuProducts) {
+        const product = products.find(p => p.name === item.product)
+        if (product) {
+          menuProducts.push({
+            id: uuidv4(),
+            menuId: mainMenu.id,
+            productId: product.id,
+            price: item.price,
+            category: item.category,
+            displayOrder: item.order,
+            note: `${item.product} available at main bakery`,
+            businessId: this.businessId,
+            createdAt: now,
+            updatedAt: now
+          })
+        }
+      }
+    }
+
+    // Add selected products to express menu with slightly higher pricing
+    if (expressMenu) {
+      const expressMenuProducts = [
+        { product: 'Chocolate Chip Cookies', price: 38000, category: 'Cookies', order: 1 },
+        { product: 'Vanilla Cupcakes', price: 42000, category: 'Cupcakes', order: 2 },
+        { product: 'Blueberry Muffins', price: 35000, category: 'Muffins', order: 3 },
+        { product: 'Croissants', price: 28000, category: 'Pastries', order: 4 },
+        { product: 'Chocolate Brownies', price: 32000, category: 'Desserts', order: 5 }
+      ]
+
+      for (const item of expressMenuProducts) {
+        const product = products.find(p => p.name === item.product)
+        if (product) {
+          menuProducts.push({
+            id: uuidv4(),
+            menuId: expressMenu.id,
+            productId: product.id,
+            price: item.price,
+            category: item.category,
+            displayOrder: item.order,
+            note: `${item.product} available at express location`,
+            businessId: this.businessId,
+            createdAt: now,
+            updatedAt: now
+          })
+        }
+      }
+    }
+
+    await db.menuProducts.bulkAdd(menuProducts)
+  }
+
+  private async seedMenuBranches(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Menu Branches', 'Linking menus to bakery branches...')
+
+    const menus = await db.menus.where('businessId').equals(this.businessId).toArray()
+    const branches = await db.branches.where('businessId').equals(this.businessId).toArray()
+
+    const mainMenu = menus.find(m => m.name === 'Main Bakery Menu')
+    const expressMenu = menus.find(m => m.name === 'Express Menu')
+    const mainBranch = branches.find(b => b.name === 'Main Bakery')
+    const mallBranch = branches.find(b => b.name === 'Mall Kiosk')
+
+    const now = new Date().toISOString()
+    const menuBranches: MenuBranch[] = []
+
+    if (mainMenu && mainBranch) {
+      menuBranches.push({
+        id: uuidv4(),
+        menuId: mainMenu.id,
+        branchId: mainBranch.id,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      })
+    }
+
+    if (expressMenu && mallBranch) {
+      menuBranches.push({
+        id: uuidv4(),
+        menuId: expressMenu.id,
+        branchId: mallBranch.id,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      })
+    }
+
+    await db.menuBranches.bulkAdd(menuBranches)
+  }
+
+  private async seedAssetCategories(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Asset Categories', 'Creating bakery asset categories...')
+
+    const now = new Date().toISOString()
+    const categories: AssetCategory[] = [
+      {
+        id: uuidv4(),
+        name: 'Baking Equipment',
+        description: 'Ovens, mixers, and baking tools',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Refrigeration',
+        description: 'Refrigerators, freezers, and cooling equipment',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Display & Storage',
+        description: 'Display cases, shelving, and storage solutions',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Point of Sale',
+        description: 'Cash registers, payment systems, and POS equipment',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.assetCategories.bulkAdd(categories)
+  }
+
+  private async seedFixedAssets(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Fixed Assets', 'Creating bakery fixed assets...')
+
+    const categories = await db.assetCategories.where('businessId').equals(this.businessId).toArray()
+    const bakingCat = categories.find(c => c.name === 'Baking Equipment')?.id
+    const refrigerationCat = categories.find(c => c.name === 'Refrigeration')?.id
+    const displayCat = categories.find(c => c.name === 'Display & Storage')?.id
+    const posCat = categories.find(c => c.name === 'Point of Sale')?.id
+
+    const now = new Date().toISOString()
+    const assets: FixedAsset[] = [
+      {
+        id: uuidv4(),
+        name: 'Commercial Convection Oven',
+        purchaseValue: 85000000, // 85M IDR
+        currentValue: 75000000, // 75M IDR
+        purchaseDate: '2023-01-15',
+        category: bakingCat,
+        depreciationRate: 10, // 10% per year
+        usefulLife: 10, // 10 years
+        note: 'Main baking oven for bread and pastries',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Industrial Stand Mixer',
+        purchaseValue: 25000000, // 25M IDR
+        currentValue: 22000000, // 22M IDR
+        purchaseDate: '2023-02-01',
+        category: bakingCat,
+        depreciationRate: 15, // 15% per year
+        usefulLife: 8, // 8 years
+        note: 'Heavy-duty mixer for dough and batters',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Walk-in Refrigerator',
+        purchaseValue: 45000000, // 45M IDR
+        currentValue: 40000000, // 40M IDR
+        purchaseDate: '2023-01-10',
+        category: refrigerationCat,
+        depreciationRate: 12, // 12% per year
+        usefulLife: 12, // 12 years
+        note: 'Main refrigeration for ingredients and finished products',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Display Case',
+        purchaseValue: 15000000, // 15M IDR
+        currentValue: 13000000, // 13M IDR
+        purchaseDate: '2023-03-01',
+        category: displayCat,
+        depreciationRate: 10, // 10% per year
+        usefulLife: 10, // 10 years
+        note: 'Front-of-house display for baked goods',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'POS System',
+        purchaseValue: 8000000, // 8M IDR
+        currentValue: 6000000, // 6M IDR
+        purchaseDate: '2023-04-01',
+        category: posCat,
+        depreciationRate: 25, // 25% per year
+        usefulLife: 4, // 4 years
+        note: 'Modern POS system for order processing',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.fixedAssets.bulkAdd(assets)
+  }
+
+  private async seedRecurringExpenses(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Recurring Expenses', 'Creating bakery recurring expenses...')
+
+    const now = new Date().toISOString()
+    const expenses: RecurringExpense[] = [
+      {
+        id: uuidv4(),
+        name: 'Equipment Maintenance',
+        amount: 2500000, // 2.5M IDR per month
+        frequency: 'monthly',
+        category: 'maintenance',
+        isActive: true,
+        businessId: this.businessId,
+        startDate: now,
+        note: 'Monthly equipment maintenance and repairs',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Health Department License',
+        amount: 1500000, // 1.5M IDR per year
+        frequency: 'yearly',
+        category: 'licensing',
+        isActive: true,
+        businessId: this.businessId,
+        startDate: now,
+        note: 'Annual health department license renewal',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Cleaning Supplies',
+        amount: 800000, // 800k IDR per month
+        frequency: 'monthly',
+        category: 'supplies',
+        isActive: true,
+        businessId: this.businessId,
+        startDate: now,
+        note: 'Monthly cleaning and sanitation supplies',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Packaging Supplies',
+        amount: 1200000, // 1.2M IDR per month
+        frequency: 'monthly',
+        category: 'supplies',
+        isActive: true,
+        businessId: this.businessId,
+        startDate: now,
+        note: 'Monthly packaging and takeaway supplies',
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.recurringExpenses.bulkAdd(expenses)
+  }
+
+  private async seedSalesTargets(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Sales Targets', 'Creating bakery sales targets...')
+
+    // Get menus, products, and branches for reference
+    const menus = await db.menus.where('businessId').equals(this.businessId).toArray()
+    const products = await db.products.where('businessId').equals(this.businessId).toArray()
+    const branches = await db.branches.where('businessId').equals(this.businessId).toArray()
+    const mainMenu = menus.find(m => m.name === 'Main Bakery Menu')
+
+    if (!mainMenu) return
+
+    const now = new Date().toISOString()
+    const targets: DailyProductSalesTarget[] = []
+
+    // Create targets for the next 30 days
+    for (let i = 0; i < 30; i++) {
+      const targetDate = new Date()
+      targetDate.setDate(targetDate.getDate() + i)
+      const dateStr = targetDate.toISOString().split('T')[0]
+
+      // Different targets for different days of the week
+      const dayOfWeek = targetDate.getDay()
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      const multiplier = isWeekend ? 1.3 : 1.0 // Higher targets on weekends
+
+      // Create targets for main bakery products
+      const productTargets = [
+        { name: 'Artisan Sourdough Bread', baseTarget: 15 },
+        { name: 'Chocolate Chip Cookies', baseTarget: 25 },
+        { name: 'Vanilla Cupcakes', baseTarget: 20 },
+        { name: 'Cinnamon Rolls', baseTarget: 18 },
+        { name: 'Blueberry Muffins', baseTarget: 22 },
+        { name: 'Croissants', baseTarget: 30 },
+        { name: 'Chocolate Brownies', baseTarget: 15 },
+        { name: 'Apple Pie Slice', baseTarget: 12 }
+      ]
+
+      for (const target of productTargets) {
+        const product = products.find(p => p.name === target.name)
+        const branch = branches.find(b => b.name === 'Main Bakery')
+        
+        if (product && branch) {
+          targets.push({
+            id: uuidv4(),
+            productId: product.id,
+            branchId: branch.id,
+            targetQuantity: Math.round(target.baseTarget * multiplier),
+            businessId: this.businessId,
+            createdAt: now,
+            updatedAt: now
+          })
+        }
+      }
+    }
+
+    await db.dailyProductSalesTargets.bulkAdd(targets)
+  }
+
+  private async seedHistoricalSales(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Historical Sales', 'Creating comprehensive bakery sales data...')
+
+    // Get all necessary data for comprehensive sales generation
+    const menus = await db.menus.where('businessId').equals(this.businessId).toArray()
+    const products = await db.products.where('businessId').equals(this.businessId).toArray()
+    const branches = await db.branches.where('businessId').equals(this.businessId).toArray()
+    const menuProducts = await db.menuProducts.where('businessId').equals(this.businessId).toArray()
+
+    const now = new Date().toISOString()
+    const salesRecords: SalesRecord[] = []
+
+    // Create comprehensive historical sales for the past 30 days
+    for (let i = 1; i <= 30; i++) {
+      const saleDate = new Date()
+      saleDate.setDate(saleDate.getDate() - i)
+      const dateStr = saleDate.toISOString().split('T')[0]
+
+      // Different sales patterns for different days
+      const dayOfWeek = saleDate.getDay()
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      const salesMultiplier = isWeekend ? 1.4 : 1.0
+
+      // Generate sales for each branch
+      for (const branch of branches) {
+        // Get menus for this branch
+        const branchMenus = menus.filter(menu => {
+          if (branch.name === 'Main Bakery') return menu.name === 'Main Bakery Menu'
+          if (branch.name === 'Mall Kiosk') return menu.name === 'Express Menu'
+          return false
+        })
+
+        for (const menu of branchMenus) {
+          const branchMenuProducts = menuProducts.filter(mp => mp.menuId === menu.id)
+          
+          for (const menuProduct of branchMenuProducts) {
+            const product = products.find(p => p.id === menuProduct.productId)
+            if (!product) continue
+
+            // Base sales quantities for different products
+            let baseSales = 0
+            switch (product.name) {
+              case 'Artisan Sourdough Bread': baseSales = Math.floor(Math.random() * 8) + 5; break
+              case 'Chocolate Chip Cookies': baseSales = Math.floor(Math.random() * 15) + 10; break
+              case 'Vanilla Cupcakes': baseSales = Math.floor(Math.random() * 12) + 8; break
+              case 'Cinnamon Rolls': baseSales = Math.floor(Math.random() * 10) + 7; break
+              case 'Blueberry Muffins': baseSales = Math.floor(Math.random() * 14) + 9; break
+              case 'Croissants': baseSales = Math.floor(Math.random() * 18) + 12; break
+              case 'Chocolate Brownies': baseSales = Math.floor(Math.random() * 8) + 5; break
+              case 'Apple Pie Slice': baseSales = Math.floor(Math.random() * 6) + 4; break
+              default: baseSales = Math.floor(Math.random() * 5) + 2
+            }
+
+            const quantity = Math.max(1, Math.round(baseSales * salesMultiplier))
+            const totalAmount = quantity * menuProduct.price
+
+            salesRecords.push({
+              id: uuidv4(),
+              productId: product.id,
+              branchId: branch.id,
+              menuId: menu.id,
+              quantity,
+              unitPrice: menuProduct.price,
+              totalAmount,
+              paymentMethod: Math.random() > 0.3 ? 'card' : 'cash',
+              businessId: this.businessId,
+              createdAt: now,
+              updatedAt: now
+            })
+          }
+        }
+      }
+    }
+
+    await db.salesRecords.bulkAdd(salesRecords)
+  }
+
+  private async seedWarehouseData(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Warehouse Data', 'Creating bakery warehouse inventory...')
+
+    const ingredients = await db.ingredients.where('businessId').equals(this.businessId).toArray()
+    const now = new Date().toISOString()
+
+    // Create warehouse batches
+    const batches: WarehouseBatch[] = []
+    const warehouseItems: WarehouseItem[] = []
+    const stockLevels: StockLevel[] = []
+
+    // Create 3 recent batches
+    for (let i = 0; i < 3; i++) {
+      const batchDate = new Date()
+      batchDate.setDate(batchDate.getDate() - (i * 7)) // Weekly batches
+
+      const batch: WarehouseBatch = {
+        id: uuidv4(),
+        batchNumber: `BB-${batchDate.getFullYear()}${(batchDate.getMonth() + 1).toString().padStart(2, '0')}${batchDate.getDate().toString().padStart(2, '0')}-${(i + 1).toString().padStart(3, '0')}`,
+        dateAdded: batchDate.toISOString().split('T')[0],
+        supplier: i === 0 ? 'Premium Flour Mills' : i === 1 ? 'Fresh Dairy Co.' : 'Baking Essentials',
+        totalCost: (i + 1) * 5000000, // 5M, 10M, 15M IDR
+        note: `Batch ${i + 1} - Weekly ingredient delivery`,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+      batches.push(batch)
+
+      // Add items to each batch
+      const batchIngredients = ingredients.slice(i * 5, (i + 1) * 5) // 5 ingredients per batch
+      for (const ingredient of batchIngredients) {
+        const quantity = Math.floor(Math.random() * 50) + 20 // 20-70 units
+        const unitCost = ingredient.baseUnitCost
+        const totalCost = quantity * unitCost
+
+        const warehouseItem: WarehouseItem = {
+          id: uuidv4(),
+          batchId: batch.id,
+          quantity,
+          unitCost,
+          totalCost,
+          expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+        warehouseItems.push(warehouseItem)
+      }
+    }
+
+    // Create current stock levels
+    for (const ingredient of ingredients) {
+      const currentStock = Math.floor(Math.random() * 100) + 50 // 50-150 units
+      const minLevel = Math.floor(currentStock * 0.2) // 20% of current as minimum
+      const maxLevel = Math.floor(currentStock * 2) // 200% of current as maximum
+
+      const stockLevel: StockLevel = {
+        id: uuidv4(),
+        currentStock,
+        minimumLevel: minLevel,
+        maximumLevel: maxLevel,
+        lastUpdated: now,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+      stockLevels.push(stockLevel)
+    }
+
+    // Add all warehouse data
+    await db.warehouseBatches.bulkAdd(batches)
+    await db.warehouseItems.bulkAdd(warehouseItems)
+    await db.stockLevels.bulkAdd(stockLevels)
+  }
+
+  private async seedProductionData(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Production Data', 'Creating bakery production records...')
+
+    const products = await db.products.where('businessId').equals(this.businessId).toArray()
+    const branches = await db.branches.where('businessId').equals(this.businessId).toArray()
+    const mainBranch = branches.find(b => b.name === 'Main Bakery')
+
+    if (!mainBranch) return
+
+    const now = new Date().toISOString()
+    const productionBatches: ProductionBatch[] = []
+    const productionItems: ProductionItem[] = []
+
+    // Create production batches for the past 7 days
+    for (let i = 1; i <= 7; i++) {
+      const productionDate = new Date()
+      productionDate.setDate(productionDate.getDate() - i)
+      const dateStr = productionDate.toISOString().split('T')[0]
+
+      // Morning production batch
+      const morningBatch: ProductionBatch = {
+        id: uuidv4(),
+        batchNumber: `PB-${dateStr}-AM`,
+        productionDate: dateStr,
+        branchId: mainBranch.id,
+        status: 'Completed',
+        startTime: '04:00',
+        endTime: '08:00',
+        totalCost: 0, // Will be calculated
+        note: 'Morning production batch for fresh daily items',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+      productionBatches.push(morningBatch)
+
+      // Afternoon production batch
+      const afternoonBatch: ProductionBatch = {
+        id: uuidv4(),
+        batchNumber: `PB-${dateStr}-PM`,
+        productionDate: dateStr,
+        branchId: mainBranch.id,
+        status: 'completed',
+        startTime: '12:00',
+        endTime: '16:00',
+        totalCost: 0, // Will be calculated
+        note: 'Afternoon production batch for next day prep',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+      productionBatches.push(afternoonBatch)
+
+      // Add production items to batches
+      const dayOfWeek = productionDate.getDay()
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      const productionMultiplier = isWeekend ? 1.3 : 1.0
+
+      // Morning batch items (fresh daily items)
+      const morningProducts = [
+        { name: 'Artisan Sourdough Bread', baseQuantity: 20 },
+        { name: 'Croissants', baseQuantity: 40 },
+        { name: 'Blueberry Muffins', baseQuantity: 30 }
+      ]
+
+      for (const item of morningProducts) {
+        const product = products.find(p => p.name === item.name)
+        if (product) {
+          const quantity = Math.round(item.baseQuantity * productionMultiplier)
+          const unitCost = Math.floor(Math.random() * 5000) + 8000 // 8k-13k IDR per unit
+          const totalCost = quantity * unitCost
+
+          productionItems.push({
+            id: uuidv4(),
+            productId: product.id,
+            quantity,
+            unitCost,
+            totalCost,
+            note: `Morning production of ${product.name}`,
+            businessId: this.businessId,
+            createdAt: now,
+            updatedAt: now
+          })
+        }
+      }
+
+      // Afternoon batch items (prep items)
+      const afternoonProducts = [
+        { name: 'Chocolate Chip Cookies', baseQuantity: 35 },
+        { name: 'Vanilla Cupcakes', baseQuantity: 25 },
+        { name: 'Cinnamon Rolls', baseQuantity: 20 },
+        { name: 'Chocolate Brownies', baseQuantity: 18 }
+      ]
+
+      for (const item of afternoonProducts) {
+        const product = products.find(p => p.name === item.name)
+        if (product) {
+          const quantity = Math.round(item.baseQuantity * productionMultiplier)
+          const unitCost = Math.floor(Math.random() * 4000) + 6000 // 6k-10k IDR per unit
+          const totalCost = quantity * unitCost
+
+          productionItems.push({
+            id: uuidv4(),
+            productId: product.id,
+            quantity,
+            unitCost,
+            totalCost,
+            note: `Afternoon production of ${product.name}`,
+            businessId: this.businessId,
+            createdAt: now,
+            updatedAt: now
+          })
+        }
+      }
+    }
+
+    await db.productionBatches.bulkAdd(productionBatches)
+    await db.productionItems.bulkAdd(productionItems)
+  }
+
+  private async seedPlanningData(): Promise<void> {
+    this.currentStep++
+    this.updateProgress('Planning Data', 'Creating bakery planning and operational data...')
+
+    const now = new Date().toISOString()
+    
+    // Create plan templates
+    const planTemplates: PlanTemplate[] = [
+      {
+        id: uuidv4(),
+        name: 'Monthly Bakery Operations',
+        description: 'Standard monthly operational plan for bakery business',
+        category: 'operations',
+        isActive: true,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Seasonal Menu Planning',
+        description: 'Quarterly menu updates and seasonal product planning',
+        category: 'production',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.planTemplates.bulkAdd(planTemplates)
+
+    // Create operational plans
+    const operationalPlans: OperationalPlan[] = [
+      {
+        id: uuidv4(),
+        name: 'February 2024 Operations',
+        description: 'Monthly operational plan for February 2024',
+        startDate: '2024-02-01',
+        endDate: '2024-02-29',
+        status: 'active',
+        templateId: planTemplates[0].id,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Spring 2024 Menu Launch',
+        description: 'Spring seasonal menu planning and launch',
+        startDate: '2024-03-01',
+        endDate: '2024-05-31',
+        status: 'draft',
+        templateId: planTemplates[1].id,
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.operationalPlans.bulkAdd(operationalPlans)
+
+    // Create plan goals
+    const planGoals: PlanGoal[] = [
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+        title: 'Increase Daily Sales',
+        description: 'Achieve 15% increase in daily sales revenue',
+        targetValue: 15,
+        currentValue: 8,
+        unit: 'percentage',
+        priority: 'high',
+        dueDate: '2024-02-29',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+        title: 'Reduce Food Waste',
+        description: 'Minimize daily food waste to under 5%',
+        targetValue: 5,
+        currentValue: 8,
+        unit: 'percentage',
+        priority: 'medium',
+        dueDate: '2024-02-29',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.planGoals.bulkAdd(planGoals)
+
+    // Create plan tasks
+    const planTasks: PlanTask[] = [
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+
+        title: 'Launch Valentine\'s Day Specials',
+        description: 'Create and promote special Valentine\'s themed products',
+        status: 'completed',
+        priority: 'high',
+        assignedTo: 'Head Baker',
+        dueDate: '2024-02-14',
+        completedDate: '2024-02-13',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+
+        title: 'Implement Inventory Tracking',
+        description: 'Set up better inventory tracking system to reduce waste',
+        status: 'in-progress',
+        priority: 'medium',
+        assignedTo: 'Manager',
+        dueDate: '2024-02-25',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.planTasks.bulkAdd(planTasks)
+
+    // Create plan metrics
+    const planMetrics: PlanMetric[] = [
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+
+        name: 'Daily Revenue',
+        description: 'Track daily revenue performance',
+        targetValue: 2500000, // 2.5M IDR daily target
+        currentValue: 2200000, // 2.2M IDR current
+        unit: 'IDR',
+        measurementDate: '2024-01-31',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        planId: operationalPlans[0].id,
+
+        name: 'Waste Percentage',
+        description: 'Track daily food waste percentage',
+        targetValue: 5,
+        currentValue: 8,
+        unit: 'percentage',
+        measurementDate: '2024-01-31',
+        businessId: this.businessId,
+        createdAt: now,
+        updatedAt: now
+      }
+    ]
+
+    await db.planMetrics.bulkAdd(planMetrics)
+  }
+}
+
+/**
+ * Export function to seed a comprehensive bakery business
+ */
+export async function seedComprehensiveBakeryBusiness(progressCallback?: ProgressCallback): Promise<string> {
+  const seeder = new ComprehensiveBakerySeeder(progressCallback)
+  return await seeder.seedBakeryBusiness()
+}
