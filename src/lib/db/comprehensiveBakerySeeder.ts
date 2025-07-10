@@ -494,6 +494,34 @@ export class ComprehensiveBakerySeeder {
         createdAt: now,
         updatedAt: now
       },
+      {
+        id: uuidv4(),
+        name: 'Cocoa Powder',
+        baseUnitCost: 35000, // 35k IDR per 250g
+        baseUnitQuantity: 250, // 250g
+        unit: 'g',
+        category: flavorCat,
+        supplierInfo: 'Premium Chocolate Co.',
+        note: 'Unsweetened cocoa powder for chocolate flavor',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: uuidv4(),
+        name: 'Cream Cheese',
+        baseUnitCost: 25000, // 25k IDR per 250g
+        baseUnitQuantity: 250, // 250g
+        unit: 'g',
+        category: dairyCat,
+        supplierInfo: 'Dairy Fresh Co.',
+        note: 'Cream cheese for frostings and glazes',
+        businessId: this.businessId,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
+      },
       // Packaging
       {
         id: uuidv4(),
@@ -643,15 +671,29 @@ export class ComprehensiveBakerySeeder {
 
     const sourdoughBread = products.find(p => p.name === 'Artisan Sourdough Bread')
     const chocolateChipCookies = products.find(p => p.name === 'Chocolate Chip Cookies')
+    const vanillaCupcakes = products.find(p => p.name === 'Vanilla Cupcakes')
+    const cinnamonRolls = products.find(p => p.name === 'Cinnamon Rolls')
+    const blueberryMuffins = products.find(p => p.name === 'Blueberry Muffins')
+    const croissants = products.find(p => p.name === 'Croissants')
+    const chocolateBrownies = products.find(p => p.name === 'Chocolate Brownies')
+    const applePieSlice = products.find(p => p.name === 'Apple Pie Slice')
 
     const breadFlour = ingredients.find(i => i.name === 'Bread Flour')
     const allPurposeFlour = ingredients.find(i => i.name === 'All-Purpose Flour')
+    const cakeFlour = ingredients.find(i => i.name === 'Cake Flour')
     const eggs = ingredients.find(i => i.name === 'Fresh Eggs')
     const butter = ingredients.find(i => i.name === 'Unsalted Butter')
     const sugar = ingredients.find(i => i.name === 'Granulated Sugar')
     const brownSugar = ingredients.find(i => i.name === 'Brown Sugar')
+    const powderedSugar = ingredients.find(i => i.name === 'Powdered Sugar')
     const yeast = ingredients.find(i => i.name === 'Active Dry Yeast')
+    const bakingPowder = ingredients.find(i => i.name === 'Baking Powder')
+    const vanillaExtract = ingredients.find(i => i.name === 'Pure Vanilla Extract')
+    const cinnamon = ingredients.find(i => i.name === 'Cinnamon Powder')
     const chocolateChips = ingredients.find(i => i.name === 'Dark Chocolate Chips')
+    const cocoaPowder = ingredients.find(i => i.name === 'Cocoa Powder')
+    const creamCheese = ingredients.find(i => i.name === 'Cream Cheese')
+    const milk = ingredients.find(i => i.name === 'Whole Milk')
     const smallBoxes = ingredients.find(i => i.name === 'Bakery Boxes (Small)')
     const largeBoxes = ingredients.find(i => i.name === 'Bakery Boxes (Large)')
 
@@ -762,6 +804,502 @@ export class ComprehensiveBakerySeeder {
           productId: chocolateChipCookies.id,
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box per dozen
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Vanilla Cupcakes ingredients
+    if (vanillaCupcakes && cakeFlour && butter && eggs && sugar && powderedSugar && bakingPowder && vanillaExtract && milk && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: cakeFlour.id,
+          usagePerCup: 200, // 200g cake flour per dozen
+          note: 'Cake flour for tender texture',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: butter.id,
+          usagePerCup: 120, // 120g butter per dozen
+          note: 'Unsalted butter for richness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: eggs.id,
+          usagePerCup: 3, // 3 eggs per dozen
+          note: 'Fresh eggs for structure',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: sugar.id,
+          usagePerCup: 150, // 150g sugar
+          note: 'Granulated sugar for sweetness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: powderedSugar.id,
+          usagePerCup: 200, // 200g powdered sugar for frosting
+          note: 'Powdered sugar for buttercream frosting',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: bakingPowder.id,
+          usagePerCup: 10, // 10g baking powder
+          note: 'Baking powder for rise',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: vanillaExtract.id,
+          usagePerCup: 5, // 5ml vanilla extract
+          note: 'Pure vanilla extract for flavor',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: milk.id,
+          usagePerCup: 120, // 120ml milk
+          note: 'Whole milk for moisture',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: vanillaCupcakes.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box per dozen
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Cinnamon Rolls ingredients
+    if (cinnamonRolls && allPurposeFlour && butter && eggs && sugar && brownSugar && yeast && cinnamon && creamCheese && powderedSugar && milk && largeBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 400, // 400g flour per batch
+          note: 'All-purpose flour for dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: butter.id,
+          usagePerCup: 100, // 100g butter
+          note: 'Butter for dough and filling',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: eggs.id,
+          usagePerCup: 2, // 2 eggs
+          note: 'Eggs for enriched dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: sugar.id,
+          usagePerCup: 50, // 50g sugar for dough
+          note: 'Sugar for dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: brownSugar.id,
+          usagePerCup: 100, // 100g brown sugar for filling
+          note: 'Brown sugar for cinnamon filling',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: yeast.id,
+          usagePerCup: 7, // 7g yeast
+          note: 'Active dry yeast for rise',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: cinnamon.id,
+          usagePerCup: 15, // 15g cinnamon
+          note: 'Ground cinnamon for filling',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: creamCheese.id,
+          usagePerCup: 100, // 100g cream cheese for glaze
+          note: 'Cream cheese for glaze',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: powderedSugar.id,
+          usagePerCup: 150, // 150g powdered sugar for glaze
+          note: 'Powdered sugar for cream cheese glaze',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: milk.id,
+          usagePerCup: 200, // 200ml milk
+          note: 'Milk for dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: cinnamonRolls.id,
+          ingredientId: largeBoxes.id,
+          usagePerCup: 1, // 1 large box
+          note: 'Large bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Blueberry Muffins ingredients
+    if (blueberryMuffins && allPurposeFlour && butter && eggs && sugar && bakingPowder && milk && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 250, // 250g flour per dozen
+          note: 'All-purpose flour for muffin base',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: butter.id,
+          usagePerCup: 80, // 80g butter
+          note: 'Melted butter for moisture',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: eggs.id,
+          usagePerCup: 2, // 2 eggs
+          note: 'Eggs for binding',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: sugar.id,
+          usagePerCup: 120, // 120g sugar
+          note: 'Sugar for sweetness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: bakingPowder.id,
+          usagePerCup: 12, // 12g baking powder
+          note: 'Baking powder for rise',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: milk.id,
+          usagePerCup: 180, // 180ml milk
+          note: 'Milk for moisture',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: blueberryMuffins.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Croissants ingredients
+    if (croissants && allPurposeFlour && butter && eggs && sugar && yeast && milk && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 300, // 300g flour per batch
+          note: 'All-purpose flour for laminated dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: butter.id,
+          usagePerCup: 200, // 200g butter for lamination
+          note: 'Butter for lamination layers',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: eggs.id,
+          usagePerCup: 1, // 1 egg for wash
+          note: 'Egg wash for golden color',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: sugar.id,
+          usagePerCup: 30, // 30g sugar
+          note: 'Sugar for dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: yeast.id,
+          usagePerCup: 6, // 6g yeast
+          note: 'Yeast for fermentation',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: milk.id,
+          usagePerCup: 150, // 150ml milk
+          note: 'Milk for dough',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: croissants.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Chocolate Brownies ingredients
+    if (chocolateBrownies && allPurposeFlour && butter && eggs && sugar && cocoaPowder && chocolateChips && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 150, // 150g flour
+          note: 'All-purpose flour for structure',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: butter.id,
+          usagePerCup: 180, // 180g butter
+          note: 'Butter for fudgy texture',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: eggs.id,
+          usagePerCup: 3, // 3 eggs
+          note: 'Eggs for binding and richness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: sugar.id,
+          usagePerCup: 200, // 200g sugar
+          note: 'Sugar for sweetness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: cocoaPowder.id,
+          usagePerCup: 50, // 50g cocoa powder
+          note: 'Cocoa powder for chocolate flavor',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: chocolateChips.id,
+          usagePerCup: 100, // 100g chocolate chips
+          note: 'Chocolate chips for extra richness',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: chocolateBrownies.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box
+          note: 'Small bakery box for packaging',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        }
+      )
+    }
+
+    // Apple Pie Slice ingredients
+    if (applePieSlice && allPurposeFlour && butter && sugar && cinnamon && smallBoxes) {
+      productIngredients.push(
+        {
+          id: uuidv4(),
+          productId: applePieSlice.id,
+          ingredientId: allPurposeFlour.id,
+          usagePerCup: 200, // 200g flour for crust
+          note: 'All-purpose flour for pie crust',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: applePieSlice.id,
+          ingredientId: butter.id,
+          usagePerCup: 120, // 120g butter for crust
+          note: 'Cold butter for flaky crust',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: applePieSlice.id,
+          ingredientId: sugar.id,
+          usagePerCup: 80, // 80g sugar for filling
+          note: 'Sugar for apple filling',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: applePieSlice.id,
+          ingredientId: cinnamon.id,
+          usagePerCup: 8, // 8g cinnamon
+          note: 'Cinnamon for apple spice',
+          businessId: this.businessId,
+          createdAt: now,
+          updatedAt: now
+        },
+        {
+          id: uuidv4(),
+          productId: applePieSlice.id,
+          ingredientId: smallBoxes.id,
+          usagePerCup: 1, // 1 small box per slice
           note: 'Small bakery box for packaging',
           businessId: this.businessId,
           createdAt: now,
@@ -1015,7 +1553,7 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Commercial Convection Oven',
-        purchaseValue: 85000000, // 85M IDR
+        purchaseCost: 85000000, // 85M IDR
         currentValue: 75000000, // 75M IDR
         purchaseDate: '2023-01-15',
         category: bakingCat,
@@ -1029,7 +1567,7 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Industrial Stand Mixer',
-        purchaseValue: 25000000, // 25M IDR
+        purchaseCost: 25000000, // 25M IDR
         currentValue: 22000000, // 22M IDR
         purchaseDate: '2023-02-01',
         category: bakingCat,
@@ -1043,7 +1581,7 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Walk-in Refrigerator',
-        purchaseValue: 45000000, // 45M IDR
+        purchaseCost: 45000000, // 45M IDR
         currentValue: 40000000, // 40M IDR
         purchaseDate: '2023-01-10',
         category: refrigerationCat,
@@ -1057,7 +1595,7 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Display Case',
-        purchaseValue: 15000000, // 15M IDR
+        purchaseCost: 15000000, // 15M IDR
         currentValue: 13000000, // 13M IDR
         purchaseDate: '2023-03-01',
         category: displayCat,
@@ -1071,7 +1609,7 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'POS System',
-        purchaseValue: 8000000, // 8M IDR
+        purchaseCost: 8000000, // 8M IDR
         currentValue: 6000000, // 6M IDR
         purchaseDate: '2023-04-01',
         category: posCat,
@@ -1195,9 +1733,12 @@ export class ComprehensiveBakerySeeder {
         if (product && branch) {
           targets.push({
             id: uuidv4(),
+            menuId: mainMenu.id,
             productId: product.id,
             branchId: branch.id,
+            targetDate: dateStr,
             targetQuantity: Math.round(target.baseTarget * multiplier),
+            note: `Target for ${product.name} on ${dateStr}`,
             businessId: this.businessId,
             createdAt: now,
             updatedAt: now
@@ -1268,13 +1809,15 @@ export class ComprehensiveBakerySeeder {
 
             salesRecords.push({
               id: uuidv4(),
+              menuId: menu.id,
               productId: product.id,
               branchId: branch.id,
-              menuId: menu.id,
+              saleDate: dateStr,
+              saleTime: `${Math.floor(Math.random() * 12) + 8}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}:00`,
               quantity,
               unitPrice: menuProduct.price,
               totalAmount,
-              paymentMethod: Math.random() > 0.3 ? 'card' : 'cash',
+              note: `Sale of ${product.name}`,
               businessId: this.businessId,
               createdAt: now,
               updatedAt: now
@@ -1327,8 +1870,10 @@ export class ComprehensiveBakerySeeder {
         const warehouseItem: WarehouseItem = {
           id: uuidv4(),
           batchId: batch.id,
+          ingredientName: ingredient.name,
           quantity,
-          unitCost,
+          unit: ingredient.unit,
+          costPerUnit: unitCost,
           totalCost,
           expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
           businessId: this.businessId,
@@ -1347,10 +1892,11 @@ export class ComprehensiveBakerySeeder {
 
       const stockLevel: StockLevel = {
         id: uuidv4(),
+        ingredientName: ingredient.name,
+        unit: ingredient.unit,
         currentStock,
-        minimumLevel: minLevel,
-        maximumLevel: maxLevel,
-        lastUpdated: now,
+        reservedStock: Math.floor(Math.random() * 20),
+        lowStockThreshold: minLevel,
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1439,11 +1985,10 @@ export class ComprehensiveBakerySeeder {
 
           productionItems.push({
             id: uuidv4(),
-            productId: product.id,
+            productionBatchId: morningBatch.id,
+            ingredientName: product.name,
             quantity,
-            unitCost,
-            totalCost,
-            note: `Morning production of ${product.name}`,
+            unit: 'pieces',
             businessId: this.businessId,
             createdAt: now,
             updatedAt: now
@@ -1468,11 +2013,10 @@ export class ComprehensiveBakerySeeder {
 
           productionItems.push({
             id: uuidv4(),
-            productId: product.id,
+            productionBatchId: afternoonBatch.id,
+            ingredientName: product.name,
             quantity,
-            unitCost,
-            totalCost,
-            note: `Afternoon production of ${product.name}`,
+            unit: 'pieces',
             businessId: this.businessId,
             createdAt: now,
             updatedAt: now
@@ -1497,8 +2041,13 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Monthly Bakery Operations',
         description: 'Standard monthly operational plan for bakery business',
+        type: 'operational',
         category: 'operations',
-        isActive: true,
+        isDefault: true,
+        estimatedDuration: 30,
+        difficulty: 'medium',
+        tags: ['operations', 'monthly'],
+        note: 'Standard template for monthly operations',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1507,7 +2056,13 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Seasonal Menu Planning',
         description: 'Quarterly menu updates and seasonal product planning',
+        type: 'strategic',
         category: 'production',
+        isDefault: false,
+        estimatedDuration: 90,
+        difficulty: 'high',
+        tags: ['menu', 'seasonal'],
+        note: 'Template for seasonal menu changes',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1522,10 +2077,13 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'February 2024 Operations',
         description: 'Monthly operational plan for February 2024',
+        type: 'operational',
+        status: 'active',
         startDate: '2024-02-01',
         endDate: '2024-02-29',
-        status: 'active',
+        branchId: null,
         templateId: planTemplates[0].id,
+        note: 'February monthly operations plan',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1534,10 +2092,13 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Spring 2024 Menu Launch',
         description: 'Spring seasonal menu planning and launch',
+        type: 'strategic',
+        status: 'draft',
         startDate: '2024-03-01',
         endDate: '2024-05-31',
-        status: 'draft',
+        branchId: null,
         templateId: planTemplates[1].id,
+        note: 'Spring menu launch plan',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1556,8 +2117,13 @@ export class ComprehensiveBakerySeeder {
         targetValue: 15,
         currentValue: 8,
         unit: 'percentage',
+        category: 'financial',
         priority: 'high',
         dueDate: '2024-02-29',
+        completed: false,
+        branchId: null,
+        linkedTaskIds: [],
+        note: 'Focus on increasing daily sales through promotions',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1570,8 +2136,13 @@ export class ComprehensiveBakerySeeder {
         targetValue: 5,
         currentValue: 8,
         unit: 'percentage',
+        category: 'operational',
         priority: 'medium',
         dueDate: '2024-02-29',
+        completed: false,
+        branchId: null,
+        linkedTaskIds: [],
+        note: 'Implement better inventory management',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1585,14 +2156,17 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         planId: operationalPlans[0].id,
-
         title: 'Launch Valentine\'s Day Specials',
         description: 'Create and promote special Valentine\'s themed products',
-        status: 'completed',
+        category: 'marketing',
         priority: 'high',
+        status: 'completed',
         assignedTo: 'Head Baker',
+        estimatedDuration: 7,
+        actualDuration: 6,
+        dependencies: [],
         dueDate: '2024-02-14',
-        completedDate: '2024-02-13',
+        completedAt: '2024-02-13T10:00:00.000Z',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1600,13 +2174,17 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         planId: operationalPlans[0].id,
-
         title: 'Implement Inventory Tracking',
         description: 'Set up better inventory tracking system to reduce waste',
-        status: 'in-progress',
+        category: 'operations',
         priority: 'medium',
+        status: 'in-progress',
         assignedTo: 'Manager',
+        estimatedDuration: 14,
+        actualDuration: null,
+        dependencies: [],
         dueDate: '2024-02-25',
+        completedAt: null,
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1620,13 +2198,15 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         planId: operationalPlans[0].id,
-
         name: 'Daily Revenue',
         description: 'Track daily revenue performance',
         targetValue: 2500000, // 2.5M IDR daily target
         currentValue: 2200000, // 2.2M IDR current
         unit: 'IDR',
-        measurementDate: '2024-01-31',
+        category: 'financial',
+        trackingFrequency: 'daily',
+        lastUpdated: '2024-01-31T23:59:59.000Z',
+        note: 'Daily revenue tracking metric',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
@@ -1634,13 +2214,15 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         planId: operationalPlans[0].id,
-
         name: 'Waste Percentage',
         description: 'Track daily food waste percentage',
         targetValue: 5,
         currentValue: 8,
         unit: 'percentage',
-        measurementDate: '2024-01-31',
+        category: 'operational',
+        trackingFrequency: 'daily',
+        lastUpdated: '2024-01-31T23:59:59.000Z',
+        note: 'Daily waste percentage tracking',
         businessId: this.businessId,
         createdAt: now,
         updatedAt: now
