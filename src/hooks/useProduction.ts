@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ProductionService } from '@/lib/services/productionService'
 import type { ProductionBatch, ProductionBatchWithItems, ProductionBatchStatus } from '@/lib/db/schema'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export function useProduction() {
   const [batches, setBatches] = useState<ProductionBatchWithItems[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadBatches = useCallback(async () => {
     try {
@@ -19,7 +21,7 @@ export function useProduction() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const createBatchWithItems = useCallback(async (
     batchData: { dateCreated: string; status?: ProductionBatchStatus; note?: string },
@@ -135,6 +137,7 @@ export function useProductionStats() {
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadStats = useCallback(async () => {
     try {
@@ -148,7 +151,7 @@ export function useProductionStats() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   useEffect(() => {
     loadStats()
@@ -166,6 +169,7 @@ export function useProductionBatch(batchId: string) {
   const [batch, setBatch] = useState<ProductionBatchWithItems | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadBatch = useCallback(async () => {
     try {
@@ -179,7 +183,7 @@ export function useProductionBatch(batchId: string) {
     } finally {
       setLoading(false)
     }
-  }, [batchId])
+  }, [batchId, currentBusinessId])
 
   const updateStatus = useCallback(async (
     status: ProductionBatchStatus,

@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { ProductService } from '@/lib/services/productService'
 import type { Product, ProductWithIngredients, NewProduct } from '@/lib/db/schema'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadProducts = useCallback(async () => {
     try {
@@ -19,7 +21,7 @@ export function useProducts() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const createProduct = useCallback(async (
     productData: Omit<NewProduct, 'id' | 'isActive'>
@@ -138,6 +140,7 @@ export function useProduct(id: string) {
   const [product, setProduct] = useState<ProductWithIngredients | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadProduct = useCallback(async () => {
     if (!id) {
@@ -158,7 +161,7 @@ export function useProduct(id: string) {
     } finally {
       setLoading(false)
     }
-  }, [id])
+  }, [id, currentBusinessId])
 
   useEffect(() => {
     loadProduct()
@@ -186,10 +189,11 @@ export function useProductCOGS(productId: string) {
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadCOGS = useCallback(async () => {
     if (!productId) return
-    
+
     try {
       setLoading(true)
       setError(null)
@@ -201,7 +205,7 @@ export function useProductCOGS(productId: string) {
     } finally {
       setLoading(false)
     }
-  }, [productId])
+  }, [productId, currentBusinessId])
 
   useEffect(() => {
     loadCOGS()
@@ -222,6 +226,7 @@ export function useProductsWithCounts(includeInactive: boolean = false) {
   const [products, setProducts] = useState<Array<Product & { ingredientCount: number, cogsPerCup: number }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadProducts = useCallback(async () => {
     try {
@@ -235,7 +240,7 @@ export function useProductsWithCounts(includeInactive: boolean = false) {
     } finally {
       setLoading(false)
     }
-  }, [includeInactive])
+  }, [includeInactive, currentBusinessId])
 
   useEffect(() => {
     loadProducts()

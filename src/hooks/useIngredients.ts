@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { IngredientService } from '@/lib/services/ingredientService'
 import type { Ingredient, IngredientWithUsage, NewIngredient } from '@/lib/db/schema'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export function useIngredients() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadIngredients = useCallback(async () => {
     try {
@@ -19,7 +21,7 @@ export function useIngredients() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const createIngredient = useCallback(async (
     ingredientData: Omit<NewIngredient, 'id' | 'isActive'>
@@ -104,10 +106,11 @@ export function useIngredient(id: string) {
   const [ingredient, setIngredient] = useState<IngredientWithUsage | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadIngredient = useCallback(async () => {
     if (!id) return
-    
+
     try {
       setLoading(true)
       setError(null)
@@ -119,7 +122,7 @@ export function useIngredient(id: string) {
     } finally {
       setLoading(false)
     }
-  }, [id])
+  }, [id, currentBusinessId])
 
   useEffect(() => {
     loadIngredient()
@@ -137,6 +140,7 @@ export function useIngredientsWithCounts(includeInactive: boolean = false) {
   const [ingredients, setIngredients] = useState<Array<Ingredient & { usageCount: number; categoryName?: string }>>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadIngredients = useCallback(async () => {
     try {
@@ -150,7 +154,7 @@ export function useIngredientsWithCounts(includeInactive: boolean = false) {
     } finally {
       setLoading(false)
     }
-  }, [includeInactive])
+  }, [includeInactive, currentBusinessId])
 
   useEffect(() => {
     loadIngredients()
@@ -168,6 +172,7 @@ export function useIngredientCategories() {
   const [categories, setCategories] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadCategories = useCallback(async () => {
     try {
@@ -181,7 +186,7 @@ export function useIngredientCategories() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const createCategory = useCallback(async (categoryName: string): Promise<{ success: boolean; error?: string }> => {
     try {

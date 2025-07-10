@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { FixedAssetService } from '../lib/services/fixedAssetService'
 import { type FixedAsset, type NewFixedAsset } from '../lib/db/schema'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseFixedAssetsResult {
   assets: FixedAsset[]
@@ -28,6 +29,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
     totalCurrentValue: 0,
     totalDepreciation: 0
   })
+  const currentBusinessId = useCurrentBusinessId()
 
   const fetchAssets = useCallback(async () => {
     try {
@@ -47,7 +49,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const addAsset = useCallback(async (asset: NewFixedAsset) => {
     try {

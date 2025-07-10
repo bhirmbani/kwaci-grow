@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { WarehouseService } from '@/lib/services/warehouseService'
 import type { WarehouseBatch, WarehouseItem } from '@/lib/db/schema'
 import type { ShoppingListItem } from '@/utils/cogsCalculations'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export interface WarehouseBatchWithItems extends WarehouseBatch {
   items: WarehouseItem[]
@@ -11,6 +12,7 @@ export function useWarehouse() {
   const [batches, setBatches] = useState<WarehouseBatchWithItems[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadBatches = useCallback(async () => {
     try {
@@ -24,7 +26,7 @@ export function useWarehouse() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const addFromShoppingList = useCallback(async (
     shoppingListItems: ShoppingListItem[],
@@ -125,6 +127,7 @@ export function useWarehouseStats() {
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadStats = useCallback(async () => {
     try {
@@ -138,7 +141,7 @@ export function useWarehouseStats() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   useEffect(() => {
     loadStats()

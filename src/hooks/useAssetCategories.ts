@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AssetCategoryService } from '../lib/services/assetCategoryService'
 import { type AssetCategory, type NewAssetCategory } from '../lib/db/schema'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseAssetCategoriesResult {
   categories: AssetCategory[]
@@ -17,6 +18,7 @@ export function useAssetCategories(): UseAssetCategoriesResult {
   const [categories, setCategories] = useState<AssetCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -30,7 +32,7 @@ export function useAssetCategories(): UseAssetCategoriesResult {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const createCategory = useCallback(async (name: string, description?: string): Promise<{ success: boolean; error?: string }> => {
     try {

@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { JourneyService, JOURNEY_STEP_INFO, type JourneyStepId, type JourneyStepInfo } from '@/lib/services/journeyService'
 import type { JourneyProgress } from '@/lib/db/schema'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export function useJourney(userId?: string) {
   const [progress, setProgress] = useState<JourneyProgress[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadProgress = useCallback(async () => {
     try {
@@ -19,7 +21,7 @@ export function useJourney(userId?: string) {
     } finally {
       setLoading(false)
     }
-  }, [userId])
+  }, [userId, currentBusinessId])
 
   const completeStep = useCallback(async (stepId: JourneyStepId): Promise<{ success: boolean; error?: string }> => {
     try {
@@ -129,6 +131,7 @@ export function useJourneyStep(stepId: JourneyStepId, userId?: string) {
   const [stepProgress, setStepProgress] = useState<JourneyProgress | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadStepProgress = useCallback(async () => {
     try {
@@ -142,7 +145,7 @@ export function useJourneyStep(stepId: JourneyStepId, userId?: string) {
     } finally {
       setLoading(false)
     }
-  }, [stepId, userId])
+  }, [stepId, userId, currentBusinessId])
 
   const completeStep = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { RecurringExpensesService } from '../lib/services/recurringExpensesService'
 import { type RecurringExpense, type NewRecurringExpense } from '../lib/db/schema'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseRecurringExpensesReturn {
   expenses: RecurringExpense[]
@@ -35,6 +36,7 @@ export function useRecurringExpenses(includeInactive = false): UseRecurringExpen
   const [monthlyTotal, setMonthlyTotal] = useState(0)
   const [yearlyTotal, setYearlyTotal] = useState(0)
   const [categoryTotals, setCategoryTotals] = useState<{ category: string; monthly: number; yearly: number }[]>([])
+  const currentBusinessId = useCurrentBusinessId()
 
   // Load data from database
   const loadData = useCallback(async () => {
@@ -69,7 +71,7 @@ export function useRecurringExpenses(includeInactive = false): UseRecurringExpen
     } finally {
       setLoading(false)
     }
-  }, [includeInactive])
+  }, [includeInactive, currentBusinessId])
 
   // Initial load
   useEffect(() => {

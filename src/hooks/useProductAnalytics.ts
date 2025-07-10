@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { MenuService } from '@/lib/services/menuService'
 import { useProductEvents } from '@/lib/events/productEvents'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 interface MenuProductProjection {
   menuId: string
@@ -38,6 +39,7 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState(Date.now())
+  const currentBusinessId = useCurrentBusinessId()
 
   const calculateMenuAnalytics = useCallback(async () => {
     try {
@@ -140,7 +142,7 @@ export function useMenuAnalytics(daysPerMonth: number, targetQuantities: Map<str
     } finally {
       setLoading(false)
     }
-  }, [daysPerMonth, targetQuantities])
+  }, [daysPerMonth, targetQuantities, currentBusinessId])
 
   // Manual refetch function for real-time synchronization
   const refetch = useCallback(() => {

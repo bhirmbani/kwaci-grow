@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { StockService } from '@/lib/services/stockService'
 import type { StockLevel, StockTransaction } from '@/lib/db/schema'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 
 export function useStockLevels() {
   const [stockLevels, setStockLevels] = useState<StockLevel[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadStockLevels = useCallback(async () => {
     try {
@@ -19,7 +21,7 @@ export function useStockLevels() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const processSale = useCallback(async (
     cupsSold: number,
@@ -152,6 +154,7 @@ export function useStockTransactions(ingredientName?: string, unit?: string) {
   const [transactions, setTransactions] = useState<StockTransaction[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadTransactions = useCallback(async () => {
     try {
@@ -165,7 +168,7 @@ export function useStockTransactions(ingredientName?: string, unit?: string) {
     } finally {
       setLoading(false)
     }
-  }, [ingredientName, unit])
+  }, [ingredientName, unit, currentBusinessId])
 
   useEffect(() => {
     loadTransactions()
@@ -214,6 +217,7 @@ export function useStockLevel(ingredientName: string, unit: string) {
   const [stockLevel, setStockLevel] = useState<StockLevel | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const loadStockLevel = useCallback(async () => {
     try {
@@ -227,7 +231,7 @@ export function useStockLevel(ingredientName: string, unit: string) {
     } finally {
       setLoading(false)
     }
-  }, [ingredientName, unit])
+  }, [ingredientName, unit, currentBusinessId])
 
   const deductStock = useCallback(async (
     quantity: number,
