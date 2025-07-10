@@ -8,6 +8,7 @@ export function BusinessSwitchingLoader() {
   const [showCompletion, setShowCompletion] = useState(false)
   const [completionBusinessName, setCompletionBusinessName] = useState<string | null>(null)
   const [wasBusinessSwitching, setWasBusinessSwitching] = useState(false)
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false)
 
   // Track when business switching starts
   useEffect(() => {
@@ -31,9 +32,14 @@ export function BusinessSwitchingLoader() {
   useEffect(() => {
     if (showCompletion) {
       const timer = setTimeout(() => {
-        setShowCompletion(false)
-        setCompletionBusinessName(null)
-      }, 2500)
+        setIsAnimatingOut(true)
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+          setShowCompletion(false)
+          setCompletionBusinessName(null)
+          setIsAnimatingOut(false)
+        }, 600) // Animation duration
+      }, 2000) // Show for 2 seconds before starting fade out
       
       return () => clearTimeout(timer)
     }
@@ -64,7 +70,49 @@ export function BusinessSwitchingLoader() {
           </div>
         ) : (
           // Completion state
-          <div className="flex flex-col items-center space-y-4 p-8 bg-card border rounded-lg shadow-lg animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+          <div 
+            className={`flex flex-col items-center space-y-4 p-8 bg-card border rounded-lg shadow-lg transition-all duration-600 ease-in-out ${
+              isAnimatingOut 
+                ? 'animate-out fade-out-0 zoom-out-110 duration-600' 
+                : 'animate-in fade-in-0 slide-in-from-bottom-4 zoom-in-95 duration-500'
+            }`}
+            style={{
+              animation: isAnimatingOut 
+                ? 'fadeOutScale 0.6s ease-in-out forwards' 
+                : 'fadeInScale 0.5s ease-out forwards'
+            }}
+          >
+            <style>{`
+              @keyframes fadeInScale {
+                0% {
+                  opacity: 0;
+                  transform: translateY(20px) scale(0.95);
+                }
+                50% {
+                  opacity: 1;
+                  transform: translateY(0) scale(1.05);
+                }
+                100% {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+              
+              @keyframes fadeOutScale {
+                0% {
+                  opacity: 1;
+                  transform: scale(1);
+                }
+                30% {
+                  opacity: 1;
+                  transform: scale(1.1);
+                }
+                100% {
+                  opacity: 0;
+                  transform: scale(1.2);
+                }
+              }
+            `}</style>
             <div className="flex items-center space-x-3">
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-green-600 text-white">
                 <Building2 className="size-4" />

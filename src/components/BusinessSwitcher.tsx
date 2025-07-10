@@ -1,6 +1,5 @@
 import * as React from "react"
-import { ChevronsUpDown, Plus, Building2, CheckCircle } from "lucide-react"
-import { toast } from "sonner"
+import { ChevronsUpDown, Plus, Building2 } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -33,33 +32,9 @@ export function BusinessSwitcher({
   const currentBusiness = useCurrentBusiness()
   const businesses = useBusinesses()
   const { switchBusiness } = useBusinessStore()
-  const [hasInitialized, setHasInitialized] = React.useState(false)
-
-  // Track when the component has initialized to avoid showing toast on initial load
-  React.useEffect(() => {
-    if (currentBusiness && !hasInitialized) {
-      setHasInitialized(true)
-    }
-  }, [currentBusiness, hasInitialized])
 
   const handleBusinessSelect = async (business: Business) => {
-    // Only show toast if this is an actual switch (not initial load) and switching to a different business
-    const isActualSwitch = hasInitialized && currentBusiness && currentBusiness.id !== business.id
-
-    if (isActualSwitch) {
-      // Show toast notification immediately
-      toast.success(`Switched to ${business.name}`, {
-        description: "You are now operating in this business context",
-        icon: <CheckCircle className="h-4 w-4" />,
-        duration: 3000,
-      })
-
-      // Switch business with loading state
-      await switchBusiness(business)
-    } else {
-      // For initial load, just switch without toast or loading
-      await switchBusiness(business)
-    }
+    await switchBusiness(business)
   }
 
   const handleCreateBusiness = () => {
