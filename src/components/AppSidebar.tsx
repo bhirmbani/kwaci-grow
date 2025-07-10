@@ -22,6 +22,7 @@ import {
   Map,
   CreditCard,
 } from "lucide-react"
+import { useState } from "react"
 
 import {
   Sidebar,
@@ -46,6 +47,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { BusinessSwitcher } from "./BusinessSwitcher"
+import { BusinessManagementSheet } from "./BusinessManagementSheet"
 
 // Menu items for the financial dashboard
 const items = [
@@ -153,29 +156,23 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const [isBusinessManagementOpen, setIsBusinessManagementOpen] = useState(false)
+
+  const handleCreateBusiness = () => {
+    setIsBusinessManagementOpen(true)
+  }
+
+  const handleManageBusinesses = () => {
+    setIsBusinessManagementOpen(true)
+  }
 
   return (
     <Sidebar collapsible="icon" variant="sidebar">
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/" className="flex items-center gap-2">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Coffee className="size-4" aria-hidden="true" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    Coffee Cart
-                  </span>
-                  <span className="truncate text-xs">
-                    Financial Dashboard
-                  </span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <BusinessSwitcher
+          onCreateBusiness={handleCreateBusiness}
+          onManageBusinesses={handleManageBusinesses}
+        />
       </SidebarHeader>
 
       <SidebarContent>
@@ -303,6 +300,12 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+
+      {/* Business Management Sheet */}
+      <BusinessManagementSheet
+        open={isBusinessManagementOpen}
+        onOpenChange={setIsBusinessManagementOpen}
+      />
     </Sidebar>
   )
 }

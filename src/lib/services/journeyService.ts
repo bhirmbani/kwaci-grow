@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
-import type { JourneyProgress, NewJourneyProgress } from '../db/schema'
+import type { JourneyProgress } from '../db/schema'
+import { getCurrentBusinessId, requireBusinessId } from './businessContext'
 
 // Journey step definitions
 export const JOURNEY_STEPS = {
@@ -36,7 +37,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Navigate to the Ingredients page and create at least one ingredient (e.g., Coffee Beans, Milk, Sugar)',
     order: 1,
     validationFn: async () => {
-      const ingredients = await db.ingredients.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const ingredients = await db.ingredients.where('businessId').equals(businessId).toArray()
       return ingredients.length > 0
     }
   },
@@ -47,7 +50,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Go to Products page and create a product using your ingredients with proper COGS calculation',
     order: 2,
     validationFn: async () => {
-      const products = await db.products.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const products = await db.products.where('businessId').equals(businessId).toArray()
       return products.length > 0
     }
   },
@@ -58,7 +63,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Create a menu in the Menus section to organize your products',
     order: 3,
     validationFn: async () => {
-      const menus = await db.menus.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const menus = await db.menus.where('businessId').equals(businessId).toArray()
       return menus.length > 0
     }
   },
@@ -69,7 +76,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Create a branch location for your coffee shop operations',
     order: 4,
     validationFn: async () => {
-      const branches = await db.branches.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const branches = await db.branches.where('businessId').equals(businessId).toArray()
       return branches.length > 0
     }
   },
@@ -80,7 +89,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Add your created product to the menu with pricing information',
     order: 5,
     validationFn: async () => {
-      const menuProducts = await db.menuProducts.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const menuProducts = await db.menuProducts.where('businessId').equals(businessId).toArray()
       return menuProducts.length > 0
     }
   },
@@ -91,7 +102,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Go to Warehouse and add ingredients to your inventory using the COGS calculator',
     order: 6,
     validationFn: async () => {
-      const warehouseItems = await db.warehouseItems.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const warehouseItems = await db.warehouseItems.where('businessId').equals(businessId).toArray()
       return warehouseItems.length > 0
     }
   },
@@ -102,7 +115,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Use the Quick Production Allocation feature to reserve ingredients for production',
     order: 7,
     validationFn: async () => {
-      const productionBatches = await db.productionBatches.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const productionBatches = await db.productionBatches.where('businessId').equals(businessId).toArray()
       return productionBatches.length > 0
     }
   },
@@ -113,7 +128,12 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Change a production batch status from Pending → In Progress → Completed',
     order: 8,
     validationFn: async () => {
-      const completedBatches = await db.productionBatches.where('status').equals('Completed').toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const completedBatches = await db.productionBatches
+        .where('businessId').equals(businessId)
+        .and(batch => batch.status === 'Completed')
+        .toArray()
       return completedBatches.length > 0
     }
   },
@@ -124,7 +144,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Go to Operations and record a sales transaction for your products',
     order: 9,
     validationFn: async () => {
-      const salesRecords = await db.salesRecords.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const salesRecords = await db.salesRecords.where('businessId').equals(businessId).toArray()
       return salesRecords.length > 0
     }
   },
@@ -135,7 +157,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
     instructions: 'Use the calendar-based interface to set daily sales targets for your products. This helps track performance and plan operations.',
     order: 10,
     validationFn: async () => {
-      const salesTargets = await db.dailyProductSalesTargets.toArray()
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return false
+      const salesTargets = await db.dailyProductSalesTargets.where('businessId').equals(businessId).toArray()
       return salesTargets.length > 0
     }
   }
@@ -143,12 +167,19 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
 
 export class JourneyService {
   /**
-   * Get all journey progress for current user
+   * Get all journey progress for current business
    */
   static async getAllProgress(userId?: string): Promise<JourneyProgress[]> {
     try {
-      const progress = await db.journeyProgress.toArray()
-      return userId ? progress.filter(p => p.userId === userId) : progress
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return []
+
+      let query = db.journeyProgress.where('businessId').equals(businessId)
+      if (userId) {
+        query = query.and(p => p.userId === userId)
+      }
+
+      return await query.toArray()
     } catch (error) {
       console.error('Error getting journey progress:', error)
       throw error
@@ -156,16 +187,22 @@ export class JourneyService {
   }
 
   /**
-   * Get progress for a specific step
+   * Get progress for a specific step in current business
    */
   static async getStepProgress(stepId: JourneyStepId, userId?: string): Promise<JourneyProgress | null> {
     try {
-      const progress = await db.journeyProgress
-        .where('stepId')
-        .equals(stepId)
-        .first()
-      
-      return progress || null
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return null
+
+      let query = db.journeyProgress
+        .where('stepId').equals(stepId)
+        .and(p => p.businessId === businessId)
+
+      if (userId) {
+        query = query.and(p => p.userId === userId)
+      }
+
+      return await query.first() || null
     } catch (error) {
       console.error('Error getting step progress:', error)
       throw error
@@ -173,10 +210,11 @@ export class JourneyService {
   }
 
   /**
-   * Mark a step as completed
+   * Mark a step as completed for current business
    */
   static async completeStep(stepId: JourneyStepId, userId?: string): Promise<JourneyProgress> {
     try {
+      const businessId = requireBusinessId()
       const now = new Date().toISOString()
       const existing = await this.getStepProgress(stepId, userId)
 
@@ -198,6 +236,7 @@ export class JourneyService {
           completed: true,
           completedAt: now,
           userId,
+          businessId,
           createdAt: now,
           updatedAt: now
         }
@@ -266,14 +305,22 @@ export class JourneyService {
   }
 
   /**
-   * Reset all journey progress (for testing/demo purposes)
+   * Reset all journey progress for current business (for testing/demo purposes)
    */
   static async resetProgress(userId?: string): Promise<void> {
     try {
+      const businessId = getCurrentBusinessId()
+      if (!businessId) return
+
+      let query = db.journeyProgress.where('businessId').equals(businessId)
       if (userId) {
-        await db.journeyProgress.where('userId').equals(userId).delete()
-      } else {
-        await db.journeyProgress.clear()
+        query = query.and(p => p.userId === userId)
+      }
+
+      const progressToDelete = await query.toArray()
+      const ids = progressToDelete.map(p => p.id)
+      if (ids.length > 0) {
+        await db.journeyProgress.bulkDelete(ids)
       }
     } catch (error) {
       console.error('Error resetting journey progress:', error)

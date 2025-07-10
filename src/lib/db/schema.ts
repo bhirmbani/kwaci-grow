@@ -1,10 +1,22 @@
 // TypeScript interfaces for database entities
+
+// Business entity for multi-business support
+export interface Business {
+  id: string
+  name: string
+  description?: string
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface FinancialItem {
   id: string
   name: string
   value: number // Store in smallest currency unit (IDR) - calculated cost per cup for VARIABLE_COGS
   category: FinancialItemCategory
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
   // COGS calculation fields (optional, used for VARIABLE_COGS category)
@@ -24,6 +36,7 @@ export interface BonusScheme {
   perCup: number // Bonus amount per cup above target (IDR)
   baristaCount: number // Number of baristas
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -41,6 +54,7 @@ export interface WarehouseBatch {
   batchNumber: number // Auto-incrementing starting at 1
   dateAdded: string // ISO date string
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -54,6 +68,7 @@ export interface WarehouseItem {
   costPerUnit: number // Cost per unit (e.g., cost per ml, cost per gram)
   totalCost: number // Total cost for this ingredient
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -66,6 +81,7 @@ export interface StockLevel {
   reservedStock: number // Stock reserved for pending orders
   lowStockThreshold: number // Alert when stock falls below this level
   lastUpdated: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -82,6 +98,7 @@ export interface StockTransaction {
   reservationPurpose?: string // Purpose of reservation (e.g., "Manual Reservation", "Production Batch #5")
   productionBatchId?: string // Optional reference to production batch
   transactionDate: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -92,6 +109,7 @@ export interface ProductionBatch {
   dateCreated: string // ISO date string
   status: 'Pending' | 'In Progress' | 'Completed' // Production batch status
   note: string
+  businessId: string // Foreign key to Business
   // Production output tracking (set when batch is completed)
   productName?: string // Name of the product being produced (e.g., "Espresso")
   outputQuantity?: number // Quantity produced (e.g., 10)
@@ -107,6 +125,7 @@ export interface ProductionItem {
   quantity: number
   unit: string
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -116,6 +135,7 @@ export interface Product {
   name: string
   description: string
   note: string
+  businessId: string // Foreign key to Business
   isActive: boolean // For soft deletion
   cogsPerCup?: number // Cost of goods sold per cup (calculated)
   createdAt: string
@@ -131,6 +151,7 @@ export interface Ingredient {
   supplierInfo?: string // Optional supplier information
   category?: string // Optional ingredient category
   note: string
+  businessId: string // Foreign key to Business
   isActive: boolean // For soft deletion
   createdAt: string
   updatedAt: string
@@ -142,6 +163,7 @@ export interface ProductIngredient {
   ingredientId: string // Foreign key to Ingredient
   usagePerCup: number // Usage amount per cup (e.g., 100 ml)
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -150,6 +172,7 @@ export interface IngredientCategory {
   id: string
   name: string
   description?: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -161,6 +184,7 @@ export interface Menu {
   description: string
   status: 'active' | 'inactive'
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -173,6 +197,7 @@ export interface MenuProduct {
   category: string // e.g., 'Coffee', 'Tea', 'Pastry'
   displayOrder: number // For sorting products in menu
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -182,6 +207,7 @@ export interface Branch {
   name: string
   location: string
   note: string
+  businessId: string // Foreign key to Business
   isActive: boolean
   businessHoursStart: string // Business start time in HH:MM format (e.g., "06:00")
   businessHoursEnd: string // Business end time in HH:MM format (e.g., "22:00")
@@ -193,6 +219,7 @@ export interface MenuBranch {
   id: string
   menuId: string // Foreign key to Menu
   branchId: string // Foreign key to Branch
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -204,6 +231,7 @@ export interface DailySalesTarget {
   targetDate: string // YYYY-MM-DD format
   targetAmount: number // Target sales amount in IDR
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -216,6 +244,7 @@ export interface DailyProductSalesTarget {
   targetDate: string // YYYY-MM-DD format
   targetQuantity: number // Target quantity to sell
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -231,6 +260,7 @@ export interface SalesRecord {
   unitPrice: number // Price per unit in IDR
   totalAmount: number // quantity * unitPrice
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -240,6 +270,7 @@ export interface ProductTargetDefault {
   productId: string // Foreign key to Product
   defaultTargetQuantityPerDay: number // Default target quantity per day
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -250,6 +281,7 @@ export interface JourneyProgress {
   completed: boolean
   completedAt?: string // ISO date string when step was completed
   userId?: string // For future multi-user support
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -323,6 +355,7 @@ export interface FixedAsset {
   depreciationMonths: number // Depreciation period in months
   currentValue: number // Calculated current value
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -331,6 +364,7 @@ export interface AssetCategory {
   id: string
   name: string
   description?: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -349,6 +383,7 @@ export interface RecurringExpense {
   startDate: string // ISO date string
   endDate?: string // ISO date string, optional for expenses with known end dates
   note: string
+  businessId: string // Foreign key to Business
   isActive: boolean // For soft deletion
   createdAt: string
   updatedAt: string

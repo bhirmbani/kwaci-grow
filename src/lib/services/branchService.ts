@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
-import type { 
-  Branch, 
+import { getCurrentBusinessId } from './businessContext'
+import type {
+  Branch,
   BranchWithMenus,
   NewBranch,
   Menu
@@ -9,21 +10,27 @@ import type {
 
 export class BranchService {
   /**
-   * Get all branches (active and inactive)
+   * Get all branches for the current business (active and inactive)
    */
-  static async getAll(includeInactive: boolean = false): Promise<Branch[]> {
+  static async getAll(includeInactive: boolean = false, businessId?: string): Promise<Branch[]> {
     try {
-      if (includeInactive) {
-        return await db.branches.orderBy('name').toArray()
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      let query = db.branches.where('businessId').equals(currentBusinessId)
+
+      if (!includeInactive) {
+        const allBranches = await query.toArray()
+        return allBranches.filter(branch => branch.isActive === true).sort((a, b) => a.name.localeCompare(b.name))
       } else {
-        return await db.branches
-          .filter(branch => branch.isActive === true)
-          .sortBy('name')
+        return await query.sortBy('name')
       }
     } catch (error) {
       console.error('BranchService.getAll() - Database error:', error)
 
-      if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+      if (error instanceof Error && error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
         throw new Error(
           'Database corruption detected (IDBKeyRange error). A database reset is required to fix this issue.'
         )
@@ -145,11 +152,17 @@ export class BranchService {
   /**
    * Create a new branch
    */
-  static async create(branchData: Omit<NewBranch, 'id' | 'isActive'>): Promise<Branch> {
+  static async create(branchData: Omit<NewBranch, 'id' | 'isActive' | 'businessId'>, businessId?: string): Promise<Branch> {
+    const currentBusinessId = businessId || getCurrentBusinessId()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     const now = new Date().toISOString()
     const newBranch: Branch = {
       id: uuidv4(),
       ...branchData,
+      businessId: currentBusinessId,
       isActive: true,
       createdAt: now,
       updatedAt: now,

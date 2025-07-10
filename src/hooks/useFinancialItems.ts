@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { FinancialItemsService } from '../lib/services/financialItemsService'
 import { type FinancialItem, type FinancialItemCategory } from '../lib/db/schema'
 import type { FinancialItem as AppFinancialItem } from '../types'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseFinancialItemsResult {
   items: AppFinancialItem[]
@@ -79,6 +80,7 @@ export function useFinancialItems(category: FinancialItemCategory): UseFinancial
   const [items, setItems] = useState<AppFinancialItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const fetchItems = useCallback(async () => {
     try {
@@ -93,7 +95,7 @@ export function useFinancialItems(category: FinancialItemCategory): UseFinancial
     } finally {
       setLoading(false)
     }
-  }, [category])
+  }, [category, currentBusinessId])
 
   const addItem = useCallback(async (item: Omit<AppFinancialItem, 'id'>) => {
     try {

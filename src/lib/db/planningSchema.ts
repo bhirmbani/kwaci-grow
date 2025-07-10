@@ -11,6 +11,7 @@ export interface OperationalPlan {
   branchId?: string // Optional branch assignment
   templateId?: string // Reference to template used
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -30,6 +31,7 @@ export interface PlanGoal {
   branchId?: string // Optional foreign key to Branch for sales target integration
   linkedTaskIds: string[] // Array of task IDs that are linked to this goal
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -50,6 +52,7 @@ export interface PlanTask {
   completedAt?: string
   taskType?: 'warehouse-batches' | 'ingredient-purchases' | 'production-batches' | 'sales-records' | 'product-creation' // Optional task type for internal linking
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -66,6 +69,7 @@ export interface PlanMetric {
   trackingFrequency: 'hourly' | 'daily' | 'weekly' | 'monthly'
   lastUpdated: string
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -81,6 +85,7 @@ export interface PlanTemplate {
   difficulty: 'beginner' | 'intermediate' | 'advanced'
   tags: string // Stored as comma-separated string
   note: string
+  businessId: string // Foreign key to Business
   createdAt: string
   updatedAt: string
 }
@@ -95,6 +100,7 @@ export interface PlanGoalTemplate {
   category: 'sales' | 'production' | 'efficiency' | 'quality' | 'cost'
   priority: 'low' | 'medium' | 'high'
   note: string
+  businessId: string // Foreign key to Business
 }
 
 export interface PlanTaskTemplate {
@@ -107,6 +113,7 @@ export interface PlanTaskTemplate {
   estimatedDuration: number // in minutes
   dependencies: string[] // Array of template task IDs
   note: string
+  businessId: string // Foreign key to Business
 }
 
 export interface PlanMetricTemplate {
@@ -119,6 +126,7 @@ export interface PlanMetricTemplate {
   category: 'financial' | 'operational' | 'quality' | 'efficiency'
   trackingFrequency: 'hourly' | 'daily' | 'weekly' | 'monthly'
   note: string
+  businessId: string // Foreign key to Business
 }
 
 // Extended types with relationships

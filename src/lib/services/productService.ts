@@ -3,31 +3,45 @@ import type { Product, NewProduct, ProductWithIngredients, Ingredient, ProductIn
 import { v4 as uuidv4 } from 'uuid'
 import { productEvents } from '../events/productEvents'
 
+// Helper function to get current business ID
+let getCurrentBusinessId: (() => string | null) | null = null
+
+export function setBusinessIdProvider(provider: () => string | null) {
+  getCurrentBusinessId = provider
+}
+
 export class ProductService {
   /**
-   * Get all products (active and inactive)
+   * Get all products for the current business (active and inactive)
    */
-  static async getAll(includeInactive: boolean = false): Promise<Product[]> {
+  static async getAll(includeInactive: boolean = false, businessId?: string): Promise<Product[]> {
     try {
-      if (includeInactive) {
-        return await db.products.orderBy('name').toArray()
+      const currentBusinessId = businessId || getCurrentBusinessId?.()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      let query = db.products.where('businessId').equals(currentBusinessId)
+
+      if (!includeInactive) {
+        const allProducts = await query.toArray()
+        return allProducts.filter(product => product.isActive === true).sort((a, b) => a.name.localeCompare(b.name))
       } else {
-        return await db.products
-          .filter(product => product.isActive === true)
-          .sortBy('name')
+        return await query.sortBy('name')
       }
     } catch (error) {
       console.error('ProductService.getAll() - Database error:', error)
 
       // Only check for actual IDBKeyRange errors, not general database errors
-      if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+      if (error instanceof Error && error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
         throw new Error(
           'Database corruption detected (IDBKeyRange error). A database reset is required to fix this issue.'
         )
       }
 
       // For other errors, provide a generic message but don't assume corruption
-      throw new Error(`Failed to retrieve products: ${error.message}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      throw new Error(`Failed to retrieve products: ${errorMessage}`)
     }
   }
 
@@ -95,11 +109,17 @@ export class ProductService {
   /**
    * Create a new product
    */
-  static async create(productData: Omit<NewProduct, 'id' | 'isActive'>): Promise<Product> {
+  static async create(productData: Omit<NewProduct, 'id' | 'isActive' | 'businessId'>, businessId?: string): Promise<Product> {
+    const currentBusinessId = businessId || getCurrentBusinessId?.()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     const now = new Date().toISOString()
     const newProduct: Product = {
       id: uuidv4(),
       ...productData,
+      businessId: currentBusinessId,
       isActive: true,
       createdAt: now,
       updatedAt: now,
@@ -171,8 +191,14 @@ export class ProductService {
     productId: string,
     ingredientId: string,
     usagePerCup: number,
-    note: string = ''
+    note: string = '',
+    businessId?: string
   ): Promise<ProductIngredient> {
+    const currentBusinessId = businessId || getCurrentBusinessId?.()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     // Check if relationship already exists
     const existing = await db.productIngredients
       .where('productId')
@@ -191,6 +217,7 @@ export class ProductService {
       ingredientId,
       usagePerCup,
       note,
+      businessId: currentBusinessId,
       createdAt: now,
       updatedAt: now,
     }

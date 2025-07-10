@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { AppSettingsService } from '../lib/services/appSettingsService'
 import type { AppSettingKey } from '../lib/db/schema'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseAppSettingResult {
   value: number
@@ -14,6 +15,7 @@ export function useAppSetting(key: AppSettingKey, defaultValue: number): UseAppS
   const [value, setValue] = useState<number>(defaultValue)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const fetchValue = useCallback(async () => {
     try {
@@ -28,7 +30,7 @@ export function useAppSetting(key: AppSettingKey, defaultValue: number): UseAppS
     } finally {
       setLoading(false)
     }
-  }, [key, defaultValue])
+  }, [key, defaultValue, currentBusinessId])
 
   const updateValue = useCallback(async (newValue: number) => {
     // Store previous value for potential rollback

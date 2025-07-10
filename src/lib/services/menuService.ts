@@ -2,12 +2,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
 import { ProductService } from './productService'
 import { productEvents } from '../events/productEvents'
-import type { 
-  Menu, 
-  MenuProduct, 
-  MenuWithProducts, 
+import { getCurrentBusinessId, requireBusinessId, withBusinessId } from './businessContext'
+import type {
+  Menu,
+  MenuProduct,
+  MenuWithProducts,
   MenuWithProductCount,
-  NewMenu, 
+  NewMenu,
   NewMenuProduct,
 
   Branch
@@ -15,26 +16,32 @@ import type {
 
 export class MenuService {
   /**
-   * Get all menus (active and inactive)
+   * Get all menus for the current business (active and inactive)
    */
-  static async getAll(includeInactive: boolean = false): Promise<Menu[]> {
+  static async getAll(includeInactive: boolean = false, businessId?: string): Promise<Menu[]> {
     try {
-      if (includeInactive) {
-        return await db.menus.orderBy('name').toArray()
+      const currentBusinessId = businessId || getCurrentBusinessId()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      let query = db.menus.where('businessId').equals(currentBusinessId)
+
+      if (!includeInactive) {
+        const allMenus = await query.toArray()
+        return allMenus.filter(menu => menu.status === 'active').sort((a, b) => a.name.localeCompare(b.name))
       } else {
-        return await db.menus
-          .filter(menu => menu.status === 'active')
-          .sortBy('name')
+        return await query.sortBy('name')
       }
     } catch (error) {
       console.error('MenuService.getAll() - Database error:', error)
-      
-      if (error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
+
+      if (error instanceof Error && error.name === 'DataError' && error.message && error.message.includes('IDBKeyRange')) {
         throw new Error(
           'Database corruption detected (IDBKeyRange error). A database reset is required to fix this issue.'
         )
       }
-      
+
       throw error
     }
   }
@@ -205,11 +212,17 @@ export class MenuService {
   /**
    * Create a new menu
    */
-  static async create(menuData: Omit<NewMenu, 'id' | 'status'>): Promise<Menu> {
+  static async create(menuData: Omit<NewMenu, 'id' | 'status' | 'businessId'>, businessId?: string): Promise<Menu> {
+    const currentBusinessId = businessId || getCurrentBusinessId()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     const now = new Date().toISOString()
     const newMenu: Menu = {
       id: uuidv4(),
       ...menuData,
+      businessId: currentBusinessId,
       status: 'active',
       createdAt: now,
       updatedAt: now,
@@ -341,7 +354,12 @@ export class MenuService {
   /**
    * Assign menu to branches
    */
-  static async assignToBranches(menuId: string, branchIds: string[]): Promise<void> {
+  static async assignToBranches(menuId: string, branchIds: string[], businessId?: string): Promise<void> {
+    const currentBusinessId = businessId || getCurrentBusinessId()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     const now = new Date().toISOString()
 
     // Remove existing assignments
@@ -352,6 +370,7 @@ export class MenuService {
       id: uuidv4(),
       menuId,
       branchId,
+      businessId: currentBusinessId,
       createdAt: now,
       updatedAt: now,
     }))

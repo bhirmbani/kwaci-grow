@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { BonusSchemeService } from '../lib/services/bonusSchemeService'
 import type { BonusScheme as AppBonusScheme } from '../types'
 import type { BonusScheme as DbBonusScheme } from '../lib/db/schema'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
 
 interface UseBonusSchemeResult {
   scheme: AppBonusScheme | null
@@ -25,6 +26,7 @@ export function useBonusScheme(): UseBonusSchemeResult {
   const [scheme, setScheme] = useState<AppBonusScheme | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const currentBusinessId = useCurrentBusinessId()
 
   const fetchScheme = useCallback(async () => {
     try {
@@ -44,7 +46,7 @@ export function useBonusScheme(): UseBonusSchemeResult {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentBusinessId])
 
   const updateScheme = useCallback(async (newScheme: AppBonusScheme) => {
     // Store previous scheme for potential rollback

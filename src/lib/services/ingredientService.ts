@@ -2,18 +2,32 @@ import { db } from '../db'
 import type { Ingredient, NewIngredient, IngredientWithUsage } from '../db/schema'
 import { v4 as uuidv4 } from 'uuid'
 
+// Helper function to get current business ID
+// This will be imported from the business store in components
+let getCurrentBusinessId: (() => string | null) | null = null
+
+export function setBusinessIdProvider(provider: () => string | null) {
+  getCurrentBusinessId = provider
+}
+
 export class IngredientService {
   /**
-   * Get all ingredients (active and inactive)
+   * Get all ingredients for the current business (active and inactive)
    */
-  static async getAll(includeInactive: boolean = false): Promise<Ingredient[]> {
+  static async getAll(includeInactive: boolean = false, businessId?: string): Promise<Ingredient[]> {
     try {
-      if (includeInactive) {
-        return await db.ingredients.orderBy('name').toArray()
+      const currentBusinessId = businessId || getCurrentBusinessId?.()
+      if (!currentBusinessId) {
+        throw new Error('No business selected. Please select a business first.')
+      }
+
+      let query = db.ingredients.where('businessId').equals(currentBusinessId)
+
+      if (!includeInactive) {
+        const allIngredients = await query.toArray()
+        return allIngredients.filter(ingredient => ingredient.isActive === true).sort((a, b) => a.name.localeCompare(b.name))
       } else {
-        return await db.ingredients
-          .filter(ingredient => ingredient.isActive === true)
-          .sortBy('name')
+        return await query.sortBy('name')
       }
     } catch (error) {
       console.error('IngredientService.getAll() - Database error:', error)
@@ -70,18 +84,24 @@ export class IngredientService {
   /**
    * Create a new ingredient
    */
-  static async create(ingredientData: Omit<NewIngredient, 'id' | 'isActive'>): Promise<Ingredient> {
+  static async create(ingredientData: Omit<NewIngredient, 'id' | 'isActive' | 'businessId'>, businessId?: string): Promise<Ingredient> {
+    const currentBusinessId = businessId || getCurrentBusinessId?.()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
     const now = new Date().toISOString()
     const newIngredient: Ingredient = {
       id: uuidv4(),
       ...ingredientData,
+      businessId: currentBusinessId,
       isActive: true,
       createdAt: now,
       updatedAt: now,
     }
 
     await db.ingredients.add(newIngredient)
-    
+
     return newIngredient
   }
 
@@ -143,36 +163,50 @@ export class IngredientService {
   }
 
   /**
-   * Get all unique categories
+   * Get all unique categories for the current business
    */
-  static async getCategories(): Promise<string[]> {
-    const categories = await db.ingredientCategories.orderBy('name').toArray()
+  static async getCategories(businessId?: string): Promise<string[]> {
+    const currentBusinessId = businessId || getCurrentBusinessId?.()
+    if (!currentBusinessId) {
+      throw new Error('No business selected. Please select a business first.')
+    }
+
+    const categories = await db.ingredientCategories
+      .where('businessId')
+      .equals(currentBusinessId)
+      .sortBy('name')
     return categories.map(cat => cat.name)
   }
 
   /**
    * Create a new category
    */
-  static async createCategory(categoryName: string): Promise<{ success: boolean; error?: string }> {
+  static async createCategory(categoryName: string, businessId?: string): Promise<{ success: boolean; error?: string }> {
     try {
+      const currentBusinessId = businessId || getCurrentBusinessId?.()
+      if (!currentBusinessId) {
+        return { success: false, error: 'No business selected. Please select a business first.' }
+      }
+
       const trimmedName = categoryName.trim()
       if (!trimmedName) {
         return { success: false, error: 'Category name cannot be empty' }
       }
 
-      // Check if category already exists
-      const existingCategories = await this.getCategories()
+      // Check if category already exists in current business
+      const existingCategories = await this.getCategories(currentBusinessId)
       if (existingCategories.includes(trimmedName)) {
         return { success: false, error: 'Category already exists' }
       }
 
       const now = new Date().toISOString()
       const categoryId = `cat-${trimmedName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
-      
+
       await db.ingredientCategories.add({
         id: categoryId,
         name: trimmedName,
         description: `Category for ${trimmedName}`,
+        businessId: currentBusinessId,
         createdAt: now,
         updatedAt: now
       })

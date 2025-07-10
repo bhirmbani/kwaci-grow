@@ -5,27 +5,46 @@ import { ThemeProvider } from '../contexts/ThemeContext'
 import { SidebarProvider, SidebarTrigger } from '../components/ui/sidebar'
 import { AppSidebar } from '../components/AppSidebar'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { Toaster } from '../components/ui/sonner'
 import { useSidebarState } from '../hooks/useSidebarState'
 import { ensureDatabaseInitialized } from '../lib/db/init'
 import { validateCalculations } from '../utils/financialCalculations.test'
+import { useBusinessStore } from '../lib/stores/businessStore'
+import { initializeBusinessContext } from '../lib/services/businessContext'
+import { BusinessSwitchingLoader } from '../components/BusinessSwitchingLoader'
 
 function RootComponent() {
   const [dbInitialized, setDbInitialized] = useState(false)
   const { defaultOpen, onOpenChange } = useSidebarState()
+  const { initializeStore, getCurrentBusinessId } = useBusinessStore()
 
-  // Initialize database on app start
+  // Initialize database and business store on app start
   useEffect(() => {
-    ensureDatabaseInitialized()
-      .then(() => {
+    const initialize = async () => {
+      try {
+        // Initialize database first
+        await ensureDatabaseInitialized()
+
+        // Then initialize business store
+        await initializeStore()
+
+        // Initialize business context for all services
+        initializeBusinessContext(getCurrentBusinessId)
+
         setDbInitialized(true)
+
         // Run financial calculations validation in development
         if (import.meta.env.DEV) {
           console.log('Running financial calculations validation...')
           validateCalculations()
         }
-      })
-      .catch(console.error)
-  }, [])
+      } catch (error) {
+        console.error('Failed to initialize application:', error)
+      }
+    }
+
+    initialize()
+  }, [initializeStore])
 
   if (!dbInitialized) {
     return (
@@ -56,6 +75,8 @@ function RootComponent() {
             </div>
           </div>
         </main>
+        <Toaster position="top-right" />
+        <BusinessSwitchingLoader />
         {import.meta.env.DEV && <TanStackRouterDevtools />}
       </SidebarProvider>
     </ThemeProvider>

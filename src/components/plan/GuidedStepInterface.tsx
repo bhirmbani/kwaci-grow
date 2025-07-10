@@ -44,7 +44,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
     'create-production-allocation': '/warehouse',
     'change-production-batch-status': '/production',
     'record-sales': '/operations',
-    'create-sales-target': '/operations'
+    'create-sales-target': '/sales-targets'
   }
 
   // Enhanced validation logic for each step

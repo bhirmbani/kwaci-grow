@@ -1,9 +1,10 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate, RecurringExpense } from './schema'
+import type { Business, FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate, RecurringExpense } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
   // Define table types
+  businesses!: EntityTable<Business, 'id'>
   financialItems!: EntityTable<FinancialItem, 'id'>
   bonusSchemes!: EntityTable<BonusScheme, 'id'>
   appSettings!: EntityTable<AppSetting, 'id'>
@@ -1149,6 +1150,88 @@ export class FinancialDashboardDB extends Dexie {
     }).upgrade(async tx => {
       console.log('🔄 Adding compound index for dailyProductSalesTargets performance optimization...')
       console.log('✅ Compound index [menuId+productId+branchId+targetDate] added successfully')
+    })
+
+    // Version 29 - Add Business table and businessId foreign keys for multi-business support
+    this.version(29).stores({
+      businesses: 'id, name, description, note, createdAt, updatedAt',
+      financialItems: 'id, name, category, value, note, businessId, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, businessId, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, businessId, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, businessId, createdAt, updatedAt',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, businessId, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, transactionDate, businessId, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, businessId, productName, outputQuantity, outputUnit, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, businessId, createdAt, updatedAt',
+      ingredientCategories: 'id, name, description, businessId, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, category, supplierInfo, note, businessId, isActive, createdAt, updatedAt',
+      products: 'id, name, description, note, businessId, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, businessId, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, businessId, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, businessId, createdAt, updatedAt',
+      branches: 'id, name, location, note, businessId, isActive, businessHoursStart, businessHoursEnd, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, businessId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, businessId, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, businessId, createdAt, updatedAt, [menuId+productId+branchId+targetDate]',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, businessId, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, businessId, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, businessId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, businessId, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note, businessId',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note, businessId',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note, businessId',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, businessId, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, businessId, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, businessId, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, businessId, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, businessId, createdAt, updatedAt',
+      assetCategories: 'id, name, description, businessId, createdAt, updatedAt',
+      recurringExpenses: 'id, name, description, amount, frequency, category, startDate, endDate, note, businessId, isActive, createdAt, updatedAt'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding Business table and businessId foreign keys for multi-business support...')
+
+      // Create a default business for existing data
+      const defaultBusiness = {
+        id: 'default-business-' + Date.now(),
+        name: 'My Coffee Business',
+        description: 'Default business created during multi-business migration',
+        note: 'This is the default business created when upgrading to multi-business support. You can rename or modify this business as needed.',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      await tx.table('businesses').add(defaultBusiness)
+      console.log('✅ Default business created:', defaultBusiness.name)
+
+      // Migrate existing data to use the default business
+      const tables = [
+        'financialItems', 'bonusSchemes', 'warehouseBatches', 'warehouseItems',
+        'stockLevels', 'stockTransactions', 'productionBatches', 'productionItems',
+        'ingredientCategories', 'ingredients', 'products', 'productIngredients',
+        'menus', 'menuProducts', 'branches', 'menuBranches', 'dailySalesTargets',
+        'dailyProductSalesTargets', 'salesRecords', 'productTargetDefaults',
+        'journeyProgress', 'planTemplates', 'planGoalTemplates', 'planTaskTemplates',
+        'planMetricTemplates', 'plans', 'planGoals', 'planTasks', 'planMetrics',
+        'fixedAssets', 'assetCategories', 'recurringExpenses'
+      ]
+
+      for (const tableName of tables) {
+        try {
+          const records = await tx.table(tableName).toArray()
+          for (const record of records) {
+            await tx.table(tableName).update(record.id, {
+              businessId: defaultBusiness.id,
+              updatedAt: new Date().toISOString()
+            })
+          }
+          console.log(`✅ Migrated ${records.length} records in ${tableName} table`)
+        } catch (error) {
+          console.log(`ℹ️ Table ${tableName} does not exist or is empty, skipping migration`)
+        }
+      }
+
+      console.log('✅ Multi-business support added successfully')
     })
   }
 }
