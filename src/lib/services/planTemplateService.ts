@@ -104,7 +104,7 @@ export class PlanTemplateService {
     const newGoalTemplate: PlanGoalTemplate = {
       id: uuidv4(),
       templateId,
-      ...goalData,
+      ...withBusinessId(goalData),
     }
     
     await db.planGoalTemplates.add(newGoalTemplate)
@@ -118,7 +118,7 @@ export class PlanTemplateService {
     const newTaskTemplate: PlanTaskTemplate = {
       id: uuidv4(),
       templateId,
-      ...taskData,
+      ...withBusinessId(taskData),
     }
     
     await db.planTaskTemplates.add(newTaskTemplate)
@@ -185,6 +185,7 @@ export class PlanTemplateService {
         branchId: planData.branchId,
         templateId: templateId,
         note: planData.note || '',
+        ...withBusinessId({}),
         createdAt: now,
         updatedAt: now,
       }
@@ -210,6 +211,7 @@ export class PlanTemplateService {
           estimatedDuration: taskTemplate.estimatedDuration,
           dependencies: [], // Will be updated in step 2
           note: taskTemplate.note,
+          ...withBusinessId({}),
           createdAt: now,
           updatedAt: now,
         }
@@ -255,6 +257,7 @@ export class PlanTemplateService {
           branchId: planData.branchId, // Use plan's branchId for all goals
           linkedTaskIds,
           note: goalTemplate.note,
+          ...withBusinessId({}),
           createdAt: now,
           updatedAt: now,
         }
@@ -277,6 +280,7 @@ export class PlanTemplateService {
           trackingFrequency: metricTemplate.trackingFrequency,
           lastUpdated: now,
           note: metricTemplate.note,
+          ...withBusinessId({}),
           createdAt: now,
           updatedAt: now,
         })
@@ -673,7 +677,7 @@ export class PlanTemplateService {
   /**
    * Create default goals and tasks for a template
    */
-  private static async createDefaultGoalsAndTasks(templateId: string, templateType: 'daily' | 'weekly' | 'monthly'): Promise<void> {
+  private static async createDefaultGoalsAndTasks(templateId: string, templateType: 'daily' | 'weekly' | 'monthly' | 'operational' | 'strategic'): Promise<void> {
     try {
       console.log(`🎯 Creating default goals and tasks for ${templateType} template (ID: ${templateId})...`)
 
@@ -794,6 +798,92 @@ export class PlanTemplateService {
           estimatedDuration: 120,
           dependencies: [],
           note: 'Monthly strategic planning'
+        })
+
+      } else if (templateType === 'operational') {
+        // Operational template goals (for bakery/general operations)
+        void await this.addGoalTemplate(templateId, {
+          title: 'Operational Efficiency',
+          description: 'Maintain high operational efficiency standards',
+          defaultTargetValue: 90,
+          unit: 'percentage',
+          category: 'efficiency',
+          priority: 'high',
+          note: 'Monthly operational efficiency goal'
+        })
+
+        void await this.addGoalTemplate(templateId, {
+          title: 'Quality Standards',
+          description: 'Maintain product quality standards',
+          defaultTargetValue: 95,
+          unit: 'percentage',
+          category: 'quality',
+          priority: 'high',
+          note: 'Quality assurance goal'
+        })
+
+        // Operational template tasks
+        const planningTask = await this.addTaskTemplate(templateId, {
+          title: 'Monthly Planning',
+          description: 'Plan monthly operations, schedules, and resource allocation',
+          category: 'setup',
+          priority: 'high',
+          estimatedDuration: 120,
+          dependencies: [],
+          note: 'Strategic monthly planning session'
+        })
+
+        const productionTask = await this.addTaskTemplate(templateId, {
+          title: 'Production Review',
+          description: 'Review production processes and optimize workflows',
+          category: 'production',
+          priority: 'high',
+          estimatedDuration: 90,
+          dependencies: [planningTask.id],
+          note: 'Monthly production optimization'
+        })
+
+        void await this.addTaskTemplate(templateId, {
+          title: 'Quality Assessment',
+          description: 'Assess product quality and implement improvements',
+          category: 'maintenance',
+          priority: 'medium',
+          estimatedDuration: 60,
+          dependencies: [productionTask.id],
+          note: 'Monthly quality review'
+        })
+
+      } else if (templateType === 'strategic') {
+        // Strategic template goals
+        void await this.addGoalTemplate(templateId, {
+          title: 'Strategic Growth',
+          description: 'Achieve strategic business growth targets',
+          defaultTargetValue: 15,
+          unit: 'percentage',
+          category: 'sales',
+          priority: 'high',
+          note: 'Strategic growth objective'
+        })
+
+        // Strategic template tasks
+        void await this.addTaskTemplate(templateId, {
+          title: 'Market Analysis',
+          description: 'Analyze market trends and competitive landscape',
+          category: 'setup',
+          priority: 'high',
+          estimatedDuration: 180,
+          dependencies: [],
+          note: 'Strategic market research'
+        })
+
+        void await this.addTaskTemplate(templateId, {
+          title: 'Strategic Planning',
+          description: 'Develop long-term strategic plans and initiatives',
+          category: 'setup',
+          priority: 'high',
+          estimatedDuration: 240,
+          dependencies: [],
+          note: 'Long-term strategic planning'
         })
       }
 

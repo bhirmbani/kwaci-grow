@@ -45,7 +45,7 @@ export function GoalItem({ goal, allTasks, index, onUpdate, onDelete }: GoalItem
   const [operationError, setOperationError] = useState<string | null>(null)
 
   const priorityConfig = PRIORITY_CONFIG[goal.priority]
-  const categoryConfig = CATEGORY_CONFIG[goal.category]
+  const categoryConfig = CATEGORY_CONFIG[goal.category] || 'text-primary'
 
   const handleUpdate = async (goalData: Omit<NewPlanGoal, 'id' | 'planId'>) => {
     try {
@@ -178,7 +178,7 @@ export function GoalItem({ goal, allTasks, index, onUpdate, onDelete }: GoalItem
 
             {/* Metadata Row */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge className={cn("text-xs", categoryConfig.color)}>
+              <Badge className={cn("text-xs", categoryConfig.color || 'text-primary')}>
                 <Target className="mr-1 h-3 w-3" />
                 {categoryConfig.label}
               </Badge>
