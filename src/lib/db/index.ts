@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Business, FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate, RecurringExpense } from './schema'
+import type { Business, FinancialItem, BonusScheme, AppSetting, WarehouseBatch, WarehouseItem, StockLevel, StockTransaction, ProductionBatch, ProductionItem, Product, Ingredient, ProductIngredient, IngredientCategory, Menu, MenuProduct, Branch, MenuBranch, DailySalesTarget, DailyProductSalesTarget, SalesRecord, ProductTargetDefault, JourneyProgress, OperationalPlan, PlanGoal, PlanTask, PlanMetric, PlanTemplate, PlanGoalTemplate, PlanTaskTemplate, PlanMetricTemplate, RecurringExpense, FixedAsset, AssetCategory } from './schema'
 
 // Define the database class
 export class FinancialDashboardDB extends Dexie {
@@ -40,6 +40,10 @@ export class FinancialDashboardDB extends Dexie {
 
   // Recurring expenses table
   recurringExpenses!: EntityTable<RecurringExpense, 'id'>
+
+  // Fixed assets management tables
+  fixedAssets!: EntityTable<FixedAsset, 'id'>
+  assetCategories!: EntityTable<AssetCategory, 'id'>
 
   constructor() {
     super('FinancialDashboardDB')

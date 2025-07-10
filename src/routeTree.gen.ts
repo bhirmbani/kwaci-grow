@@ -15,6 +15,7 @@ import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
 import { Route as TestDatabaseRouteImport } from './routes/test-database'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SeedMultiBusinessRouteImport } from './routes/seed-multi-business'
 import { Route as SeedDatabaseRouteImport } from './routes/seed-database'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
 import { Route as RecurringExpensesRouteImport } from './routes/recurring-expenses'
@@ -63,6 +64,11 @@ const TestDatabaseRoute = TestDatabaseRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeedMultiBusinessRoute = SeedMultiBusinessRouteImport.update({
+  id: '/seed-multi-business',
+  path: '/seed-multi-business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeedDatabaseRoute = SeedDatabaseRouteImport.update({
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-database': typeof SeedDatabaseRoute
+  '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-database': typeof SeedDatabaseRoute
+  '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/recurring-expenses': typeof RecurringExpensesRoute
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-database': typeof SeedDatabaseRoute
+  '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
   '/test-database': typeof TestDatabaseRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/recurring-expenses'
     | '/sales-targets'
     | '/seed-database'
+    | '/seed-multi-business'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/recurring-expenses'
     | '/sales-targets'
     | '/seed-database'
+    | '/seed-multi-business'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/recurring-expenses'
     | '/sales-targets'
     | '/seed-database'
+    | '/seed-multi-business'
     | '/settings'
     | '/test-database'
     | '/test-ingredient-fix'
@@ -342,6 +354,7 @@ export interface RootRouteChildren {
   RecurringExpensesRoute: typeof RecurringExpensesRoute
   SalesTargetsRoute: typeof SalesTargetsRoute
   SeedDatabaseRoute: typeof SeedDatabaseRoute
+  SeedMultiBusinessRoute: typeof SeedMultiBusinessRoute
   SettingsRoute: typeof SettingsRoute
   TestDatabaseRoute: typeof TestDatabaseRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seed-multi-business': {
+      id: '/seed-multi-business'
+      path: '/seed-multi-business'
+      fullPath: '/seed-multi-business'
+      preLoaderRoute: typeof SeedMultiBusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seed-database': {
@@ -550,6 +570,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecurringExpensesRoute: RecurringExpensesRoute,
   SalesTargetsRoute: SalesTargetsRoute,
   SeedDatabaseRoute: SeedDatabaseRoute,
+  SeedMultiBusinessRoute: SeedMultiBusinessRoute,
   SettingsRoute: SettingsRoute,
   TestDatabaseRoute: TestDatabaseRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,

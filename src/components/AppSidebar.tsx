@@ -6,7 +6,6 @@ import {
   Settings,
   User,
   ChevronUp,
-  Coffee,
   TrendingUp,
   FileText,
   PieChart,
@@ -15,7 +14,6 @@ import {
   Factory,
   Beaker,
   Database,
-  Bug,
   Menu,
   Target,
   Activity,
@@ -245,6 +243,14 @@ export function AppSidebar() {
                   <Link to="/seed-database">
                     <Database aria-hidden="true" />
                     <span>Database Seed</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/seed-multi-business">
+                    <Database aria-hidden="true" />
+                    <span>Multi-Business Seed</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
