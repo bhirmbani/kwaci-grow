@@ -10,8 +10,6 @@
 
 import { useMemo } from 'react'
 import { 
-  TrendingUp, 
-  TrendingDown, 
   AlertTriangle, 
   CheckCircle, 
   AlertCircle,
@@ -25,6 +23,8 @@ import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { formatCurrency } from '@/utils/formatters'
 import type { FinancialSummary } from '@/lib/types/accounting'
+import { FinancialHealthScoreExplanation } from './FinancialExplanationSheets3'
+import { KeyMetricsExplanation, QuickStatsExplanation } from './FinancialExplanationSheets4'
 
 interface FinancialHealthIndicatorsProps {
   summary: FinancialSummary | null
@@ -257,6 +257,14 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
                   <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 )}
                 Financial Health Score
+                <FinancialHealthScoreExplanation 
+                  summary={summary} 
+                  healthScore={healthMetrics.overall}
+                  profitabilityScore={healthMetrics.profitability}
+                  liquidityScore={healthMetrics.liquidity}
+                  efficiencyScore={healthMetrics.efficiency}
+                  growthScore={healthMetrics.growth}
+                />
               </CardTitle>
               <CardDescription>
                 Overall business financial health assessment
@@ -271,7 +279,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold">
-                {healthMetrics.overall}/100
+                {Math.round(healthMetrics.overall * 10) / 10}/100
               </span>
               <span className={`text-sm font-medium ${getHealthColor(healthMetrics.overall)}`}>
                 {overallBadge.label} Health
@@ -286,10 +294,13 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Key Metrics
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                Key Metrics
+              </CardTitle>
+              <KeyMetricsExplanation summary={summary} />
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">
@@ -297,7 +308,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.profitability} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.profitability)}`}>
-                  {healthMetrics.profitability}
+                  {Math.round(healthMetrics.profitability * 10) / 10}
                 </span>
               </div>
             </div>
@@ -306,7 +317,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.liquidity} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.liquidity)}`}>
-                  {healthMetrics.liquidity}
+                  {Math.round(healthMetrics.liquidity * 10) / 10}
                 </span>
               </div>
             </div>
@@ -315,7 +326,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.efficiency} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.efficiency)}`}>
-                  {healthMetrics.efficiency}
+                  {Math.round(healthMetrics.efficiency * 10) / 10}
                 </span>
               </div>
             </div>
@@ -324,7 +335,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.growth} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.growth)}`}>
-                  {healthMetrics.growth}
+                  {Math.round(healthMetrics.growth * 10) / 10}
                 </span>
               </div>
             </div>
@@ -333,10 +344,13 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Quick Stats
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Quick Stats
+              </CardTitle>
+              <QuickStatsExplanation summary={summary} />
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">

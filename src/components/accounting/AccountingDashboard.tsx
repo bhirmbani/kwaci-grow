@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Filter, Download, TrendingUp, TrendingDown, DollarSign, Receipt, RefreshCw } from 'lucide-react'
+import { Filter, Download, TrendingUp, TrendingDown, DollarSign, Receipt, RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,12 +15,17 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAccounting } from '@/hooks/useAccounting'
 import { useCurrentBusiness } from '@/lib/stores/businessStore'
 import { formatCurrency } from '@/utils/formatters'
-import { exportTransactions, exportFinancialSummary, exportFinancialReport } from '@/utils/exportUtils'
+import { exportFinancialReport } from '@/utils/exportUtils'
 import { TransactionList } from './TransactionList'
 import { FinancialSummaryCards } from './FinancialSummaryCards'
 import { FinancialHealthIndicators } from './FinancialHealthIndicators'
 import { QuickActions } from './QuickActions'
-import type { TransactionFilters } from '@/lib/types/accounting'
+import { 
+  TotalTransactionsExplanation, 
+  SalesIncomeExplanation, 
+  OperatingExpensesExplanation, 
+  NetPositionExplanation 
+} from './FinancialExplanationSheets3'
 
 export function AccountingDashboard() {
   const currentBusiness = useCurrentBusiness()
@@ -189,7 +194,10 @@ export function AccountingDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
-            <Receipt className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-1">
+              <TotalTransactionsExplanation summary={financialSummary} transactionCount={transactions.length} />
+              <Receipt className="h-4 w-4 text-muted-foreground" />
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -206,7 +214,10 @@ export function AccountingDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sales Income</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <div className="flex items-center gap-1">
+              <SalesIncomeExplanation summary={financialSummary} />
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -225,7 +236,10 @@ export function AccountingDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Operating Expenses</CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-600" />
+            <div className="flex items-center gap-1">
+              <OperatingExpensesExplanation summary={financialSummary} />
+              <TrendingDown className="h-4 w-4 text-red-600" />
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -244,7 +258,10 @@ export function AccountingDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Position</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-1">
+              <NetPositionExplanation summary={financialSummary} />
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </div>
           </CardHeader>
           <CardContent>
             {loading || summaryLoading ? (

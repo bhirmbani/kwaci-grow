@@ -9,12 +9,23 @@
  */
 
 import { TrendingUp, TrendingDown, DollarSign, PieChart, AlertTriangle, CheckCircle } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { formatCurrency } from '@/utils/formatters'
 import type { FinancialSummary } from '@/lib/types/accounting'
+import { 
+  TotalIncomeExplanation, 
+  TotalExpensesExplanation, 
+  NetIncomeExplanation, 
+  CashFlowExplanation 
+} from './FinancialExplanationSheets'
+import { 
+  CostStructureExplanation, 
+  RevenueMixExplanation, 
+  PerformanceExplanation 
+} from './FinancialExplanationSheets2'
 
 interface FinancialSummaryCardsProps {
   summary: FinancialSummary | null
@@ -99,7 +110,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <div className="flex items-center gap-1">
+              <TotalIncomeExplanation summary={summary} />
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
@@ -116,7 +130,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-600" />
+            <div className="flex items-center gap-1">
+              <TotalExpensesExplanation summary={summary} />
+              <TrendingDown className="h-4 w-4 text-red-600" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
@@ -134,7 +151,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Income</CardTitle>
-            <DollarSign className={`h-4 w-4 ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+            <div className="flex items-center gap-1">
+              <NetIncomeExplanation summary={summary} />
+              <DollarSign className={`h-4 w-4 ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+            </div>
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -151,7 +171,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cash Flow</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-1">
+              <CashFlowExplanation summary={summary} />
+              <PieChart className="h-4 w-4 text-muted-foreground" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${summary.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -172,7 +195,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Cost Structure</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium">Cost Structure</CardTitle>
+                <CostStructureExplanation summary={summary} />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
@@ -194,7 +220,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Revenue Mix</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium">Revenue Mix</CardTitle>
+                <RevenueMixExplanation summary={summary} />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
@@ -212,7 +241,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Performance</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium">Performance</CardTitle>
+                <PerformanceExplanation summary={summary} />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
