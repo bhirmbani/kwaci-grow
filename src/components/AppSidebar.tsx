@@ -21,6 +21,7 @@ import {
   Receipt,
   Bug,
   Building2,
+  BookOpen,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -210,6 +211,24 @@ export function AppSidebar() {
                   )}
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Learning & Support</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/learn">
+                    <BookOpen aria-hidden="true" />
+                    <span>Learning Hub</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

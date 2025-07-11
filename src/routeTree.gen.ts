@@ -23,6 +23,7 @@ import { Route as ProductionRouteImport } from './routes/production'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as MenusRouteImport } from './routes/menus'
+import { Route as LearnRouteImport } from './routes/learn'
 import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as DebugAccountingRouteImport } from './routes/debug-accounting'
@@ -108,6 +109,11 @@ const MenusRoute = MenusRouteImport.update({
   path: '/menus',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IngredientsRoute = IngredientsRouteImport.update({
   id: '/ingredients',
   path: '/ingredients',
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
   '/plan': typeof PlanRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
   '/plan': typeof PlanRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
   '/plan': typeof PlanRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/learn'
     | '/menus'
     | '/operations'
     | '/plan'
@@ -302,6 +312,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/learn'
     | '/menus'
     | '/operations'
     | '/plan'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/learn'
     | '/menus'
     | '/operations'
     | '/plan'
@@ -361,6 +373,7 @@ export interface RootRouteChildren {
   DebugAccountingRoute: typeof DebugAccountingRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
   IngredientsRoute: typeof IngredientsRoute
+  LearnRoute: typeof LearnRoute
   MenusRoute: typeof MenusRoute
   OperationsRoute: typeof OperationsRoute
   PlanRoute: typeof PlanRoute
@@ -482,6 +495,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ingredients': {
       id: '/ingredients'
       path: '/ingredients'
@@ -585,6 +605,7 @@ const rootRouteChildren: RootRouteChildren = {
   DebugAccountingRoute: DebugAccountingRoute,
   FixedAssetsRoute: FixedAssetsRoute,
   IngredientsRoute: IngredientsRoute,
+  LearnRoute: LearnRoute,
   MenusRoute: MenusRoute,
   OperationsRoute: OperationsRoute,
   PlanRoute: PlanRoute,
