@@ -20,6 +20,7 @@ import {
   Map,
   CreditCard,
   Receipt,
+  Bug,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -251,6 +252,15 @@ export function AppSidebar() {
                   <Link to="/seed-multi-business">
                     <Database aria-hidden="true" />
                     <span>Multi-Business Seed</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/debug-accounting">
+                    <Bug aria-hidden="true" />
+                    <span>Debug Accounting</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

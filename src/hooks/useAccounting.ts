@@ -83,6 +83,7 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
   const isMountedRef = useRef(true)
 
   useEffect(() => {
+    isMountedRef.current = true
     return () => {
       isMountedRef.current = false
     }
@@ -90,7 +91,10 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
   // Fetch transactions - stable function that doesn't depend on filters
   const fetchTransactions = useCallback(async (filters?: TransactionFilters) => {
+    console.log('useAccounting.fetchTransactions() - Called with:', { currentBusinessId, filters })
+
     if (!currentBusinessId) {
+      console.log('useAccounting.fetchTransactions() - No business ID, clearing transactions')
       setTransactions([])
       setLoading(false)
       return
@@ -104,21 +108,21 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
       const filtersToUse = filters !== undefined ? filters : currentFilters
       const appliedFilters = filtersToUse ? { ...filtersToUse, businessId: currentBusinessId } : undefined
 
+      console.log('useAccounting.fetchTransactions() - Calling AccountingService with:', { currentBusinessId, appliedFilters })
       const data = await AccountingService.getAllTransactions(currentBusinessId, appliedFilters)
+      console.log('useAccounting.fetchTransactions() - Received data:', { count: data.length })
 
-      // Only update state if component is still mounted
-      if (isMountedRef.current) {
-        setTransactions(data)
-      }
+      // Always update state - let React handle component lifecycle
+      console.log('useAccounting.fetchTransactions() - Setting transactions:', { count: data.length })
+      setTransactions(data)
     } catch (err) {
-      // Only update error state if component is still mounted
-      if (isMountedRef.current) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions'
-        setError(errorMessage)
-        console.error('useAccounting.fetchTransactions() - Error:', err)
-      }
+      // Always update error state - let React handle component lifecycle
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions'
+      setError(errorMessage)
+      console.error('useAccounting.fetchTransactions() - Error:', err)
     } finally {
-      // Always reset loading state - this is critical for UI responsiveness
+      // Always reset loading state for UI responsiveness - loading states should always clear
+      console.log('useAccounting.fetchTransactions() - Finally block, clearing loading state')
       setLoading(false)
     }
   }, [currentBusinessId, currentFilters])
@@ -139,17 +143,13 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
       const dateRangeToUse = dateRange !== undefined ? dateRange : currentFilters?.dateRange
       const summary = await AccountingService.getFinancialSummary(currentBusinessId, dateRangeToUse)
 
-      // Only update state if component is still mounted
-      if (isMountedRef.current) {
-        setFinancialSummary(summary)
-      }
+      // Always update state - let React handle component lifecycle
+      setFinancialSummary(summary)
     } catch (err) {
-      // Only update error state if component is still mounted
-      if (isMountedRef.current) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch financial summary'
-        setSummaryError(errorMessage)
-        console.error('useAccounting.fetchFinancialSummary() - Error:', err)
-      }
+      // Always update error state - let React handle component lifecycle
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch financial summary'
+      setSummaryError(errorMessage)
+      console.error('useAccounting.fetchFinancialSummary() - Error:', err)
     } finally {
       // Always reset loading state - this is critical for UI responsiveness
       setSummaryLoading(false)
@@ -228,7 +228,7 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
   // Refetch functions
   const refetch = useCallback(async () => {
-    await fetchTransactions(currentFilters)
+    await fetchTransactions(currentFilters || undefined)
   }, [fetchTransactions, currentFilters])
 
   const refetchSummary = useCallback(async () => {
@@ -261,7 +261,11 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
   // Effect for initial data loading and business context changes
   useEffect(() => {
+    console.log('useAccounting - useEffect triggered:', { currentBusinessId, isMounted: isMountedRef.current })
+
     if (currentBusinessId && isMountedRef.current) {
+      console.log('useAccounting - Fetching data for business:', currentBusinessId)
+
       // Clear previous data immediately when switching businesses
       setTransactions([])
       setFinancialSummary(null)
@@ -270,12 +274,13 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
       // Fetch new data without filters (fresh start)
       Promise.all([
-        fetchTransactions(null), // Pass null to use current filters
+        fetchTransactions(undefined), // Pass undefined to use current filters
         fetchFinancialSummary(undefined) // Pass undefined to use current date range
       ]).catch(err => {
         console.error('useAccounting - Business switch data fetch error:', err)
       })
     } else if (!currentBusinessId && isMountedRef.current) {
+      console.log('useAccounting - No business ID, clearing data')
       setTransactions([])
       setFinancialSummary(null)
       setLoading(false)
@@ -283,7 +288,7 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
       setError(null)
       setSummaryError(null)
     }
-  }, [currentBusinessId]) // Remove function dependencies to prevent loops
+  }, [currentBusinessId, fetchTransactions, fetchFinancialSummary]) // Add function dependencies
 
   // Effect for filter changes - separate to prevent infinite loops
   useEffect(() => {
@@ -311,7 +316,7 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
     const interval = setInterval(() => {
       if (isMountedRef.current) {
         Promise.all([
-          fetchTransactions(currentFilters),
+          fetchTransactions(currentFilters || undefined),
           fetchFinancialSummary(currentFilters?.dateRange)
         ]).catch(err => {
           console.error('useAccounting - Auto-refresh data fetch error:', err)

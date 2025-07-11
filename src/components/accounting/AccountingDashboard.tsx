@@ -27,6 +27,7 @@ export function AccountingDashboard() {
   const [showFilters, setShowFilters] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
+  // Always call useAccounting hook to prevent unmounting issues
   const {
     transactions,
     financialSummary,
@@ -45,8 +46,20 @@ export function AccountingDashboard() {
     enableRealTimeUpdates: true
   })
 
+
+
   // Memoize totals to prevent unnecessary recalculations
   const totals = useMemo(() => getTotalsByType(), [getTotalsByType])
+
+  // Temporary debugging to verify loading states
+  useEffect(() => {
+    console.log('AccountingDashboard - Loading states:', {
+      loading,
+      summaryLoading,
+      transactionCount: transactions.length,
+      hasFinancialSummary: !!financialSummary
+    })
+  }, [loading, summaryLoading, transactions.length, financialSummary])
 
   // Update last refresh time when data changes
   useEffect(() => {
@@ -66,7 +79,7 @@ export function AccountingDashboard() {
     }
   }
 
-  // Handle business not selected
+  // Handle business not selected - render within the same component to prevent unmounting
   if (!currentBusiness) {
     return (
       <div className="space-y-6">
@@ -78,7 +91,7 @@ export function AccountingDashboard() {
             </p>
           </div>
         </div>
-        
+
         <Alert>
           <Receipt className="h-4 w-4" />
           <AlertDescription>

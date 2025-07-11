@@ -29,7 +29,7 @@ function RootComponent() {
         await initializeStore()
 
         // Initialize business context for all services
-        initializeBusinessContext(getCurrentBusinessId)
+        initializeBusinessContext(() => getCurrentBusinessId())
 
         setDbInitialized(true)
 
