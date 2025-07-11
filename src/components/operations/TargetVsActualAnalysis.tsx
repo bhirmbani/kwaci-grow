@@ -20,6 +20,7 @@ import { DailyProductSalesTargetService, type MenuTargetSummary } from '@/lib/se
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
 import { calculateBusinessTimeProgress, calculateExpectedProgress, getCurrentTimeInfo, getSalesTargetStatus } from '@/lib/utils/operationsUtils'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { Branch } from '@/lib/db/schema'
 
 // Use MenuTargetSummary from the service
@@ -48,6 +49,7 @@ interface TargetAnalysis {
 
 
 export function TargetVsActualAnalysis() {
+  const currentBusinessId = useCurrentBusinessId()
   const [analyses, setAnalyses] = useState<TargetAnalysis[]>([])
   const [branches, setBranches] = useState<Branch[]>([])
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
@@ -57,6 +59,8 @@ export function TargetVsActualAnalysis() {
   // Load initial data
   useEffect(() => {
     const loadBranches = async () => {
+      if (!currentBusinessId) return
+
       try {
         const branchesData = await BranchService.getAllBranches()
         setBranches(branchesData.filter(branch => branch.isActive))
@@ -66,11 +70,16 @@ export function TargetVsActualAnalysis() {
     }
 
     loadBranches()
-  }, [])
+  }, [currentBusinessId])
 
   // Load analysis data when date or branch changes
   useEffect(() => {
     const loadAnalysisData = async () => {
+      if (!currentBusinessId) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       try {
         // Get menu target summaries for the selected date
@@ -154,7 +163,7 @@ export function TargetVsActualAnalysis() {
     }
 
     loadAnalysisData()
-  }, [selectedDate, selectedBranch])
+  }, [selectedDate, selectedBranch, currentBusinessId])
 
   const getStatusIcon = (status: TargetAnalysis['status']) => {
     switch (status) {

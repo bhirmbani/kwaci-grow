@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { v4 as uuidv4 } from 'uuid'
+import { getCurrentBusinessId, withBusinessId } from '@/lib/services/businessContext'
 import type { SalesRecord, SalesRecordWithDetails, NewSalesRecord } from '@/lib/db/schema'
 
 export interface SalesRecordSummary {
@@ -21,7 +22,7 @@ export class SalesRecordService {
 
     const newRecord: SalesRecord = {
       id: uuidv4(),
-      ...recordData,
+      ...withBusinessId(recordData),
       createdAt: now,
       updatedAt: now,
     }
@@ -49,18 +50,26 @@ export class SalesRecordService {
    * Get sales records for a specific date and branch
    */
   static async getRecordsForDate(
-    saleDate: string, 
+    saleDate: string,
     branchId?: string
   ): Promise<SalesRecordWithDetails[]> {
     try {
+      const currentBusinessId = getCurrentBusinessId()
+      if (!currentBusinessId) {
+        return []
+      }
+
       let records = await db.salesRecords
         .where('saleDate')
         .equals(saleDate)
         .toArray()
 
-      if (branchId) {
-        records = records.filter(record => record.branchId === branchId)
-      }
+      // Filter by business ID and optionally by branch
+      records = records.filter(record => {
+        if (record.businessId !== currentBusinessId) return false
+        if (branchId && record.branchId !== branchId) return false
+        return true
+      })
 
       // Get related data for each record
       const recordsWithDetails: SalesRecordWithDetails[] = []
@@ -99,14 +108,22 @@ export class SalesRecordService {
     branchId?: string
   ): Promise<SalesRecordWithDetails[]> {
     try {
+      const currentBusinessId = getCurrentBusinessId()
+      if (!currentBusinessId) {
+        return []
+      }
+
       const records = await db.salesRecords
         .where('saleDate')
         .between(startDate, endDate, true, true)
         .toArray()
 
-      const filteredRecords = branchId 
-        ? records.filter(record => record.branchId === branchId)
-        : records
+      // Filter by business ID and optionally by branch
+      const filteredRecords = records.filter(record => {
+        if (record.businessId !== currentBusinessId) return false
+        if (branchId && record.branchId !== branchId) return false
+        return true
+      })
 
       // Get related data for each record
       const recordsWithDetails: SalesRecordWithDetails[] = []

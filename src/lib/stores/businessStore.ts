@@ -117,22 +117,27 @@ export const useBusinessStore = create<BusinessState>()(
 
       initializeStore: async () => {
         if (get().isInitialized) return
-        
+
         set({ isLoading: true })
         try {
           // Load all businesses
           await get().loadBusinesses()
-          
+
+          const { businesses, currentBusiness } = get()
+
           // Check if we need to create a default business (for migration)
-          const { businesses } = get()
           if (businesses.length === 0) {
             const defaultBusiness = await BusinessService.createDefault()
-            set({ 
+            set({
               businesses: [defaultBusiness],
               currentBusiness: defaultBusiness
             })
+          } else if (!currentBusiness) {
+            // If businesses exist but none is selected, select the first one
+            console.log('BusinessStore: Auto-selecting first business:', businesses[0].name)
+            set({ currentBusiness: businesses[0] })
           }
-          
+
           set({ isInitialized: true })
         } catch (error) {
           console.error('Failed to initialize business store:', error)

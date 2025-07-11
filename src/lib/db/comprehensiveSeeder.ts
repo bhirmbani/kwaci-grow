@@ -1373,9 +1373,8 @@ export class ComprehensiveSeeder {
     const now = new Date().toISOString()
     const salesRecords: SalesRecord[] = []
 
-    // Create limited historical sales for the past 7 days AND future 3 days
-    // Reduced for testing - approximately 500 total sales records
-    for (let i = -3; i <= 7; i++) {
+    // Create limited historical sales for the past 10 days to keep total records around 500-1000
+    for (let i = 1; i <= 10; i++) {
       const saleDate = new Date()
       saleDate.setDate(saleDate.getDate() - i)
       const dateStr = saleDate.toISOString().split('T')[0]

@@ -37,6 +37,7 @@ import { SalesTargetService } from '@/lib/services/salesTargetService'
 import { MenuService } from '@/lib/services/menuService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { Branch, MenuWithProducts, Product, MenuProduct } from '@/lib/db/schema'
 
 const salesRecordSchema = z.object({
@@ -58,6 +59,7 @@ interface SalesRecordFormProps {
 }
 
 export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
+  const currentBusinessId = useCurrentBusinessId()
   const [branches, setBranches] = useState<Branch[]>([])
   const [menus, setMenus] = useState<MenuWithProducts[]>([])
   const [availableProducts, setAvailableProducts] = useState<(Product & { menuProduct: MenuProduct })[]>([])
@@ -90,6 +92,8 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
   // Load initial data
   useEffect(() => {
     const loadData = async () => {
+      if (!currentBusinessId) return
+
       try {
         const [branchesData, menusData] = await Promise.all([
           BranchService.getAllBranches(),
@@ -106,7 +110,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
     }
 
     loadData()
-  }, [])
+  }, [currentBusinessId])
 
   // Update available products when menu changes
   useEffect(() => {

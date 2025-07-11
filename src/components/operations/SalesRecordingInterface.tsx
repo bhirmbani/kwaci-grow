@@ -33,9 +33,11 @@ import { SalesRecordForm } from './SalesRecordForm'
 import { SalesRecordService, type SalesRecordSummary } from '@/lib/services/salesRecordService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { SalesRecordWithDetails, Branch } from '@/lib/db/schema'
 
 export function SalesRecordingInterface() {
+  const currentBusinessId = useCurrentBusinessId()
   const [salesRecords, setSalesRecords] = useState<SalesRecordWithDetails[]>([])
   const [salesSummary, setSalesSummary] = useState<SalesRecordSummary>({
     totalSales: 0,
@@ -44,7 +46,13 @@ export function SalesRecordingInterface() {
     topProduct: null,
   })
   const [branches, setBranches] = useState<Branch[]>([])
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  // Default to yesterday since seeding creates records for past dates only
+  const getYesterday = () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    return yesterday
+  }
+  const [selectedDate, setSelectedDate] = useState(format(getYesterday(), 'yyyy-MM-dd'))
   const [selectedBranch, setSelectedBranch] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -52,6 +60,8 @@ export function SalesRecordingInterface() {
   // Load initial data
   useEffect(() => {
     const loadBranches = async () => {
+      if (!currentBusinessId) return
+
       try {
         const branchesData = await BranchService.getAllBranches()
         setBranches(branchesData.filter((branch) => branch.isActive))
@@ -61,11 +71,23 @@ export function SalesRecordingInterface() {
     }
 
     loadBranches()
-  }, [])
+  }, [currentBusinessId])
 
   // Load sales data when date or branch changes
   useEffect(() => {
     const loadSalesData = async () => {
+      if (!currentBusinessId) {
+        setLoading(false)
+        setSalesRecords([])
+        setSalesSummary({
+          totalSales: 0,
+          totalRevenue: 0,
+          averageOrderValue: 0,
+          topProduct: null,
+        })
+        return
+      }
+
       setLoading(true)
       try {
         const [records, summary] = await Promise.all([
@@ -83,12 +105,14 @@ export function SalesRecordingInterface() {
     }
 
     loadSalesData()
-  }, [selectedDate, selectedBranch])
+  }, [selectedDate, selectedBranch, currentBusinessId])
 
   const handleRecordSuccess = () => {
     setSheetOpen(false)
     // Reload data to show the new record
     const loadSalesData = async () => {
+      if (!currentBusinessId) return
+
       try {
         const [records, summary] = await Promise.all([
           SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined),
@@ -107,6 +131,8 @@ export function SalesRecordingInterface() {
 
   return (
     <div className="space-y-6">
+
+
       {/* Filters */}
       <Card>
         <CardHeader>

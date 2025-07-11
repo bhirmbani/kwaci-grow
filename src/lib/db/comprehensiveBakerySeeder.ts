@@ -1719,37 +1719,48 @@ export class ComprehensiveBakerySeeder {
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
       const multiplier = isWeekend ? 1.3 : 1.0 // Higher targets on weekends
 
-      // Create targets for main bakery products
-      const productTargets = [
-        { name: 'Artisan Sourdough Bread', baseTarget: 15 },
-        { name: 'Chocolate Chip Cookies', baseTarget: 25 },
-        { name: 'Vanilla Cupcakes', baseTarget: 20 },
-        { name: 'Cinnamon Rolls', baseTarget: 18 },
-        { name: 'Blueberry Muffins', baseTarget: 22 },
-        { name: 'Croissants', baseTarget: 30 },
-        { name: 'Chocolate Brownies', baseTarget: 15 },
-        { name: 'Apple Pie Slice', baseTarget: 12 }
-      ]
-
-      for (const target of productTargets) {
-        const product = products.find(p => p.name === target.name)
-        const branch = branches.find(b => b.name === 'Main Bakery')
-        
-        if (product && branch) {
-          targets.push({
-            id: uuidv4(),
-            menuId: mainMenu.id,
-            productId: product.id,
-            branchId: branch.id,
-            targetDate: dateStr,
-            targetQuantity: Math.round(target.baseTarget * multiplier),
-            note: `Target for ${product.name} on ${dateStr}`,
-            businessId: this.businessId!,
-            createdAt: now,
-            updatedAt: now
-          })
+      // Create targets for all branches with branch-specific multipliers
+      branches.forEach(branch => {
+        // Branch multipliers for bakery
+        let branchMultiplier = 1
+        switch (branch.name) {
+          case 'Main Bakery': branchMultiplier = 1.5; break
+          case 'Mall Kiosk': branchMultiplier = 1.2; break
+          default: branchMultiplier = 1.0
         }
-      }
+
+        const productTargets = [
+          { name: 'Artisan Sourdough Bread', baseTarget: 15 },
+          { name: 'Chocolate Chip Cookies', baseTarget: 25 },
+          { name: 'Vanilla Cupcakes', baseTarget: 20 },
+          { name: 'Cinnamon Rolls', baseTarget: 18 },
+          { name: 'Blueberry Muffins', baseTarget: 22 },
+          { name: 'Croissants', baseTarget: 30 },
+          { name: 'Chocolate Brownies', baseTarget: 15 },
+          { name: 'Apple Pie Slice', baseTarget: 12 }
+        ]
+
+        for (const target of productTargets) {
+          const product = products.find(p => p.name === target.name)
+
+          if (product) {
+            const finalTarget = Math.round(target.baseTarget * multiplier * branchMultiplier)
+
+            targets.push({
+              id: uuidv4(),
+              menuId: mainMenu.id,
+              productId: product.id,
+              branchId: branch.id,
+              targetDate: dateStr,
+              targetQuantity: finalTarget,
+              note: `Bakery target for ${product.name} at ${branch.name} on ${dateStr}`,
+              businessId: this.businessId!,
+              createdAt: now,
+              updatedAt: now
+            })
+          }
+        }
+      })
     }
 
     await db.dailyProductSalesTargets.bulkAdd(targets)
@@ -1768,19 +1779,19 @@ export class ComprehensiveBakerySeeder {
     const now = new Date().toISOString()
     const salesRecords: SalesRecord[] = []
 
-    // Create comprehensive historical sales for the past 30 days
-    for (let i = 1; i <= 30; i++) {
+    // Create limited historical sales for the past 15 days to keep total records around 500-1000
+    for (let i = 1; i <= 15; i++) {
       const saleDate = new Date()
       saleDate.setDate(saleDate.getDate() - i)
       const dateStr = saleDate.toISOString().split('T')[0]
-
-      // Different sales patterns for different days
       const dayOfWeek = saleDate.getDay()
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
-      const salesMultiplier = isWeekend ? 1.4 : 1.0
 
       // Generate sales for each branch
       for (const branch of branches) {
+        // Get business hours for this branch (bakery hours: 6 AM - 8 PM)
+        const businessHours = this.getBranchBusinessHours(branch)
+
         // Get menus for this branch
         const branchMenus = menus.filter(menu => {
           if (branch.name === 'Main Bakery') return menu.name === 'Main Bakery Menu'
@@ -1790,44 +1801,52 @@ export class ComprehensiveBakerySeeder {
 
         for (const menu of branchMenus) {
           const branchMenuProducts = menuProducts.filter(mp => mp.menuId === menu.id)
-          
-          for (const menuProduct of branchMenuProducts) {
-            const product = products.find(p => p.id === menuProduct.productId)
-            if (!product) continue
+          if (branchMenuProducts.length === 0) continue
 
-            // Base sales quantities for different products
-            let baseSales = 0
-            switch (product.name) {
-              case 'Artisan Sourdough Bread': baseSales = Math.floor(Math.random() * 8) + 5; break
-              case 'Chocolate Chip Cookies': baseSales = Math.floor(Math.random() * 15) + 10; break
-              case 'Vanilla Cupcakes': baseSales = Math.floor(Math.random() * 12) + 8; break
-              case 'Cinnamon Rolls': baseSales = Math.floor(Math.random() * 10) + 7; break
-              case 'Blueberry Muffins': baseSales = Math.floor(Math.random() * 14) + 9; break
-              case 'Croissants': baseSales = Math.floor(Math.random() * 18) + 12; break
-              case 'Chocolate Brownies': baseSales = Math.floor(Math.random() * 8) + 5; break
-              case 'Apple Pie Slice': baseSales = Math.floor(Math.random() * 6) + 4; break
-              default: baseSales = Math.floor(Math.random() * 5) + 2
-            }
+          // Determine menu operating hours
+          const menuHours = this.getMenuOperatingHours(menu, businessHours)
+          if (!menuHours) continue
 
-            const quantity = Math.max(1, Math.round(baseSales * salesMultiplier))
-            const totalAmount = quantity * menuProduct.price
+          // Generate realistic sales throughout the menu's operating hours
+          const salesTimes = this.generateBakerySpecificSalesTimes(
+            saleDate,
+            branch,
+            menu,
+            menuHours,
+            isWeekend
+          )
 
-            salesRecords.push({
-              id: uuidv4(),
-              menuId: menu.id,
-              productId: product.id,
-              branchId: branch.id,
-              saleDate: dateStr,
-              saleTime: `${Math.floor(Math.random() * 12) + 8}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}:00`,
-              quantity,
-              unitPrice: menuProduct.price,
-              totalAmount,
-              note: `Sale of ${product.name}`,
-              businessId: this.businessId!,
-              createdAt: now,
-              updatedAt: now
+          salesTimes.forEach(saleTime => {
+            // Select products based on menu and time-based popularity for bakery
+            const selectedProducts = this.selectBakeryProductsForTimeSlot(
+              branchMenuProducts,
+              saleTime,
+              menu.name
+            )
+
+            selectedProducts.forEach(({ menuProduct, quantity }) => {
+              const product = products.find(p => p.id === menuProduct.productId)
+              if (!product) return
+
+              const totalAmount = menuProduct.price * quantity
+
+              salesRecords.push({
+                id: uuidv4(),
+                menuId: menu.id,
+                productId: product.id,
+                branchId: branch.id,
+                saleDate: dateStr,
+                saleTime: saleTime,
+                quantity: quantity,
+                unitPrice: menuProduct.price,
+                totalAmount: totalAmount,
+                note: `Bakery sale at ${branch.name} - ${menu.name}`,
+                businessId: this.businessId!,
+                createdAt: now,
+                updatedAt: now
+              })
             })
-          }
+          })
         }
       }
     }
@@ -2284,6 +2303,164 @@ export class ComprehensiveBakerySeeder {
     ]
 
     await db.planMetrics.bulkAdd(planMetrics)
+  }
+
+  // Bakery-specific business hours and sales patterns
+  private getBranchBusinessHours(branch: Branch): { open: number; close: number } {
+    // Bakery hours: 6 AM - 8 PM (different from coffee shop)
+    switch (branch.name) {
+      case 'Main Bakery': return { open: 6, close: 20 }
+      case 'Mall Kiosk': return { open: 8, close: 22 }
+      default: return { open: 7, close: 19 }
+    }
+  }
+
+  private getMenuOperatingHours(menu: Menu, businessHours: { open: number; close: number }): { start: number; end: number } | null {
+    // Bakery menus operate during full business hours
+    switch (menu.name) {
+      case 'Main Bakery Menu': return { start: businessHours.open, end: businessHours.close }
+      case 'Express Menu': return { start: businessHours.open, end: businessHours.close }
+      default: return { start: businessHours.open, end: businessHours.close }
+    }
+  }
+
+  private generateBakerySpecificSalesTimes(
+    date: Date,
+    branch: Branch,
+    menu: Menu,
+    menuHours: { start: number; end: number },
+    isWeekend: boolean
+  ): string[] {
+    const times: string[] = []
+    const dayOfWeek = date.getDay()
+
+    // Bakery peak hours: 7-10 AM (morning rush), 3-6 PM (afternoon/evening)
+    const morningRushStart = 7
+    const morningRushEnd = 10
+    const afternoonRushStart = 15
+    const afternoonRushEnd = 18
+
+    // Generate sales throughout the day with realistic bakery patterns
+    for (let hour = menuHours.start; hour < menuHours.end; hour++) {
+      let salesInHour = 0
+
+      // Determine sales frequency based on time and day
+      if (hour >= morningRushStart && hour <= morningRushEnd) {
+        // Morning rush - fresh bread and pastries
+        salesInHour = isWeekend ? 4 : 6
+      } else if (hour >= afternoonRushStart && hour <= afternoonRushEnd) {
+        // Afternoon rush - desserts and treats
+        salesInHour = isWeekend ? 5 : 4
+      } else if (hour >= 11 && hour <= 14) {
+        // Lunch time - moderate sales
+        salesInHour = 2
+      } else {
+        // Off-peak hours
+        salesInHour = 1
+      }
+
+      // Weekend adjustment
+      if (isWeekend) {
+        salesInHour = Math.round(salesInHour * 1.3)
+      }
+
+      // Branch-specific multipliers
+      switch (branch.name) {
+        case 'Main Bakery': salesInHour = Math.round(salesInHour * 1.5); break
+        case 'Mall Kiosk': salesInHour = Math.round(salesInHour * 1.2); break
+      }
+
+      // Generate random times within the hour
+      for (let i = 0; i < salesInHour; i++) {
+        const minute = Math.floor(Math.random() * 60)
+        const second = Math.floor(Math.random() * 60)
+        times.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`)
+      }
+    }
+
+    return times
+  }
+
+  private selectBakeryProductsForTimeSlot(
+    menuProducts: MenuProduct[],
+    saleTime: string,
+    menuName: string
+  ): Array<{ menuProduct: MenuProduct; quantity: number }> {
+    const hour = parseInt(saleTime.split(':')[0])
+    const selections: Array<{ menuProduct: MenuProduct; quantity: number }> = []
+
+    // Number of products in this sale (usually 1-2 for bakery)
+    const numProducts = Math.random() < 0.8 ? 1 : 2
+
+    for (let i = 0; i < numProducts; i++) {
+      // Select product based on time and menu for bakery
+      const selectedMenuProduct = this.selectBakeryProductForTimeAndMenu(menuProducts, hour, menuName)
+      if (selectedMenuProduct) {
+        const quantity = Math.random() < 0.9 ? 1 : Math.random() < 0.8 ? 2 : 3
+        selections.push({ menuProduct: selectedMenuProduct, quantity })
+      }
+    }
+
+    return selections
+  }
+
+  private selectBakeryProductForTimeAndMenu(menuProducts: MenuProduct[], hour: number, menuName: string): MenuProduct | null {
+    if (menuProducts.length === 0) return null
+
+    // Time-based product preferences for bakery
+    const timePreferences: { [key: string]: number } = {}
+
+    if (hour >= 6 && hour <= 10) {
+      // Morning preferences - fresh bread and breakfast items
+      timePreferences['Artisan Sourdough Bread'] = 4
+      timePreferences['Croissants'] = 4
+      timePreferences['Cinnamon Rolls'] = 3
+      timePreferences['Blueberry Muffins'] = 3
+      timePreferences['Vanilla Cupcakes'] = 1
+    } else if (hour >= 11 && hour <= 14) {
+      // Lunch preferences - light items
+      timePreferences['Croissants'] = 2
+      timePreferences['Artisan Sourdough Bread'] = 2
+      timePreferences['Chocolate Chip Cookies'] = 2
+      timePreferences['Apple Pie Slice'] = 1
+    } else if (hour >= 15 && hour <= 18) {
+      // Afternoon/evening preferences - desserts and treats
+      timePreferences['Chocolate Chip Cookies'] = 4
+      timePreferences['Vanilla Cupcakes'] = 4
+      timePreferences['Chocolate Brownies'] = 3
+      timePreferences['Apple Pie Slice'] = 3
+      timePreferences['Cinnamon Rolls'] = 2
+    } else {
+      // Off-peak preferences
+      timePreferences['Chocolate Chip Cookies'] = 2
+      timePreferences['Vanilla Cupcakes'] = 2
+      timePreferences['Artisan Sourdough Bread'] = 1
+    }
+
+    // Create weighted array of menu products
+    const weightedProducts: MenuProduct[] = []
+
+    menuProducts.forEach(mp => {
+      // Find the product to get its name
+      const productName = this.getBakeryProductNameById(mp.productId)
+      const weight = timePreferences[productName] || 1
+
+      for (let w = 0; w < weight; w++) {
+        weightedProducts.push(mp)
+      }
+    })
+
+    return weightedProducts[Math.floor(Math.random() * weightedProducts.length)]
+  }
+
+  private getBakeryProductNameById(productId: string): string {
+    // This is a simplified lookup - in a real implementation, you'd cache the products
+    // For now, we'll use a simple mapping based on common bakery product names
+    const productNames = [
+      'Artisan Sourdough Bread', 'Chocolate Chip Cookies', 'Vanilla Cupcakes',
+      'Cinnamon Rolls', 'Blueberry Muffins', 'Croissants', 'Chocolate Brownies', 'Apple Pie Slice'
+    ]
+    return productNames[Math.floor(Math.random() * productNames.length)]
   }
 }
 

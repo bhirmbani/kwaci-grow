@@ -28,6 +28,7 @@ import { DailyProductSalesTargetService, type MenuTargetSummary } from '@/lib/se
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
 import { calculateBusinessTimeProgress, calculateExpectedProgress, getCurrentTimeInfo, getSalesTargetStatus } from '@/lib/utils/operationsUtils'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { Branch, SalesRecordWithDetails } from '@/lib/db/schema'
 
 interface AnalyticsFilters {
@@ -38,13 +39,14 @@ interface AnalyticsFilters {
 }
 
 export function AnalyticsDashboard() {
+  const currentBusinessId = useCurrentBusinessId()
   const [filters, setFilters] = useState<AnalyticsFilters>({
     startDate: format(new Date(), 'yyyy-MM-dd'),
     endDate: format(new Date(), 'yyyy-MM-dd'),
     branchId: '',
     timeRange: 'today'
   })
-  
+
   const [branches, setBranches] = useState<Branch[]>([])
   const [hourlyData, setHourlyData] = useState<HourlyData[]>([])
   const [productData, setProductData] = useState<ProductData[]>([])
@@ -55,6 +57,8 @@ export function AnalyticsDashboard() {
   // Load initial data
   useEffect(() => {
     const loadBranches = async () => {
+      if (!currentBusinessId) return
+
       try {
         const branchesData = await BranchService.getAllBranches()
         setBranches(branchesData.filter(branch => branch.isActive))
@@ -64,7 +68,7 @@ export function AnalyticsDashboard() {
     }
 
     loadBranches()
-  }, [])
+  }, [currentBusinessId])
 
   // Update date range when time range preset changes
   useEffect(() => {
@@ -95,6 +99,11 @@ export function AnalyticsDashboard() {
   // Load analytics data when filters change
   useEffect(() => {
     const loadAnalyticsData = async () => {
+      if (!currentBusinessId) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       try {
         // Get sales records for the date range
@@ -210,7 +219,7 @@ export function AnalyticsDashboard() {
     }
 
     loadAnalyticsData()
-  }, [filters])
+  }, [filters, currentBusinessId])
 
   const handleTimeRangeChange = (timeRange: AnalyticsFilters['timeRange']) => {
     setFilters(prev => ({ ...prev, timeRange }))

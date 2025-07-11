@@ -29,6 +29,7 @@ import { DailyProductSalesTargetService } from '@/lib/services/dailyProductSales
 import { BranchService } from '@/lib/services/branchService'
 import { MenuService } from '@/lib/services/menuService'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { Branch, MenuWithProducts, SalesRecordWithDetails } from '@/lib/db/schema'
 
 interface ProductProjection {
@@ -54,6 +55,7 @@ interface ProjectionSummary {
 }
 
 export function EnhancedProjectionTable() {
+  const currentBusinessId = useCurrentBusinessId()
   const [branches, setBranches] = useState<Branch[]>([])
   const [menus, setMenus] = useState<MenuWithProducts[]>([])
   const [selectedBranch, setSelectedBranch] = useState<string>('')
@@ -61,7 +63,7 @@ export function EnhancedProjectionTable() {
   const [referenceDate, setReferenceDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [daysPerMonth, setDaysPerMonth] = useState(30)
   const [useActualData, setUseActualData] = useState(true)
-  
+
   const [projections, setProjections] = useState<ProductProjection[]>([])
   const [summary, setSummary] = useState<ProjectionSummary>({
     totalDailyRevenue: 0,
@@ -77,6 +79,8 @@ export function EnhancedProjectionTable() {
   // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
+      if (!currentBusinessId) return
+
       try {
         const [branchesData, menusData] = await Promise.all([
           BranchService.getAllBranches(),
@@ -93,12 +97,12 @@ export function EnhancedProjectionTable() {
     }
 
     loadInitialData()
-  }, [])
+  }, [currentBusinessId])
 
   // Calculate projections when parameters change
   useEffect(() => {
     const calculateProjections = async () => {
-      if (!selectedBranch || !selectedMenu) {
+      if (!currentBusinessId || !selectedBranch || !selectedMenu) {
         setProjections([])
         setSummary({
           totalDailyRevenue: 0,
@@ -191,7 +195,7 @@ export function EnhancedProjectionTable() {
     }
 
     calculateProjections()
-  }, [selectedBranch, selectedMenu, referenceDate, daysPerMonth, useActualData, menus])
+  }, [selectedBranch, selectedMenu, referenceDate, daysPerMonth, useActualData, menus, currentBusinessId])
 
   const getPerformanceColor = (performance: number) => {
     if (performance >= 100) return 'text-green-600'
