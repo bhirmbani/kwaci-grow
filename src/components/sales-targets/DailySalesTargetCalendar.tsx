@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
-import { PlusIcon, Target, Calendar as CalendarIcon } from "lucide-react"
+import { Target, Calendar as CalendarIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from "@/components/ui/badge"
@@ -47,7 +47,7 @@ export default function DailySalesTargetCalendar({
 
     try {
       const branch = await BranchService.getById(branchId)
-      const isValid = branch && branch.businessId === currentBusinessId
+      const isValid = !!(branch && branch.businessId === currentBusinessId)
       setIsValidBranch(isValid)
 
       if (!isValid) {
@@ -182,13 +182,13 @@ export default function DailySalesTargetCalendar({
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
-  }
-
-  const handleAddTarget = () => {
-    if (selectedDate && onAddTarget) {
-      onAddTarget(selectedDate)
+    // Trigger the same functionality as the plus button when clicking on a date
+    if (date && onAddTarget) {
+      onAddTarget(date)
     }
   }
+
+
 
   // Show message when branch is invalid
   if (!currentBusinessId || !branchId || !isValidBranch) {
@@ -279,24 +279,12 @@ export default function DailySalesTargetCalendar({
       
       <Card className="w-full max-w-2xl">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-medium">
-              {selectedDate?.toLocaleDateString("en-US", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-6"
-              title="Add Target"
-              onClick={handleAddTarget}
-            >
-              <PlusIcon />
-              <span className="sr-only">Add Target</span>
-            </Button>
+          <div className="text-sm font-medium">
+            {selectedDate?.toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </div>
         </CardHeader>
         <CardContent className="px-3">
