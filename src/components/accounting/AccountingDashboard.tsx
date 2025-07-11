@@ -5,7 +5,7 @@
  * Provides financial overview, transaction management, and quick actions.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Plus, Filter, Download, TrendingUp, TrendingDown, DollarSign, Receipt, RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,9 @@ export function AccountingDashboard() {
     refreshInterval: 60000, // 1 minute
     enableRealTimeUpdates: true
   })
+
+  // Memoize totals to prevent unnecessary recalculations
+  const totals = useMemo(() => getTotalsByType(), [getTotalsByType])
 
   // Update last refresh time when data changes
   useEffect(() => {
@@ -112,8 +115,6 @@ export function AccountingDashboard() {
       </div>
     )
   }
-
-  const totals = getTotalsByType()
 
   return (
     <div className="space-y-6">

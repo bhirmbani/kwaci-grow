@@ -9,7 +9,7 @@
  * - Filtering and search capabilities
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { AccountingService } from '@/lib/services/accountingService'
 import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type {
@@ -79,8 +79,17 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
   const [summaryError, setSummaryError] = useState<string | null>(null)
   const [currentFilters, setCurrentFilters] = useState<TransactionFilters | null>(initialFilters || null)
 
-  // Fetch transactions
-  const fetchTransactions = useCallback(async () => {
+  // Ref to track if component is mounted (prevent state updates after unmount)
+  const isMountedRef = useRef(true)
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  // Fetch transactions - stable function that doesn't depend on filters
+  const fetchTransactions = useCallback(async (filters?: TransactionFilters) => {
     if (!currentBusinessId) {
       setTransactions([])
       setLoading(false)
@@ -90,22 +99,32 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
     try {
       setError(null)
       setLoading(true)
-      
-      const filters = currentFilters ? { ...currentFilters, businessId: currentBusinessId } : undefined
-      const data = await AccountingService.getAllTransactions(currentBusinessId, filters)
-      
-      setTransactions(data)
+
+      // Use provided filters or current filters
+      const filtersToUse = filters !== undefined ? filters : currentFilters
+      const appliedFilters = filtersToUse ? { ...filtersToUse, businessId: currentBusinessId } : undefined
+
+      const data = await AccountingService.getAllTransactions(currentBusinessId, appliedFilters)
+
+      // Only update state if component is still mounted
+      if (isMountedRef.current) {
+        setTransactions(data)
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions'
-      setError(errorMessage)
-      console.error('useAccounting.fetchTransactions() - Error:', err)
+      // Only update error state if component is still mounted
+      if (isMountedRef.current) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch transactions'
+        setError(errorMessage)
+        console.error('useAccounting.fetchTransactions() - Error:', err)
+      }
     } finally {
+      // Always reset loading state - this is critical for UI responsiveness
       setLoading(false)
     }
   }, [currentBusinessId, currentFilters])
 
-  // Fetch financial summary
-  const fetchFinancialSummary = useCallback(async () => {
+  // Fetch financial summary - stable function that doesn't create dependency loops
+  const fetchFinancialSummary = useCallback(async (dateRange?: { start: string; end: string }) => {
     if (!currentBusinessId) {
       setFinancialSummary(null)
       setSummaryLoading(false)
@@ -115,16 +134,24 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
     try {
       setSummaryError(null)
       setSummaryLoading(true)
-      
-      const dateRange = currentFilters?.dateRange
-      const summary = await AccountingService.getFinancialSummary(currentBusinessId, dateRange)
-      
-      setFinancialSummary(summary)
+
+      // Use provided date range or current filters date range
+      const dateRangeToUse = dateRange !== undefined ? dateRange : currentFilters?.dateRange
+      const summary = await AccountingService.getFinancialSummary(currentBusinessId, dateRangeToUse)
+
+      // Only update state if component is still mounted
+      if (isMountedRef.current) {
+        setFinancialSummary(summary)
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch financial summary'
-      setSummaryError(errorMessage)
-      console.error('useAccounting.fetchFinancialSummary() - Error:', err)
+      // Only update error state if component is still mounted
+      if (isMountedRef.current) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch financial summary'
+        setSummaryError(errorMessage)
+        console.error('useAccounting.fetchFinancialSummary() - Error:', err)
+      }
     } finally {
+      // Always reset loading state - this is critical for UI responsiveness
       setSummaryLoading(false)
     }
   }, [currentBusinessId, currentFilters?.dateRange])
@@ -201,12 +228,12 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
   // Refetch functions
   const refetch = useCallback(async () => {
-    await fetchTransactions()
-  }, [fetchTransactions])
+    await fetchTransactions(currentFilters)
+  }, [fetchTransactions, currentFilters])
 
   const refetchSummary = useCallback(async () => {
-    await fetchFinancialSummary()
-  }, [fetchFinancialSummary])
+    await fetchFinancialSummary(currentFilters?.dateRange)
+  }, [fetchFinancialSummary, currentFilters?.dateRange])
 
   // Utility functions
   const getTransactionsByType = useCallback((type: TransactionType) => {
@@ -234,26 +261,66 @@ export function useAccounting(options: UseAccountingOptions = {}): UseAccounting
 
   // Effect for initial data loading and business context changes
   useEffect(() => {
-    if (currentBusinessId) {
-      Promise.all([fetchTransactions(), fetchFinancialSummary()])
-    } else {
+    if (currentBusinessId && isMountedRef.current) {
+      // Clear previous data immediately when switching businesses
+      setTransactions([])
+      setFinancialSummary(null)
+      setError(null)
+      setSummaryError(null)
+
+      // Fetch new data without filters (fresh start)
+      Promise.all([
+        fetchTransactions(null), // Pass null to use current filters
+        fetchFinancialSummary(undefined) // Pass undefined to use current date range
+      ]).catch(err => {
+        console.error('useAccounting - Business switch data fetch error:', err)
+      })
+    } else if (!currentBusinessId && isMountedRef.current) {
       setTransactions([])
       setFinancialSummary(null)
       setLoading(false)
       setSummaryLoading(false)
+      setError(null)
+      setSummaryError(null)
     }
-  }, [currentBusinessId, fetchTransactions, fetchFinancialSummary])
+  }, [currentBusinessId]) // Remove function dependencies to prevent loops
+
+  // Effect for filter changes - separate to prevent infinite loops
+  useEffect(() => {
+    if (currentBusinessId && currentFilters && isMountedRef.current) {
+      // Debounce filter changes to prevent excessive API calls
+      const timeoutId = setTimeout(() => {
+        if (isMountedRef.current) {
+          Promise.all([
+            fetchTransactions(currentFilters),
+            fetchFinancialSummary(currentFilters.dateRange)
+          ]).catch(err => {
+            console.error('useAccounting - Filter change data fetch error:', err)
+          })
+        }
+      }, 300)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [currentFilters, currentBusinessId]) // Remove function dependencies
 
   // Effect for auto-refresh
   useEffect(() => {
-    if (!autoRefresh || !currentBusinessId) return
+    if (!autoRefresh || !currentBusinessId || !isMountedRef.current) return
 
     const interval = setInterval(() => {
-      Promise.all([fetchTransactions(), fetchFinancialSummary()])
+      if (isMountedRef.current) {
+        Promise.all([
+          fetchTransactions(currentFilters),
+          fetchFinancialSummary(currentFilters?.dateRange)
+        ]).catch(err => {
+          console.error('useAccounting - Auto-refresh data fetch error:', err)
+        })
+      }
     }, refreshInterval)
 
     return () => clearInterval(interval)
-  }, [autoRefresh, refreshInterval, currentBusinessId, fetchTransactions, fetchFinancialSummary])
+  }, [autoRefresh, refreshInterval, currentBusinessId]) // Remove function dependencies
 
   // Memoized return value for performance
   return useMemo(() => ({
