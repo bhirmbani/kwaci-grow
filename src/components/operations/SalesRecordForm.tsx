@@ -33,7 +33,6 @@ import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 
 import { SalesRecordService } from '@/lib/services/salesRecordService'
-import { SalesTargetService } from '@/lib/services/salesTargetService'
 import { MenuService } from '@/lib/services/menuService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
@@ -145,9 +144,15 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
   }, [selectedProductId, availableProducts, setValue])
 
   const onSubmit = async (data: SalesRecordData) => {
+    if (!currentBusinessId) {
+      console.error('No business selected')
+      return
+    }
+
     try {
       await SalesRecordService.createRecord({
         ...data,
+        businessId: currentBusinessId,
         totalAmount,
         note: data.note || '',
       })
@@ -372,9 +377,11 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
                   <Input
                     type="number"
                     min="0"
-                    step="1000"
+                    step="any"
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    readOnly={!!selectedProductId}
+                    className={selectedProductId ? "bg-muted" : ""}
                   />
                 </FormControl>
                 <FormMessage />
