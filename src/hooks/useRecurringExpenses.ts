@@ -40,29 +40,34 @@ export function useRecurringExpenses(includeInactive = false): UseRecurringExpen
 
   // Load data from database
   const loadData = useCallback(async () => {
+    if (!currentBusinessId) {
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)
 
       // Load expenses
-      const expensesData = includeInactive 
-        ? await RecurringExpensesService.getAll()
-        : await RecurringExpensesService.getActive()
+      const expensesData = includeInactive
+        ? await RecurringExpensesService.getAll(currentBusinessId)
+        : await RecurringExpensesService.getActive(currentBusinessId)
       
       setExpenses(expensesData)
 
       // Load categories
-      const categoriesData = await RecurringExpensesService.getCategories()
+      const categoriesData = await RecurringExpensesService.getCategories(currentBusinessId)
       setCategories(categoriesData)
 
       // Load totals
-      const monthlyTotalData = await RecurringExpensesService.getMonthlyTotal()
-      const yearlyTotalData = await RecurringExpensesService.getYearlyTotal()
+      const monthlyTotalData = await RecurringExpensesService.getMonthlyTotal(currentBusinessId)
+      const yearlyTotalData = await RecurringExpensesService.getYearlyTotal(currentBusinessId)
       setMonthlyTotal(monthlyTotalData)
       setYearlyTotal(yearlyTotalData)
 
       // Load category totals
-      const categoryTotalsData = await RecurringExpensesService.getTotalsByCategory()
+      const categoryTotalsData = await RecurringExpensesService.getTotalsByCategory(currentBusinessId)
       setCategoryTotals(categoryTotalsData)
 
     } catch (err) {
@@ -80,9 +85,18 @@ export function useRecurringExpenses(includeInactive = false): UseRecurringExpen
 
   // CRUD operations
   const createExpense = useCallback(async (expense: NewRecurringExpense): Promise<RecurringExpense> => {
+    if (!currentBusinessId) {
+      throw new Error('No business selected')
+    }
+
     try {
       setError(null)
-      const created = await RecurringExpensesService.create(expense)
+      // Ensure the expense has the correct businessId
+      const expenseWithBusinessId = {
+        ...expense,
+        businessId: currentBusinessId
+      }
+      const created = await RecurringExpensesService.create(expenseWithBusinessId)
       await loadData() // Refresh all data
       return created
     } catch (err) {
@@ -90,7 +104,7 @@ export function useRecurringExpenses(includeInactive = false): UseRecurringExpen
       setError(errorMessage)
       throw new Error(errorMessage)
     }
-  }, [loadData])
+  }, [currentBusinessId, loadData])
 
   const updateExpense = useCallback(async (id: string, updates: Partial<Omit<RecurringExpense, 'id' | 'createdAt'>>): Promise<RecurringExpense> => {
     try {

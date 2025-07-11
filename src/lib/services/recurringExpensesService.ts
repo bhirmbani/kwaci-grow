@@ -3,11 +3,18 @@ import { type RecurringExpense, type NewRecurringExpense } from '../db/schema'
 
 export class RecurringExpensesService {
   // Get all recurring expenses
-  static async getAll(): Promise<RecurringExpense[]> {
+  static async getAll(businessId?: string): Promise<RecurringExpense[]> {
     try {
-      return await db.recurringExpenses
-        .orderBy('createdAt')
-        .toArray()
+      if (businessId) {
+        // Use where().equals().toArray() and sort in JavaScript
+        const expenses = await db.recurringExpenses.where('businessId').equals(businessId).toArray()
+        // Sort by createdAt in JavaScript
+        return expenses.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      } else {
+        return await db.recurringExpenses
+          .orderBy('createdAt')
+          .toArray()
+      }
     } catch (error) {
       console.error('Failed to get all recurring expenses:', error)
       if (error instanceof Error && error.message.includes('IDBKeyRange')) {
@@ -18,13 +25,11 @@ export class RecurringExpensesService {
   }
 
   // Get active recurring expenses only
-  static async getActive(): Promise<RecurringExpense[]> {
+  static async getActive(businessId?: string): Promise<RecurringExpense[]> {
     try {
-      // Use toArray() and filter manually to avoid IDBKeyRange issues
-      const allExpenses = await db.recurringExpenses.toArray()
-      return allExpenses
-        .filter(expense => expense.isActive)
-        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      // Use business-aware getAll and then filter for active
+      const allExpenses = await this.getAll(businessId)
+      return allExpenses.filter(expense => expense.isActive)
     } catch (error) {
       console.error('Failed to get active recurring expenses:', error)
       if (error instanceof Error && error.message.includes('IDBKeyRange')) {
@@ -35,12 +40,11 @@ export class RecurringExpensesService {
   }
 
   // Get recurring expenses by category
-  static async getByCategory(category: string): Promise<RecurringExpense[]> {
+  static async getByCategory(category: string, businessId?: string): Promise<RecurringExpense[]> {
     try {
-      const allExpenses = await db.recurringExpenses.toArray()
-      return allExpenses
-        .filter(expense => expense.category === category && expense.isActive)
-        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      // Use business-aware getActive and then filter by category
+      const activeExpenses = await this.getActive(businessId)
+      return activeExpenses.filter(expense => expense.category === category)
     } catch (error) {
       console.error('Failed to get recurring expenses by category:', error)
       throw error
@@ -48,12 +52,11 @@ export class RecurringExpensesService {
   }
 
   // Get recurring expenses by frequency
-  static async getByFrequency(frequency: 'monthly' | 'yearly'): Promise<RecurringExpense[]> {
+  static async getByFrequency(frequency: 'monthly' | 'yearly', businessId?: string): Promise<RecurringExpense[]> {
     try {
-      const allExpenses = await db.recurringExpenses.toArray()
-      return allExpenses
-        .filter(expense => expense.frequency === frequency && expense.isActive)
-        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      // Use business-aware getActive and then filter by frequency
+      const activeExpenses = await this.getActive(businessId)
+      return activeExpenses.filter(expense => expense.frequency === frequency)
     } catch (error) {
       console.error('Failed to get recurring expenses by frequency:', error)
       throw error
@@ -118,15 +121,15 @@ export class RecurringExpensesService {
   }
 
   // Get all unique categories
-  static async getCategories(): Promise<string[]> {
-    const expenses = await this.getActive()
+  static async getCategories(businessId?: string): Promise<string[]> {
+    const expenses = await this.getActive(businessId)
     const categories = [...new Set(expenses.map(expense => expense.category))]
     return categories.sort()
   }
 
   // Calculate monthly total for all active expenses
-  static async getMonthlyTotal(): Promise<number> {
-    const expenses = await this.getActive()
+  static async getMonthlyTotal(businessId?: string): Promise<number> {
+    const expenses = await this.getActive(businessId)
     return expenses.reduce((total, expense) => {
       if (expense.frequency === 'monthly') {
         return total + expense.amount
@@ -138,8 +141,8 @@ export class RecurringExpensesService {
   }
 
   // Calculate yearly total for all active expenses
-  static async getYearlyTotal(): Promise<number> {
-    const expenses = await this.getActive()
+  static async getYearlyTotal(businessId?: string): Promise<number> {
+    const expenses = await this.getActive(businessId)
     return expenses.reduce((total, expense) => {
       if (expense.frequency === 'monthly') {
         return total + (expense.amount * 12)
@@ -151,13 +154,13 @@ export class RecurringExpensesService {
   }
 
   // Get totals by category
-  static async getTotalsByCategory(): Promise<{ category: string; monthly: number; yearly: number }[]> {
-    const expenses = await this.getActive()
+  static async getTotalsByCategory(businessId?: string): Promise<{ category: string; monthly: number; yearly: number }[]> {
+    const expenses = await this.getActive(businessId)
     const categoryTotals = new Map<string, { monthly: number; yearly: number }>()
 
     expenses.forEach(expense => {
       const existing = categoryTotals.get(expense.category) || { monthly: 0, yearly: 0 }
-      
+
       if (expense.frequency === 'monthly') {
         existing.monthly += expense.amount
         existing.yearly += expense.amount * 12
@@ -176,24 +179,22 @@ export class RecurringExpensesService {
   }
 
   // Get expenses that are currently active (within date range)
-  static async getCurrentlyActiveExpenses(): Promise<RecurringExpense[]> {
+  static async getCurrentlyActiveExpenses(businessId?: string): Promise<RecurringExpense[]> {
     const now = new Date()
     const today = now.toISOString().split('T')[0] // YYYY-MM-DD format
 
-    return await db.recurringExpenses
-      .where('isActive')
-      .equals(true)
-      .and(expense => {
-        const startDate = expense.startDate
-        const endDate = expense.endDate
+    // Use business-aware getActive and then filter by date range
+    const activeExpenses = await this.getActive(businessId)
+    return activeExpenses.filter(expense => {
+      const startDate = expense.startDate
+      const endDate = expense.endDate
 
-        // Check if expense is within its active date range
-        const isAfterStart = today >= startDate
-        const isBeforeEnd = !endDate || today <= endDate
+      // Check if expense is within its active date range
+      const isAfterStart = today >= startDate
+      const isBeforeEnd = !endDate || today <= endDate
 
-        return isAfterStart && isBeforeEnd
-      })
-      .sortBy('createdAt')
+      return isAfterStart && isBeforeEnd
+    })
   }
 
   // Bulk operations
