@@ -151,44 +151,18 @@ export class ComprehensiveBakerySeeder {
     this.updateProgress('Financial Items', 'Creating bakery financial items...')
 
     const now = new Date().toISOString()
+
+    // Only create initial capital and depreciation entries here
+    // Operational expenses should be in RecurringExpenses
+    // Asset purchases will be created when fixed assets are seeded
     const financialItems: FinancialItem[] = [
       {
         id: uuidv4(),
-        name: 'Bakery Rent',
-        value: 18000000, // 18M IDR per month (higher for bakery space)
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Monthly rent for bakery with kitchen facilities',
-        businessId: this.businessId,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        id: uuidv4(),
-        name: 'Baker & Staff Salary',
-        value: 30000000, // 30M IDR per month (skilled bakers cost more)
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Total monthly salaries for bakers and staff',
-        businessId: this.businessId,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        id: uuidv4(),
-        name: 'Utilities & Gas',
-        value: 4500000, // 4.5M IDR per month (ovens use more energy)
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Electricity, water, gas for ovens',
-        businessId: this.businessId,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        id: uuidv4(),
-        name: 'Insurance',
-        value: 2000000, // 2M IDR per month
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Business and equipment insurance',
-        businessId: this.businessId,
+        name: 'Initial Bakery Capital',
+        value: 750000000, // 750M IDR initial investment (higher for bakery equipment)
+        category: FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL,
+        note: 'Initial capital investment for bakery business',
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -207,7 +181,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Flours & Grains',
         description: 'Various types of flour and grain products',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -215,7 +189,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Dairy & Eggs',
         description: 'Milk, butter, eggs, and other dairy products',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -223,7 +197,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Sweeteners & Sugars',
         description: 'Various types of sugar and sweetening agents',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -231,7 +205,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Fats & Oils',
         description: 'Butter, oils, and other fats for baking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -239,7 +213,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Leavening Agents',
         description: 'Yeast, baking powder, and other rising agents',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -247,7 +221,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Flavorings & Extracts',
         description: 'Vanilla, chocolate, spices, and flavor extracts',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -255,7 +229,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Packaging & Containers',
         description: 'Boxes, bags, and packaging materials',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -289,7 +263,7 @@ export class ComprehensiveBakerySeeder {
         category: flourCat,
         supplierInfo: 'Premium Flour Mills',
         note: 'High-quality all-purpose flour for general baking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -303,7 +277,7 @@ export class ComprehensiveBakerySeeder {
         category: flourCat,
         supplierInfo: 'Premium Flour Mills',
         note: 'High-protein flour for bread making',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -317,7 +291,7 @@ export class ComprehensiveBakerySeeder {
         category: flourCat,
         supplierInfo: 'Premium Flour Mills',
         note: 'Low-protein flour for tender cakes',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -332,7 +306,7 @@ export class ComprehensiveBakerySeeder {
         category: dairyCat,
         supplierInfo: 'Local Farm Fresh',
         note: 'Grade A fresh eggs for baking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -346,7 +320,7 @@ export class ComprehensiveBakerySeeder {
         category: dairyCat,
         supplierInfo: 'Premium Dairy Co.',
         note: 'High-quality unsalted butter for baking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -360,7 +334,7 @@ export class ComprehensiveBakerySeeder {
         category: dairyCat,
         supplierInfo: 'Fresh Dairy Co.',
         note: 'Fresh whole milk for baking and glazes',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -374,7 +348,7 @@ export class ComprehensiveBakerySeeder {
         category: dairyCat,
         supplierInfo: 'Premium Dairy Co.',
         note: 'Heavy cream for whipping and rich pastries',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -389,7 +363,7 @@ export class ComprehensiveBakerySeeder {
         category: sweetenerCat,
         supplierInfo: 'Sweet Supply Co.',
         note: 'Regular white granulated sugar',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -403,7 +377,7 @@ export class ComprehensiveBakerySeeder {
         category: sweetenerCat,
         supplierInfo: 'Sweet Supply Co.',
         note: 'Light brown sugar for rich flavor',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -417,7 +391,7 @@ export class ComprehensiveBakerySeeder {
         category: sweetenerCat,
         supplierInfo: 'Sweet Supply Co.',
         note: 'Confectioners sugar for icings and dusting',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -432,7 +406,7 @@ export class ComprehensiveBakerySeeder {
         category: leavenCat,
         supplierInfo: 'Baking Essentials',
         note: 'Active dry yeast for bread making',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -446,7 +420,7 @@ export class ComprehensiveBakerySeeder {
         category: leavenCat,
         supplierInfo: 'Baking Essentials',
         note: 'Double-acting baking powder',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -461,7 +435,7 @@ export class ComprehensiveBakerySeeder {
         category: flavorCat,
         supplierInfo: 'Flavor Masters',
         note: 'Pure vanilla extract for premium flavor',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -475,7 +449,7 @@ export class ComprehensiveBakerySeeder {
         category: flavorCat,
         supplierInfo: 'Premium Chocolate Co.',
         note: 'High-quality dark chocolate chips',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -489,7 +463,7 @@ export class ComprehensiveBakerySeeder {
         category: flavorCat,
         supplierInfo: 'Spice Masters',
         note: 'Ground cinnamon for baking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -503,7 +477,7 @@ export class ComprehensiveBakerySeeder {
         category: flavorCat,
         supplierInfo: 'Premium Chocolate Co.',
         note: 'Unsweetened cocoa powder for chocolate flavor',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -517,7 +491,7 @@ export class ComprehensiveBakerySeeder {
         category: dairyCat,
         supplierInfo: 'Dairy Fresh Co.',
         note: 'Cream cheese for frostings and glazes',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -532,7 +506,7 @@ export class ComprehensiveBakerySeeder {
         category: packagingCat,
         supplierInfo: 'Packaging Solutions',
         note: 'Small boxes for individual pastries',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -546,7 +520,7 @@ export class ComprehensiveBakerySeeder {
         category: packagingCat,
         supplierInfo: 'Packaging Solutions',
         note: 'Large boxes for cakes and bread',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -560,7 +534,7 @@ export class ComprehensiveBakerySeeder {
         category: packagingCat,
         supplierInfo: 'Packaging Solutions',
         note: 'Paper bags for takeaway items',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -581,7 +555,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Artisan Sourdough Bread',
         description: 'Traditional sourdough bread with crispy crust',
         note: 'Made with natural sourdough starter, 24-hour fermentation',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -591,7 +565,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Chocolate Chip Cookies',
         description: 'Classic chocolate chip cookies (dozen)',
         note: 'Soft and chewy with premium dark chocolate chips',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -601,7 +575,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Vanilla Cupcakes',
         description: 'Fluffy vanilla cupcakes with buttercream frosting',
         note: 'Made with pure vanilla extract and topped with vanilla buttercream',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -611,7 +585,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Cinnamon Rolls',
         description: 'Warm cinnamon rolls with cream cheese glaze',
         note: 'Soft yeast dough rolled with cinnamon sugar filling',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -621,7 +595,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Blueberry Muffins',
         description: 'Fresh blueberry muffins with streusel topping',
         note: 'Bursting with fresh blueberries and a crunchy top',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -631,7 +605,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Croissants',
         description: 'Buttery, flaky French croissants',
         note: 'Laminated dough with multiple butter layers for perfect flakiness',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -641,7 +615,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Chocolate Brownies',
         description: 'Rich, fudgy chocolate brownies',
         note: 'Dense and chocolatey with a perfect chewy texture',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -651,7 +625,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Apple Pie Slice',
         description: 'Classic apple pie with cinnamon and flaky crust',
         note: 'Made with fresh apples and our signature pie crust',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -709,7 +683,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: breadFlour.id,
           usagePerCup: 500, // 500g flour per loaf
           note: 'High-protein bread flour for structure',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -719,7 +693,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: yeast.id,
           usagePerCup: 5, // 5g yeast per loaf
           note: 'Active dry yeast for fermentation',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -729,7 +703,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: largeBoxes.id,
           usagePerCup: 1, // 1 box per loaf
           note: 'Large bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -745,7 +719,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 250, // 250g flour per dozen cookies
           note: 'All-purpose flour for cookie base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -755,7 +729,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 150, // 150g butter per dozen
           note: 'Unsalted butter for rich flavor',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -765,7 +739,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 2, // 2 eggs per dozen
           note: 'Fresh eggs for binding',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -775,7 +749,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 100, // 100g granulated sugar
           note: 'Granulated sugar for sweetness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -785,7 +759,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: brownSugar.id,
           usagePerCup: 100, // 100g brown sugar
           note: 'Brown sugar for moisture and flavor',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -795,7 +769,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: chocolateChips.id,
           usagePerCup: 200, // 200g chocolate chips
           note: 'Dark chocolate chips for rich flavor',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -805,7 +779,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box per dozen
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -821,7 +795,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: cakeFlour.id,
           usagePerCup: 200, // 200g cake flour per dozen
           note: 'Cake flour for tender texture',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -831,7 +805,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 120, // 120g butter per dozen
           note: 'Unsalted butter for richness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -841,7 +815,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 3, // 3 eggs per dozen
           note: 'Fresh eggs for structure',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -851,7 +825,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 150, // 150g sugar
           note: 'Granulated sugar for sweetness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -861,7 +835,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: powderedSugar.id,
           usagePerCup: 200, // 200g powdered sugar for frosting
           note: 'Powdered sugar for buttercream frosting',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -871,7 +845,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: bakingPowder.id,
           usagePerCup: 10, // 10g baking powder
           note: 'Baking powder for rise',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -881,7 +855,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: vanillaExtract.id,
           usagePerCup: 5, // 5ml vanilla extract
           note: 'Pure vanilla extract for flavor',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -891,7 +865,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: milk.id,
           usagePerCup: 120, // 120ml milk
           note: 'Whole milk for moisture',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -901,7 +875,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box per dozen
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -917,7 +891,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 400, // 400g flour per batch
           note: 'All-purpose flour for dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -927,7 +901,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 100, // 100g butter
           note: 'Butter for dough and filling',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -937,7 +911,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 2, // 2 eggs
           note: 'Eggs for enriched dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -947,7 +921,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 50, // 50g sugar for dough
           note: 'Sugar for dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -957,7 +931,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: brownSugar.id,
           usagePerCup: 100, // 100g brown sugar for filling
           note: 'Brown sugar for cinnamon filling',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -967,7 +941,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: yeast.id,
           usagePerCup: 7, // 7g yeast
           note: 'Active dry yeast for rise',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -977,7 +951,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: cinnamon.id,
           usagePerCup: 15, // 15g cinnamon
           note: 'Ground cinnamon for filling',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -987,7 +961,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: creamCheese.id,
           usagePerCup: 100, // 100g cream cheese for glaze
           note: 'Cream cheese for glaze',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -997,7 +971,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: powderedSugar.id,
           usagePerCup: 150, // 150g powdered sugar for glaze
           note: 'Powdered sugar for cream cheese glaze',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1007,7 +981,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: milk.id,
           usagePerCup: 200, // 200ml milk
           note: 'Milk for dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1017,7 +991,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: largeBoxes.id,
           usagePerCup: 1, // 1 large box
           note: 'Large bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1033,7 +1007,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 250, // 250g flour per dozen
           note: 'All-purpose flour for muffin base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1043,7 +1017,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 80, // 80g butter
           note: 'Melted butter for moisture',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1053,7 +1027,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 2, // 2 eggs
           note: 'Eggs for binding',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1063,7 +1037,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 120, // 120g sugar
           note: 'Sugar for sweetness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1073,7 +1047,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: bakingPowder.id,
           usagePerCup: 12, // 12g baking powder
           note: 'Baking powder for rise',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1083,7 +1057,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: milk.id,
           usagePerCup: 180, // 180ml milk
           note: 'Milk for moisture',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1093,7 +1067,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1109,7 +1083,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 300, // 300g flour per batch
           note: 'All-purpose flour for laminated dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1119,7 +1093,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 200, // 200g butter for lamination
           note: 'Butter for lamination layers',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1129,7 +1103,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 1, // 1 egg for wash
           note: 'Egg wash for golden color',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1139,7 +1113,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 30, // 30g sugar
           note: 'Sugar for dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1149,7 +1123,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: yeast.id,
           usagePerCup: 6, // 6g yeast
           note: 'Yeast for fermentation',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1159,7 +1133,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: milk.id,
           usagePerCup: 150, // 150ml milk
           note: 'Milk for dough',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1169,7 +1143,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1185,7 +1159,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 150, // 150g flour
           note: 'All-purpose flour for structure',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1195,7 +1169,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 180, // 180g butter
           note: 'Butter for fudgy texture',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1205,7 +1179,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: eggs.id,
           usagePerCup: 3, // 3 eggs
           note: 'Eggs for binding and richness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1215,7 +1189,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 200, // 200g sugar
           note: 'Sugar for sweetness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1225,7 +1199,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: cocoaPowder.id,
           usagePerCup: 50, // 50g cocoa powder
           note: 'Cocoa powder for chocolate flavor',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1235,7 +1209,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: chocolateChips.id,
           usagePerCup: 100, // 100g chocolate chips
           note: 'Chocolate chips for extra richness',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1245,7 +1219,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1261,7 +1235,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: allPurposeFlour.id,
           usagePerCup: 200, // 200g flour for crust
           note: 'All-purpose flour for pie crust',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1271,7 +1245,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: butter.id,
           usagePerCup: 120, // 120g butter for crust
           note: 'Cold butter for flaky crust',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1281,7 +1255,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: sugar.id,
           usagePerCup: 80, // 80g sugar for filling
           note: 'Sugar for apple filling',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1291,7 +1265,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: cinnamon.id,
           usagePerCup: 8, // 8g cinnamon
           note: 'Cinnamon for apple spice',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1301,7 +1275,7 @@ export class ComprehensiveBakerySeeder {
           ingredientId: smallBoxes.id,
           usagePerCup: 1, // 1 small box per slice
           note: 'Small bakery box for packaging',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1322,7 +1296,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Main Bakery',
         location: 'Sweet Dreams Bakery - Downtown Location',
         note: 'Main production facility and storefront with full kitchen',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         businessHoursStart: '05:00',
         businessHoursEnd: '20:00',
@@ -1334,7 +1308,7 @@ export class ComprehensiveBakerySeeder {
         name: 'Mall Kiosk',
         location: 'Sweet Dreams Express - Central Mall Food Court',
         note: 'Smaller retail location focusing on grab-and-go items',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         businessHoursStart: '09:00',
         businessHoursEnd: '21:00',
@@ -1358,7 +1332,7 @@ export class ComprehensiveBakerySeeder {
         description: 'Complete menu for main bakery location',
         status: 'active',
         note: 'Full selection of fresh baked goods and custom orders',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1368,7 +1342,7 @@ export class ComprehensiveBakerySeeder {
         description: 'Limited menu for mall kiosk location',
         status: 'active',
         note: 'Quick grab-and-go items for busy shoppers',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1415,7 +1389,7 @@ export class ComprehensiveBakerySeeder {
             category: item.category,
             displayOrder: item.order,
             note: `${item.product} available at main bakery`,
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -1444,7 +1418,7 @@ export class ComprehensiveBakerySeeder {
             category: item.category,
             displayOrder: item.order,
             note: `${item.product} available at express location`,
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -1475,7 +1449,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         menuId: mainMenu.id,
         branchId: mainBranch.id,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       })
@@ -1486,7 +1460,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         menuId: expressMenu.id,
         branchId: mallBranch.id,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       })
@@ -1505,7 +1479,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Baking Equipment',
         description: 'Ovens, mixers, and baking tools',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1513,7 +1487,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Refrigeration',
         description: 'Refrigerators, freezers, and cooling equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1521,7 +1495,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Display & Storage',
         description: 'Display cases, shelving, and storage solutions',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1529,7 +1503,7 @@ export class ComprehensiveBakerySeeder {
         id: uuidv4(),
         name: 'Point of Sale',
         description: 'Cash registers, payment systems, and POS equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1562,7 +1536,7 @@ export class ComprehensiveBakerySeeder {
         depreciationMonths: 120, // 10 years
         currentValue: 79625000, // Calculated depreciated value
         note: 'Main baking oven for bread and pastries',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1575,7 +1549,7 @@ export class ComprehensiveBakerySeeder {
         depreciationMonths: 96, // 8 years
         currentValue: 23333333, // Calculated depreciated value
         note: 'Heavy-duty mixer for dough and batters',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1588,7 +1562,7 @@ export class ComprehensiveBakerySeeder {
         depreciationMonths: 144, // 12 years
         currentValue: 42500000, // Calculated depreciated value
         note: 'Main refrigeration for ingredients and finished products',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1601,7 +1575,7 @@ export class ComprehensiveBakerySeeder {
         depreciationMonths: 120, // 10 years
         currentValue: 14000000, // Calculated depreciated value
         note: 'Front-of-house display for baked goods',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1614,13 +1588,46 @@ export class ComprehensiveBakerySeeder {
         depreciationMonths: 48, // 4 years
         currentValue: 6666667, // Calculated depreciated value
         note: 'Modern POS system for order processing',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
     ]
 
     await db.fixedAssets.bulkAdd(assets)
+
+    // Create corresponding financial items for asset purchases
+    const assetPurchaseItems: FinancialItem[] = assets.map(asset => ({
+      id: uuidv4(),
+      name: `Purchase: ${asset.name}`,
+      value: asset.purchaseCost,
+      category: FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL,
+      note: `Asset purchase: ${asset.note}`,
+      businessId: this.businessId!,
+      isFixedAsset: true,
+      sourceAssetId: asset.id,
+      createdAt: asset.purchaseDate + 'T00:00:00.000Z',
+      updatedAt: now
+    }))
+
+    // Create depreciation entries for each asset
+    const depreciationItems: FinancialItem[] = assets.map(asset => {
+      const monthlyDepreciation = (asset.purchaseCost - asset.currentValue) / 6 // 6 months of depreciation
+      return {
+        id: uuidv4(),
+        name: `Depreciation: ${asset.name}`,
+        value: monthlyDepreciation,
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: `Monthly depreciation for ${asset.name}`,
+        businessId: this.businessId!,
+        isFixedAsset: true,
+        sourceAssetId: asset.id,
+        createdAt: now,
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd([...assetPurchaseItems, ...depreciationItems])
   }
 
   private async seedRecurringExpenses(): Promise<void> {
@@ -1636,7 +1643,7 @@ export class ComprehensiveBakerySeeder {
         frequency: 'monthly',
         category: 'maintenance',
         isActive: true,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         startDate: now,
         note: 'Monthly equipment maintenance and repairs',
         createdAt: now,
@@ -1649,7 +1656,7 @@ export class ComprehensiveBakerySeeder {
         frequency: 'yearly',
         category: 'licensing',
         isActive: true,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         startDate: now,
         note: 'Annual health department license renewal',
         createdAt: now,
@@ -1662,7 +1669,7 @@ export class ComprehensiveBakerySeeder {
         frequency: 'monthly',
         category: 'supplies',
         isActive: true,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         startDate: now,
         note: 'Monthly cleaning and sanitation supplies',
         createdAt: now,
@@ -1675,7 +1682,7 @@ export class ComprehensiveBakerySeeder {
         frequency: 'monthly',
         category: 'supplies',
         isActive: true,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         startDate: now,
         note: 'Monthly packaging and takeaway supplies',
         createdAt: now,
@@ -1737,7 +1744,7 @@ export class ComprehensiveBakerySeeder {
             targetDate: dateStr,
             targetQuantity: Math.round(target.baseTarget * multiplier),
             note: `Target for ${product.name} on ${dateStr}`,
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -1816,7 +1823,7 @@ export class ComprehensiveBakerySeeder {
               unitPrice: menuProduct.price,
               totalAmount,
               note: `Sale of ${product.name}`,
-              businessId: this.businessId,
+              businessId: this.businessId!,
               createdAt: now,
               updatedAt: now
             })
@@ -1852,7 +1859,7 @@ export class ComprehensiveBakerySeeder {
         supplier: i === 0 ? 'Premium Flour Mills' : i === 1 ? 'Fresh Dairy Co.' : 'Baking Essentials',
         totalCost: (i + 1) * 5000000, // 5M, 10M, 15M IDR
         note: `Batch ${i + 1} - Weekly ingredient delivery`,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1874,7 +1881,7 @@ export class ComprehensiveBakerySeeder {
           costPerUnit: unitCost,
           totalCost,
           expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -1895,7 +1902,7 @@ export class ComprehensiveBakerySeeder {
         currentStock,
         reservedStock: Math.floor(Math.random() * 20),
         lowStockThreshold: minLevel,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1906,6 +1913,26 @@ export class ComprehensiveBakerySeeder {
     await db.warehouseBatches.bulkAdd(batches)
     await db.warehouseItems.bulkAdd(warehouseItems)
     await db.stockLevels.bulkAdd(stockLevels)
+
+    // Create corresponding financial items for warehouse purchases
+    const warehousePurchaseItems: FinancialItem[] = batches.map(batch => {
+      const batchTotalCost = warehouseItems
+        .filter(item => item.batchId === batch.id)
+        .reduce((sum, item) => sum + item.totalCost, 0)
+
+      return {
+        id: uuidv4(),
+        name: `Warehouse Purchase: ${batch.batchNumber}`,
+        value: batchTotalCost,
+        category: FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS,
+        note: `Inventory purchase for batch ${batch.batchNumber}`,
+        businessId: this.businessId!,
+        createdAt: batch.dateAdded + 'T00:00:00.000Z',
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd(warehousePurchaseItems)
   }
 
   private async seedProductionData(): Promise<void> {
@@ -1914,6 +1941,7 @@ export class ComprehensiveBakerySeeder {
 
     const products = await db.products.where('businessId').equals(this.businessId).toArray()
     const branches = await db.branches.where('businessId').equals(this.businessId).toArray()
+    const ingredients = await db.ingredients.where('businessId').equals(this.businessId).toArray()
     const mainBranch = branches.find(b => b.name === 'Main Bakery')
 
     if (!mainBranch) return
@@ -1939,7 +1967,7 @@ export class ComprehensiveBakerySeeder {
         endTime: '08:00',
         totalCost: 0, // Will be calculated
         note: 'Morning production batch for fresh daily items',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1956,7 +1984,7 @@ export class ComprehensiveBakerySeeder {
         endTime: '16:00',
         totalCost: 0, // Will be calculated
         note: 'Afternoon production batch for next day prep',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1987,7 +2015,7 @@ export class ComprehensiveBakerySeeder {
             ingredientName: product.name,
             quantity,
             unit: 'pieces',
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -2015,7 +2043,7 @@ export class ComprehensiveBakerySeeder {
             ingredientName: product.name,
             quantity,
             unit: 'pieces',
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -2025,6 +2053,34 @@ export class ComprehensiveBakerySeeder {
 
     await db.productionBatches.bulkAdd(productionBatches)
     await db.productionItems.bulkAdd(productionItems)
+
+    // Create corresponding financial items for production costs (only for completed batches)
+    const completedBatches = productionBatches.filter(batch => batch.status === 'Completed')
+    const productionCostItems: FinancialItem[] = completedBatches.map(batch => {
+      // Calculate production cost based on ingredients used
+      const batchItems = productionItems.filter(item => item.productionBatchId === batch.id)
+      const totalCost = batchItems.reduce((sum, item) => {
+        const ingredient = ingredients.find(ing => ing.name === item.ingredientName)
+        if (ingredient) {
+          const costPerUnit = ingredient.baseUnitCost / ingredient.baseUnitQuantity
+          return sum + (item.quantity * costPerUnit)
+        }
+        return sum
+      }, 0)
+
+      return {
+        id: uuidv4(),
+        name: `Production Cost: Batch ${batch.batchNumber}`,
+        value: totalCost,
+        category: FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS,
+        note: `Production costs for batch ${batch.batchNumber}`,
+        businessId: this.businessId!,
+        createdAt: batch.dateCreated + 'T00:00:00.000Z',
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd(productionCostItems)
   }
 
   private async seedPlanningData(): Promise<void> {
@@ -2046,7 +2102,7 @@ export class ComprehensiveBakerySeeder {
         difficulty: 'medium',
         tags: ['operations', 'monthly'],
         note: 'Standard template for monthly operations',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -2061,7 +2117,7 @@ export class ComprehensiveBakerySeeder {
         difficulty: 'high',
         tags: ['menu', 'seasonal'],
         note: 'Template for seasonal menu changes',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -2082,7 +2138,7 @@ export class ComprehensiveBakerySeeder {
         branchId: null,
         templateId: planTemplates[0].id,
         note: 'February monthly operations plan',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -2097,7 +2153,7 @@ export class ComprehensiveBakerySeeder {
         branchId: null,
         templateId: planTemplates[1].id,
         note: 'Spring menu launch plan',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -2122,7 +2178,7 @@ export class ComprehensiveBakerySeeder {
         branchId: null,
         linkedTaskIds: [],
         note: 'Focus on increasing daily sales through promotions',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -2141,7 +2197,7 @@ export class ComprehensiveBakerySeeder {
         branchId: null,
         linkedTaskIds: [],
         note: 'Implement better inventory management',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -2165,7 +2221,7 @@ export class ComprehensiveBakerySeeder {
         dependencies: [],
         dueDate: '2024-02-14',
         completedAt: '2024-02-13T10:00:00.000Z',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -2183,7 +2239,7 @@ export class ComprehensiveBakerySeeder {
         dependencies: [],
         dueDate: '2024-02-25',
         completedAt: null,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -2205,7 +2261,7 @@ export class ComprehensiveBakerySeeder {
         trackingFrequency: 'daily',
         lastUpdated: '2024-01-31T23:59:59.000Z',
         note: 'Daily revenue tracking metric',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -2221,7 +2277,7 @@ export class ComprehensiveBakerySeeder {
         trackingFrequency: 'daily',
         lastUpdated: '2024-01-31T23:59:59.000Z',
         note: 'Daily waste percentage tracking',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }

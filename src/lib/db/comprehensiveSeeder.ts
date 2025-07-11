@@ -183,34 +183,18 @@ export class ComprehensiveSeeder {
     this.updateProgress('Financial Items', 'Creating financial items...')
 
     const now = new Date().toISOString()
+
+    // Only create initial capital and depreciation entries here
+    // Operational expenses should be in RecurringExpenses
+    // Asset purchases will be created when fixed assets are seeded
     const financialItems: FinancialItem[] = [
       {
         id: uuidv4(),
-        name: 'Rent',
-        value: 15000000, // 15M IDR per month
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Monthly rent for main location',
-        businessId: this.businessId,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        id: uuidv4(),
-        name: 'Staff Salary',
-        value: 25000000, // 25M IDR per month
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Total monthly staff salaries',
-        businessId: this.businessId,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        id: uuidv4(),
-        name: 'Utilities',
-        value: 3000000, // 3M IDR per month
-        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
-        note: 'Electricity, water, internet',
-        businessId: this.businessId,
+        name: 'Initial Business Capital',
+        value: 500000000, // 500M IDR initial investment
+        category: FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL,
+        note: 'Initial capital investment for coffee shop business',
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -229,7 +213,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Coffee Beans',
         description: 'Various types of coffee beans',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -237,7 +221,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Dairy & Milk',
         description: 'Milk and dairy products',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -245,7 +229,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Syrups & Flavors',
         description: 'Flavoring syrups and additives',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -253,7 +237,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Packaging',
         description: 'Cups, lids, sleeves, and packaging materials',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -261,7 +245,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Sweeteners',
         description: 'Sugar and artificial sweeteners',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -294,7 +278,7 @@ export class ComprehensiveSeeder {
         category: coffeeCat,
         supplierInfo: 'Premium Coffee Roasters',
         note: 'High-quality Arabica beans for espresso',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -308,7 +292,7 @@ export class ComprehensiveSeeder {
         category: coffeeCat,
         supplierInfo: 'Local Coffee Suppliers',
         note: 'Strong Robusta beans for blends',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -323,7 +307,7 @@ export class ComprehensiveSeeder {
         category: dairyCat,
         supplierInfo: 'Fresh Dairy Co.',
         note: 'Fresh whole milk for lattes and cappuccinos',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -337,7 +321,7 @@ export class ComprehensiveSeeder {
         category: dairyCat,
         supplierInfo: 'Plant Based Alternatives',
         note: 'Premium oat milk for dairy-free options',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -352,7 +336,7 @@ export class ComprehensiveSeeder {
         category: syrupCat,
         supplierInfo: 'Flavor Masters',
         note: 'Natural vanilla flavoring syrup',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -366,7 +350,7 @@ export class ComprehensiveSeeder {
         category: syrupCat,
         supplierInfo: 'Flavor Masters',
         note: 'Rich caramel flavoring syrup',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -381,7 +365,7 @@ export class ComprehensiveSeeder {
         category: packagingCat,
         supplierInfo: 'EcoPack Solutions',
         note: 'Biodegradable paper cups with logo',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -395,7 +379,7 @@ export class ComprehensiveSeeder {
         category: packagingCat,
         supplierInfo: 'EcoPack Solutions',
         note: 'Recyclable plastic lids',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -410,7 +394,7 @@ export class ComprehensiveSeeder {
         category: sweetenerCat,
         supplierInfo: 'Sweet Supply Co.',
         note: 'Regular white sugar',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -424,7 +408,7 @@ export class ComprehensiveSeeder {
         category: sweetenerCat,
         supplierInfo: 'Sweet Supply Co.',
         note: 'Natural brown sugar',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -445,7 +429,7 @@ export class ComprehensiveSeeder {
         name: 'Espresso',
         description: 'Classic single shot espresso',
         note: 'Strong and bold coffee shot',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -455,7 +439,7 @@ export class ComprehensiveSeeder {
         name: 'Americano',
         description: 'Espresso with hot water',
         note: 'Simple black coffee',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -465,7 +449,7 @@ export class ComprehensiveSeeder {
         name: 'Latte',
         description: 'Espresso with steamed milk',
         note: 'Creamy and smooth coffee',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -475,7 +459,7 @@ export class ComprehensiveSeeder {
         name: 'Cappuccino',
         description: 'Espresso with steamed milk and foam',
         note: 'Traditional Italian coffee',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -485,7 +469,7 @@ export class ComprehensiveSeeder {
         name: 'Vanilla Latte',
         description: 'Latte with vanilla syrup',
         note: 'Sweet and aromatic coffee',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -495,7 +479,7 @@ export class ComprehensiveSeeder {
         name: 'Caramel Macchiato',
         description: 'Espresso with caramel and steamed milk',
         note: 'Sweet caramel flavored coffee',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -539,7 +523,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -549,7 +533,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -565,7 +549,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -575,7 +559,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -585,7 +569,7 @@ export class ComprehensiveSeeder {
           ingredientId: lids.id,
           usagePerCup: 1, // 1 lid
           note: 'Cup lid',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -601,7 +585,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -611,7 +595,7 @@ export class ComprehensiveSeeder {
           ingredientId: milk.id,
           usagePerCup: 200, // 200ml steamed milk
           note: 'Steamed milk',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -621,7 +605,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -631,7 +615,7 @@ export class ComprehensiveSeeder {
           ingredientId: lids.id,
           usagePerCup: 1, // 1 lid
           note: 'Cup lid',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -647,7 +631,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -657,7 +641,7 @@ export class ComprehensiveSeeder {
           ingredientId: milk.id,
           usagePerCup: 200, // 200ml steamed milk
           note: 'Steamed milk',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -667,7 +651,7 @@ export class ComprehensiveSeeder {
           ingredientId: vanillaSyrup.id,
           usagePerCup: 15, // 15ml vanilla syrup
           note: 'Vanilla flavoring',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -677,7 +661,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -687,7 +671,7 @@ export class ComprehensiveSeeder {
           ingredientId: lids.id,
           usagePerCup: 1, // 1 lid
           note: 'Cup lid',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -703,7 +687,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -713,7 +697,7 @@ export class ComprehensiveSeeder {
           ingredientId: milk.id,
           usagePerCup: 150, // 150ml steamed milk (less than latte)
           note: 'Steamed milk with foam',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -723,7 +707,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -733,7 +717,7 @@ export class ComprehensiveSeeder {
           ingredientId: lids.id,
           usagePerCup: 1, // 1 lid
           note: 'Cup lid',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -749,7 +733,7 @@ export class ComprehensiveSeeder {
           ingredientId: arabica.id,
           usagePerCup: 18, // 18g coffee per shot
           note: 'Single shot espresso base',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -759,7 +743,7 @@ export class ComprehensiveSeeder {
           ingredientId: milk.id,
           usagePerCup: 200, // 200ml steamed milk
           note: 'Steamed milk',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -769,7 +753,7 @@ export class ComprehensiveSeeder {
           ingredientId: caramelSyrup.id,
           usagePerCup: 20, // 20ml caramel syrup (more than vanilla)
           note: 'Caramel flavoring',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -779,7 +763,7 @@ export class ComprehensiveSeeder {
           ingredientId: cups.id,
           usagePerCup: 1, // 1 cup
           note: 'Serving cup',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -789,7 +773,7 @@ export class ComprehensiveSeeder {
           ingredientId: lids.id,
           usagePerCup: 1, // 1 lid
           note: 'Cup lid',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -812,7 +796,7 @@ export class ComprehensiveSeeder {
         businessHoursStart: '07:00',
         businessHoursEnd: '22:00',
         note: 'Main flagship store in business district',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -824,7 +808,7 @@ export class ComprehensiveSeeder {
         businessHoursStart: '10:00',
         businessHoursEnd: '21:00',
         note: 'High-traffic mall location',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -836,7 +820,7 @@ export class ComprehensiveSeeder {
         businessHoursStart: '06:30',
         businessHoursEnd: '20:00',
         note: 'Student-focused location with study areas',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -848,7 +832,7 @@ export class ComprehensiveSeeder {
         businessHoursStart: '05:00',
         businessHoursEnd: '23:00',
         note: 'Travel hub with extended hours',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         isActive: true,
         createdAt: now,
         updatedAt: now
@@ -870,7 +854,7 @@ export class ComprehensiveSeeder {
         description: 'Premium coffee selection for early birds',
         status: 'active',
         note: 'Available 6:00 AM - 11:00 AM with premium pricing',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -880,7 +864,7 @@ export class ComprehensiveSeeder {
         description: 'Complete coffee menu available all day',
         status: 'active',
         note: 'Standard menu with regular pricing',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -890,7 +874,7 @@ export class ComprehensiveSeeder {
         description: 'Discounted coffee for evening customers',
         status: 'active',
         note: 'Available 6:00 PM - close with special pricing',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -936,7 +920,7 @@ export class ComprehensiveSeeder {
           category: 'Coffee',
           displayOrder: index + 1,
           note: 'Premium morning pricing',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -965,7 +949,7 @@ export class ComprehensiveSeeder {
           category: 'Coffee',
           displayOrder: index + 1,
           note: 'Standard all-day pricing',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -994,7 +978,7 @@ export class ComprehensiveSeeder {
           category: 'Coffee',
           displayOrder: index + 1,
           note: 'Evening special pricing',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -1022,7 +1006,7 @@ export class ComprehensiveSeeder {
           id: uuidv4(),
           menuId: menu.id,
           branchId: branch.id,
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -1046,7 +1030,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Coffee Equipment',
         description: 'Espresso machines, grinders, and brewing equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1054,7 +1038,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Furniture & Fixtures',
         description: 'Tables, chairs, counters, and store fixtures',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1062,7 +1046,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Technology',
         description: 'POS systems, computers, and electronic equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1070,7 +1054,7 @@ export class ComprehensiveSeeder {
         id: uuidv4(),
         name: 'Kitchen Equipment',
         description: 'Refrigerators, ovens, and food preparation equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1108,7 +1092,7 @@ export class ComprehensiveSeeder {
         depreciationMonths: 120, // 10 years
         currentValue: 142500000, // Depreciated value
         note: 'Professional 3-group espresso machine',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1121,7 +1105,7 @@ export class ComprehensiveSeeder {
         depreciationMonths: 60, // 5 years
         currentValue: 21875000, // Depreciated value
         note: 'Commercial coffee grinder',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1134,7 +1118,7 @@ export class ComprehensiveSeeder {
         depreciationMonths: 36, // 3 years
         currentValue: 11250000, // Depreciated value
         note: 'Complete point-of-sale system with tablets',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1147,7 +1131,7 @@ export class ComprehensiveSeeder {
         depreciationMonths: 84, // 7 years
         currentValue: 17857143, // Depreciated value
         note: 'Double-door commercial refrigerator',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1160,13 +1144,46 @@ export class ComprehensiveSeeder {
         depreciationMonths: 60, // 5 years
         currentValue: 26250000, // Depreciated value
         note: '10 tables with 40 chairs for customer seating',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
     ]
 
     await db.fixedAssets.bulkAdd(assets)
+
+    // Create corresponding financial items for asset purchases
+    const assetPurchaseItems: FinancialItem[] = assets.map(asset => ({
+      id: uuidv4(),
+      name: `Purchase: ${asset.name}`,
+      value: asset.purchaseCost,
+      category: FINANCIAL_ITEM_CATEGORIES.INITIAL_CAPITAL,
+      note: `Asset purchase: ${asset.note}`,
+      businessId: this.businessId!,
+      isFixedAsset: true,
+      sourceAssetId: asset.id,
+      createdAt: asset.purchaseDate + 'T00:00:00.000Z',
+      updatedAt: now
+    }))
+
+    // Create depreciation entries for each asset
+    const depreciationItems: FinancialItem[] = assets.map(asset => {
+      const monthlyDepreciation = (asset.purchaseCost - asset.currentValue) / 6 // 6 months of depreciation
+      return {
+        id: uuidv4(),
+        name: `Depreciation: ${asset.name}`,
+        value: monthlyDepreciation,
+        category: FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS,
+        note: `Monthly depreciation for ${asset.name}`,
+        businessId: this.businessId!,
+        isFixedAsset: true,
+        sourceAssetId: asset.id,
+        createdAt: now,
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd([...assetPurchaseItems, ...depreciationItems])
   }
 
   private async seedRecurringExpenses(): Promise<void> {
@@ -1189,7 +1206,7 @@ export class ComprehensiveSeeder {
         description: 'Monthly rent for downtown flagship store',
         isActive: true,
         note: 'Prime location rent with annual increase clause',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1204,7 +1221,7 @@ export class ComprehensiveSeeder {
         description: 'Total monthly salaries for all staff',
         isActive: true,
         note: 'Includes manager, baristas, and part-time staff',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1219,7 +1236,7 @@ export class ComprehensiveSeeder {
         description: 'Monthly electricity consumption',
         isActive: true,
         note: 'High usage due to espresso machines and refrigeration',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1234,7 +1251,7 @@ export class ComprehensiveSeeder {
         description: 'Comprehensive business insurance coverage',
         isActive: true,
         note: 'Covers property, liability, and equipment',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1249,7 +1266,7 @@ export class ComprehensiveSeeder {
         description: 'Internet and phone services',
         isActive: true,
         note: 'High-speed internet for POS and customer WiFi',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1264,7 +1281,7 @@ export class ComprehensiveSeeder {
         description: 'Regular maintenance for coffee equipment',
         isActive: true,
         note: 'Preventive maintenance to ensure quality',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1331,7 +1348,7 @@ export class ComprehensiveSeeder {
             targetDate: dateStr,
             targetQuantity: finalTarget,
             note: `Daily target for ${product.name} at ${branch.name}`,
-            businessId: this.businessId,
+            businessId: this.businessId!,
             createdAt: now,
             updatedAt: now
           })
@@ -1356,9 +1373,9 @@ export class ComprehensiveSeeder {
     const now = new Date().toISOString()
     const salesRecords: SalesRecord[] = []
 
-    // Create comprehensive historical sales for the past 30 days AND future 7 days
-    // Past data for analytics, future data for target analysis
-    for (let i = -7; i <= 30; i++) {
+    // Create limited historical sales for the past 7 days AND future 3 days
+    // Reduced for testing - approximately 500 total sales records
+    for (let i = -3; i <= 7; i++) {
       const saleDate = new Date()
       saleDate.setDate(saleDate.getDate() - i)
       const dateStr = saleDate.toISOString().split('T')[0]
@@ -1413,7 +1430,7 @@ export class ComprehensiveSeeder {
                 unitPrice: menuProduct.price,
                 totalAmount: totalAmount,
                 note: `${isFuture ? 'Projected' : 'Historical'} sale at ${branch.name} - ${menu.name}`,
-                businessId: this.businessId,
+                businessId: this.businessId!,
                 createdAt: now,
                 updatedAt: now
               })
@@ -1561,15 +1578,15 @@ export class ComprehensiveSeeder {
   }
 
   private calculateBaseSalesVolume(branch: Branch, menu: Menu, isWeekend: boolean): number {
-    // Base sales per menu per day
+    // Base sales per menu per day - reduced for testing (targeting ~500 total records)
     let baseSales = 0
 
-    // Menu-specific base volumes
+    // Menu-specific base volumes (reduced by ~75%)
     switch (menu.name) {
-      case 'Morning Rush': baseSales = 40; break
-      case 'All Day Menu': baseSales = 60; break
-      case 'Evening Special': baseSales = 25; break
-      default: baseSales = 30
+      case 'Morning Rush': baseSales = 10; break
+      case 'All Day Menu': baseSales = 15; break
+      case 'Evening Special': baseSales = 6; break
+      default: baseSales = 8
     }
 
     // Branch multipliers
@@ -1714,6 +1731,7 @@ export class ComprehensiveSeeder {
         batchNumber: `WB-${batchDate.getFullYear()}${(batchDate.getMonth() + 1).toString().padStart(2, '0')}${batchDate.getDate().toString().padStart(2, '0')}-${(i + 1).toString().padStart(3, '0')}`,
         dateAdded: batchDate.toISOString().split('T')[0],
         note: `Weekly inventory batch #${i + 1}`,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1750,7 +1768,7 @@ export class ComprehensiveSeeder {
           costPerUnit: costPerUnit,
           totalCost: totalCost,
           note: `Batch ${batch.batchNumber} - ${ingredient.name}`,
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -1786,7 +1804,7 @@ export class ComprehensiveSeeder {
         reservedStock: reservedStock,
         lowStockThreshold: lowStockThreshold,
         lastUpdated: now,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       })
@@ -1795,6 +1813,26 @@ export class ComprehensiveSeeder {
     await db.warehouseBatches.bulkAdd(batches)
     await db.warehouseItems.bulkAdd(warehouseItems)
     await db.stockLevels.bulkAdd(stockLevels)
+
+    // Create corresponding financial items for warehouse purchases
+    const warehousePurchaseItems: FinancialItem[] = batches.map(batch => {
+      const batchTotalCost = warehouseItems
+        .filter(item => item.batchId === batch.id)
+        .reduce((sum, item) => sum + item.totalCost, 0)
+
+      return {
+        id: uuidv4(),
+        name: `Warehouse Purchase: ${batch.batchNumber}`,
+        value: batchTotalCost,
+        category: FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS,
+        note: `Inventory purchase for batch ${batch.batchNumber}`,
+        businessId: this.businessId!,
+        createdAt: batch.dateAdded + 'T00:00:00.000Z',
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd(warehousePurchaseItems)
   }
 
   private async seedProductionData(): Promise<void> {
@@ -1831,7 +1869,7 @@ export class ComprehensiveSeeder {
         productName: status === 'Completed' ? 'Coffee Products' : undefined,
         outputQuantity: status === 'Completed' ? Math.floor(Math.random() * 100) + 50 : undefined,
         outputUnit: status === 'Completed' ? 'cups' : undefined,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1851,7 +1889,7 @@ export class ComprehensiveSeeder {
           quantity: quantity,
           unit: ingredient.unit,
           note: `${quantity} ${ingredient.unit} of ${ingredient.name}`,
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })
@@ -1862,6 +1900,34 @@ export class ComprehensiveSeeder {
 
     await db.productionBatches.bulkAdd(productionBatches)
     await db.productionItems.bulkAdd(productionItems)
+
+    // Create corresponding financial items for production costs (only for completed batches)
+    const completedBatches = productionBatches.filter(batch => batch.status === 'Completed')
+    const productionCostItems: FinancialItem[] = completedBatches.map(batch => {
+      // Calculate production cost based on ingredients used
+      const batchItems = productionItems.filter(item => item.productionBatchId === batch.id)
+      const totalCost = batchItems.reduce((sum, item) => {
+        const ingredient = ingredients.find(ing => ing.name === item.ingredientName)
+        if (ingredient) {
+          const costPerUnit = ingredient.baseUnitCost / ingredient.baseUnitQuantity
+          return sum + (item.quantity * costPerUnit)
+        }
+        return sum
+      }, 0)
+
+      return {
+        id: uuidv4(),
+        name: `Production Cost: Batch #${batch.batchNumber}`,
+        value: totalCost,
+        category: FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS,
+        note: `Production costs for batch #${batch.batchNumber}`,
+        businessId: this.businessId!,
+        createdAt: batch.dateCreated + 'T00:00:00.000Z',
+        updatedAt: now
+      }
+    })
+
+    await db.financialItems.bulkAdd(productionCostItems)
   }
 
   private async seedPlanningData(): Promise<void> {
@@ -1884,7 +1950,7 @@ export class ComprehensiveSeeder {
         difficulty: 'beginner',
         tags: 'daily,operations,standard',
         note: 'Basic daily operations template',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       },
@@ -1899,7 +1965,7 @@ export class ComprehensiveSeeder {
         difficulty: 'intermediate',
         tags: 'weekly,inventory,planning',
         note: 'Comprehensive weekly inventory review',
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1923,7 +1989,7 @@ export class ComprehensiveSeeder {
         branchId: branch.id,
         templateId: planTemplates[0].id,
         note: `Active daily plan for ${branch.name}`,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1946,7 +2012,7 @@ export class ComprehensiveSeeder {
         branchId: branch.id,
         templateId: planTemplates[1].id,
         note: `Weekly inventory management for ${branch.name}`,
-        businessId: this.businessId,
+        businessId: this.businessId!,
         createdAt: now,
         updatedAt: now
       }
@@ -1966,7 +2032,7 @@ export class ComprehensiveSeeder {
           priority: 'high',
           dueDate: new Date().toISOString().split('T')[0],
           note: 'Track daily sales performance',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         },
@@ -1982,7 +2048,7 @@ export class ComprehensiveSeeder {
           priority: 'medium',
           dueDate: weekEnd.toISOString().split('T')[0],
           note: 'Weekly inventory accuracy target',
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         }
@@ -2008,7 +2074,7 @@ export class ComprehensiveSeeder {
           estimatedDuration: task.duration,
           dependencies: taskIndex > 0 ? [planTasks[planTasks.length - 1]?.id].filter(Boolean) : [],
           note: `Daily task: ${task.title}`,
-          businessId: this.businessId,
+          businessId: this.businessId!,
           createdAt: now,
           updatedAt: now
         })

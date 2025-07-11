@@ -13,7 +13,7 @@ import { Route as WarehouseRouteImport } from './routes/warehouse'
 import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
-import { Route as TestDatabaseRouteImport } from './routes/test-database'
+import { Route as TestAccountingIntegrationRouteImport } from './routes/test-accounting-integration'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SeedMultiBusinessRouteImport } from './routes/seed-multi-business'
 import { Route as SalesTargetsRouteImport } from './routes/sales-targets'
@@ -57,11 +57,12 @@ const TestIngredientFixRoute = TestIngredientFixRouteImport.update({
   path: '/test-ingredient-fix',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestDatabaseRoute = TestDatabaseRouteImport.update({
-  id: '/test-database',
-  path: '/test-database',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const TestAccountingIntegrationRoute =
+  TestAccountingIntegrationRouteImport.update({
+    id: '/test-accounting-integration',
+    path: '/test-accounting-integration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -191,7 +192,7 @@ export interface FileRoutesByFullPath {
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
-  '/test-database': typeof TestDatabaseRoute
+  '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -220,7 +221,7 @@ export interface FileRoutesByTo {
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
-  '/test-database': typeof TestDatabaseRoute
+  '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -250,7 +251,7 @@ export interface FileRoutesById {
   '/sales-targets': typeof SalesTargetsRoute
   '/seed-multi-business': typeof SeedMultiBusinessRoute
   '/settings': typeof SettingsRoute
-  '/test-database': typeof TestDatabaseRoute
+  '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -281,7 +282,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/seed-multi-business'
     | '/settings'
-    | '/test-database'
+    | '/test-accounting-integration'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -310,7 +311,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/seed-multi-business'
     | '/settings'
-    | '/test-database'
+    | '/test-accounting-integration'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -339,7 +340,7 @@ export interface FileRouteTypes {
     | '/sales-targets'
     | '/seed-multi-business'
     | '/settings'
-    | '/test-database'
+    | '/test-accounting-integration'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -369,7 +370,7 @@ export interface RootRouteChildren {
   SalesTargetsRoute: typeof SalesTargetsRoute
   SeedMultiBusinessRoute: typeof SeedMultiBusinessRoute
   SettingsRoute: typeof SettingsRoute
-  TestDatabaseRoute: typeof TestDatabaseRoute
+  TestAccountingIntegrationRoute: typeof TestAccountingIntegrationRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
   TestMenusRoute: typeof TestMenusRoute
   TestTargetsRoute: typeof TestTargetsRoute
@@ -411,11 +412,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestIngredientFixRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test-database': {
-      id: '/test-database'
-      path: '/test-database'
-      fullPath: '/test-database'
-      preLoaderRoute: typeof TestDatabaseRouteImport
+    '/test-accounting-integration': {
+      id: '/test-accounting-integration'
+      path: '/test-accounting-integration'
+      fullPath: '/test-accounting-integration'
+      preLoaderRoute: typeof TestAccountingIntegrationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -593,7 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalesTargetsRoute: SalesTargetsRoute,
   SeedMultiBusinessRoute: SeedMultiBusinessRoute,
   SettingsRoute: SettingsRoute,
-  TestDatabaseRoute: TestDatabaseRoute,
+  TestAccountingIntegrationRoute: TestAccountingIntegrationRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,
   TestMenusRoute: TestMenusRoute,
   TestTargetsRoute: TestTargetsRoute,

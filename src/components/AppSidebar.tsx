@@ -13,7 +13,6 @@ import {
   Package,
   Factory,
   Beaker,
-  Database,
   Menu,
   Target,
   Activity,
@@ -21,6 +20,7 @@ import {
   CreditCard,
   Receipt,
   Bug,
+  Building2,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -240,17 +240,8 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/test-database">
-                    <Database aria-hidden="true" />
-                    <span>Database Test</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
                   <Link to="/seed-multi-business">
-                    <Database aria-hidden="true" />
+                    <Building2 aria-hidden="true" />
                     <span>Multi-Business Seed</span>
                   </Link>
                 </SidebarMenuButton>
@@ -261,6 +252,15 @@ export function AppSidebar() {
                   <Link to="/debug-accounting">
                     <Bug aria-hidden="true" />
                     <span>Debug Accounting</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/test-accounting-integration">
+                    <Bug aria-hidden="true" />
+                    <span>Test Accounting Integration</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

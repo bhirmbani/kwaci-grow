@@ -46,6 +46,18 @@ import { formatCurrency } from '@/utils/formatters'
 import { TransactionFilters } from './TransactionFilters'
 import type { UnifiedTransaction, TransactionFilters as ITransactionFilters, TransactionType } from '@/lib/types/accounting'
 
+// Helper function to safely format dates
+const safeFormatDate = (dateString: string | undefined | null, formatString: string, fallback: string = 'Invalid date'): string => {
+  if (!dateString) return fallback
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return fallback
+    return format(date, formatString)
+  } catch {
+    return fallback
+  }
+}
+
 interface TransactionListProps {
   transactions: UnifiedTransaction[]
   loading: boolean
@@ -284,10 +296,10 @@ export function TransactionList({
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-medium">
-                        {format(new Date(transaction.date), 'MMM dd, yyyy')}
+                        {safeFormatDate(transaction.date, 'MMM dd, yyyy', 'No date')}
                       </span>
                       <span className="text-xs text-muted-foreground">
-                        {format(new Date(transaction.createdAt), 'HH:mm')}
+                        {safeFormatDate(transaction.createdAt, 'HH:mm', 'No time')}
                       </span>
                     </div>
                   </TableCell>
