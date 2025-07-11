@@ -21,10 +21,15 @@ export function useAssetCategories(): UseAssetCategoriesResult {
   const currentBusinessId = useCurrentBusinessId()
 
   const fetchCategories = useCallback(async () => {
+    if (!currentBusinessId) {
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)
-      const categoriesData = await AssetCategoryService.getAll()
+      const categoriesData = await AssetCategoryService.getAll(currentBusinessId)
       setCategories(categoriesData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch asset categories')
@@ -35,13 +40,18 @@ export function useAssetCategories(): UseAssetCategoriesResult {
   }, [currentBusinessId])
 
   const createCategory = useCallback(async (name: string, description?: string): Promise<{ success: boolean; error?: string }> => {
+    if (!currentBusinessId) {
+      return { success: false, error: 'No business selected' }
+    }
+
     try {
       setError(null)
-      
+
       const newCategory: NewAssetCategory = {
         id: AssetCategoryService.generateId(),
         name: name.trim(),
-        description: description?.trim()
+        description: description?.trim(),
+        businessId: currentBusinessId
       }
 
       // Optimistic update - add to UI immediately
@@ -64,7 +74,7 @@ export function useAssetCategories(): UseAssetCategoriesResult {
       await fetchCategories()
       return { success: false, error: errorMessage }
     }
-  }, [fetchCategories])
+  }, [currentBusinessId, fetchCategories])
 
   const updateCategory = useCallback(async (id: string, updates: Partial<Omit<AssetCategory, 'id' | 'createdAt' | 'updatedAt'>>) => {
     // Store previous categories for potential rollback

@@ -1543,22 +1543,24 @@ export class ComprehensiveBakerySeeder {
     this.updateProgress('Fixed Assets', 'Creating bakery fixed assets...')
 
     const categories = await db.assetCategories.where('businessId').equals(this.businessId).toArray()
-    const bakingCat = categories.find(c => c.name === 'Baking Equipment')?.id
-    const refrigerationCat = categories.find(c => c.name === 'Refrigeration')?.id
-    const displayCat = categories.find(c => c.name === 'Display & Storage')?.id
-    const posCat = categories.find(c => c.name === 'Point of Sale')?.id
+    const bakingCat = categories.find(c => c.name === 'Baking Equipment')?.id!
+    const refrigerationCat = categories.find(c => c.name === 'Refrigeration')?.id!
+    const displayCat = categories.find(c => c.name === 'Display & Storage')?.id!
+    const posCat = categories.find(c => c.name === 'Point of Sale')?.id!
 
     const now = new Date().toISOString()
+    const purchaseDate = new Date()
+    purchaseDate.setMonth(purchaseDate.getMonth() - 8) // 8 months ago
+
     const assets: FixedAsset[] = [
       {
         id: uuidv4(),
         name: 'Commercial Convection Oven',
+        categoryId: bakingCat || '',
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         purchaseCost: 85000000, // 85M IDR
-        currentValue: 75000000, // 75M IDR
-        purchaseDate: '2023-01-15',
-        category: bakingCat,
-        depreciationRate: 10, // 10% per year
-        usefulLife: 10, // 10 years
+        depreciationMonths: 120, // 10 years
+        currentValue: 79625000, // Calculated depreciated value
         note: 'Main baking oven for bread and pastries',
         businessId: this.businessId,
         createdAt: now,
@@ -1567,12 +1569,11 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Industrial Stand Mixer',
+        categoryId: bakingCat || '',
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         purchaseCost: 25000000, // 25M IDR
-        currentValue: 22000000, // 22M IDR
-        purchaseDate: '2023-02-01',
-        category: bakingCat,
-        depreciationRate: 15, // 15% per year
-        usefulLife: 8, // 8 years
+        depreciationMonths: 96, // 8 years
+        currentValue: 23333333, // Calculated depreciated value
         note: 'Heavy-duty mixer for dough and batters',
         businessId: this.businessId,
         createdAt: now,
@@ -1581,12 +1582,11 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Walk-in Refrigerator',
+        categoryId: refrigerationCat || '',
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         purchaseCost: 45000000, // 45M IDR
-        currentValue: 40000000, // 40M IDR
-        purchaseDate: '2023-01-10',
-        category: refrigerationCat,
-        depreciationRate: 12, // 12% per year
-        usefulLife: 12, // 12 years
+        depreciationMonths: 144, // 12 years
+        currentValue: 42500000, // Calculated depreciated value
         note: 'Main refrigeration for ingredients and finished products',
         businessId: this.businessId,
         createdAt: now,
@@ -1595,12 +1595,11 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'Display Case',
+        categoryId: displayCat || '',
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         purchaseCost: 15000000, // 15M IDR
-        currentValue: 13000000, // 13M IDR
-        purchaseDate: '2023-03-01',
-        category: displayCat,
-        depreciationRate: 10, // 10% per year
-        usefulLife: 10, // 10 years
+        depreciationMonths: 120, // 10 years
+        currentValue: 14000000, // Calculated depreciated value
         note: 'Front-of-house display for baked goods',
         businessId: this.businessId,
         createdAt: now,
@@ -1609,12 +1608,11 @@ export class ComprehensiveBakerySeeder {
       {
         id: uuidv4(),
         name: 'POS System',
+        categoryId: posCat || '',
+        purchaseDate: purchaseDate.toISOString().split('T')[0],
         purchaseCost: 8000000, // 8M IDR
-        currentValue: 6000000, // 6M IDR
-        purchaseDate: '2023-04-01',
-        category: posCat,
-        depreciationRate: 25, // 25% per year
-        usefulLife: 4, // 4 years
+        depreciationMonths: 48, // 4 years
+        currentValue: 6666667, // Calculated depreciated value
         note: 'Modern POS system for order processing',
         businessId: this.businessId,
         createdAt: now,

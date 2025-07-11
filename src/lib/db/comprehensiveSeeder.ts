@@ -28,7 +28,7 @@ export type ProgressCallback = (progress: SeedingProgress) => void
 export class ComprehensiveSeeder {
   private progressCallback?: ProgressCallback
   private currentStep = 0
-  private totalSteps = 18
+  private totalSteps = 20
   private businessId?: string
 
   constructor(progressCallback?: ProgressCallback, businessId?: string) {
@@ -113,6 +113,14 @@ export class ComprehensiveSeeder {
         this.currentStep++
       }
 
+      // Ensure businessId is available for business-specific seeding
+      if (!this.businessId) {
+        throw new Error('Business ID is required for comprehensive seeding')
+      }
+
+      // TypeScript assertion - businessId is guaranteed to be defined after the check above
+      const businessId = this.businessId as string
+
       // Seed in dependency order
       await this.seedAppSettings()
       await this.seedFinancialItems()
@@ -124,6 +132,8 @@ export class ComprehensiveSeeder {
       await this.seedMenus()
       await this.seedMenuProducts()
       await this.seedMenuBranches()
+      await this.seedAssetCategories()
+      await this.seedFixedAssets()
       await this.seedRecurringExpenses()
       await this.seedSalesTargets()
       await this.seedHistoricalSales()
@@ -1026,6 +1036,10 @@ export class ComprehensiveSeeder {
     this.currentStep++
     this.updateProgress('Asset Categories', 'Creating asset categories...')
 
+    if (!this.businessId) {
+      throw new Error('Business ID is required for seeding asset categories')
+    }
+
     const now = new Date().toISOString()
     const categories: AssetCategory[] = [
       {
@@ -1069,8 +1083,12 @@ export class ComprehensiveSeeder {
     this.currentStep++
     this.updateProgress('Fixed Assets', 'Creating fixed assets with depreciation...')
 
-    // Get asset categories for reference
-    const categories = await db.assetCategories.toArray()
+    if (!this.businessId) {
+      throw new Error('Business ID is required for seeding fixed assets')
+    }
+
+    // Get asset categories for reference (filter by current business)
+    const categories = await db.assetCategories.where('businessId').equals(this.businessId).toArray()
     const coffeeEquipCat = categories.find(c => c.name === 'Coffee Equipment')?.id!
     const furnitureCat = categories.find(c => c.name === 'Furniture & Fixtures')?.id!
     const techCat = categories.find(c => c.name === 'Technology')?.id!

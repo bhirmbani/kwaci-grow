@@ -32,15 +32,20 @@ export function useFixedAssets(): UseFixedAssetsResult {
   const currentBusinessId = useCurrentBusinessId()
 
   const fetchAssets = useCallback(async () => {
+    if (!currentBusinessId) {
+      setLoading(false)
+      return
+    }
+
     try {
       setLoading(true)
       setError(null)
-      
+
       const [assetsData, summaryData] = await Promise.all([
-        FixedAssetService.getAll(),
-        FixedAssetService.getSummary()
+        FixedAssetService.getAll(currentBusinessId),
+        FixedAssetService.getSummary(currentBusinessId)
       ])
-      
+
       setAssets(assetsData)
       setSummary(summaryData)
     } catch (err) {
@@ -52,18 +57,29 @@ export function useFixedAssets(): UseFixedAssetsResult {
   }, [currentBusinessId])
 
   const addAsset = useCallback(async (asset: NewFixedAsset) => {
+    if (!currentBusinessId) {
+      setError('No business selected')
+      return
+    }
+
     try {
       setError(null)
-      
+
+      // Ensure the asset has the correct businessId
+      const assetWithBusinessId = {
+        ...asset,
+        businessId: currentBusinessId
+      }
+
       // Optimistic update - add to UI immediately
       const tempAsset: FixedAsset = {
-        ...asset,
+        ...assetWithBusinessId,
         currentValue: FixedAssetService.calculateCurrentValue(asset.purchaseCost, asset.purchaseDate, asset.depreciationMonths),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
       setAssets(prevAssets => [...prevAssets, tempAsset])
-      
+
       // Update summary optimistically
       setSummary(prevSummary => ({
         totalAssets: prevSummary.totalAssets + 1,
@@ -73,7 +89,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
       }))
 
       // Create in database in background
-      await FixedAssetService.create(asset)
+      await FixedAssetService.create(assetWithBusinessId)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add fixed asset')
       console.error('Error adding fixed asset:', err)
@@ -81,7 +97,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
       await fetchAssets()
       throw err
     }
-  }, [fetchAssets])
+  }, [currentBusinessId, fetchAssets])
 
   const updateAsset = useCallback(async (id: string, updates: Partial<Omit<FixedAsset, 'id' | 'createdAt' | 'updatedAt' | 'currentValue'>>) => {
     // Store previous assets for potential rollback
@@ -119,7 +135,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
       await FixedAssetService.update(id, updates)
 
       // Fetch fresh summary from database to ensure accuracy
-      const freshSummary = await FixedAssetService.getSummary()
+      const freshSummary = await FixedAssetService.getSummary(currentBusinessId)
       setSummary(freshSummary)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update fixed asset')
@@ -129,7 +145,7 @@ export function useFixedAssets(): UseFixedAssetsResult {
       setSummary(previousSummary)
       throw err
     }
-  }, [assets, summary])
+  }, [assets, summary, currentBusinessId])
 
   const deleteAsset = useCallback(async (id: string) => {
     // Store previous state for potential rollback

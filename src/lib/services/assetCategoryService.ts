@@ -3,8 +3,15 @@ import { type AssetCategory, type NewAssetCategory } from '../db/schema'
 
 export class AssetCategoryService {
   // Get all asset categories
-  static async getAll(): Promise<AssetCategory[]> {
-    return await db.assetCategories.orderBy('name').toArray()
+  static async getAll(businessId?: string): Promise<AssetCategory[]> {
+    if (businessId) {
+      // Use where().equals().toArray() and sort in JavaScript
+      const categories = await db.assetCategories.where('businessId').equals(businessId).toArray()
+      // Sort by name in JavaScript
+      return categories.sort((a, b) => a.name.localeCompare(b.name))
+    } else {
+      return await db.assetCategories.orderBy('name').toArray()
+    }
   }
 
   // Get a single category by ID

@@ -23,9 +23,18 @@ export class FixedAssetService {
   }
 
   // Get all fixed assets with calculated current values
-  static async getAll(): Promise<FixedAsset[]> {
-    const assets = await db.fixedAssets.orderBy('createdAt').toArray()
-    
+  static async getAll(businessId?: string): Promise<FixedAsset[]> {
+    let assets: FixedAsset[]
+
+    if (businessId) {
+      // Use where().equals().toArray() and sort in JavaScript
+      assets = await db.fixedAssets.where('businessId').equals(businessId).toArray()
+      // Sort by createdAt in JavaScript
+      assets.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    } else {
+      assets = await db.fixedAssets.orderBy('createdAt').toArray()
+    }
+
     // Update current values for all assets
     return assets.map(asset => ({
       ...asset,
@@ -158,19 +167,19 @@ export class FixedAssetService {
   }
 
   // Get summary statistics
-  static async getSummary(): Promise<{
+  static async getSummary(businessId?: string): Promise<{
     totalAssets: number
     totalPurchaseCost: number
     totalCurrentValue: number
     totalDepreciation: number
   }> {
-    const assets = await this.getAll()
-    
+    const assets = await this.getAll(businessId)
+
     const totalAssets = assets.length
     const totalPurchaseCost = assets.reduce((sum, asset) => sum + asset.purchaseCost, 0)
     const totalCurrentValue = assets.reduce((sum, asset) => sum + asset.currentValue, 0)
     const totalDepreciation = totalPurchaseCost - totalCurrentValue
-    
+
     return {
       totalAssets,
       totalPurchaseCost,
