@@ -27,6 +27,7 @@ import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as CogsRouteImport } from './routes/cogs'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AccountingRouteImport } from './routes/accounting'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
@@ -125,6 +126,11 @@ const AnalyticsRoute = AnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountingRoute = AccountingRouteImport.update({
+  id: '/accounting',
+  path: '/accounting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -164,6 +170,7 @@ const PlanDetailPlanIdRoute = PlanDetailPlanIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/accounting': typeof AccountingRoute
   '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/accounting': typeof AccountingRoute
   '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
+  '/accounting': typeof AccountingRoute
   '/analytics': typeof AnalyticsRoute
   '/cogs': typeof CogsRoute
   '/fixed-assets': typeof FixedAssetsRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
+    | '/accounting'
     | '/analytics'
     | '/cogs'
     | '/fixed-assets'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
+    | '/accounting'
     | '/analytics'
     | '/cogs'
     | '/fixed-assets'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/account'
+    | '/accounting'
     | '/analytics'
     | '/cogs'
     | '/fixed-assets'
@@ -330,6 +342,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
+  AccountingRoute: typeof AccountingRoute
   AnalyticsRoute: typeof AnalyticsRoute
   CogsRoute: typeof CogsRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
@@ -483,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accounting': {
+      id: '/accounting'
+      path: '/accounting'
+      fullPath: '/accounting'
+      preLoaderRoute: typeof AccountingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account': {
       id: '/account'
       path: '/account'
@@ -538,6 +558,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
+  AccountingRoute: AccountingRoute,
   AnalyticsRoute: AnalyticsRoute,
   CogsRoute: CogsRoute,
   FixedAssetsRoute: FixedAssetsRoute,

@@ -18,16 +18,31 @@ export class SalesRecordService {
    */
   static async createRecord(recordData: Omit<NewSalesRecord, 'id'>): Promise<SalesRecord> {
     const now = new Date().toISOString()
-    
+
     const newRecord: SalesRecord = {
       id: uuidv4(),
       ...recordData,
       createdAt: now,
       updatedAt: now,
     }
-    
+
     await db.salesRecords.add(newRecord)
     return newRecord
+  }
+
+  /**
+   * Get all sales records for a business
+   */
+  static async getRecordsByBusiness(businessId: string): Promise<SalesRecord[]> {
+    try {
+      return await db.salesRecords
+        .where('businessId')
+        .equals(businessId)
+        .sortBy('saleDate')
+    } catch (error) {
+      console.error('SalesRecordService.getRecordsByBusiness() - Database error:', error)
+      throw error
+    }
   }
 
   /**

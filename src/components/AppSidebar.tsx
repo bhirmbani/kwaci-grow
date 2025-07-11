@@ -19,6 +19,7 @@ import {
   Activity,
   Map,
   CreditCard,
+  Receipt,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -85,6 +86,12 @@ const items = [
     url: "/operations",
     icon: Activity,
     description: "Sales recording, analytics, and operational tracking",
+  },
+  {
+    title: "Accounting",
+    url: "/accounting",
+    icon: Receipt,
+    description: "Comprehensive financial transaction management and accounting",
   },
   {
     title: "Recurring Expenses",

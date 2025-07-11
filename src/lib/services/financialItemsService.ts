@@ -2,6 +2,20 @@ import { db } from '../db'
 import { type FinancialItem, type NewFinancialItem, type FinancialItemCategory } from '../db/schema'
 
 export class FinancialItemsService {
+  // Get all financial items for a business
+  static async getAll(businessId?: string): Promise<FinancialItem[]> {
+    if (businessId) {
+      return await db.financialItems
+        .where('businessId')
+        .equals(businessId)
+        .sortBy('createdAt')
+    } else {
+      return await db.financialItems
+        .orderBy('createdAt')
+        .toArray()
+    }
+  }
+
   // Get all financial items by category
   static async getByCategory(category: FinancialItemCategory): Promise<FinancialItem[]> {
     return await db.financialItems
