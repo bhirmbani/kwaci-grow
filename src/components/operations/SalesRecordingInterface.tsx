@@ -46,13 +46,8 @@ export function SalesRecordingInterface() {
     topProduct: null,
   })
   const [branches, setBranches] = useState<Branch[]>([])
-  // Default to yesterday since seeding creates records for past dates only
-  const getYesterday = () => {
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    return yesterday
-  }
-  const [selectedDate, setSelectedDate] = useState(format(getYesterday(), 'yyyy-MM-dd'))
+  // Default to today's date to match the sales record form
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [selectedBranch, setSelectedBranch] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -91,8 +86,8 @@ export function SalesRecordingInterface() {
       setLoading(true)
       try {
         const [records, summary] = await Promise.all([
-          SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined),
-          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined),
+          SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined, currentBusinessId),
+          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined, currentBusinessId),
         ])
 
         setSalesRecords(records)
@@ -109,14 +104,20 @@ export function SalesRecordingInterface() {
 
   const handleRecordSuccess = () => {
     setSheetOpen(false)
+    // Update the selected date to today to show the newly created record
+    const today = format(new Date(), 'yyyy-MM-dd')
+    if (selectedDate !== today) {
+      setSelectedDate(today)
+    }
+
     // Reload data to show the new record
     const loadSalesData = async () => {
       if (!currentBusinessId) return
 
       try {
         const [records, summary] = await Promise.all([
-          SalesRecordService.getRecordsForDate(selectedDate, selectedBranch || undefined),
-          SalesRecordService.getSalesSummary(selectedDate, selectedBranch || undefined),
+          SalesRecordService.getRecordsForDate(today, selectedBranch || undefined, currentBusinessId),
+          SalesRecordService.getSalesSummary(today, selectedBranch || undefined, currentBusinessId),
         ])
 
         setSalesRecords(records)

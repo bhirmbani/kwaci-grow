@@ -51,10 +51,11 @@ export class SalesRecordService {
    */
   static async getRecordsForDate(
     saleDate: string,
-    branchId?: string
+    branchId?: string,
+    businessId?: string
   ): Promise<SalesRecordWithDetails[]> {
     try {
-      const currentBusinessId = getCurrentBusinessId()
+      const currentBusinessId = businessId || getCurrentBusinessId()
       if (!currentBusinessId) {
         return []
       }
@@ -73,7 +74,7 @@ export class SalesRecordService {
 
       // Get related data for each record
       const recordsWithDetails: SalesRecordWithDetails[] = []
-      
+
       for (const record of records) {
         const [menu, product, branch] = await Promise.all([
           db.menus.get(record.menuId),
@@ -105,10 +106,11 @@ export class SalesRecordService {
   static async getRecordsForDateRange(
     startDate: string,
     endDate: string,
-    branchId?: string
+    branchId?: string,
+    businessId?: string
   ): Promise<SalesRecordWithDetails[]> {
     try {
-      const currentBusinessId = getCurrentBusinessId()
+      const currentBusinessId = businessId || getCurrentBusinessId()
       if (!currentBusinessId) {
         return []
       }
@@ -127,7 +129,7 @@ export class SalesRecordService {
 
       // Get related data for each record
       const recordsWithDetails: SalesRecordWithDetails[] = []
-      
+
       for (const record of filteredRecords) {
         const [menu, product, branch] = await Promise.all([
           db.menus.get(record.menuId),
@@ -163,11 +165,12 @@ export class SalesRecordService {
    */
   static async getSalesSummary(
     saleDate: string,
-    branchId?: string
+    branchId?: string,
+    businessId?: string
   ): Promise<SalesRecordSummary> {
     try {
-      const records = await this.getRecordsForDate(saleDate, branchId)
-      
+      const records = await this.getRecordsForDate(saleDate, branchId, businessId)
+
       if (records.length === 0) {
         return {
           totalSales: 0,
@@ -183,7 +186,7 @@ export class SalesRecordService {
 
       // Find top product by quantity
       const productSales = new Map<string, { name: string; quantity: number }>()
-      
+
       records.forEach(record => {
         const existing = productSales.get(record.productId)
         if (existing) {
@@ -245,10 +248,11 @@ export class SalesRecordService {
    */
   static async getHourlySalesData(
     saleDate: string,
-    branchId?: string
+    branchId?: string,
+    businessId?: string
   ): Promise<Array<{ hour: string; revenue: number; sales: number }>> {
     try {
-      const records = await this.getRecordsForDate(saleDate, branchId)
+      const records = await this.getRecordsForDate(saleDate, branchId, businessId)
       
       const hourlyData = new Map<string, { revenue: number; sales: number }>()
       

@@ -34,10 +34,10 @@ export function useSalesRecords(
     try {
       setLoading(true)
       setError(null)
-      
+
       const [records, summary] = await Promise.all([
-        SalesRecordService.getRecordsForDate(date, branchId),
-        SalesRecordService.getSalesSummary(date, branchId),
+        SalesRecordService.getRecordsForDate(date, branchId, currentBusinessId),
+        SalesRecordService.getSalesSummary(date, branchId, currentBusinessId),
       ])
 
       setSalesRecords(records)

@@ -110,7 +110,8 @@ export function AnalyticsDashboard() {
         const salesRecords = await SalesRecordService.getRecordsForDateRange(
           filters.startDate,
           filters.endDate,
-          filters.branchId || undefined
+          filters.branchId || undefined,
+          currentBusinessId
         )
 
         // Process hourly data
