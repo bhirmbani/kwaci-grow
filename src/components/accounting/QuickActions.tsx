@@ -10,7 +10,6 @@
 import { useState } from 'react'
 import {
   Plus,
-  Receipt,
   CreditCard,
   TrendingUp,
   Package,
@@ -28,7 +27,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet'
 import { Link } from '@tanstack/react-router'
 import { TransactionForm } from './TransactionForm'
@@ -144,22 +142,25 @@ export function QuickActions() {
     const ButtonContent = (
       <Button
         variant={action.variant || 'outline'}
-        className="h-auto p-4 flex flex-col items-center gap-2 relative"
+        className="h-28 w-full p-2 flex flex-col items-center justify-between relative overflow-hidden"
         onClick={() => handleActionClick(action)}
       >
         {action.badge && (
           <Badge 
-            variant="secondary" 
-            className="absolute -top-2 -right-2 text-xs px-1.5 py-0.5"
+            variant="default" 
+            className="absolute top-1 right-1 text-xs px-1.5 py-0.5 z-10"
           >
             {action.badge}
           </Badge>
         )}
-        <action.icon className="h-6 w-6" />
-        <div className="text-center">
-          <div className="font-medium text-sm">{action.title}</div>
-          <div className="text-xs text-muted-foreground">{action.description}</div>
+        <div className="flex-shrink-0 mt-1">
+          <action.icon className="h-5 w-5" />
         </div>
+        <div className="text-center flex-1 flex flex-col justify-center px-1 min-h-0">
+          <div className="font-medium text-xs leading-none mb-1 line-clamp-1">{action.title}</div>
+          <div className="text-xs text-muted-foreground leading-none line-clamp-2">{action.description}</div>
+        </div>
+        <div className="flex-shrink-0 h-1"></div>
       </Button>
     )
 
@@ -191,9 +192,9 @@ export function QuickActions() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {QUICK_ACTIONS.map((action) => (
-              <div key={action.id}>
+              <div key={action.id} className="flex">
                 {renderActionButton(action)}
               </div>
             ))}
