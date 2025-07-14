@@ -1,6 +1,16 @@
 import { db } from '../db'
 import type { StockLevel, StockTransaction, NewStockLevel, NewStockTransaction } from '../db/schema'
 import { v4 as uuidv4 } from 'uuid'
+import { requireBusinessId, withBusinessId } from './businessContext'
+
+/**
+ * Set the business ID provider function
+ * This allows the service to get the current business ID without direct store dependency
+ */
+export function setBusinessIdProvider(_provider: () => string | null) {
+  // This function is required for business context initialization
+  // The provider is not used directly in this service since we use requireBusinessId()
+}
 
 export class StockService {
   /**
@@ -16,11 +26,13 @@ export class StockService {
         throw new Error('Invalid unit parameter')
       }
 
-      // Use simple query instead of compound index to avoid IDBKeyRange errors
+      const businessId = requireBusinessId()
+
+      // Filter by business ID, ingredient name, and unit
       return await db.stockLevels
-        .where('ingredientName')
-        .equals(ingredientName)
-        .and(stock => stock.unit === unit)
+        .where('businessId')
+        .equals(businessId)
+        .and(stock => stock.ingredientName === ingredientName && stock.unit === unit)
         .first() || null
     } catch (error) {
       console.error('Error getting stock level:', error)
@@ -33,7 +45,11 @@ export class StockService {
    */
   static async getAllStockLevels(): Promise<StockLevel[]> {
     try {
-      return await db.stockLevels.orderBy('ingredientName').toArray()
+      const businessId = requireBusinessId()
+      return await db.stockLevels
+        .where('businessId')
+        .equals(businessId)
+        .sortBy('ingredientName')
     } catch (error) {
       console.error('Error getting all stock levels:', error)
       throw error
@@ -58,13 +74,13 @@ export class StockService {
         await db.stockLevels.update(existing.id, updatedStock)
         return updatedStock
       } else {
-        const newStock: StockLevel = {
+        const newStock: StockLevel = withBusinessId({
           id: uuidv4(),
           ...stockData,
           lastUpdated: now,
           createdAt: now,
           updatedAt: now
-        }
+        })
         await db.stockLevels.add(newStock)
         return newStock
       }
@@ -176,12 +192,12 @@ export class StockService {
   static async recordTransaction(transactionData: Omit<NewStockTransaction, 'id'>): Promise<StockTransaction> {
     try {
       const now = new Date().toISOString()
-      const transaction: StockTransaction = {
+      const transaction: StockTransaction = withBusinessId({
         id: uuidv4(),
         ...transactionData,
         createdAt: now,
         updatedAt: now
-      }
+      })
 
       await db.stockTransactions.add(transaction)
       return transaction
@@ -200,15 +216,24 @@ export class StockService {
     limit: number = 50
   ): Promise<StockTransaction[]> {
     try {
-      let query = db.stockTransactions.orderBy('transactionDate').reverse()
+      const businessId = requireBusinessId()
+      let query = db.stockTransactions
+        .where('businessId')
+        .equals(businessId)
+        .reverse()
+        .sortBy('transactionDate')
+
+      // Apply additional filters after getting business-specific transactions
+      const transactions = await query
+      let filtered = transactions
 
       if (ingredientName && unit) {
-        query = query.filter(t => t.ingredientName === ingredientName && t.unit === unit)
+        filtered = transactions.filter(t => t.ingredientName === ingredientName && t.unit === unit)
       } else if (ingredientName) {
-        query = query.filter(t => t.ingredientName === ingredientName)
+        filtered = transactions.filter(t => t.ingredientName === ingredientName)
       }
 
-      return await query.limit(limit).toArray()
+      return filtered.slice(0, limit)
     } catch (error) {
       console.error('Error getting stock transactions:', error)
       throw error
@@ -220,7 +245,10 @@ export class StockService {
    */
   static async getLowStockAlerts(): Promise<StockLevel[]> {
     try {
+      const businessId = requireBusinessId()
       return await db.stockLevels
+        .where('businessId')
+        .equals(businessId)
         .filter(stock => stock.currentStock <= stock.lowStockThreshold)
         .toArray()
     } catch (error) {

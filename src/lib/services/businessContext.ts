@@ -12,6 +12,7 @@ import { setBusinessIdProvider as setPlanningBusinessId } from './planningServic
 import { setBusinessIdProvider as setPlanTemplateBusinessId } from './planTemplateService'
 import { setBusinessIdProvider as setWarehouseBusinessId } from './warehouseService'
 import { setBusinessIdProvider as setProductionBusinessId } from './productionService'
+import { setBusinessIdProvider as setStockBusinessId } from './stockService'
 // Note: MenuService and BranchService don't export setBusinessIdProvider yet,
 // they use getCurrentBusinessId directly from businessContext
 
@@ -35,6 +36,7 @@ export function initializeBusinessContext(provider: BusinessIdProvider) {
   setPlanTemplateBusinessId(provider)
   setWarehouseBusinessId(provider)
   setProductionBusinessId(provider)
+  setStockBusinessId(provider)
 
   // TODO: Add other services as they are updated:
   // setMenuBusinessId(provider)
