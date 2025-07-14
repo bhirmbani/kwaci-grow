@@ -10,6 +10,8 @@ import { setBusinessIdProvider as setIngredientBusinessId } from './ingredientSe
 import { setBusinessIdProvider as setProductBusinessId } from './productService'
 import { setBusinessIdProvider as setPlanningBusinessId } from './planningService'
 import { setBusinessIdProvider as setPlanTemplateBusinessId } from './planTemplateService'
+import { setBusinessIdProvider as setWarehouseBusinessId } from './warehouseService'
+import { setBusinessIdProvider as setProductionBusinessId } from './productionService'
 // Note: MenuService and BranchService don't export setBusinessIdProvider yet,
 // they use getCurrentBusinessId directly from businessContext
 
@@ -31,12 +33,13 @@ export function initializeBusinessContext(provider: BusinessIdProvider) {
   setProductBusinessId(provider)
   setPlanningBusinessId(provider)
   setPlanTemplateBusinessId(provider)
+  setWarehouseBusinessId(provider)
+  setProductionBusinessId(provider)
 
   // TODO: Add other services as they are updated:
   // setMenuBusinessId(provider)
   // setBranchBusinessId(provider)
   // setSalesBusinessId(provider)
-  // setWarehouseBusinessId(provider)
   // setJourneyBusinessId(provider) - JourneyService now uses getCurrentBusinessId directly
   // etc.
 }
@@ -65,7 +68,7 @@ export function requireBusinessId(): string {
  * Usage: filterByBusiness(db.someTable, businessId) - for simple table queries
  * or: filterByBusiness(db.someTable.where('someField').equals(value), businessId) - for complex queries
  */
-export function filterByBusiness<T>(query: any, businessId?: string): any {
+export function filterByBusiness(query: any, businessId?: string): any {
   const currentBusinessId = businessId || getCurrentBusinessId()
   if (!currentBusinessId) {
     throw new Error('No business selected. Please select a business first.')

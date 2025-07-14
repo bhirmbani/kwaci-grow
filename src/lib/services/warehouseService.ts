@@ -3,6 +3,16 @@ import type { WarehouseBatch, WarehouseItem, NewWarehouseBatch, NewWarehouseItem
 import type { ShoppingListItem } from '@/utils/cogsCalculations'
 import { StockService } from './stockService'
 import { v4 as uuidv4 } from 'uuid'
+import { withBusinessId, requireBusinessId } from './businessContext'
+
+/**
+ * Set the business ID provider function
+ * This allows the service to get the current business ID without direct store dependency
+ */
+export function setBusinessIdProvider(_provider: () => string | null) {
+  // This function is required for business context initialization
+  // The provider is not used directly in this service since we use requireBusinessId()
+}
 
 export class WarehouseService {
   /**
@@ -10,7 +20,8 @@ export class WarehouseService {
    */
   static async getNextBatchNumber(): Promise<number> {
     try {
-      const count = await db.warehouseBatches.count()
+      const businessId = requireBusinessId()
+      const count = await db.warehouseBatches.where('businessId').equals(businessId).count()
       return count + 1
     } catch (error) {
       console.error('Error getting next batch number:', error)
@@ -21,19 +32,19 @@ export class WarehouseService {
   /**
    * Create a new warehouse batch
    */
-  static async createBatch(batchData: Omit<NewWarehouseBatch, 'id' | 'batchNumber'>): Promise<WarehouseBatch> {
+  static async createBatch(batchData: Omit<NewWarehouseBatch, 'id' | 'batchNumber' | 'businessId'>): Promise<WarehouseBatch> {
     try {
       const batchNumber = await this.getNextBatchNumber()
       const now = new Date().toISOString()
-      
-      const newBatch: WarehouseBatch = {
+
+      const newBatch: WarehouseBatch = withBusinessId({
         id: uuidv4(),
         batchNumber,
         dateAdded: batchData.dateAdded,
         note: batchData.note || '',
         createdAt: now,
         updatedAt: now
-      }
+      })
 
       await db.warehouseBatches.add(newBatch)
       return newBatch
@@ -46,11 +57,11 @@ export class WarehouseService {
   /**
    * Add items to a warehouse batch and update stock levels
    */
-  static async addItemsToBatch(batchId: string, items: Omit<NewWarehouseItem, 'id' | 'batchId'>[]): Promise<WarehouseItem[]> {
+  static async addItemsToBatch(batchId: string, items: Omit<NewWarehouseItem, 'id' | 'batchId' | 'businessId'>[]): Promise<WarehouseItem[]> {
     try {
       const now = new Date().toISOString()
 
-      const warehouseItems: WarehouseItem[] = items.map(item => ({
+      const warehouseItems: WarehouseItem[] = items.map(item => withBusinessId({
         id: uuidv4(),
         batchId,
         ingredientName: item.ingredientName,
@@ -90,7 +101,7 @@ export class WarehouseService {
   /**
    * Convert shopping list items to warehouse items format
    */
-  static convertShoppingListToWarehouseItems(shoppingListItems: ShoppingListItem[]): Omit<NewWarehouseItem, 'id' | 'batchId'>[] {
+  static convertShoppingListToWarehouseItems(shoppingListItems: ShoppingListItem[]): Omit<NewWarehouseItem, 'id' | 'batchId' | 'businessId'>[] {
     return shoppingListItems.map(item => ({
       ingredientName: item.name,
       quantity: item.totalNeeded, // For True Shopping List, this is already the purchased quantity in base units
@@ -133,11 +144,12 @@ export class WarehouseService {
    */
   static async getAllBatchesWithItems(): Promise<(WarehouseBatch & { items: WarehouseItem[] })[]> {
     try {
-      const batches = await db.warehouseBatches.orderBy('batchNumber').reverse().toArray()
-      
+      const businessId = requireBusinessId()
+      const batches = await db.warehouseBatches.where('businessId').equals(businessId).reverse().sortBy('batchNumber')
+
       const batchesWithItems = await Promise.all(
-        batches.map(async (batch) => {
-          const items = await db.warehouseItems.where('batchId').equals(batch.id).toArray()
+        batches.map(async (batch: WarehouseBatch) => {
+          const items = await db.warehouseItems.where(['businessId', 'batchId']).equals([businessId, batch.id]).toArray()
           return { ...batch, items }
         })
       )
@@ -154,10 +166,11 @@ export class WarehouseService {
    */
   static async getBatchesByDateRange(startDate: string, endDate: string): Promise<WarehouseBatch[]> {
     try {
-      return await db.warehouseBatches
-        .where('dateAdded')
-        .between(startDate, endDate, true, true)
-        .toArray()
+      const businessId = requireBusinessId()
+      const allBatches = await db.warehouseBatches.where('businessId').equals(businessId).toArray()
+      return allBatches.filter(batch =>
+        batch.dateAdded >= startDate && batch.dateAdded <= endDate
+      )
     } catch (error) {
       console.error('Error getting batches by date range:', error)
       throw error
@@ -169,10 +182,11 @@ export class WarehouseService {
    */
   static async getBatchWithItems(batchId: string): Promise<(WarehouseBatch & { items: WarehouseItem[] }) | null> {
     try {
+      const businessId = requireBusinessId()
       const batch = await db.warehouseBatches.get(batchId)
-      if (!batch) return null
+      if (!batch || batch.businessId !== businessId) return null
 
-      const items = await db.warehouseItems.where('batchId').equals(batchId).toArray()
+      const items = await db.warehouseItems.where(['businessId', 'batchId']).equals([businessId, batchId]).toArray()
       return { ...batch, items }
     } catch (error) {
       console.error('Error getting batch with items:', error)
@@ -185,8 +199,15 @@ export class WarehouseService {
    */
   static async deleteBatch(batchId: string): Promise<void> {
     try {
+      const businessId = requireBusinessId()
+      // Verify batch belongs to current business before deleting
+      const batch = await db.warehouseBatches.get(batchId)
+      if (!batch || batch.businessId !== businessId) {
+        throw new Error('Warehouse batch not found or access denied')
+      }
+
       await db.transaction('rw', [db.warehouseBatches, db.warehouseItems], async () => {
-        await db.warehouseItems.where('batchId').equals(batchId).delete()
+        await db.warehouseItems.where(['businessId', 'batchId']).equals([businessId, batchId]).delete()
         await db.warehouseBatches.delete(batchId)
       })
     } catch (error) {
@@ -200,6 +221,13 @@ export class WarehouseService {
    */
   static async updateBatch(batchId: string, updates: Partial<Omit<WarehouseBatch, 'id' | 'batchNumber' | 'createdAt'>>): Promise<void> {
     try {
+      const businessId = requireBusinessId()
+      // Verify batch belongs to current business before updating
+      const batch = await db.warehouseBatches.get(batchId)
+      if (!batch || batch.businessId !== businessId) {
+        throw new Error('Warehouse batch not found or access denied')
+      }
+
       const updateData = {
         ...updates,
         updatedAt: new Date().toISOString()
@@ -237,19 +265,18 @@ export class WarehouseService {
     latestBatch?: WarehouseBatch
   }> {
     try {
-      const totalBatches = await db.warehouseBatches.count()
-      const totalItems = await db.warehouseItems.count()
-      
-      const allItems = await db.warehouseItems.toArray()
-      const totalValue = allItems.reduce((sum, item) => {
+      const businessId = requireBusinessId()
+      const totalBatches = await db.warehouseBatches.where('businessId').equals(businessId).count()
+      const totalItems = await db.warehouseItems.where('businessId').equals(businessId).count()
+
+      const allItems = await db.warehouseItems.where('businessId').equals(businessId).toArray()
+      const totalValue = allItems.reduce((sum: number, item: WarehouseItem) => {
         const cost = typeof item.totalCost === 'number' && !isNaN(item.totalCost) ? item.totalCost : 0
         return sum + cost
       }, 0)
-      
-      const latestBatch = await db.warehouseBatches
-        .orderBy('batchNumber')
-        .reverse()
-        .first()
+
+      const batches = await db.warehouseBatches.where('businessId').equals(businessId).reverse().sortBy('batchNumber')
+      const latestBatch = batches[0]
 
       return {
         totalBatches,

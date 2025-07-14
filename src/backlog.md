@@ -24,7 +24,3 @@ there is no form to change status of plans. i see there are active and draft sta
 ingredient that is not fixed. for example plastic bag. we will buy plastic bag as an inventory item but not all product we make will use plastic bag. how to handle this? just record the date of plastic bag is empty/run out then we will spread those plastic bag cost to the products being sold during that period (from the date we buy the plastic bag to the date we run out of it).
 
 in reports - financial overview user need to know profit and cost for each branch, menu, and product.
-
-
-IMPORTANT
-1. when creating business manually from scratch all data should empty, however warehouse route have seeder data from previous business

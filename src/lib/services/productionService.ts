@@ -2,6 +2,16 @@ import { db } from '../db'
 import type { ProductionBatch, ProductionItem, NewProductionBatch, NewProductionItem, ProductionBatchWithItems, ProductionBatchStatus } from '../db/schema'
 import { StockService } from './stockService'
 import { v4 as uuidv4 } from 'uuid'
+import { withBusinessId, requireBusinessId } from './businessContext'
+
+/**
+ * Set the business ID provider function
+ * This allows the service to get the current business ID without direct store dependency
+ */
+export function setBusinessIdProvider(_provider: () => string | null) {
+  // This function is required for business context initialization
+  // The provider is not used directly in this service since we use requireBusinessId()
+}
 
 export class ProductionService {
   /**
@@ -9,7 +19,8 @@ export class ProductionService {
    */
   static async getNextBatchNumber(): Promise<number> {
     try {
-      const count = await db.productionBatches.count()
+      const businessId = requireBusinessId()
+      const count = await db.productionBatches.where('businessId').equals(businessId).count()
       return count + 1
     } catch (error) {
       console.error('Error getting next production batch number:', error)
@@ -20,12 +31,12 @@ export class ProductionService {
   /**
    * Create a new production batch
    */
-  static async createBatch(batchData: Omit<NewProductionBatch, 'id' | 'batchNumber'>): Promise<ProductionBatch> {
+  static async createBatch(batchData: Omit<NewProductionBatch, 'id' | 'batchNumber' | 'businessId'>): Promise<ProductionBatch> {
     try {
       const batchNumber = await this.getNextBatchNumber()
       const now = new Date().toISOString()
-      
-      const newBatch: ProductionBatch = {
+
+      const newBatch: ProductionBatch = withBusinessId({
         id: uuidv4(),
         batchNumber,
         dateCreated: batchData.dateCreated,
@@ -33,7 +44,7 @@ export class ProductionService {
         note: batchData.note || '',
         createdAt: now,
         updatedAt: now
-      }
+      })
 
       await db.productionBatches.add(newBatch)
       return newBatch
@@ -46,7 +57,7 @@ export class ProductionService {
   /**
    * Add items to a production batch and reserve stock
    */
-  static async addItemsToBatch(batchId: string, items: Omit<NewProductionItem, 'id' | 'productionBatchId'>[]): Promise<ProductionItem[]> {
+  static async addItemsToBatch(batchId: string, items: Omit<NewProductionItem, 'id' | 'productionBatchId' | 'businessId'>[]): Promise<ProductionItem[]> {
     try {
       const now = new Date().toISOString()
       const productionItems: ProductionItem[] = []
@@ -58,7 +69,7 @@ export class ProductionService {
       }
 
       for (const item of items) {
-        const productionItem: ProductionItem = {
+        const productionItem: ProductionItem = withBusinessId({
           id: uuidv4(),
           productionBatchId: batchId,
           ingredientName: item.ingredientName,
@@ -67,7 +78,7 @@ export class ProductionService {
           note: item.note || '',
           createdAt: now,
           updatedAt: now
-        }
+        })
 
         await db.productionItems.add(productionItem)
         productionItems.push(productionItem)
@@ -115,7 +126,8 @@ export class ProductionService {
    */
   static async getAllBatches(): Promise<ProductionBatch[]> {
     try {
-      return await db.productionBatches.orderBy('batchNumber').reverse().toArray()
+      const businessId = requireBusinessId()
+      return await db.productionBatches.where('businessId').equals(businessId).reverse().sortBy('batchNumber')
     } catch (error) {
       console.error('Error getting production batches:', error)
       throw error
@@ -131,7 +143,8 @@ export class ProductionService {
       const batchesWithItems: ProductionBatchWithItems[] = []
 
       for (const batch of batches) {
-        const items = await db.productionItems.where('productionBatchId').equals(batch.id).toArray()
+        const businessId = requireBusinessId()
+        const items = await db.productionItems.where(['businessId', 'productionBatchId']).equals([businessId, batch.id]).toArray()
         batchesWithItems.push({
           ...batch,
           items
@@ -150,11 +163,12 @@ export class ProductionService {
    */
   static async getBatchWithItems(batchId: string): Promise<ProductionBatchWithItems | null> {
     try {
+      const businessId = requireBusinessId()
       const batch = await db.productionBatches.get(batchId)
-      if (!batch) return null
+      if (!batch || batch.businessId !== businessId) return null
 
-      const items = await db.productionItems.where('productionBatchId').equals(batchId).toArray()
-      
+      const items = await db.productionItems.where(['businessId', 'productionBatchId']).equals([businessId, batchId]).toArray()
+
       return {
         ...batch,
         items
@@ -178,6 +192,13 @@ export class ProductionService {
     }
   ): Promise<void> {
     try {
+      const businessId = requireBusinessId()
+      // Verify batch belongs to current business before updating
+      const batch = await db.productionBatches.get(batchId)
+      if (!batch || batch.businessId !== businessId) {
+        throw new Error('Production batch not found or access denied')
+      }
+
       const now = new Date().toISOString()
 
       // Prepare update data
@@ -239,13 +260,14 @@ export class ProductionService {
    */
   static async deleteBatch(batchId: string): Promise<void> {
     try {
+      const businessId = requireBusinessId()
       const batch = await db.productionBatches.get(batchId)
-      if (!batch) {
-        throw new Error('Production batch not found')
+      if (!batch || batch.businessId !== businessId) {
+        throw new Error('Production batch not found or access denied')
       }
 
       // Get items to release reservations
-      const items = await db.productionItems.where('productionBatchId').equals(batchId).toArray()
+      const items = await db.productionItems.where(['businessId', 'productionBatchId']).equals([businessId, batchId]).toArray()
 
       // Release stock reservations for each item (only if not completed)
       if (batch.status !== 'Completed') {
@@ -261,7 +283,7 @@ export class ProductionService {
       }
 
       // Delete items and batch
-      await db.productionItems.where('productionBatchId').equals(batchId).delete()
+      await db.productionItems.where(['businessId', 'productionBatchId']).equals([businessId, batchId]).delete()
       await db.productionBatches.delete(batchId)
     } catch (error) {
       console.error('Error deleting production batch:', error)
@@ -274,6 +296,13 @@ export class ProductionService {
    */
   static async updateBatch(batchId: string, updates: Partial<Pick<ProductionBatch, 'note'>>): Promise<void> {
     try {
+      const businessId = requireBusinessId()
+      // Verify batch belongs to current business before updating
+      const batch = await db.productionBatches.get(batchId)
+      if (!batch || batch.businessId !== businessId) {
+        throw new Error('Production batch not found or access denied')
+      }
+
       const now = new Date().toISOString()
       await db.productionBatches.update(batchId, {
         ...updates,
@@ -297,9 +326,10 @@ export class ProductionService {
     latestBatch?: ProductionBatch
   }> {
     try {
+      const businessId = requireBusinessId()
       const batches = await this.getAllBatches()
-      const totalItems = await db.productionItems.count()
-      
+      const totalItems = await db.productionItems.where('businessId').equals(businessId).count()
+
       const stats = {
         totalBatches: batches.length,
         pendingBatches: batches.filter(b => b.status === 'Pending').length,
