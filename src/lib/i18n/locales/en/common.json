@@ -1,0 +1,135 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "plan": "Plan",
+    "products": "Products",
+    "menus": "Menus",
+    "salesTargets": "Sales Targets",
+    "operations": "Operations",
+    "people": "People",
+    "accounting": "Accounting",
+    "recurringExpenses": "Recurring Expenses",
+    "analytics": "Analytics",
+    "ingredients": "Ingredients",
+    "cogsCalculator": "COGS Calculator",
+    "warehouse": "Warehouse",
+    "production": "Production",
+    "fixedAssets": "Fixed Assets",
+    "reports": "Reports",
+    "kwaciDemo": "KWACI Demo",
+    "learningHub": "Learning Hub",
+    "settings": "Settings",
+    "account": "Account"
+  },
+  "navigationDescriptions": {
+    "dashboard": "Main financial dashboard",
+    "plan": "Guided onboarding and operational planning",
+    "products": "Manage products and their compositions",
+    "menus": "Create and manage coffee shop menus",
+    "salesTargets": "Set daily sales targets for menu products",
+    "operations": "Sales recording, analytics, and operational tracking",
+    "people": "Manage employees and point-of-contact assignments",
+    "accounting": "Comprehensive financial transaction management and accounting",
+    "recurringExpenses": "Manage monthly and yearly recurring operational expenses",
+    "analytics": "Product-specific income projections and profit analysis",
+    "ingredients": "Manage ingredients and their properties",
+    "cogsCalculator": "Calculate cost of goods sold",
+    "warehouse": "Manage warehouse stock and inventory",
+    "production": "Manage production batches and allocations",
+    "fixedAssets": "Manage fixed assets and depreciation",
+    "reports": "Financial reports and analytics",
+    "kwaciDemo": "Explore KWACI acronym meanings and animations"
+  },
+  "reportsSubMenu": {
+    "financialOverview": "Financial Overview",
+    "profitAnalysis": "Profit Analysis",
+    "costBreakdown": "Cost Breakdown"
+  },
+  "sidebarGroups": {
+    "navigation": "Navigation",
+    "learningSupport": "Learning & Support",
+    "quickActions": "Quick Actions",
+    "devTools": "Dev Tools"
+  },
+  "devTools": {
+    "multiBusinessSeed": "Multi-Business Seed",
+    "debugAccounting": "Debug Accounting"
+  },
+  "userMenu": {
+    "businessOwner": "KWACI Business Owner",
+    "email": "owner@kwaci.grow",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "signOut": "Sign out"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh"
+  },
+  "language": {
+    "switchLanguage": "Switch Language",
+    "currentLanguage": "Current Language",
+    "english": "English",
+    "indonesian": "Bahasa Indonesia"
+  },
+  "kwaci": {
+    "brandName": "KWACI Grow",
+    "acronyms": {
+      "mixed": {
+        "name": "Mixed (Indonesian-English)",
+        "k": "Keuangan",
+        "kDesc": "Finance",
+        "w": "Wirausaha", 
+        "wDesc": "Entrepreneur",
+        "a": "Automated",
+        "aDesc": "Automated processes",
+        "c": "Commerce",
+        "cDesc": "Commerce management",
+        "i": "Insights",
+        "iDesc": "Business insights"
+      },
+      "english": {
+        "name": "All English Alternative",
+        "k": "Knowledge",
+        "kDesc": "Business knowledge management",
+        "w": "Warehouse",
+        "wDesc": "Inventory and stock management",
+        "a": "Analytics",
+        "aDesc": "Data analytics and reporting",
+        "c": "Commerce",
+        "cDesc": "Business commerce operations",
+        "i": "Intelligence",
+        "iDesc": "Business intelligence"
+      },
+      "indonesian": {
+        "name": "All Bahasa Indonesia Alternative",
+        "k": "Kasir",
+        "kDesc": "Cashier/POS",
+        "w": "Warung",
+        "wDesc": "Small business/shop",
+        "a": "Akuntansi",
+        "aDesc": "Accounting",
+        "c": "Cerdas",
+        "cDesc": "Smart/intelligent",
+        "i": "Inovasi",
+        "iDesc": "Innovation"
+      }
+    }
+  }
+}

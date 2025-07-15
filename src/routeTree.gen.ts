@@ -13,6 +13,7 @@ import { Route as WarehouseRouteImport } from './routes/warehouse'
 import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
+import { Route as TestI18nRouteImport } from './routes/test-i18n'
 import { Route as TestEmployeesRouteImport } from './routes/test-employees'
 import { Route as TestDashboardRouteImport } from './routes/test-dashboard'
 import { Route as TestBusinessIsolationRouteImport } from './routes/test-business-isolation'
@@ -61,6 +62,11 @@ const TestMenusRoute = TestMenusRouteImport.update({
 const TestIngredientFixRoute = TestIngredientFixRouteImport.update({
   id: '/test-ingredient-fix',
   path: '/test-ingredient-fix',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestI18nRoute = TestI18nRouteImport.update({
+  id: '/test-i18n',
+  path: '/test-i18n',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestEmployeesRoute = TestEmployeesRouteImport.update({
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/test-business-isolation': typeof TestBusinessIsolationRoute
   '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
+  '/test-i18n': typeof TestI18nRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/test-business-isolation': typeof TestBusinessIsolationRoute
   '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
+  '/test-i18n': typeof TestI18nRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/test-business-isolation': typeof TestBusinessIsolationRoute
   '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
+  '/test-i18n': typeof TestI18nRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/test-business-isolation'
     | '/test-dashboard'
     | '/test-employees'
+    | '/test-i18n'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/test-business-isolation'
     | '/test-dashboard'
     | '/test-employees'
+    | '/test-i18n'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -413,6 +424,7 @@ export interface FileRouteTypes {
     | '/test-business-isolation'
     | '/test-dashboard'
     | '/test-employees'
+    | '/test-i18n'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   TestBusinessIsolationRoute: typeof TestBusinessIsolationRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestEmployeesRoute: typeof TestEmployeesRoute
+  TestI18nRoute: typeof TestI18nRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
   TestMenusRoute: typeof TestMenusRoute
   TestTargetsRoute: typeof TestTargetsRoute
@@ -488,6 +501,13 @@ declare module '@tanstack/react-router' {
       path: '/test-ingredient-fix'
       fullPath: '/test-ingredient-fix'
       preLoaderRoute: typeof TestIngredientFixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-i18n': {
+      id: '/test-i18n'
+      path: '/test-i18n'
+      fullPath: '/test-i18n'
+      preLoaderRoute: typeof TestI18nRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-employees': {
@@ -721,6 +741,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestBusinessIsolationRoute: TestBusinessIsolationRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestEmployeesRoute: TestEmployeesRoute,
+  TestI18nRoute: TestI18nRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,
   TestMenusRoute: TestMenusRoute,
   TestTargetsRoute: TestTargetsRoute,

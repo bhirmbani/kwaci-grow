@@ -5,10 +5,12 @@ import { ThemeProvider } from '../contexts/ThemeContext'
 import { SidebarProvider, SidebarTrigger, SidebarInset } from '../components/ui/sidebar'
 import { AppSidebar } from '../components/AppSidebar'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { Toaster } from '../components/ui/sonner'
 import { ensureDatabaseInitialized } from '../lib/db/init'
 import { validateCalculations } from '../utils/financialCalculations.test'
 import { useBusinessStore } from '../lib/stores/businessStore'
+import { useLanguageStore } from '../lib/stores/languageStore'
 import { initializeBusinessContext } from '../lib/services/businessContext'
 import { BusinessSwitchingLoader } from '../components/BusinessSwitchingLoader'
 import { KwaciAcronymCompact } from '../components/KwaciAcronymAnimation'
@@ -17,12 +19,16 @@ function RootComponent() {
   const [dbInitialized, setDbInitialized] = useState(false)
   // Remove custom sidebar state management - use built-in shadcn/ui state
   const { initializeStore, getCurrentBusinessId } = useBusinessStore()
+  const { initializeLanguage } = useLanguageStore()
 
   // Initialize database and business store on app start
   useEffect(() => {
     const initialize = async () => {
       try {
-        // Initialize database first
+        // Initialize language first (for proper UI display)
+        await initializeLanguage()
+
+        // Initialize database
         await ensureDatabaseInitialized()
 
         // Then initialize business store
@@ -44,7 +50,7 @@ function RootComponent() {
     }
 
     initialize()
-  }, [initializeStore])
+  }, [initializeStore, initializeLanguage])
 
   if (!dbInitialized) {
     return (
@@ -82,7 +88,10 @@ function RootComponent() {
                   <KwaciAcronymCompact acronymIndex={0} />
                 </div>
               </div>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">

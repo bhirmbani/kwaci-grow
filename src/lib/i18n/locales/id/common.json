@@ -1,0 +1,135 @@
+{
+  "navigation": {
+    "dashboard": "Dasbor",
+    "plan": "Rencana",
+    "products": "Produk",
+    "menus": "Menu",
+    "salesTargets": "Target Penjualan",
+    "operations": "Operasional",
+    "people": "Karyawan",
+    "accounting": "Akuntansi",
+    "recurringExpenses": "Biaya Berulang",
+    "analytics": "Analitik",
+    "ingredients": "Bahan Baku",
+    "cogsCalculator": "Kalkulator HPP",
+    "warehouse": "Gudang",
+    "production": "Produksi",
+    "fixedAssets": "Aset Tetap",
+    "reports": "Laporan",
+    "kwaciDemo": "Demo KWACI",
+    "learningHub": "Pusat Belajar",
+    "settings": "Pengaturan",
+    "account": "Akun"
+  },
+  "navigationDescriptions": {
+    "dashboard": "Dasbor keuangan utama",
+    "plan": "Panduan onboarding dan perencanaan operasional",
+    "products": "Kelola produk dan komposisinya",
+    "menus": "Buat dan kelola menu kedai kopi",
+    "salesTargets": "Tetapkan target penjualan harian untuk produk menu",
+    "operations": "Pencatatan penjualan, analitik, dan pelacakan operasional",
+    "people": "Kelola karyawan dan penugasan point-of-contact",
+    "accounting": "Manajemen transaksi keuangan dan akuntansi komprehensif",
+    "recurringExpenses": "Kelola biaya operasional berulang bulanan dan tahunan",
+    "analytics": "Proyeksi pendapatan spesifik produk dan analisis keuntungan",
+    "ingredients": "Kelola bahan baku dan propertinya",
+    "cogsCalculator": "Hitung harga pokok penjualan",
+    "warehouse": "Kelola stok dan inventori gudang",
+    "production": "Kelola batch produksi dan alokasi",
+    "fixedAssets": "Kelola aset tetap dan depresiasi",
+    "reports": "Laporan keuangan dan analitik",
+    "kwaciDemo": "Jelajahi makna dan animasi akronim KWACI"
+  },
+  "reportsSubMenu": {
+    "financialOverview": "Ringkasan Keuangan",
+    "profitAnalysis": "Analisis Keuntungan",
+    "costBreakdown": "Rincian Biaya"
+  },
+  "sidebarGroups": {
+    "navigation": "Navigasi",
+    "learningSupport": "Belajar & Dukungan",
+    "quickActions": "Aksi Cepat",
+    "devTools": "Alat Pengembang"
+  },
+  "devTools": {
+    "multiBusinessSeed": "Seed Multi-Bisnis",
+    "debugAccounting": "Debug Akuntansi"
+  },
+  "userMenu": {
+    "businessOwner": "Pemilik Bisnis KWACI",
+    "email": "pemilik@kwaci.grow",
+    "keyboardShortcuts": "Pintasan Keyboard",
+    "signOut": "Keluar"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Kesalahan",
+    "success": "Berhasil",
+    "cancel": "Batal",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "create": "Buat",
+    "update": "Perbarui",
+    "close": "Tutup",
+    "back": "Kembali",
+    "next": "Selanjutnya",
+    "previous": "Sebelumnya",
+    "search": "Cari",
+    "filter": "Filter",
+    "sort": "Urutkan",
+    "export": "Ekspor",
+    "import": "Impor",
+    "refresh": "Segarkan"
+  },
+  "language": {
+    "switchLanguage": "Ganti Bahasa",
+    "currentLanguage": "Bahasa Saat Ini",
+    "english": "English",
+    "indonesian": "Bahasa Indonesia"
+  },
+  "kwaci": {
+    "brandName": "KWACI Grow",
+    "acronyms": {
+      "mixed": {
+        "name": "Campuran (Indonesia-Inggris)",
+        "k": "Keuangan",
+        "kDesc": "Keuangan",
+        "w": "Wirausaha", 
+        "wDesc": "Wirausaha",
+        "a": "Automated",
+        "aDesc": "Proses otomatis",
+        "c": "Commerce",
+        "cDesc": "Manajemen perdagangan",
+        "i": "Insights",
+        "iDesc": "Wawasan bisnis"
+      },
+      "english": {
+        "name": "Alternatif Semua Bahasa Inggris",
+        "k": "Knowledge",
+        "kDesc": "Manajemen pengetahuan bisnis",
+        "w": "Warehouse",
+        "wDesc": "Manajemen inventori dan stok",
+        "a": "Analytics",
+        "aDesc": "Analitik data dan pelaporan",
+        "c": "Commerce",
+        "cDesc": "Operasi perdagangan bisnis",
+        "i": "Intelligence",
+        "iDesc": "Kecerdasan bisnis"
+      },
+      "indonesian": {
+        "name": "Alternatif Semua Bahasa Indonesia",
+        "k": "Kasir",
+        "kDesc": "Kasir/POS",
+        "w": "Warung",
+        "wDesc": "Bisnis kecil/toko",
+        "a": "Akuntansi",
+        "aDesc": "Akuntansi",
+        "c": "Cerdas",
+        "cDesc": "Cerdas/pintar",
+        "i": "Inovasi",
+        "iDesc": "Inovasi"
+      }
+    }
+  }
+}

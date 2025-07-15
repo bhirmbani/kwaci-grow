@@ -26,6 +26,7 @@ import {
   Info,
 } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from 'react-i18next'
 
 import {
   Sidebar,
@@ -53,6 +54,36 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { BusinessSwitcher } from "./BusinessSwitcher"
 import { BusinessManagementSheet } from "./BusinessManagementSheet"
+
+// Helper function to convert navigation titles to translation keys
+const getNavigationKey = (title: string): string => {
+  const keyMap: Record<string, string> = {
+    'Dashboard': 'dashboard',
+    'Plan': 'plan',
+    'Products': 'products',
+    'Menus': 'menus',
+    'Sales Targets': 'salesTargets',
+    'Operations': 'operations',
+    'People': 'people',
+    'Accounting': 'accounting',
+    'Recurring Expenses': 'recurringExpenses',
+    'Analytics': 'analytics',
+    'Ingredients': 'ingredients',
+    'COGS Calculator': 'cogsCalculator',
+    'Warehouse': 'warehouse',
+    'Production': 'production',
+    'Fixed Assets': 'fixedAssets',
+    'Reports': 'reports',
+    'KWACI Demo': 'kwaciDemo',
+    'Learning Hub': 'learningHub',
+    'Settings': 'settings',
+    'Account': 'account',
+    'Financial Overview': 'financialOverview',
+    'Profit Analysis': 'profitAnalysis',
+    'Cost Breakdown': 'costBreakdown'
+  }
+  return keyMap[title] || title.toLowerCase().replace(/\s+/g, '')
+}
 
 // Menu items for the financial dashboard
 const items = [
@@ -178,6 +209,7 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const { t } = useTranslation()
   const [isBusinessManagementOpen, setIsBusinessManagementOpen] = useState(false)
 
   const handleCreateBusiness = () => {
@@ -199,15 +231,15 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebarGroups.navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <Link to={item.url} title={item.description}>
+                  <SidebarMenuButton asChild tooltip={t(`navigation.${getNavigationKey(item.title)}`)}>
+                    <Link to={item.url} title={t(`navigationDescriptions.${getNavigationKey(item.title)}`)}>
                       <item.icon aria-hidden="true" />
-                      <span>{item.title}</span>
+                      <span>{t(`navigation.${getNavigationKey(item.title)}`)}</span>
                     </Link>
                   </SidebarMenuButton>
                   {item.items && (
@@ -215,9 +247,9 @@ export function AppSidebar() {
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <Link to={subItem.url} title={subItem.title}>
+                            <Link to={subItem.url} title={t(`reportsSubMenu.${getNavigationKey(subItem.title)}`)}>
                               <subItem.icon aria-hidden="true" />
-                              <span>{subItem.title}</span>
+                              <span>{t(`reportsSubMenu.${getNavigationKey(subItem.title)}`)}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -233,14 +265,14 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarGroup>
-          <SidebarGroupLabel>Learning & Support</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebarGroups.learningSupport')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Learning Hub">
+                <SidebarMenuButton asChild tooltip={t('navigation.learningHub')}>
                   <Link to="/learn">
                     <BookOpen aria-hidden="true" />
-                    <span>Learning Hub</span>
+                    <span>{t('navigation.learningHub')}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -251,14 +283,14 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebarGroups.quickActions')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings">
+                <SidebarMenuButton asChild tooltip={t('navigation.settings')}>
                   <Link to="/settings">
                     <Settings aria-hidden="true" />
-                    <span>Settings</span>
+                    <span>{t('navigation.settings')}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -269,23 +301,23 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarGroup>
-          <SidebarGroupLabel>Dev Tools</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebarGroups.devTools')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Multi-Business Seed">
+                <SidebarMenuButton asChild tooltip={t('devTools.multiBusinessSeed')}>
                   <Link to="/seed-multi-business">
                     <Building2 aria-hidden="true" />
-                    <span>Multi-Business Seed</span>
+                    <span>{t('devTools.multiBusinessSeed')}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Debug Accounting">
+                <SidebarMenuButton asChild tooltip={t('devTools.debugAccounting')}>
                   <Link to="/debug-accounting">
                     <Bug aria-hidden="true" />
-                    <span>Debug Accounting</span>
+                    <span>{t('devTools.debugAccounting')}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -310,13 +342,13 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  tooltip="KWACI Business Owner"
+                  tooltip={t('userMenu.businessOwner')}
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <User className="size-4" aria-hidden="true" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">KWACI Business Owner</span>
-                    <span className="truncate text-xs">owner@kwaci.grow</span>
+                    <span className="truncate font-semibold">{t('userMenu.businessOwner')}</span>
+                    <span className="truncate text-xs">{t('userMenu.email')}</span>
                   </div>
                   <ChevronUp className="ml-auto size-4" aria-hidden="true" />
                 </SidebarMenuButton>
@@ -330,21 +362,21 @@ export function AppSidebar() {
                 <DropdownMenuItem asChild>
                   <Link to="/account">
                     <User aria-hidden="true" />
-                    Account
+                    {t('navigation.account')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/settings">
                     <Settings aria-hidden="true" />
-                    Settings
+                    {t('navigation.settings')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Keyboard aria-hidden="true" />
-                  Keyboard Shortcuts
+                  {t('userMenu.keyboardShortcuts')}
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  Sign out
+                  {t('userMenu.signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
