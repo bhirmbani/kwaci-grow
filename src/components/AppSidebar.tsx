@@ -5,6 +5,7 @@ import {
   BarChart3,
   Settings,
   User,
+  Users,
   ChevronUp,
   TrendingUp,
   FileText,
@@ -90,6 +91,12 @@ const items = [
     url: "/operations",
     icon: Activity,
     description: "Sales recording, analytics, and operational tracking",
+  },
+  {
+    title: "People",
+    url: "/people",
+    icon: Users,
+    description: "Manage employees and point-of-contact assignments",
   },
   {
     title: "Accounting",

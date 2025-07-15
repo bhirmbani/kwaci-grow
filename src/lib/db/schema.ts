@@ -389,10 +389,56 @@ export interface RecurringExpense {
   updatedAt: string
 }
 
+// Employee Management Schema
+export interface Employee {
+  id: string
+  businessId: string // Foreign key to Business
+  name: string
+  companyIdNumber: string // Employee ID within company
+  nationalIdNumber?: string // Government ID number
+  dateOfBirth?: string // YYYY-MM-DD format
+  position: string // Job title
+  department: string
+  jobLevel?: string // e.g., "Junior", "Senior", "Manager"
+  salary?: number // Salary in IDR
+  phone?: string
+  email?: string
+  hireDate: string // YYYY-MM-DD format
+  employmentStatus: 'Active' | 'Inactive' | 'Terminated'
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface EmployeePocAssignment {
+  id: string
+  businessId: string // Foreign key to Business
+  employeeId: string // Foreign key to Employee
+  branchId: string // Foreign key to Branch
+  assignedDate: string // YYYY-MM-DD format
+  isActive: boolean
+  note: string
+  createdAt: string
+  updatedAt: string
+}
+
+// Extended types for Employee management
+export interface EmployeeWithPocAssignments extends Employee {
+  pocAssignments: (EmployeePocAssignment & { branch: Branch })[]
+  pocAssignmentCount: number
+}
+
+export interface EmployeePocAssignmentWithDetails extends EmployeePocAssignment {
+  employee: Employee
+  branch: Branch
+}
+
 // Re-export planning schema types
 export * from './planningSchema'
 export type NewProductTargetDefault = Omit<ProductTargetDefault, 'createdAt' | 'updatedAt'>
 export type NewJourneyProgress = Omit<JourneyProgress, 'createdAt' | 'updatedAt'>
+export type NewEmployee = Omit<Employee, 'createdAt' | 'updatedAt'>
+export type NewEmployeePocAssignment = Omit<EmployeePocAssignment, 'createdAt' | 'updatedAt'>
 
 // Category enum for financial items
 export const FINANCIAL_ITEM_CATEGORIES = {

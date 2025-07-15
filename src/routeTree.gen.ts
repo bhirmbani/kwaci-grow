@@ -13,6 +13,7 @@ import { Route as WarehouseRouteImport } from './routes/warehouse'
 import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
+import { Route as TestEmployeesRouteImport } from './routes/test-employees'
 import { Route as TestBusinessIsolationRouteImport } from './routes/test-business-isolation'
 import { Route as TestAccountingIntegrationRouteImport } from './routes/test-accounting-integration'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -22,6 +23,7 @@ import { Route as RecurringExpensesRouteImport } from './routes/recurring-expens
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ProductionRouteImport } from './routes/production'
 import { Route as PlanRouteImport } from './routes/plan'
+import { Route as PeopleRouteImport } from './routes/people'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as MenusRouteImport } from './routes/menus'
 import { Route as LearnRouteImport } from './routes/learn'
@@ -58,6 +60,11 @@ const TestMenusRoute = TestMenusRouteImport.update({
 const TestIngredientFixRoute = TestIngredientFixRouteImport.update({
   id: '/test-ingredient-fix',
   path: '/test-ingredient-fix',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestEmployeesRoute = TestEmployeesRouteImport.update({
+  id: '/test-employees',
+  path: '/test-employees',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestBusinessIsolationRoute = TestBusinessIsolationRouteImport.update({
@@ -104,6 +111,11 @@ const ProductionRoute = ProductionRouteImport.update({
 const PlanRoute = PlanRouteImport.update({
   id: '/plan',
   path: '/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeopleRoute = PeopleRouteImport.update({
+  id: '/people',
+  path: '/people',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OperationsRoute = OperationsRouteImport.update({
@@ -205,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/people': typeof PeopleRoute
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
@@ -214,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -237,6 +251,7 @@ export interface FileRoutesByTo {
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/people': typeof PeopleRoute
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
@@ -246,6 +261,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -270,6 +286,7 @@ export interface FileRoutesById {
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
+  '/people': typeof PeopleRoute
   '/plan': typeof PlanRoute
   '/production': typeof ProductionRoute
   '/products': typeof ProductsRoute
@@ -279,6 +296,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
   '/test-targets': typeof TestTargetsRoute
@@ -304,6 +322,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/menus'
     | '/operations'
+    | '/people'
     | '/plan'
     | '/production'
     | '/products'
@@ -313,6 +332,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -336,6 +356,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/menus'
     | '/operations'
+    | '/people'
     | '/plan'
     | '/production'
     | '/products'
@@ -345,6 +366,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -368,6 +390,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/menus'
     | '/operations'
+    | '/people'
     | '/plan'
     | '/production'
     | '/products'
@@ -377,6 +400,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
     | '/test-targets'
@@ -401,6 +425,7 @@ export interface RootRouteChildren {
   LearnRoute: typeof LearnRoute
   MenusRoute: typeof MenusRoute
   OperationsRoute: typeof OperationsRoute
+  PeopleRoute: typeof PeopleRoute
   PlanRoute: typeof PlanRoute
   ProductionRoute: typeof ProductionRoute
   ProductsRoute: typeof ProductsRoute
@@ -410,6 +435,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TestAccountingIntegrationRoute: typeof TestAccountingIntegrationRoute
   TestBusinessIsolationRoute: typeof TestBusinessIsolationRoute
+  TestEmployeesRoute: typeof TestEmployeesRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
   TestMenusRoute: typeof TestMenusRoute
   TestTargetsRoute: typeof TestTargetsRoute
@@ -449,6 +475,13 @@ declare module '@tanstack/react-router' {
       path: '/test-ingredient-fix'
       fullPath: '/test-ingredient-fix'
       preLoaderRoute: typeof TestIngredientFixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-employees': {
+      id: '/test-employees'
+      path: '/test-employees'
+      fullPath: '/test-employees'
+      preLoaderRoute: typeof TestEmployeesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-business-isolation': {
@@ -512,6 +545,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/plan'
       preLoaderRoute: typeof PlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/people': {
+      id: '/people'
+      path: '/people'
+      fullPath: '/people'
+      preLoaderRoute: typeof PeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/operations': {
@@ -649,6 +689,7 @@ const rootRouteChildren: RootRouteChildren = {
   LearnRoute: LearnRoute,
   MenusRoute: MenusRoute,
   OperationsRoute: OperationsRoute,
+  PeopleRoute: PeopleRoute,
   PlanRoute: PlanRoute,
   ProductionRoute: ProductionRoute,
   ProductsRoute: ProductsRoute,
@@ -658,6 +699,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TestAccountingIntegrationRoute: TestAccountingIntegrationRoute,
   TestBusinessIsolationRoute: TestBusinessIsolationRoute,
+  TestEmployeesRoute: TestEmployeesRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,
   TestMenusRoute: TestMenusRoute,
   TestTargetsRoute: TestTargetsRoute,
