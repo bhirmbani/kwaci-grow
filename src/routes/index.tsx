@@ -1,132 +1,123 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useMemo } from 'react'
-import { ProjectionTable } from '../components/ProjectionTable'
-import { Input } from '../components/ui/input'
-import { Label } from '../components/ui/label'
-import { FinancialTermsSheet } from '../components/sheets/FinancialTermsSheet'
-import { BonusSchemeSheet } from '../components/sheets/BonusSchemeSheet'
-import { InitialCapitalSheet } from '../components/sheets/InitialCapitalSheet'
-import { FixedCostsSheet } from '../components/sheets/FixedCostsSheet'
-import { VariableCOGSSheet } from '../components/sheets/VariableCOGSSheet'
-import { useFinancialItems } from '../hooks/useFinancialItems'
-import { useBonusScheme } from '../hooks/useBonusScheme'
-import { useAppSetting } from '../hooks/useAppSetting'
-import { FINANCIAL_ITEM_CATEGORIES, APP_SETTING_KEYS } from '../lib/db/schema'
+import { useState, useCallback } from 'react'
+import { SalesAnalyticsSection } from '../components/dashboard/SalesAnalyticsSection'
+import { FinancialOverviewSection } from '../components/dashboard/FinancialOverviewSection'
+import { OperationsStatusSection } from '../components/dashboard/OperationsStatusSection'
+import { InventoryAlertsSection } from '../components/dashboard/InventoryAlertsSection'
+import { BranchPerformanceSection } from '../components/dashboard/BranchPerformanceSection'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
+import { Badge } from '../components/ui/badge'
+import { RefreshCw, BarChart3, Building2 } from 'lucide-react'
+import { Button } from '../components/ui/button'
+import { useCurrentBusinessId } from '../lib/stores/businessStore'
+import type { TimePeriod } from '../lib/services/dashboardService'
 
 function Dashboard() {
-  // Database hooks
-  const {
-    items: fixedItems,
-    loading: fixedLoading
-  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.FIXED_COSTS)
+  const currentBusinessId = useCurrentBusinessId()
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('today')
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
-  const {
-    items: cogsItems,
-    loading: cogsLoading,
-    updateItems: setCogsItems
-  } = useFinancialItems(FINANCIAL_ITEM_CATEGORIES.VARIABLE_COGS)
+  // Handle period change from sales analytics
+  const handlePeriodChange = useCallback((period: TimePeriod) => {
+    setSelectedPeriod(period)
+  }, [])
 
-  const {
-    scheme: bonusScheme,
-    loading: bonusLoading,
-    updateScheme: setBonusScheme
-  } = useBonusScheme()
+  // Handle manual refresh
+  const handleRefresh = useCallback(() => {
+    setLastRefresh(new Date())
+    // Force re-render of all components by updating the key
+    window.location.reload()
+  }, [])
 
-  const {
-    value: daysPerMonth,
-    loading: daysLoading,
-    updateValue: setDaysPerMonth
-  } = useAppSetting(APP_SETTING_KEYS.DAYS_PER_MONTH, 30)
-
-  const {
-    value: pricePerCup,
-    loading: priceLoading,
-    updateValue: setPricePerCup
-  } = useAppSetting(APP_SETTING_KEYS.PRICE_PER_CUP, 5)
-
-  // Loading state
-  const isLoading = fixedLoading || cogsLoading || bonusLoading || daysLoading || priceLoading
-
-  // Memoized projection table to prevent unnecessary re-renders
-  const memoizedProjectionTable = useMemo(() => (
-    <ProjectionTable
-      fixedItems={fixedItems}
-      cogsItems={cogsItems}
-      bonusScheme={bonusScheme}
-      daysPerMonth={daysPerMonth}
-      pricePerCup={pricePerCup}
-    />
-  ), [fixedItems, cogsItems, bonusScheme, daysPerMonth, pricePerCup])
-
-  if (isLoading) {
+  if (!currentBusinessId) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg">Loading dashboard...</div>
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <CardTitle>Welcome to KWACI Grow</CardTitle>
+            <CardDescription>
+              Your comprehensive business management dashboard
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="text-muted-foreground mb-4">
+              Please select a business from the sidebar to view your dashboard and start managing your operations.
+            </p>
+            <Badge variant="outline" className="text-xs">
+              Multi-business support enabled
+            </Badge>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   return (
-    <>
-      {/* Configuration & Data Management - Compact Layout */}
-      <div className="mb-6 p-3 bg-card rounded-lg border shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Configuration & Data Management</h2>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Financial Parameters - Compact */}
-          <div className="lg:col-span-1">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Financial Parameters</h3>
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="days-per-month" className="text-xs">Days/Month</Label>
-                <Input
-                  id="days-per-month"
-                  type="number"
-                  value={daysPerMonth}
-                  onChange={(e) => setDaysPerMonth(Number(e.target.value))}
-                  min="1"
-                  max="31"
-                  className="h-8 text-sm"
-                />
-              </div>
-              <div>
-                <Label htmlFor="price-per-cup" className="text-xs">Price/Cup ($)</Label>
-                <Input
-                  id="price-per-cup"
-                  type="number"
-                  value={pricePerCup}
-                  onChange={(e) => setPricePerCup(Number(e.target.value))}
-                  step="0.01"
-                  min="0"
-                  className="h-8 text-sm"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Sheet Triggers - Compact */}
-          <div className="lg:col-span-2">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Data Management</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-              <FinancialTermsSheet />
-              <BonusSchemeSheet
-                bonusScheme={bonusScheme}
-                onUpdate={setBonusScheme}
-              />
-              <InitialCapitalSheet />
-              <FixedCostsSheet />
-              <VariableCOGSSheet
-                items={cogsItems}
-                onUpdate={setCogsItems}
-              />
-            </div>
-          </div>
+    <div className="space-y-8">
+      {/* Dashboard Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Business Dashboard</h1>
+          <p className="text-muted-foreground">
+            Comprehensive overview of your business operations and performance
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="text-xs">
+            Last updated: {lastRefresh.toLocaleTimeString()}
+          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
         </div>
       </div>
 
-      {/* Main Financial Table - The Primary Focus */}
-      {memoizedProjectionTable}
-    </>
+      {/* Sales Analytics Section */}
+      <SalesAnalyticsSection
+        onPeriodChange={handlePeriodChange}
+        initialPeriod={selectedPeriod}
+      />
+
+      {/* Financial Overview Section */}
+      <FinancialOverviewSection />
+
+      {/* Operations and Inventory Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div>
+          <OperationsStatusSection />
+        </div>
+        <div>
+          <InventoryAlertsSection />
+        </div>
+      </div>
+
+      {/* Branch Performance Section */}
+      <BranchPerformanceSection selectedPeriod={selectedPeriod} />
+
+      {/* Dashboard Footer */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                Dashboard data updates automatically when you switch business contexts
+              </span>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              Real-time data
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
 

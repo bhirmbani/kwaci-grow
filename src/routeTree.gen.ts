@@ -14,6 +14,7 @@ import { Route as TestTargetsRouteImport } from './routes/test-targets'
 import { Route as TestMenusRouteImport } from './routes/test-menus'
 import { Route as TestIngredientFixRouteImport } from './routes/test-ingredient-fix'
 import { Route as TestEmployeesRouteImport } from './routes/test-employees'
+import { Route as TestDashboardRouteImport } from './routes/test-dashboard'
 import { Route as TestBusinessIsolationRouteImport } from './routes/test-business-isolation'
 import { Route as TestAccountingIntegrationRouteImport } from './routes/test-accounting-integration'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -65,6 +66,11 @@ const TestIngredientFixRoute = TestIngredientFixRouteImport.update({
 const TestEmployeesRoute = TestEmployeesRouteImport.update({
   id: '/test-employees',
   path: '/test-employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestDashboardRoute = TestDashboardRouteImport.update({
+  id: '/test-dashboard',
+  path: '/test-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestBusinessIsolationRoute = TestBusinessIsolationRouteImport.update({
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/test-accounting-integration': typeof TestAccountingIntegrationRoute
   '/test-business-isolation': typeof TestBusinessIsolationRoute
+  '/test-dashboard': typeof TestDashboardRoute
   '/test-employees': typeof TestEmployeesRoute
   '/test-ingredient-fix': typeof TestIngredientFixRoute
   '/test-menus': typeof TestMenusRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-dashboard'
     | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-dashboard'
     | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/test-accounting-integration'
     | '/test-business-isolation'
+    | '/test-dashboard'
     | '/test-employees'
     | '/test-ingredient-fix'
     | '/test-menus'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TestAccountingIntegrationRoute: typeof TestAccountingIntegrationRoute
   TestBusinessIsolationRoute: typeof TestBusinessIsolationRoute
+  TestDashboardRoute: typeof TestDashboardRoute
   TestEmployeesRoute: typeof TestEmployeesRoute
   TestIngredientFixRoute: typeof TestIngredientFixRoute
   TestMenusRoute: typeof TestMenusRoute
@@ -482,6 +495,13 @@ declare module '@tanstack/react-router' {
       path: '/test-employees'
       fullPath: '/test-employees'
       preLoaderRoute: typeof TestEmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-dashboard': {
+      id: '/test-dashboard'
+      path: '/test-dashboard'
+      fullPath: '/test-dashboard'
+      preLoaderRoute: typeof TestDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/test-business-isolation': {
@@ -699,6 +719,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TestAccountingIntegrationRoute: TestAccountingIntegrationRoute,
   TestBusinessIsolationRoute: TestBusinessIsolationRoute,
+  TestDashboardRoute: TestDashboardRoute,
   TestEmployeesRoute: TestEmployeesRoute,
   TestIngredientFixRoute: TestIngredientFixRoute,
   TestMenusRoute: TestMenusRoute,
