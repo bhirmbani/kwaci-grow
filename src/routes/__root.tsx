@@ -12,6 +12,7 @@ import { validateCalculations } from '../utils/financialCalculations.test'
 import { useBusinessStore } from '../lib/stores/businessStore'
 import { initializeBusinessContext } from '../lib/services/businessContext'
 import { BusinessSwitchingLoader } from '../components/BusinessSwitchingLoader'
+import { KwaciAcronymCompact } from '../components/KwaciAcronymAnimation'
 
 function RootComponent() {
   const [dbInitialized, setDbInitialized] = useState(false)
@@ -62,9 +63,14 @@ function RootComponent() {
           <div className="flex items-center gap-2 p-4 border-b">
             <SidebarTrigger />
             <div className="flex-1 flex justify-between items-center">
-              <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
-                Coffee Cart Financial Dashboard
-              </h1>
+              <div className="flex items-center gap-4">
+                <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
+                  KWACI Grow
+                </h1>
+                <div className="hidden sm:block">
+                  <KwaciAcronymCompact acronymIndex={0} />
+                </div>
+              </div>
               <ThemeToggle />
             </div>
           </div>

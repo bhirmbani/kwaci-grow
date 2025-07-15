@@ -11,7 +11,7 @@ export function FinancialTermsReference() {
           Complete Financial Terms Guide
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Understanding all financial metrics used in the coffee cart business dashboard
+          Understanding all financial metrics used in the KWACI Grow business dashboard
         </p>
       </CardHeader>
       <CardContent className="space-y-6">

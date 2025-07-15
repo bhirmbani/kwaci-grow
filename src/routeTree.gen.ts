@@ -25,6 +25,7 @@ import { Route as PlanRouteImport } from './routes/plan'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as MenusRouteImport } from './routes/menus'
 import { Route as LearnRouteImport } from './routes/learn'
+import { Route as KwaciDemoRouteImport } from './routes/kwaci-demo'
 import { Route as IngredientsRouteImport } from './routes/ingredients'
 import { Route as FixedAssetsRouteImport } from './routes/fixed-assets'
 import { Route as DebugAccountingRouteImport } from './routes/debug-accounting'
@@ -120,6 +121,11 @@ const LearnRoute = LearnRouteImport.update({
   path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KwaciDemoRoute = KwaciDemoRouteImport.update({
+  id: '/kwaci-demo',
+  path: '/kwaci-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IngredientsRoute = IngredientsRouteImport.update({
   id: '/ingredients',
   path: '/ingredients',
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/kwaci-demo': typeof KwaciDemoRoute
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/kwaci-demo': typeof KwaciDemoRoute
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/debug-accounting': typeof DebugAccountingRoute
   '/fixed-assets': typeof FixedAssetsRoute
   '/ingredients': typeof IngredientsRoute
+  '/kwaci-demo': typeof KwaciDemoRoute
   '/learn': typeof LearnRoute
   '/menus': typeof MenusRoute
   '/operations': typeof OperationsRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/kwaci-demo'
     | '/learn'
     | '/menus'
     | '/operations'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/kwaci-demo'
     | '/learn'
     | '/menus'
     | '/operations'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/debug-accounting'
     | '/fixed-assets'
     | '/ingredients'
+    | '/kwaci-demo'
     | '/learn'
     | '/menus'
     | '/operations'
@@ -385,6 +397,7 @@ export interface RootRouteChildren {
   DebugAccountingRoute: typeof DebugAccountingRoute
   FixedAssetsRoute: typeof FixedAssetsRoute
   IngredientsRoute: typeof IngredientsRoute
+  KwaciDemoRoute: typeof KwaciDemoRoute
   LearnRoute: typeof LearnRoute
   MenusRoute: typeof MenusRoute
   OperationsRoute: typeof OperationsRoute
@@ -522,6 +535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kwaci-demo': {
+      id: '/kwaci-demo'
+      path: '/kwaci-demo'
+      fullPath: '/kwaci-demo'
+      preLoaderRoute: typeof KwaciDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ingredients': {
       id: '/ingredients'
       path: '/ingredients'
@@ -625,6 +645,7 @@ const rootRouteChildren: RootRouteChildren = {
   DebugAccountingRoute: DebugAccountingRoute,
   FixedAssetsRoute: FixedAssetsRoute,
   IngredientsRoute: IngredientsRoute,
+  KwaciDemoRoute: KwaciDemoRoute,
   LearnRoute: LearnRoute,
   MenusRoute: MenusRoute,
   OperationsRoute: OperationsRoute,

@@ -22,6 +22,7 @@ import {
   Bug,
   Building2,
   BookOpen,
+  Info,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -159,6 +160,12 @@ const items = [
         icon: FileText,
       },
     ],
+  },
+  {
+    title: "KWACI Demo",
+    url: "/kwaci-demo",
+    icon: Info,
+    description: "Explore KWACI acronym meanings and animations",
   },
 ]
 
@@ -299,8 +306,8 @@ export function AppSidebar() {
                 >
                   <User className="size-4" aria-hidden="true" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Coffee Cart Owner</span>
-                    <span className="truncate text-xs">owner@coffeecart.com</span>
+                    <span className="truncate font-semibold">KWACI Business Owner</span>
+                    <span className="truncate text-xs">owner@kwaci.grow</span>
                   </div>
                   <ChevronUp className="ml-auto size-4" aria-hidden="true" />
                 </SidebarMenuButton>
