@@ -40,6 +40,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { Link } from '@tanstack/react-router'
@@ -196,7 +197,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <Link to={item.url} title={item.description}>
                       <item.icon aria-hidden="true" />
                       <span>{item.title}</span>
@@ -229,7 +230,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Learning Hub">
                   <Link to="/learn">
                     <BookOpen aria-hidden="true" />
                     <span>Learning Hub</span>
@@ -247,7 +248,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Settings">
                   <Link to="/settings">
                     <Settings aria-hidden="true" />
                     <span>Settings</span>
@@ -265,7 +266,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Multi-Business Seed">
                   <Link to="/seed-multi-business">
                     <Building2 aria-hidden="true" />
                     <span>Multi-Business Seed</span>
@@ -274,7 +275,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Debug Accounting">
                   <Link to="/debug-accounting">
                     <Bug aria-hidden="true" />
                     <span>Debug Accounting</span>
@@ -283,7 +284,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Test Accounting Integration">
                   <Link to="/test-accounting-integration">
                     <Bug aria-hidden="true" />
                     <span>Test Accounting Integration</span>
@@ -302,6 +303,7 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
+                  tooltip="KWACI Business Owner"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <User className="size-4" aria-hidden="true" />
@@ -348,6 +350,9 @@ export function AppSidebar() {
         open={isBusinessManagementOpen}
         onOpenChange={setIsBusinessManagementOpen}
       />
+      
+      {/* Rail for easier expansion when collapsed */}
+      <SidebarRail />
     </Sidebar>
   )
 }

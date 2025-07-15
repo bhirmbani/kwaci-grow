@@ -2,11 +2,10 @@ import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useEffect, useState } from 'react'
 import { ThemeProvider } from '../contexts/ThemeContext'
-import { SidebarProvider, SidebarTrigger } from '../components/ui/sidebar'
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '../components/ui/sidebar'
 import { AppSidebar } from '../components/AppSidebar'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Toaster } from '../components/ui/sonner'
-import { useSidebarState } from '../hooks/useSidebarState'
 import { ensureDatabaseInitialized } from '../lib/db/init'
 import { validateCalculations } from '../utils/financialCalculations.test'
 import { useBusinessStore } from '../lib/stores/businessStore'
@@ -16,7 +15,7 @@ import { KwaciAcronymCompact } from '../components/KwaciAcronymAnimation'
 
 function RootComponent() {
   const [dbInitialized, setDbInitialized] = useState(false)
-  const { defaultOpen, onOpenChange } = useSidebarState()
+  // Remove custom sidebar state management - use built-in shadcn/ui state
   const { initializeStore, getCurrentBusinessId } = useBusinessStore()
 
   // Initialize database and business store on app start
@@ -57,11 +56,11 @@ function RootComponent() {
 
   return (
     <ThemeProvider>
-      <SidebarProvider defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+      <SidebarProvider>
         <AppSidebar />
-        <main className="flex-1 min-h-screen bg-background">
-          <div className="flex items-center gap-2 p-4 border-b">
-            <SidebarTrigger />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
             <div className="flex-1 flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
@@ -73,14 +72,13 @@ function RootComponent() {
               </div>
               <ThemeToggle />
             </div>
-          </div>
-
-          <div className="p-4">
-            <div className="max-w-7xl mx-auto">
+          </header>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <div className="max-w-7xl mx-auto w-full">
               <Outlet />
             </div>
           </div>
-        </main>
+        </SidebarInset>
         <Toaster position="top-right" />
         <BusinessSwitchingLoader />
         {import.meta.env.DEV && <TanStackRouterDevtools />}
