@@ -1,4 +1,4 @@
-import { Loader2, Building2, CheckCircle } from "lucide-react"
+import { Loader2, CheckCircle } from "lucide-react"
 import { useIsBusinessSwitching, useCurrentBusiness } from "@/lib/stores/businessStore"
 import { useState, useEffect } from "react"
 
@@ -56,9 +56,11 @@ export function BusinessSwitchingLoader() {
           // Loading state
           <div className="flex flex-col items-center space-y-4 p-8 bg-card border rounded-lg shadow-lg">
             <div className="flex items-center space-x-3">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Building2 className="size-4" />
-              </div>
+              <img 
+                src="/kwaci-grow-webp-transparent.webp" 
+                alt="KWACI Grow Logo" 
+                className="h-8 w-8 object-contain"
+              />
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
             <div className="text-center space-y-2">
@@ -114,9 +116,11 @@ export function BusinessSwitchingLoader() {
               }
             `}</style>
             <div className="flex items-center space-x-3">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-green-600 text-white">
-                <Building2 className="size-4" />
-              </div>
+              <img 
+                src="/kwaci-grow-webp-transparent.webp" 
+                alt="KWACI Grow Logo" 
+                className="h-8 w-8 object-contain"
+              />
               <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <div className="text-center space-y-2">

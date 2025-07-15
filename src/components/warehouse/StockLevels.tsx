@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { AlertTriangle, Package, TrendingUp, TrendingDown, Settings, Check, X, Edit3 } from 'lucide-react'
+import { AlertTriangle, Package, TrendingUp, Settings, Check, X, Edit3 } from 'lucide-react'
 import { useStockLevels, useLowStockAlerts } from '@/hooks/useStock'
-import { formatCurrency } from '@/utils/formatters'
+
 
 export function StockLevels() {
   const {
@@ -48,7 +48,7 @@ export function StockLevels() {
     setReservationMessage(null)
   }
 
-  const handleReservationSave = async (ingredientName: string, unit: string, currentReservation: number) => {
+  const handleReservationSave = async (ingredientName: string, unit: string) => {
     if (newReservation < 0) {
       setReservationMessage({
         type: 'error',
@@ -79,7 +79,7 @@ export function StockLevels() {
           text: result.error || 'Failed to update reservation'
         })
       }
-    } catch (error) {
+    } catch {
       setReservationMessage({
         type: 'error',
         text: 'An unexpected error occurred while updating reservation'
@@ -114,7 +114,7 @@ export function StockLevels() {
           text: result.error || 'Failed to reserve stock'
         })
       }
-    } catch (error) {
+    } catch {
       setReservationMessage({
         type: 'error',
         text: 'An unexpected error occurred while reserving stock'
@@ -143,7 +143,7 @@ export function StockLevels() {
           text: result.error || 'Failed to unreserve stock'
         })
       }
-    } catch (error) {
+    } catch {
       setReservationMessage({
         type: 'error',
         text: 'An unexpected error occurred while unreserving stock'
@@ -188,8 +188,15 @@ export function StockLevels() {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Stock Data</h3>
+            <div className="flex flex-col items-center space-y-4">
+              <img 
+                src="/kwaci-grow-webp-transparent.webp" 
+                alt="KWACI Grow Logo" 
+                className="h-16 w-16 opacity-50"
+              />
+              <Package className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 mt-4">No Stock Data</h3>
             <p className="text-muted-foreground">
               Stock levels will appear here after you add items to the warehouse.
             </p>
@@ -312,7 +319,7 @@ export function StockLevels() {
                             size="sm"
                             variant="ghost"
                             className="h-8 w-8 p-0"
-                            onClick={() => handleReservationSave(stock.ingredientName, stock.unit, reservedStock)}
+                            onClick={() => handleReservationSave(stock.ingredientName, stock.unit)}
                           >
                             <Check className="h-3 w-3 text-green-600" />
                           </Button>
@@ -361,7 +368,7 @@ export function StockLevels() {
                           </>
                         ) : (
                           <>
-                            <TrendingDown className="h-3 w-3 mr-1" />
+                            <TrendingUp className="h-3 w-3 mr-1" />
                             Moderate
                           </>
                         )}

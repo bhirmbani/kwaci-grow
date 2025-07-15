@@ -48,8 +48,13 @@ function RootComponent() {
 
   if (!dbInitialized) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Initializing database...</div>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <img 
+          src="/kwaci-grow-webp-transparent.webp" 
+          alt="KWACI Grow Logo" 
+          className="h-16 w-16 object-contain animate-pulse"
+        />
+        <div className="text-lg text-muted-foreground">Initializing database...</div>
       </div>
     )
   }
@@ -63,9 +68,16 @@ function RootComponent() {
             <SidebarTrigger className="-ml-1" />
             <div className="flex-1 flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
-                  KWACI Grow
-                </h1>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="/kwaci-grow-webp-transparent.webp" 
+                    alt="KWACI Grow Logo" 
+                    className="h-8 w-8 md:h-10 md:w-10 object-contain"
+                  />
+                  <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
+                    KWACI Grow
+                  </h1>
+                </div>
                 <div className="hidden sm:block">
                   <KwaciAcronymCompact acronymIndex={0} />
                 </div>

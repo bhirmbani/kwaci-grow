@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Badge } from '../ui/badge'
-import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Clock, Star } from 'lucide-react'
+import { TrendingUp, DollarSign, ShoppingCart, Clock, Star } from 'lucide-react'
 import { DashboardService, type TimePeriod, type SalesAnalytics } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
@@ -62,11 +62,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
     }
   }
 
-  const formatChange = (current: number, previous: number): { percentage: number; isPositive: boolean } => {
-    if (previous === 0) return { percentage: 0, isPositive: true }
-    const percentage = ((current - previous) / previous) * 100
-    return { percentage: Math.abs(percentage), isPositive: percentage >= 0 }
-  }
+
 
   if (!currentBusinessId) {
     return (
@@ -267,8 +263,15 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
       {!loading && !error && salesData && salesData.totalTransactions === 0 && (
         <Card>
           <CardContent className="p-8 text-center">
-            <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Sales Data</h3>
+            <div className="flex flex-col items-center space-y-4">
+              <img 
+                src="/kwaci-grow-webp-transparent.webp" 
+                alt="KWACI Grow Logo" 
+                className="h-16 w-16 opacity-50"
+              />
+              <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 mt-4">No Sales Data</h3>
             <p className="text-muted-foreground">
               No sales recorded for {getPeriodLabel(selectedPeriod).toLowerCase()}. 
               Start recording sales to see analytics here.
