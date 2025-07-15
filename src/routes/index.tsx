@@ -89,11 +89,11 @@ function Dashboard() {
       <FinancialOverviewSection />
 
       {/* Operations and Inventory Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+        <div className="h-full">
           <OperationsStatusSection />
         </div>
-        <div>
+        <div className="h-full">
           <InventoryAlertsSection />
         </div>
       </div>

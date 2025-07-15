@@ -65,18 +65,7 @@ export function InventoryAlertsSection() {
     }
   }
 
-  const getProgressColor = (alertLevel: InventoryAlert['alertLevel']) => {
-    switch (alertLevel) {
-      case 'critical':
-        return 'bg-red-500'
-      case 'low':
-        return 'bg-yellow-500'
-      case 'normal':
-        return 'bg-green-500'
-      default:
-        return 'bg-gray-500'
-    }
-  }
+
 
   // Calculate summary statistics
   const criticalCount = inventoryAlerts.filter(alert => alert.alertLevel === 'critical').length
@@ -110,96 +99,127 @@ export function InventoryAlertsSection() {
         </p>
       </div>
 
-      {/* Inventory Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Critical Alerts */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Critical Alerts</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold text-red-600">{criticalCount}</p>
-                )}
+      {/* Inventory Overview Card */}
+      <Card className="min-h-[280px]">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Inventory Overview
+          </CardTitle>
+          <CardDescription>
+            Stock levels and low inventory warnings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Critical Alerts */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Critical Alerts</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold text-red-600">{criticalCount}</p>
+                  )}
+                </div>
+                <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
               </div>
-              <AlertTriangle className="h-8 w-8 text-red-500" />
-            </div>
-            {!loading && !error && (
-              <div className="mt-4">
-                <Badge 
+              {!loading && !error && (
+                <Badge
                   variant={criticalCount > 0 ? "destructive" : "secondary"}
                   className="text-xs"
                 >
                   {criticalCount > 0 ? 'Immediate Action' : 'No Critical Issues'}
                 </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Low Stock Alerts */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Low Stock Alerts</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold text-yellow-600">{lowStockCount}</p>
-                )}
-              </div>
-              <AlertCircle className="h-8 w-8 text-yellow-500" />
+              )}
             </div>
-            {!loading && !error && (
-              <div className="mt-4">
-                <Badge 
+
+            {/* Low Stock Alerts */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Low Stock Alerts</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold text-yellow-600">{lowStockCount}</p>
+                  )}
+                </div>
+                <AlertCircle className="h-6 w-6 text-yellow-500 flex-shrink-0" />
+              </div>
+              {!loading && !error && (
+                <Badge
                   variant={lowStockCount > 0 ? "default" : "secondary"}
                   className={`text-xs ${lowStockCount > 0 ? 'bg-yellow-100 text-yellow-800' : ''}`}
                 >
                   {lowStockCount > 0 ? 'Monitor Closely' : 'Stock Levels Good'}
                 </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Total Items Monitored */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Items Below Threshold</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold">{totalAlerts}</p>
-                )}
-              </div>
-              <Package className="h-8 w-8 text-blue-500" />
+              )}
             </div>
-            {!loading && !error && (
-              <div className="mt-4">
-                <p className="text-xs text-muted-foreground">
-                  {totalAlerts > 0 ? 'Require attention' : 'All items well-stocked'}
-                </p>
+
+            {/* Total Items Monitored */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Items Below Threshold</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold">{totalAlerts}</p>
+                  )}
+                </div>
+                <Package className="h-6 w-6 text-blue-500 flex-shrink-0" />
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+              {!loading && !error && (
+                <Badge
+                  variant={totalAlerts > 0 ? "secondary" : "default"}
+                  className="text-xs"
+                >
+                  {totalAlerts > 0 ? 'Require Attention' : 'All Well-Stocked'}
+                </Badge>
+              )}
+            </div>
+
+            {/* Stock Health Rate */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Stock Health</p>
+                  {loading ? (
+                    <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold text-green-600">
+                      {totalAlerts === 0 ? '100' : Math.max(0, Math.round(((inventoryAlerts.length - criticalCount) / Math.max(1, inventoryAlerts.length)) * 100))}%
+                    </p>
+                  )}
+                </div>
+                <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+              </div>
+              {!loading && !error && (
+                <Badge
+                  variant={totalAlerts === 0 ? "default" : "secondary"}
+                  className="text-xs"
+                >
+                  {totalAlerts === 0 ? 'Excellent Health' : 'Good Overall'}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Inventory Alerts Table */}
       {!loading && !error && (
-        <Card>
+        <Card className="min-h-[400px]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
@@ -243,25 +263,25 @@ export function InventoryAlertsSection() {
                         return a.percentageRemaining - b.percentageRemaining
                       })
                       .map((alert, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">
+                        <TableRow key={index} className="hover:bg-muted/50">
+                          <TableCell className="font-medium py-3">
                             <div className="flex items-center gap-2">
                               {getAlertIcon(alert.alertLevel)}
                               <span>{alert.ingredientName}</span>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <span className="font-medium">
                               {alert.currentStock} {alert.unit}
                             </span>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <span className="text-muted-foreground">
                               {alert.threshold} {alert.unit}
                             </span>
                           </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
+                          <TableCell className="py-3">
+                            <div className="space-y-2 min-w-[120px]">
                               <Progress 
                                 value={Math.min(100, alert.percentageRemaining)}
                                 className="h-2"
@@ -271,10 +291,10 @@ export function InventoryAlertsSection() {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             {getAlertBadge(alert.alertLevel)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <div className="text-sm">
                               {alert.alertLevel === 'critical' && (
                                 <span className="text-red-600 font-medium">
@@ -303,59 +323,7 @@ export function InventoryAlertsSection() {
         </Card>
       )}
 
-      {/* Quick Actions Card */}
-      {inventoryAlerts.length > 0 && !loading && !error && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recommended Actions</CardTitle>
-            <CardDescription>
-              Suggested next steps based on current inventory status
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {criticalCount > 0 && (
-                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                  <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-red-800">Critical Stock Shortage</h4>
-                    <p className="text-sm text-red-700">
-                      {criticalCount} ingredient{criticalCount > 1 ? 's are' : ' is'} critically low or out of stock. 
-                      Place emergency orders immediately to avoid production disruption.
-                    </p>
-                  </div>
-                </div>
-              )}
-              
-              {lowStockCount > 0 && (
-                <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-yellow-800">Low Stock Warning</h4>
-                    <p className="text-sm text-yellow-700">
-                      {lowStockCount} ingredient{lowStockCount > 1 ? 's are' : ' is'} below the recommended threshold. 
-                      Plan reorders within the next few days to maintain optimal stock levels.
-                    </p>
-                  </div>
-                </div>
-              )}
 
-              {criticalCount === 0 && lowStockCount === 0 && (
-                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-green-800">Inventory Status Good</h4>
-                    <p className="text-sm text-green-700">
-                      All monitored ingredients are above their low stock thresholds. 
-                      Continue monitoring and maintain regular reorder schedules.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Error State */}
       {error && (

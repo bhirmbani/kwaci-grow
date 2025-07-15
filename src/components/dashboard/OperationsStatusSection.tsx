@@ -42,16 +42,16 @@ export function OperationsStatusSection() {
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
-        return <Badge variant="secondary">Pending</Badge>
+        return <Badge variant="secondary" className="whitespace-nowrap">Pending</Badge>
       case 'in progress':
       case 'in-progress':
-        return <Badge variant="default" className="bg-blue-100 text-blue-800">In Progress</Badge>
+        return <Badge variant="default" className="bg-blue-100 text-blue-800 whitespace-nowrap">In Progress</Badge>
       case 'completed':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Completed</Badge>
+        return <Badge variant="default" className="bg-green-100 text-green-800 whitespace-nowrap">Completed</Badge>
       case 'cancelled':
-        return <Badge variant="destructive">Cancelled</Badge>
+        return <Badge variant="destructive" className="whitespace-nowrap">Cancelled</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline" className="whitespace-nowrap">{status}</Badge>
     }
   }
 
@@ -92,132 +92,129 @@ export function OperationsStatusSection() {
         </p>
       </div>
 
-      {/* Operations Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Incomplete */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Incomplete Batches</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold">{operationsData?.totalIncomplete || 0}</p>
-                )}
+      {/* Operations Overview Card */}
+      <Card className="min-h-[280px]">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Factory className="h-5 w-5" />
+            Operations Overview
+          </CardTitle>
+          <CardDescription>
+            Production batches and operational workflow status
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Total Incomplete */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Incomplete Batches</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold">{operationsData?.totalIncomplete || 0}</p>
+                  )}
+                </div>
+                <Package className="h-6 w-6 text-blue-500 flex-shrink-0" />
               </div>
-              <Package className="h-8 w-8 text-blue-500" />
-            </div>
-            {operationsData && (
-              <div className="mt-4">
-                <Badge 
+              {operationsData && (
+                <Badge
                   variant={operationsData.totalIncomplete > 0 ? "secondary" : "default"}
                   className="text-xs"
                 >
                   {operationsData.totalIncomplete > 0 ? 'Active' : 'All Complete'}
                 </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Overdue Count */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Overdue Batches</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold text-red-600">{operationsData?.overdueCount || 0}</p>
-                )}
-              </div>
-              <AlertTriangle className="h-8 w-8 text-red-500" />
+              )}
             </div>
-            {operationsData && (
-              <div className="mt-4">
-                <Badge 
+
+            {/* Overdue Count */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Overdue Batches</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold text-red-600">{operationsData?.overdueCount || 0}</p>
+                  )}
+                </div>
+                <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
+              </div>
+              {operationsData && (
+                <Badge
                   variant={operationsData.overdueCount > 0 ? "destructive" : "secondary"}
                   className="text-xs"
                 >
                   {operationsData.overdueCount > 0 ? 'Attention Needed' : 'On Track'}
                 </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Urgent Count */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Urgent Batches</p>
-                {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : (
-                  <p className="text-2xl font-bold text-yellow-600">{operationsData?.urgentCount || 0}</p>
-                )}
-              </div>
-              <Clock className="h-8 w-8 text-yellow-500" />
+              )}
             </div>
-            {operationsData && (
-              <div className="mt-4">
-                <Badge 
+
+            {/* Urgent Count */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">Urgent Batches</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : (
+                    <p className="text-2xl font-bold text-yellow-600">{operationsData?.urgentCount || 0}</p>
+                  )}
+                </div>
+                <Clock className="h-6 w-6 text-yellow-500 flex-shrink-0" />
+              </div>
+              {operationsData && (
+                <Badge
                   variant={operationsData.urgentCount > 0 ? "default" : "secondary"}
                   className={`text-xs ${operationsData.urgentCount > 0 ? 'bg-yellow-100 text-yellow-800' : ''}`}
                 >
                   {operationsData.urgentCount > 0 ? 'Monitor Closely' : 'Normal'}
                 </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Completion Rate */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">On-Time Rate</p>
-                {loading ? (
-                  <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
-                ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : operationsData ? (
-                  <p className="text-2xl font-bold">
-                    {operationsData.totalIncomplete > 0 
-                      ? Math.round(((operationsData.totalIncomplete - operationsData.overdueCount) / operationsData.totalIncomplete) * 100)
-                      : 100
-                    }%
-                  </p>
-                ) : (
-                  <p className="text-2xl font-bold">100%</p>
-                )}
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              )}
             </div>
-            {operationsData && (
-              <div className="mt-4">
+
+            {/* On-Time Rate */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground">On-Time Rate</p>
+                  {loading ? (
+                    <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
+                  ) : error ? (
+                    <p className="text-sm text-destructive">Error loading</p>
+                  ) : operationsData ? (
+                    <p className="text-2xl font-bold">
+                      {operationsData.totalIncomplete > 0
+                        ? Math.round(((operationsData.totalIncomplete - operationsData.overdueCount) / operationsData.totalIncomplete) * 100)
+                        : 100
+                      }%
+                    </p>
+                  ) : (
+                    <p className="text-2xl font-bold">100%</p>
+                  )}
+                </div>
+                <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+              </div>
+              {operationsData && (
                 <p className="text-xs text-muted-foreground">
                   Batches completed on time
                 </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Incomplete Batches Table */}
       {operationsData && !loading && !error && (
-        <Card>
+        <Card className="min-h-[400px]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Factory className="h-5 w-5" />
@@ -240,14 +237,14 @@ export function OperationsStatusSection() {
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Batch #</TableHead>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Age</TableHead>
+                    <TableRow className="h-12">
+                      <TableHead className="w-[120px]">Batch #</TableHead>
+                      <TableHead className="max-w-[200px]">Product</TableHead>
+                      <TableHead className="w-[120px]">Quantity</TableHead>
+                      <TableHead className="w-[100px]">Status</TableHead>
+                      <TableHead className="w-[100px]">Priority</TableHead>
+                      <TableHead className="w-[100px]">Created</TableHead>
+                      <TableHead className="w-[120px]">Age</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -261,34 +258,42 @@ export function OperationsStatusSection() {
                         return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime()
                       })
                       .map((batch) => (
-                        <TableRow key={batch.id}>
-                          <TableCell className="font-medium">
-                            {batch.batchNumber}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{batch.productName}</span>
-                              {batch.quantity > 0 && (
-                                <span className="text-sm text-muted-foreground">
-                                  Target: {batch.quantity} {batch.unit}
-                                </span>
-                              )}
+                        <TableRow key={batch.id} className="hover:bg-muted/50 h-16">
+                          <TableCell className="font-medium py-3 h-16">
+                            <div className="truncate" title={batch.batchNumber}>
+                              {batch.batchNumber}
                             </div>
                           </TableCell>
-                          <TableCell>
-                            {batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : 'Not specified'}
+                          <TableCell className="py-3 h-16 max-w-[200px]">
+                            <div className="truncate font-medium" title={batch.productName}>
+                              {batch.productName}
+                            </div>
+                            {batch.quantity > 0 && (
+                              <div className="truncate text-sm text-muted-foreground" title={`Target: ${batch.quantity} ${batch.unit}`}>
+                                Target: {batch.quantity} {batch.unit}
+                              </div>
+                            )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3 h-16">
+                            <div className="truncate font-medium" title={batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : 'Not specified'}>
+                              {batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : 'Not specified'}
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-3 h-16 whitespace-nowrap">
                             {getStatusBadge(batch.status)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3 h-16">
                             {getPriorityBadge(batch.isOverdue, batch.isUrgent)}
                           </TableCell>
-                          <TableCell>
-                            {new Date(batch.dateCreated).toLocaleDateString()}
+                          <TableCell className="py-3 h-16">
+                            <div className="truncate text-sm" title={new Date(batch.dateCreated).toLocaleDateString()}>
+                              {new Date(batch.dateCreated).toLocaleDateString()}
+                            </div>
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })}
+                          <TableCell className="text-sm text-muted-foreground py-3 h-16">
+                            <div className="truncate" title={formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })}>
+                              {formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })}
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
