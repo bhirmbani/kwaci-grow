@@ -95,7 +95,7 @@
         "name": "Campuran (Indonesia-Inggris)",
         "k": "Keuangan",
         "kDesc": "Keuangan",
-        "w": "Wirausaha", 
+        "w": "Wirausaha",
         "wDesc": "Wirausaha",
         "a": "Automated",
         "aDesc": "Proses otomatis",
@@ -129,6 +129,287 @@
         "cDesc": "Cerdas/pintar",
         "i": "Inovasi",
         "iDesc": "Inovasi"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dasbor Bisnis",
+    "description": "Ringkasan komprehensif operasi dan kinerja bisnis Anda",
+    "lastUpdated": "Terakhir diperbarui",
+    "refresh": "Segarkan",
+    "realTimeData": "Data real-time",
+    "dataUpdatesAutomatically": "Data dasbor diperbarui secara otomatis saat Anda beralih konteks bisnis",
+    "welcome": {
+      "title": "Selamat Datang di KWACI Grow",
+      "description": "Dasbor manajemen bisnis komprehensif Anda",
+      "selectBusiness": "Silakan pilih bisnis dari sidebar untuk melihat dasbor Anda dan mulai mengelola operasi.",
+      "multiBusinessEnabled": "Dukungan multi-bisnis diaktifkan"
+    },
+    "noBusinessSelected": "Tidak ada bisnis yang dipilih",
+    "selectBusinessToView": "Silakan pilih bisnis untuk melihat",
+    "errorLoading": "Kesalahan memuat",
+    "tryAgain": "Coba lagi",
+    "salesAnalytics": {
+      "title": "Analitik Penjualan",
+      "description": "Wawasan pendapatan dan transaksi untuk {{period}}",
+      "selectPeriod": "Pilih periode",
+      "periods": {
+        "today": "Hari Ini",
+        "week": "Minggu Ini",
+        "month": "Bulan Ini",
+        "quarter": "3 Bulan Terakhir"
+      },
+      "metrics": {
+        "totalRevenue": "Total Pendapatan",
+        "transactions": "Transaksi",
+        "avgOrderValue": "Nilai Rata-rata Pesanan",
+        "topProduct": "Produk Terlaris",
+        "perTransactionAverage": "Rata-rata per transaksi",
+        "sold": "terjual",
+        "noSales": "Tidak ada penjualan",
+        "active": "Aktif"
+      },
+      "hourlyChart": {
+        "title": "Penjualan Per Jam Hari Ini",
+        "description": "Distribusi pendapatan dan transaksi sepanjang hari",
+        "peakHours": "Jam Sibuk"
+      },
+      "noData": {
+        "title": "Tidak Ada Data Penjualan",
+        "description": "Tidak ada penjualan tercatat untuk {{period}}. Mulai catat penjualan untuk melihat analitik di sini."
+      }
+    },
+    "financialOverview": {
+      "title": "Ringkasan Keuangan",
+      "description": "Posisi keuangan saat ini dan wawasan arus kas",
+      "metrics": {
+        "availableCash": "Kas Tersedia",
+        "monthlyExpenses": "Biaya Bulanan",
+        "netPosition": "Posisi Bersih",
+        "cashRunway": "Runway Kas",
+        "burnRate": "Tingkat pembakaran",
+        "months": "bulan",
+        "atCurrentBurnRate": "Pada tingkat pembakaran saat ini",
+        "positive": "Positif",
+        "negative": "Negatif"
+      },
+      "healthStatus": {
+        "healthy": "Sehat",
+        "caution": "Hati-hati",
+        "critical": "Kritis"
+      },
+      "summary": {
+        "title": "Ringkasan Kesehatan Keuangan",
+        "description": "Ringkasan posisi keuangan bisnis Anda",
+        "cashFlowStatus": "Status Arus Kas",
+        "positiveCashFlow": "Arus kas positif - bisnis menghasilkan lebih banyak pendapatan daripada biaya",
+        "negativeCashFlow": "Arus kas negatif - biaya melebihi pendapatan, pantau dengan cermat",
+        "revenueVsExpenses": "Pendapatan vs Biaya",
+        "monthlyRevenue": "Pendapatan Bulanan",
+        "monthlyExpenses": "Biaya Bulanan",
+        "netResult": "Hasil Bersih",
+        "recommendations": "Rekomendasi Keuangan",
+        "focusOnRevenue": "• Fokus pada peningkatan pendapatan atau pengurangan biaya",
+        "considerOptimization": "• Pertimbangkan optimisasi biaya - runway kurang dari 3 bulan",
+        "considerReinvestment": "• Pertimbangkan reinvestasi keuntungan untuk pertumbuhan bisnis",
+        "immediateAttention": "• Perhatian segera diperlukan - posisi kas negatif"
+      },
+      "error": {
+        "title": "Tidak Dapat Memuat Data Keuangan"
+      }
+    },
+    "operationsStatus": {
+      "title": "Status Operasional",
+      "description": "Status batch produksi dan alur kerja operasional",
+      "overview": "Ringkasan Operasional",
+      "metrics": {
+        "incompleteBatches": "Batch Belum Selesai",
+        "overdueBatches": "Batch Terlambat",
+        "urgentBatches": "Batch Mendesak",
+        "onTimeRate": "Tingkat Tepat Waktu",
+        "batchesCompletedOnTime": "Batch diselesaikan tepat waktu"
+      },
+      "status": {
+        "pending": "Menunggu",
+        "inProgress": "Sedang Berlangsung",
+        "completed": "Selesai",
+        "cancelled": "Dibatalkan"
+      },
+      "priority": {
+        "overdue": "Terlambat",
+        "urgent": "Mendesak",
+        "normal": "Normal"
+      },
+      "badges": {
+        "active": "Aktif",
+        "allComplete": "Semua Selesai",
+        "attentionNeeded": "Perlu Perhatian",
+        "onTrack": "Sesuai Jadwal",
+        "monitorClosely": "Pantau Ketat"
+      },
+      "columns": {
+        "batchNumber": "No. Batch",
+        "product": "Produk",
+        "quantity": "Kuantitas",
+        "status": "Status",
+        "priority": "Prioritas",
+        "created": "Dibuat",
+        "age": "Umur",
+        "target": "Target",
+        "notSpecified": "Tidak ditentukan"
+      },
+      "incompleteBatches": {
+        "title": "Batch Produksi Belum Selesai",
+        "description": "Batch produksi yang memerlukan perhatian atau penyelesaian"
+      },
+      "emptyState": {
+        "title": "Semua Batch Selesai",
+        "description": "Tidak ada batch produksi yang belum selesai. Kerja bagus dalam menjaga produksi!"
+      },
+      "error": {
+        "title": "Tidak Dapat Memuat Data Operasional",
+        "loading": "Gagal memuat",
+        "tryAgain": "Coba lagi"
+      },
+      "noBusinessSelected": {
+        "title": "Tidak ada bisnis dipilih",
+        "description": "Silakan pilih bisnis untuk melihat status operasional."
+      }
+    },
+    "inventoryAlerts": {
+      "title": "Peringatan Inventori",
+      "description": "Level stok dan peringatan inventori rendah",
+      "overview": "Ringkasan Inventori",
+      "metrics": {
+        "criticalAlerts": "Peringatan Kritis",
+        "lowStockAlerts": "Peringatan Stok Rendah",
+        "itemsBelowThreshold": "Item Di Bawah Ambang Batas",
+        "stockHealth": "Kesehatan Stok"
+      },
+      "summary": {
+        "title": "Ringkasan Inventori",
+        "criticalItems": "Item Kritis",
+        "lowStockItems": "Item Stok Rendah",
+        "totalItems": "Total Item"
+      },
+      "alertLevels": {
+        "critical": "Kritis",
+        "lowStock": "Stok Rendah",
+        "normal": "Normal"
+      },
+      "badges": {
+        "immediateAction": "Tindakan Segera",
+        "noCriticalIssues": "Tidak Ada Masalah Kritis",
+        "monitorClosely": "Pantau Ketat",
+        "stockLevelsGood": "Level Stok Baik",
+        "requireAttention": "Perlu Perhatian",
+        "allWellStocked": "Semua Stok Cukup",
+        "excellentHealth": "Kesehatan Sangat Baik",
+        "goodOverall": "Baik Secara Keseluruhan"
+      },
+      "columns": {
+        "ingredient": "Bahan",
+        "currentStock": "Stok Saat Ini",
+        "threshold": "Ambang Batas",
+        "stockLevel": "Level Stok",
+        "alertLevel": "Level Peringatan",
+        "actionNeeded": "Tindakan Diperlukan"
+      },
+      "actions": {
+        "outOfStock": "Stok habis - Pesan segera",
+        "reorderUrgently": "Pesan ulang mendesak",
+        "planReorderSoon": "Rencanakan pesan ulang segera",
+        "monitorLevels": "Pantau level"
+      },
+      "progress": {
+        "ofThreshold": "% dari ambang batas"
+      },
+      "lowStockIngredients": {
+        "title": "Bahan Stok Rendah",
+        "description": "Bahan yang berada di bawah ambang batas stok rendah"
+      },
+      "emptyState": {
+        "title": "Semua Level Stok Baik",
+        "description": "Tidak ada bahan yang berada di bawah ambang batas stok rendah. Pertahankan manajemen inventori yang baik!"
+      },
+      "error": {
+        "title": "Tidak Dapat Memuat Data Inventori",
+        "loading": "Gagal memuat",
+        "tryAgain": "Coba lagi"
+      },
+      "noBusinessSelected": {
+        "title": "Tidak ada bisnis dipilih",
+        "description": "Silakan pilih bisnis untuk melihat peringatan inventori."
+      }
+    },
+    "branchPerformance": {
+      "title": "Kinerja Cabang",
+      "description": "Perbandingan kinerja penjualan di semua cabang untuk {{period}}",
+      "periods": {
+        "today": "hari ini",
+        "week": "minggu ini",
+        "month": "bulan ini",
+        "quarter": "3 bulan terakhir"
+      },
+      "periodLabels": {
+        "today": "Hari Ini",
+        "week": "Minggu Ini",
+        "month": "Bulan Ini",
+        "quarter": "3 Bulan Terakhir"
+      },
+      "metrics": {
+        "activeBranches": "Cabang Aktif",
+        "totalRevenue": "Total Pendapatan",
+        "avgPerBranch": "Rata-rata per Cabang",
+        "topPerformer": "Performa Terbaik"
+      },
+      "summary": {
+        "title": "Ringkasan Kinerja",
+        "topPerformer": "Performa Terbaik",
+        "totalBranches": "Total Cabang",
+        "avgRevenue": "Rata-rata Pendapatan"
+      },
+      "badges": {
+        "operational": "Operasional",
+        "noBranches": "Tidak ada cabang"
+      },
+      "labels": {
+        "acrossAllBranches": "Di semua cabang",
+        "revenuePerBranch": "Pendapatan per cabang",
+        "noData": "Tidak ada data",
+        "aboveAverage": "Di atas rata-rata",
+        "belowAverage": "Di bawah rata-rata"
+      },
+      "columns": {
+        "rank": "Peringkat",
+        "branch": "Cabang",
+        "revenue": "Pendapatan",
+        "transactions": "Transaksi",
+        "avgOrderValue": "Rata-rata Pesanan",
+        "performance": "Kinerja"
+      },
+      "comparison": {
+        "title": "Perbandingan Kinerja Cabang",
+        "description": "Metrik kinerja detail untuk setiap cabang ({{period}})"
+      },
+      "performanceLabels": {
+        "excellent": "Sangat Baik",
+        "good": "Baik",
+        "average": "Rata-rata",
+        "belowAverage": "Di Bawah Rata-rata"
+      },
+      "emptyState": {
+        "title": "Tidak Ada Data Cabang",
+        "description": "Tidak ada cabang ditemukan atau tidak ada data penjualan tersedia untuk periode yang dipilih."
+      },
+      "error": {
+        "title": "Tidak Dapat Memuat Data Cabang",
+        "loading": "Gagal memuat",
+        "tryAgain": "Coba lagi"
+      },
+      "noBusinessSelected": {
+        "title": "Tidak ada bisnis dipilih",
+        "description": "Silakan pilih bisnis untuk melihat kinerja cabang."
       }
     }
   }

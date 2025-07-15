@@ -95,7 +95,7 @@
         "name": "Mixed (Indonesian-English)",
         "k": "Keuangan",
         "kDesc": "Finance",
-        "w": "Wirausaha", 
+        "w": "Wirausaha",
         "wDesc": "Entrepreneur",
         "a": "Automated",
         "aDesc": "Automated processes",
@@ -129,6 +129,287 @@
         "cDesc": "Smart/intelligent",
         "i": "Inovasi",
         "iDesc": "Innovation"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Business Dashboard",
+    "description": "Comprehensive overview of your business operations and performance",
+    "lastUpdated": "Last updated",
+    "refresh": "Refresh",
+    "realTimeData": "Real-time data",
+    "dataUpdatesAutomatically": "Dashboard data updates automatically when you switch business contexts",
+    "welcome": {
+      "title": "Welcome to KWACI Grow",
+      "description": "Your comprehensive business management dashboard",
+      "selectBusiness": "Please select a business from the sidebar to view your dashboard and start managing your operations.",
+      "multiBusinessEnabled": "Multi-business support enabled"
+    },
+    "noBusinessSelected": "No business selected",
+    "selectBusinessToView": "Please select a business to view",
+    "errorLoading": "Error loading",
+    "tryAgain": "Try again",
+    "salesAnalytics": {
+      "title": "Sales Analytics",
+      "description": "Revenue and transaction insights for {{period}}",
+      "selectPeriod": "Select period",
+      "periods": {
+        "today": "Today",
+        "week": "This Week",
+        "month": "This Month",
+        "quarter": "Last 3 Months"
+      },
+      "metrics": {
+        "totalRevenue": "Total Revenue",
+        "transactions": "Transactions",
+        "avgOrderValue": "Avg Order Value",
+        "topProduct": "Top Product",
+        "perTransactionAverage": "Per transaction average",
+        "sold": "sold",
+        "noSales": "No sales",
+        "active": "Active"
+      },
+      "hourlyChart": {
+        "title": "Hourly Sales Today",
+        "description": "Revenue and transaction distribution throughout the day",
+        "peakHours": "Peak Hours"
+      },
+      "noData": {
+        "title": "No Sales Data",
+        "description": "No sales recorded for {{period}}. Start recording sales to see analytics here."
+      }
+    },
+    "financialOverview": {
+      "title": "Financial Overview",
+      "description": "Current financial position and cash flow insights",
+      "metrics": {
+        "availableCash": "Available Cash",
+        "monthlyExpenses": "Monthly Expenses",
+        "netPosition": "Net Position",
+        "cashRunway": "Cash Runway",
+        "burnRate": "Burn rate",
+        "months": "months",
+        "atCurrentBurnRate": "At current burn rate",
+        "positive": "Positive",
+        "negative": "Negative"
+      },
+      "healthStatus": {
+        "healthy": "Healthy",
+        "caution": "Caution",
+        "critical": "Critical"
+      },
+      "summary": {
+        "title": "Financial Health Summary",
+        "description": "Overview of your business financial position",
+        "cashFlowStatus": "Cash Flow Status",
+        "positiveCashFlow": "Positive cash flow - business is generating more revenue than expenses",
+        "negativeCashFlow": "Negative cash flow - expenses exceed revenue, monitor closely",
+        "revenueVsExpenses": "Revenue vs Expenses",
+        "monthlyRevenue": "Monthly Revenue",
+        "monthlyExpenses": "Monthly Expenses",
+        "netResult": "Net Result",
+        "recommendations": "Financial Recommendations",
+        "focusOnRevenue": "• Focus on increasing revenue or reducing expenses",
+        "considerOptimization": "• Consider cost optimization - runway is less than 3 months",
+        "considerReinvestment": "• Consider reinvesting profits for business growth",
+        "immediateAttention": "• Immediate attention needed - negative cash position"
+      },
+      "error": {
+        "title": "Unable to Load Financial Data"
+      }
+    },
+    "operationsStatus": {
+      "title": "Operations Status",
+      "description": "Production batches and operational workflow status",
+      "overview": "Operations Overview",
+      "metrics": {
+        "incompleteBatches": "Incomplete Batches",
+        "overdueBatches": "Overdue Batches",
+        "urgentBatches": "Urgent Batches",
+        "onTimeRate": "On-Time Rate",
+        "batchesCompletedOnTime": "Batches completed on time"
+      },
+      "status": {
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "priority": {
+        "overdue": "Overdue",
+        "urgent": "Urgent",
+        "normal": "Normal"
+      },
+      "badges": {
+        "active": "Active",
+        "allComplete": "All Complete",
+        "attentionNeeded": "Attention Needed",
+        "onTrack": "On Track",
+        "monitorClosely": "Monitor Closely"
+      },
+      "columns": {
+        "batchNumber": "Batch #",
+        "product": "Product",
+        "quantity": "Quantity",
+        "status": "Status",
+        "priority": "Priority",
+        "created": "Created",
+        "age": "Age",
+        "target": "Target",
+        "notSpecified": "Not specified"
+      },
+      "incompleteBatches": {
+        "title": "Incomplete Production Batches",
+        "description": "Production batches that require attention or completion"
+      },
+      "emptyState": {
+        "title": "All Batches Complete",
+        "description": "No incomplete production batches. Great job keeping up with production!"
+      },
+      "error": {
+        "title": "Unable to Load Operations Data",
+        "loading": "Error loading",
+        "tryAgain": "Try again"
+      },
+      "noBusinessSelected": {
+        "title": "No business selected",
+        "description": "Please select a business to view operations status."
+      }
+    },
+    "inventoryAlerts": {
+      "title": "Inventory Alerts",
+      "description": "Stock levels and low inventory warnings",
+      "overview": "Inventory Overview",
+      "metrics": {
+        "criticalAlerts": "Critical Alerts",
+        "lowStockAlerts": "Low Stock Alerts",
+        "itemsBelowThreshold": "Items Below Threshold",
+        "stockHealth": "Stock Health"
+      },
+      "summary": {
+        "title": "Inventory Summary",
+        "criticalItems": "Critical Items",
+        "lowStockItems": "Low Stock Items",
+        "totalItems": "Total Items"
+      },
+      "alertLevels": {
+        "critical": "Critical",
+        "lowStock": "Low Stock",
+        "normal": "Normal"
+      },
+      "badges": {
+        "immediateAction": "Immediate Action",
+        "noCriticalIssues": "No Critical Issues",
+        "monitorClosely": "Monitor Closely",
+        "stockLevelsGood": "Stock Levels Good",
+        "requireAttention": "Require Attention",
+        "allWellStocked": "All Well-Stocked",
+        "excellentHealth": "Excellent Health",
+        "goodOverall": "Good Overall"
+      },
+      "columns": {
+        "ingredient": "Ingredient",
+        "currentStock": "Current Stock",
+        "threshold": "Threshold",
+        "stockLevel": "Stock Level",
+        "alertLevel": "Alert Level",
+        "actionNeeded": "Action Needed"
+      },
+      "actions": {
+        "outOfStock": "Out of stock - Order immediately",
+        "reorderUrgently": "Reorder urgently",
+        "planReorderSoon": "Plan reorder soon",
+        "monitorLevels": "Monitor levels"
+      },
+      "progress": {
+        "ofThreshold": "% of threshold"
+      },
+      "lowStockIngredients": {
+        "title": "Low Stock Ingredients",
+        "description": "Ingredients that are below their low stock threshold"
+      },
+      "emptyState": {
+        "title": "All Stock Levels Good",
+        "description": "No ingredients are below their low stock threshold. Keep up the good inventory management!"
+      },
+      "error": {
+        "title": "Unable to Load Inventory Data",
+        "loading": "Error loading",
+        "tryAgain": "Try again"
+      },
+      "noBusinessSelected": {
+        "title": "No business selected",
+        "description": "Please select a business to view inventory alerts."
+      }
+    },
+    "branchPerformance": {
+      "title": "Branch Performance",
+      "description": "Sales performance comparison across branches for {{period}}",
+      "periods": {
+        "today": "today",
+        "week": "this week",
+        "month": "this month",
+        "quarter": "last 3 months"
+      },
+      "periodLabels": {
+        "today": "Today",
+        "week": "This Week",
+        "month": "This Month",
+        "quarter": "Last 3 Months"
+      },
+      "metrics": {
+        "activeBranches": "Active Branches",
+        "totalRevenue": "Total Revenue",
+        "avgPerBranch": "Avg per Branch",
+        "topPerformer": "Top Performer"
+      },
+      "summary": {
+        "title": "Performance Summary",
+        "topPerformer": "Top Performer",
+        "totalBranches": "Total Branches",
+        "avgRevenue": "Avg Revenue"
+      },
+      "badges": {
+        "operational": "Operational",
+        "noBranches": "No branches"
+      },
+      "labels": {
+        "acrossAllBranches": "Across all branches",
+        "revenuePerBranch": "Revenue per branch",
+        "noData": "No data",
+        "aboveAverage": "Above average",
+        "belowAverage": "Below average"
+      },
+      "columns": {
+        "rank": "Rank",
+        "branch": "Branch",
+        "revenue": "Revenue",
+        "transactions": "Transactions",
+        "avgOrderValue": "Avg Order",
+        "performance": "Performance"
+      },
+      "comparison": {
+        "title": "Branch Performance Comparison",
+        "description": "Detailed performance metrics for each branch ({{period}})"
+      },
+      "performanceLabels": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "average": "Average",
+        "belowAverage": "Below Average"
+      },
+      "emptyState": {
+        "title": "No Branch Data",
+        "description": "No branches found or no sales data available for the selected period."
+      },
+      "error": {
+        "title": "Unable to Load Branch Data",
+        "loading": "Error loading",
+        "tryAgain": "Try again"
+      },
+      "noBusinessSelected": {
+        "title": "No business selected",
+        "description": "Please select a business to view branch performance."
       }
     }
   }

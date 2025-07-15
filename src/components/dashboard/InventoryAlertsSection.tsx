@@ -6,8 +6,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { AlertTriangle, Package, CheckCircle, AlertCircle } from 'lucide-react'
 import { DashboardService, type InventoryAlert } from '../../lib/services/dashboardService'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
+import { useTranslation } from 'react-i18next'
 
 export function InventoryAlertsSection() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [inventoryAlerts, setInventoryAlerts] = useState<InventoryAlert[]>([])
   const [loading, setLoading] = useState(true)
@@ -28,7 +30,7 @@ export function InventoryAlertsSection() {
       setInventoryAlerts(data)
     } catch (err) {
       console.error('Failed to load inventory alerts:', err)
-      setError('Failed to load inventory data')
+      setError(t('dashboard.inventoryAlerts.error.loading'))
     } finally {
       setLoading(false)
     }
@@ -42,11 +44,11 @@ export function InventoryAlertsSection() {
   const getAlertBadge = (alertLevel: InventoryAlert['alertLevel']) => {
     switch (alertLevel) {
       case 'critical':
-        return <Badge variant="destructive" className="text-xs">Critical</Badge>
+        return <Badge variant="destructive" className="text-xs">{t('dashboard.inventoryAlerts.alertLevels.critical')}</Badge>
       case 'low':
-        return <Badge variant="default" className="bg-yellow-100 text-yellow-800 text-xs">Low Stock</Badge>
+        return <Badge variant="default" className="bg-yellow-100 text-yellow-800 text-xs">{t('dashboard.inventoryAlerts.alertLevels.lowStock')}</Badge>
       case 'normal':
-        return <Badge variant="secondary" className="text-xs">Normal</Badge>
+        return <Badge variant="secondary" className="text-xs">{t('dashboard.inventoryAlerts.alertLevels.normal')}</Badge>
       default:
         return <Badge variant="outline" className="text-xs">{alertLevel}</Badge>
     }
@@ -78,12 +80,12 @@ export function InventoryAlertsSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Inventory Alerts
+            {t('dashboard.inventoryAlerts.title')}
           </CardTitle>
-          <CardDescription>No business selected</CardDescription>
+          <CardDescription>{t('dashboard.inventoryAlerts.noBusinessSelected.title')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Please select a business to view inventory alerts.</p>
+          <p className="text-muted-foreground">{t('dashboard.inventoryAlerts.noBusinessSelected.description')}</p>
         </CardContent>
       </Card>
     )
@@ -93,9 +95,9 @@ export function InventoryAlertsSection() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Inventory Alerts</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.inventoryAlerts.title')}</h2>
         <p className="text-muted-foreground">
-          Stock levels and low inventory warnings
+          {t('dashboard.inventoryAlerts.description')}
         </p>
       </div>
 
@@ -104,10 +106,10 @@ export function InventoryAlertsSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Inventory Overview
+            {t('dashboard.inventoryAlerts.overview')}
           </CardTitle>
           <CardDescription>
-            Stock levels and low inventory warnings
+            {t('dashboard.inventoryAlerts.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -116,11 +118,11 @@ export function InventoryAlertsSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Critical Alerts</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.inventoryAlerts.metrics.criticalAlerts')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.inventoryAlerts.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold text-red-600">{criticalCount}</p>
                   )}
@@ -132,7 +134,7 @@ export function InventoryAlertsSection() {
                   variant={criticalCount > 0 ? "destructive" : "secondary"}
                   className="text-xs"
                 >
-                  {criticalCount > 0 ? 'Immediate Action' : 'No Critical Issues'}
+                  {criticalCount > 0 ? t('dashboard.inventoryAlerts.badges.immediateAction') : t('dashboard.inventoryAlerts.badges.noCriticalIssues')}
                 </Badge>
               )}
             </div>
@@ -141,11 +143,11 @@ export function InventoryAlertsSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Low Stock Alerts</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.inventoryAlerts.metrics.lowStockAlerts')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.inventoryAlerts.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold text-yellow-600">{lowStockCount}</p>
                   )}
@@ -157,7 +159,7 @@ export function InventoryAlertsSection() {
                   variant={lowStockCount > 0 ? "default" : "secondary"}
                   className={`text-xs ${lowStockCount > 0 ? 'bg-yellow-100 text-yellow-800' : ''}`}
                 >
-                  {lowStockCount > 0 ? 'Monitor Closely' : 'Stock Levels Good'}
+                  {lowStockCount > 0 ? t('dashboard.inventoryAlerts.badges.monitorClosely') : t('dashboard.inventoryAlerts.badges.stockLevelsGood')}
                 </Badge>
               )}
             </div>
@@ -166,11 +168,11 @@ export function InventoryAlertsSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Items Below Threshold</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.inventoryAlerts.metrics.itemsBelowThreshold')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.inventoryAlerts.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold">{totalAlerts}</p>
                   )}
@@ -182,7 +184,7 @@ export function InventoryAlertsSection() {
                   variant={totalAlerts > 0 ? "secondary" : "default"}
                   className="text-xs"
                 >
-                  {totalAlerts > 0 ? 'Require Attention' : 'All Well-Stocked'}
+                  {totalAlerts > 0 ? t('dashboard.inventoryAlerts.badges.requireAttention') : t('dashboard.inventoryAlerts.badges.allWellStocked')}
                 </Badge>
               )}
             </div>
@@ -191,11 +193,11 @@ export function InventoryAlertsSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Stock Health</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.inventoryAlerts.metrics.stockHealth')}</p>
                   {loading ? (
                     <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.inventoryAlerts.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold text-green-600">
                       {totalAlerts === 0 ? '100' : Math.max(0, Math.round(((inventoryAlerts.length - criticalCount) / Math.max(1, inventoryAlerts.length)) * 100))}%
@@ -209,7 +211,7 @@ export function InventoryAlertsSection() {
                   variant={totalAlerts === 0 ? "default" : "secondary"}
                   className="text-xs"
                 >
-                  {totalAlerts === 0 ? 'Excellent Health' : 'Good Overall'}
+                  {totalAlerts === 0 ? t('dashboard.inventoryAlerts.badges.excellentHealth') : t('dashboard.inventoryAlerts.badges.goodOverall')}
                 </Badge>
               )}
             </div>
@@ -223,19 +225,19 @@ export function InventoryAlertsSection() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              Low Stock Ingredients
+              {t('dashboard.inventoryAlerts.lowStockIngredients.title')}
             </CardTitle>
             <CardDescription>
-              Ingredients that are below their low stock threshold
+              {t('dashboard.inventoryAlerts.lowStockIngredients.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {inventoryAlerts.length === 0 ? (
               <div className="text-center py-8">
                 <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">All Stock Levels Good</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('dashboard.inventoryAlerts.emptyState.title')}</h3>
                 <p className="text-muted-foreground">
-                  No ingredients are below their low stock threshold. Keep up the good inventory management!
+                  {t('dashboard.inventoryAlerts.emptyState.description')}
                 </p>
               </div>
             ) : (
@@ -243,12 +245,12 @@ export function InventoryAlertsSection() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Ingredient</TableHead>
-                      <TableHead>Current Stock</TableHead>
-                      <TableHead>Threshold</TableHead>
-                      <TableHead>Stock Level</TableHead>
-                      <TableHead>Alert Level</TableHead>
-                      <TableHead>Action Needed</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.ingredient')}</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.currentStock')}</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.threshold')}</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.stockLevel')}</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.alertLevel')}</TableHead>
+                      <TableHead>{t('dashboard.inventoryAlerts.columns.actionNeeded')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -287,7 +289,7 @@ export function InventoryAlertsSection() {
                                 className="h-2"
                               />
                               <span className="text-xs text-muted-foreground">
-                                {Math.round(alert.percentageRemaining)}% of threshold
+                                {Math.round(alert.percentageRemaining)}{t('dashboard.inventoryAlerts.progress.ofThreshold')}
                               </span>
                             </div>
                           </TableCell>
@@ -298,17 +300,17 @@ export function InventoryAlertsSection() {
                             <div className="text-sm">
                               {alert.alertLevel === 'critical' && (
                                 <span className="text-red-600 font-medium">
-                                  {alert.currentStock === 0 ? 'Out of stock - Order immediately' : 'Reorder urgently'}
+                                  {alert.currentStock === 0 ? t('dashboard.inventoryAlerts.actions.outOfStock') : t('dashboard.inventoryAlerts.actions.reorderUrgently')}
                                 </span>
                               )}
                               {alert.alertLevel === 'low' && (
                                 <span className="text-yellow-600 font-medium">
-                                  Plan reorder soon
+                                  {t('dashboard.inventoryAlerts.actions.planReorderSoon')}
                                 </span>
                               )}
                               {alert.alertLevel === 'normal' && (
                                 <span className="text-muted-foreground">
-                                  Monitor levels
+                                  {t('dashboard.inventoryAlerts.actions.monitorLevels')}
                                 </span>
                               )}
                             </div>

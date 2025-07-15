@@ -6,8 +6,10 @@ import { Factory, Clock, AlertTriangle, CheckCircle, Package } from 'lucide-reac
 import { DashboardService, type OperationsStatus } from '../../lib/services/dashboardService'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 
 export function OperationsStatusSection() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [operationsData, setOperationsData] = useState<OperationsStatus | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,7 +30,7 @@ export function OperationsStatusSection() {
       setOperationsData(data)
     } catch (err) {
       console.error('Failed to load operations status:', err)
-      setError('Failed to load operations data')
+      setError(t('dashboard.operationsStatus.error.loading'))
     } finally {
       setLoading(false)
     }
@@ -42,14 +44,14 @@ export function OperationsStatusSection() {
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
-        return <Badge variant="secondary" className="whitespace-nowrap">Pending</Badge>
+        return <Badge variant="secondary" className="whitespace-nowrap">{t('dashboard.operationsStatus.status.pending')}</Badge>
       case 'in progress':
       case 'in-progress':
-        return <Badge variant="default" className="bg-blue-100 text-blue-800 whitespace-nowrap">In Progress</Badge>
+        return <Badge variant="default" className="bg-blue-100 text-blue-800 whitespace-nowrap">{t('dashboard.operationsStatus.status.inProgress')}</Badge>
       case 'completed':
-        return <Badge variant="default" className="bg-green-100 text-green-800 whitespace-nowrap">Completed</Badge>
+        return <Badge variant="default" className="bg-green-100 text-green-800 whitespace-nowrap">{t('dashboard.operationsStatus.status.completed')}</Badge>
       case 'cancelled':
-        return <Badge variant="destructive" className="whitespace-nowrap">Cancelled</Badge>
+        return <Badge variant="destructive" className="whitespace-nowrap">{t('dashboard.operationsStatus.status.cancelled')}</Badge>
       default:
         return <Badge variant="outline" className="whitespace-nowrap">{status}</Badge>
     }
@@ -57,12 +59,12 @@ export function OperationsStatusSection() {
 
   const getPriorityBadge = (isOverdue: boolean, isUrgent: boolean) => {
     if (isOverdue) {
-      return <Badge variant="destructive" className="text-xs">Overdue</Badge>
+      return <Badge variant="destructive" className="text-xs">{t('dashboard.operationsStatus.priority.overdue')}</Badge>
     }
     if (isUrgent) {
-      return <Badge variant="default" className="bg-yellow-100 text-yellow-800 text-xs">Urgent</Badge>
+      return <Badge variant="default" className="bg-yellow-100 text-yellow-800 text-xs">{t('dashboard.operationsStatus.priority.urgent')}</Badge>
     }
-    return <Badge variant="outline" className="text-xs">Normal</Badge>
+    return <Badge variant="outline" className="text-xs">{t('dashboard.operationsStatus.priority.normal')}</Badge>
   }
 
   if (!currentBusinessId) {
@@ -71,12 +73,12 @@ export function OperationsStatusSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Factory className="h-5 w-5" />
-            Operations Status
+            {t('dashboard.operationsStatus.title')}
           </CardTitle>
-          <CardDescription>No business selected</CardDescription>
+          <CardDescription>{t('dashboard.operationsStatus.noBusinessSelected.title')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Please select a business to view operations status.</p>
+          <p className="text-muted-foreground">{t('dashboard.operationsStatus.noBusinessSelected.description')}</p>
         </CardContent>
       </Card>
     )
@@ -86,9 +88,9 @@ export function OperationsStatusSection() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Operations Status</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.operationsStatus.title')}</h2>
         <p className="text-muted-foreground">
-          Production batches and operational workflow status
+          {t('dashboard.operationsStatus.description')}
         </p>
       </div>
 
@@ -97,10 +99,10 @@ export function OperationsStatusSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Factory className="h-5 w-5" />
-            Operations Overview
+            {t('dashboard.operationsStatus.overview')}
           </CardTitle>
           <CardDescription>
-            Production batches and operational workflow status
+            {t('dashboard.operationsStatus.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -109,11 +111,11 @@ export function OperationsStatusSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Incomplete Batches</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.operationsStatus.metrics.incompleteBatches')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.operationsStatus.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold">{operationsData?.totalIncomplete || 0}</p>
                   )}
@@ -125,7 +127,7 @@ export function OperationsStatusSection() {
                   variant={operationsData.totalIncomplete > 0 ? "secondary" : "default"}
                   className="text-xs"
                 >
-                  {operationsData.totalIncomplete > 0 ? 'Active' : 'All Complete'}
+                  {operationsData.totalIncomplete > 0 ? t('dashboard.operationsStatus.badges.active') : t('dashboard.operationsStatus.badges.allComplete')}
                 </Badge>
               )}
             </div>
@@ -134,11 +136,11 @@ export function OperationsStatusSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Overdue Batches</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.operationsStatus.metrics.overdueBatches')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.operationsStatus.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold text-red-600">{operationsData?.overdueCount || 0}</p>
                   )}
@@ -150,7 +152,7 @@ export function OperationsStatusSection() {
                   variant={operationsData.overdueCount > 0 ? "destructive" : "secondary"}
                   className="text-xs"
                 >
-                  {operationsData.overdueCount > 0 ? 'Attention Needed' : 'On Track'}
+                  {operationsData.overdueCount > 0 ? t('dashboard.operationsStatus.badges.attentionNeeded') : t('dashboard.operationsStatus.badges.onTrack')}
                 </Badge>
               )}
             </div>
@@ -159,11 +161,11 @@ export function OperationsStatusSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">Urgent Batches</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.operationsStatus.metrics.urgentBatches')}</p>
                   {loading ? (
                     <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.operationsStatus.error.loading')}</p>
                   ) : (
                     <p className="text-2xl font-bold text-yellow-600">{operationsData?.urgentCount || 0}</p>
                   )}
@@ -175,7 +177,7 @@ export function OperationsStatusSection() {
                   variant={operationsData.urgentCount > 0 ? "default" : "secondary"}
                   className={`text-xs ${operationsData.urgentCount > 0 ? 'bg-yellow-100 text-yellow-800' : ''}`}
                 >
-                  {operationsData.urgentCount > 0 ? 'Monitor Closely' : 'Normal'}
+                  {operationsData.urgentCount > 0 ? t('dashboard.operationsStatus.badges.monitorClosely') : t('dashboard.operationsStatus.priority.normal')}
                 </Badge>
               )}
             </div>
@@ -184,11 +186,11 @@ export function OperationsStatusSection() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-muted-foreground">On-Time Rate</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('dashboard.operationsStatus.metrics.onTimeRate')}</p>
                   {loading ? (
                     <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
                   ) : error ? (
-                    <p className="text-sm text-destructive">Error loading</p>
+                    <p className="text-sm text-destructive">{t('dashboard.operationsStatus.error.loading')}</p>
                   ) : operationsData ? (
                     <p className="text-2xl font-bold">
                       {operationsData.totalIncomplete > 0
@@ -204,7 +206,7 @@ export function OperationsStatusSection() {
               </div>
               {operationsData && (
                 <p className="text-xs text-muted-foreground">
-                  Batches completed on time
+                  {t('dashboard.operationsStatus.metrics.batchesCompletedOnTime')}
                 </p>
               )}
             </div>
@@ -218,19 +220,19 @@ export function OperationsStatusSection() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Factory className="h-5 w-5" />
-              Incomplete Production Batches
+              {t('dashboard.operationsStatus.incompleteBatches.title')}
             </CardTitle>
             <CardDescription>
-              Production batches that require attention or completion
+              {t('dashboard.operationsStatus.incompleteBatches.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {operationsData.incompleteBatches.length === 0 ? (
               <div className="text-center py-8">
                 <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">All Batches Complete</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('dashboard.operationsStatus.emptyState.title')}</h3>
                 <p className="text-muted-foreground">
-                  No incomplete production batches. Great job keeping up with production!
+                  {t('dashboard.operationsStatus.emptyState.description')}
                 </p>
               </div>
             ) : (
@@ -238,13 +240,13 @@ export function OperationsStatusSection() {
                 <Table>
                   <TableHeader>
                     <TableRow className="h-12">
-                      <TableHead className="w-[120px]">Batch #</TableHead>
-                      <TableHead className="max-w-[200px]">Product</TableHead>
-                      <TableHead className="w-[120px]">Quantity</TableHead>
-                      <TableHead className="w-[100px]">Status</TableHead>
-                      <TableHead className="w-[100px]">Priority</TableHead>
-                      <TableHead className="w-[100px]">Created</TableHead>
-                      <TableHead className="w-[120px]">Age</TableHead>
+                      <TableHead className="w-[120px]">{t('dashboard.operationsStatus.columns.batchNumber')}</TableHead>
+                      <TableHead className="max-w-[200px]">{t('dashboard.operationsStatus.columns.product')}</TableHead>
+                      <TableHead className="w-[120px]">{t('dashboard.operationsStatus.columns.quantity')}</TableHead>
+                      <TableHead className="w-[100px]">{t('dashboard.operationsStatus.columns.status')}</TableHead>
+                      <TableHead className="w-[100px]">{t('dashboard.operationsStatus.columns.priority')}</TableHead>
+                      <TableHead className="w-[100px]">{t('dashboard.operationsStatus.columns.created')}</TableHead>
+                      <TableHead className="w-[120px]">{t('dashboard.operationsStatus.columns.age')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -269,14 +271,14 @@ export function OperationsStatusSection() {
                               {batch.productName}
                             </div>
                             {batch.quantity > 0 && (
-                              <div className="truncate text-sm text-muted-foreground" title={`Target: ${batch.quantity} ${batch.unit}`}>
-                                Target: {batch.quantity} {batch.unit}
+                              <div className="truncate text-sm text-muted-foreground" title={`${t('dashboard.operationsStatus.columns.target')}: ${batch.quantity} ${batch.unit}`}>
+                                {t('dashboard.operationsStatus.columns.target')}: {batch.quantity} {batch.unit}
                               </div>
                             )}
                           </TableCell>
                           <TableCell className="py-3 h-16">
-                            <div className="truncate font-medium" title={batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : 'Not specified'}>
-                              {batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : 'Not specified'}
+                            <div className="truncate font-medium" title={batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : t('dashboard.operationsStatus.columns.notSpecified')}>
+                              {batch.quantity > 0 ? `${batch.quantity} ${batch.unit}` : t('dashboard.operationsStatus.columns.notSpecified')}
                             </div>
                           </TableCell>
                           <TableCell className="py-3 h-16 whitespace-nowrap">
@@ -310,13 +312,13 @@ export function OperationsStatusSection() {
         <Card>
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Operations Data</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('dashboard.operationsStatus.error.title')}</h3>
             <p className="text-muted-foreground mb-4">{error}</p>
-            <button 
+            <button
               onClick={loadOperationsData}
               className="text-sm text-primary hover:underline"
             >
-              Try again
+              {t('dashboard.operationsStatus.error.tryAgain')}
             </button>
           </CardContent>
         </Card>

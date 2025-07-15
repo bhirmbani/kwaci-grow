@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Badge } from '../ui/badge'
@@ -13,6 +14,7 @@ interface SalesAnalyticsSectionProps {
 }
 
 export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' }: SalesAnalyticsSectionProps) {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>(initialPeriod)
   const [salesData, setSalesData] = useState<SalesAnalytics | null>(null)
@@ -34,7 +36,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
       setSalesData(data)
     } catch (err) {
       console.error('Failed to load sales analytics:', err)
-      setError('Failed to load sales data')
+      setError(t('dashboard.errorLoading'))
     } finally {
       setLoading(false)
     }
@@ -53,13 +55,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
   }, [currentBusinessId, selectedPeriod])
 
   const getPeriodLabel = (period: TimePeriod): string => {
-    switch (period) {
-      case 'today': return 'Today'
-      case 'week': return 'This Week'
-      case 'month': return 'This Month'
-      case 'quarter': return 'Last 3 Months'
-      default: return 'Today'
-    }
+    return t(`dashboard.salesAnalytics.periods.${period}`)
   }
 
 
@@ -70,12 +66,12 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            Sales Analytics
+            {t('dashboard.salesAnalytics.title')}
           </CardTitle>
-          <CardDescription>No business selected</CardDescription>
+          <CardDescription>{t('dashboard.noBusinessSelected')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Please select a business to view sales analytics.</p>
+          <p className="text-muted-foreground">{t('dashboard.selectBusinessToView')} {t('dashboard.salesAnalytics.title').toLowerCase()}.</p>
         </CardContent>
       </Card>
     )
@@ -86,20 +82,20 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
       {/* Header with Period Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Sales Analytics</h2>
+          <h2 className="text-2xl font-bold">{t('dashboard.salesAnalytics.title')}</h2>
           <p className="text-muted-foreground">
-            Revenue and transaction insights for {getPeriodLabel(selectedPeriod).toLowerCase()}
+            {t('dashboard.salesAnalytics.description', { period: getPeriodLabel(selectedPeriod).toLowerCase() })}
           </p>
         </div>
         <Select value={selectedPeriod} onValueChange={handlePeriodChange}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select period" />
+            <SelectValue placeholder={t('dashboard.salesAnalytics.selectPeriod')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="week">This Week</SelectItem>
-            <SelectItem value="month">This Month</SelectItem>
-            <SelectItem value="quarter">Last 3 Months</SelectItem>
+            <SelectItem value="today">{t('dashboard.salesAnalytics.periods.today')}</SelectItem>
+            <SelectItem value="week">{t('dashboard.salesAnalytics.periods.week')}</SelectItem>
+            <SelectItem value="month">{t('dashboard.salesAnalytics.periods.month')}</SelectItem>
+            <SelectItem value="quarter">{t('dashboard.salesAnalytics.periods.quarter')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -111,11 +107,11 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.salesAnalytics.metrics.totalRevenue')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(salesData?.totalRevenue || 0)}</p>
                 )}
@@ -137,11 +133,11 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Transactions</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.salesAnalytics.metrics.transactions')}</p>
                 {loading ? (
                   <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{salesData?.totalTransactions || 0}</p>
                 )}
@@ -151,7 +147,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
             {salesData && (
               <div className="mt-4 flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
-                  {salesData.totalTransactions > 0 ? 'Active' : 'No sales'}
+                  {salesData.totalTransactions > 0 ? t('dashboard.salesAnalytics.metrics.active') : t('dashboard.salesAnalytics.metrics.noSales')}
                 </Badge>
               </div>
             )}
@@ -163,11 +159,11 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Order Value</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.salesAnalytics.metrics.avgOrderValue')}</p>
                 {loading ? (
                   <div className="h-8 w-20 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(salesData?.averageOrderValue || 0)}</p>
                 )}
@@ -177,7 +173,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
             {salesData && salesData.totalTransactions > 0 && (
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground">
-                  Per transaction average
+                  {t('dashboard.salesAnalytics.metrics.perTransactionAverage')}
                 </p>
               </div>
             )}
@@ -189,20 +185,20 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground">Top Product</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.salesAnalytics.metrics.topProduct')}</p>
                 {loading ? (
                   <div className="h-8 w-full bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : salesData?.topProduct ? (
                   <div className="mt-2">
                     <p className="text-lg font-bold truncate">{salesData.topProduct.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {salesData.topProduct.quantity} sold • {formatCurrency(salesData.topProduct.revenue)}
+                      {salesData.topProduct.quantity} {t('dashboard.salesAnalytics.metrics.sold')} • {formatCurrency(salesData.topProduct.revenue)}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-lg font-bold text-muted-foreground">No sales</p>
+                  <p className="text-lg font-bold text-muted-foreground">{t('dashboard.salesAnalytics.metrics.noSales')}</p>
                 )}
               </div>
               <Star className="h-8 w-8 text-yellow-500 flex-shrink-0" />
@@ -217,10 +213,10 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Hourly Sales Today
+              {t('dashboard.salesAnalytics.hourlyChart.title')}
             </CardTitle>
             <CardDescription>
-              Revenue and transaction distribution throughout the day
+              {t('dashboard.salesAnalytics.hourlyChart.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -251,7 +247,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
               {/* Legend */}
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>6 AM</span>
-                <span>Peak Hours</span>
+                <span>{t('dashboard.salesAnalytics.hourlyChart.peakHours')}</span>
                 <span>10 PM</span>
               </div>
             </div>
@@ -264,17 +260,16 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
         <Card>
           <CardContent className="p-8 text-center">
             <div className="flex flex-col items-center space-y-4">
-              <img 
-                src="/kwaci-grow-webp-transparent.webp" 
-                alt="KWACI Grow Logo" 
+              <img
+                src="/kwaci-grow-webp-transparent.webp"
+                alt="KWACI Grow Logo"
                 className="h-16 w-16 opacity-50"
               />
               <ShoppingCart className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold mb-2 mt-4">No Sales Data</h3>
+            <h3 className="text-lg font-semibold mb-2 mt-4">{t('dashboard.salesAnalytics.noData.title')}</h3>
             <p className="text-muted-foreground">
-              No sales recorded for {getPeriodLabel(selectedPeriod).toLowerCase()}. 
-              Start recording sales to see analytics here.
+              {t('dashboard.salesAnalytics.noData.description', { period: getPeriodLabel(selectedPeriod).toLowerCase() })}
             </p>
           </CardContent>
         </Card>

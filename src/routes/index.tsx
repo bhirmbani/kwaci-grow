@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { SalesAnalyticsSection } from '../components/dashboard/SalesAnalyticsSection'
 import { FinancialOverviewSection } from '../components/dashboard/FinancialOverviewSection'
 import { OperationsStatusSection } from '../components/dashboard/OperationsStatusSection'
@@ -13,6 +14,7 @@ import { useCurrentBusinessId } from '../lib/stores/businessStore'
 import type { TimePeriod } from '../lib/services/dashboardService'
 
 function Dashboard() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('today')
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
@@ -35,17 +37,17 @@ function Dashboard() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <CardTitle>Welcome to KWACI Grow</CardTitle>
+            <CardTitle>{t('dashboard.welcome.title')}</CardTitle>
             <CardDescription>
-              Your comprehensive business management dashboard
+              {t('dashboard.welcome.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-muted-foreground mb-4">
-              Please select a business from the sidebar to view your dashboard and start managing your operations.
+              {t('dashboard.welcome.selectBusiness')}
             </p>
             <Badge variant="outline" className="text-xs">
-              Multi-business support enabled
+              {t('dashboard.welcome.multiBusinessEnabled')}
             </Badge>
           </CardContent>
         </Card>
@@ -58,14 +60,14 @@ function Dashboard() {
       {/* Dashboard Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Business Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
           <p className="text-muted-foreground">
-            Comprehensive overview of your business operations and performance
+            {t('dashboard.description')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-xs">
-            Last updated: {lastRefresh.toLocaleTimeString()}
+            {t('dashboard.lastUpdated')}: {lastRefresh.toLocaleTimeString()}
           </Badge>
           <Button
             variant="outline"
@@ -74,7 +76,7 @@ function Dashboard() {
             className="flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh
+            {t('dashboard.refresh')}
           </Button>
         </div>
       </div>
@@ -108,11 +110,11 @@ function Dashboard() {
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                Dashboard data updates automatically when you switch business contexts
+                {t('dashboard.dataUpdatesAutomatically')}
               </span>
             </div>
             <Badge variant="outline" className="text-xs">
-              Real-time data
+              {t('dashboard.realTimeData')}
             </Badge>
           </div>
         </CardContent>

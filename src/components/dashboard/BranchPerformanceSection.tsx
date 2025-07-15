@@ -7,6 +7,7 @@ import { Building2, TrendingUp, TrendingDown, ArrowUpDown, Crown, MapPin } from 
 import { DashboardService, type BranchPerformance, type TimePeriod } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
+import { useTranslation } from 'react-i18next'
 
 interface BranchPerformanceSectionProps {
   selectedPeriod: TimePeriod
@@ -16,6 +17,7 @@ type SortField = 'name' | 'revenue' | 'transactions' | 'averageOrderValue' | 'ra
 type SortDirection = 'asc' | 'desc'
 
 export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSectionProps) {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [branchData, setBranchData] = useState<BranchPerformance[]>([])
   const [loading, setLoading] = useState(true)
@@ -128,11 +130,11 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
 
   const getPeriodLabel = (period: TimePeriod): string => {
     switch (period) {
-      case 'today': return 'Today'
-      case 'week': return 'This Week'
-      case 'month': return 'This Month'
-      case 'quarter': return 'Last 3 Months'
-      default: return 'Today'
+      case 'today': return t('dashboard.branchPerformance.periodLabels.today')
+      case 'week': return t('dashboard.branchPerformance.periodLabels.week')
+      case 'month': return t('dashboard.branchPerformance.periodLabels.month')
+      case 'quarter': return t('dashboard.branchPerformance.periodLabels.quarter')
+      default: return t('dashboard.branchPerformance.periodLabels.today')
     }
   }
 

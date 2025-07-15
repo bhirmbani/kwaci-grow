@@ -137,6 +137,175 @@ export interface TranslationResources {
         }
       }
     }
+    dashboard: {
+      title: string
+      description: string
+      lastUpdated: string
+      refresh: string
+      realTimeData: string
+      dataUpdatesAutomatically: string
+      welcome: {
+        title: string
+        description: string
+        selectBusiness: string
+        multiBusinessEnabled: string
+      }
+      noBusinessSelected: string
+      selectBusinessToView: string
+      errorLoading: string
+      tryAgain: string
+      salesAnalytics: {
+        title: string
+        description: string
+        selectPeriod: string
+        periods: {
+          today: string
+          week: string
+          month: string
+          quarter: string
+        }
+        metrics: {
+          totalRevenue: string
+          transactions: string
+          avgOrderValue: string
+          topProduct: string
+          perTransactionAverage: string
+          sold: string
+          noSales: string
+          active: string
+        }
+        hourlyChart: {
+          title: string
+          description: string
+          peakHours: string
+        }
+        noData: {
+          title: string
+          description: string
+        }
+      }
+      financialOverview: {
+        title: string
+        description: string
+        metrics: {
+          availableCash: string
+          monthlyExpenses: string
+          netPosition: string
+          cashRunway: string
+          burnRate: string
+          months: string
+          atCurrentBurnRate: string
+          positive: string
+          negative: string
+        }
+        healthStatus: {
+          healthy: string
+          caution: string
+          critical: string
+        }
+        summary: {
+          title: string
+          description: string
+          cashFlowStatus: string
+          positiveCashFlow: string
+          negativeCashFlow: string
+          revenueVsExpenses: string
+          monthlyRevenue: string
+          monthlyExpenses: string
+          netResult: string
+          recommendations: string
+          focusOnRevenue: string
+          considerOptimization: string
+          considerReinvestment: string
+          immediateAttention: string
+        }
+        error: {
+          title: string
+        }
+      }
+      operationsStatus: {
+        title: string
+        description: string
+        overview: string
+        status: {
+          pending: string
+          inProgress: string
+          completed: string
+          cancelled: string
+        }
+        priority: {
+          overdue: string
+          urgent: string
+          normal: string
+        }
+        columns: {
+          batch: string
+          product: string
+          status: string
+          priority: string
+          lastUpdate: string
+        }
+        noData: {
+          title: string
+          description: string
+        }
+      }
+      inventoryAlerts: {
+        title: string
+        description: string
+        summary: {
+          title: string
+          criticalItems: string
+          lowStockItems: string
+          totalItems: string
+        }
+        alertLevels: {
+          critical: string
+          lowStock: string
+          normal: string
+        }
+        columns: {
+          ingredient: string
+          currentStock: string
+          minimumLevel: string
+          alertLevel: string
+          lastRestocked: string
+        }
+        stockLevel: string
+        noAlerts: {
+          title: string
+          description: string
+        }
+      }
+      branchPerformance: {
+        title: string
+        description: string
+        summary: {
+          title: string
+          topPerformer: string
+          totalBranches: string
+          avgRevenue: string
+        }
+        columns: {
+          rank: string
+          branch: string
+          revenue: string
+          transactions: string
+          avgOrderValue: string
+          performance: string
+        }
+        performanceLabels: {
+          excellent: string
+          good: string
+          average: string
+          belowAverage: string
+        }
+        noData: {
+          title: string
+          description: string
+        }
+      }
+    }
   }
 }
 

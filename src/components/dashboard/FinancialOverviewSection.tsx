@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Progress } from '../ui/progress'
@@ -8,6 +9,7 @@ import { formatCurrency } from '../../utils/formatters'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
 
 export function FinancialOverviewSection() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [financialData, setFinancialData] = useState<FinancialOverview | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,7 +30,7 @@ export function FinancialOverviewSection() {
       setFinancialData(data)
     } catch (err) {
       console.error('Failed to load financial overview:', err)
-      setError('Failed to load financial data')
+      setError(t('dashboard.errorLoading'))
     } finally {
       setLoading(false)
     }
@@ -41,11 +43,11 @@ export function FinancialOverviewSection() {
 
   const getFinancialHealthStatus = (data: FinancialOverview) => {
     if (data.netPosition > 0) {
-      return { status: 'healthy', color: 'text-green-600', bgColor: 'bg-green-100', label: 'Healthy' }
+      return { status: 'healthy', color: 'text-green-600', bgColor: 'bg-green-100', label: t('dashboard.financialOverview.healthStatus.healthy') }
     } else if (data.netPosition > -data.monthlyBurnRate * 0.5) {
-      return { status: 'warning', color: 'text-yellow-600', bgColor: 'bg-yellow-100', label: 'Caution' }
+      return { status: 'warning', color: 'text-yellow-600', bgColor: 'bg-yellow-100', label: t('dashboard.financialOverview.healthStatus.caution') }
     } else {
-      return { status: 'critical', color: 'text-red-600', bgColor: 'bg-red-100', label: 'Critical' }
+      return { status: 'critical', color: 'text-red-600', bgColor: 'bg-red-100', label: t('dashboard.financialOverview.healthStatus.critical') }
     }
   }
 
@@ -75,9 +77,9 @@ export function FinancialOverviewSection() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Financial Overview</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.financialOverview.title')}</h2>
         <p className="text-muted-foreground">
-          Current financial position and cash flow insights
+          {t('dashboard.financialOverview.description')}
         </p>
       </div>
 
