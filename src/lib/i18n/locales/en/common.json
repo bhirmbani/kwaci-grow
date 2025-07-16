@@ -175,6 +175,53 @@
         "markComplete": "Mark as Complete",
         "markingComplete": "Marking Complete...",
         "tipsTitle": "\uD83D\uDCA1 Tips for Success",
+        "tips": {
+          "createIngredient": [
+            "Start with basic ingredients like Coffee Beans, Milk, and Sugar",
+            "Set realistic base unit costs and quantities",
+            "Use clear, descriptive names for easy identification"
+          ],
+          "createProduct": [
+            "Create simple products first (e.g., Espresso, Latte)",
+            "Ensure COGS calculations are accurate",
+            "Add detailed descriptions for clarity"
+          ],
+          "createMenu": [
+            "Give your menu a clear, descriptive name",
+            "Set the status to \"Active\" when ready",
+            "Add notes about the menu's purpose or target audience"
+          ],
+          "createBranch": [
+            "Use specific location names (e.g., \"Downtown Store\")",
+            "Include address or area information",
+            "Set branch as active for operations"
+          ],
+          "addProductToMenu": [
+            "Set competitive pricing for your products",
+            "Organize products by categories",
+            "Use display order to highlight popular items"
+          ],
+          "addItemToWarehouse": [
+            "Start with sufficient quantities for production",
+            "Use the COGS calculator for accurate costing",
+            "Add batch notes for tracking purposes"
+          ],
+          "createProductionAllocation": [
+            "Allocate realistic quantities based on demand",
+            "Check stock levels before allocation",
+            "Add production notes for reference"
+          ],
+          "changeProductionBatchStatus": [
+            "Follow the workflow: Pending → In Progress → Completed",
+            "Monitor stock level changes after completion",
+            "Record actual output quantities when completing"
+          ],
+          "recordSales": [
+            "Record sales with accurate timestamps",
+            "Ensure sufficient stock before recording sales",
+            "Monitor inventory deductions after sales"
+          ]
+        },
         "status": {
           "completed": "Completed",
           "ready": "Ready to Start",

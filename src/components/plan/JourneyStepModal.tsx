@@ -178,69 +178,17 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
                 {t('plan.journeyMap.modal.tipsTitle')}
               </h4>
               <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                {stepId === 'create-ingredient' && (
-                  <>
-                    <li>• Start with basic ingredients like Coffee Beans, Milk, and Sugar</li>
-                    <li>• Set realistic base unit costs and quantities</li>
-                    <li>• Use clear, descriptive names for easy identification</li>
-                  </>
-                )}
-                {stepId === 'create-product' && (
-                  <>
-                    <li>• Create simple products first (e.g., Espresso, Latte)</li>
-                    <li>• Ensure COGS calculations are accurate</li>
-                    <li>• Add detailed descriptions for clarity</li>
-                  </>
-                )}
-                {stepId === 'create-menu' && (
-                  <>
-                    <li>• Give your menu a clear, descriptive name</li>
-                    <li>• Set the status to "Active" when ready</li>
-                    <li>• Add notes about the menu's purpose or target audience</li>
-                  </>
-                )}
-                {stepId === 'create-branch' && (
-                  <>
-                    <li>• Use specific location names (e.g., "Downtown Store")</li>
-                    <li>• Include address or area information</li>
-                    <li>• Set branch as active for operations</li>
-                  </>
-                )}
-                {stepId === 'add-product-to-menu' && (
-                  <>
-                    <li>• Set competitive pricing for your products</li>
-                    <li>• Organize products by categories</li>
-                    <li>• Use display order to highlight popular items</li>
-                  </>
-                )}
-                {stepId === 'add-item-to-warehouse' && (
-                  <>
-                    <li>• Start with sufficient quantities for production</li>
-                    <li>• Use the COGS calculator for accurate costing</li>
-                    <li>• Add batch notes for tracking purposes</li>
-                  </>
-                )}
-                {stepId === 'create-production-allocation' && (
-                  <>
-                    <li>• Allocate realistic quantities based on demand</li>
-                    <li>• Check stock levels before allocation</li>
-                    <li>• Add production notes for reference</li>
-                  </>
-                )}
-                {stepId === 'change-production-batch-status' && (
-                  <>
-                    <li>• Follow the workflow: Pending → In Progress → Completed</li>
-                    <li>• Monitor stock level changes after completion</li>
-                    <li>• Record actual output quantities when completing</li>
-                  </>
-                )}
-                {stepId === 'record-sales' && (
-                  <>
-                    <li>• Record sales with accurate timestamps</li>
-                    <li>• Ensure sufficient stock before recording sales</li>
-                    <li>• Monitor inventory deductions after sales</li>
-                  </>
-                )}
+                {(() => {
+                  // Transform stepId (e.g., "create-product") to camelCase (e.g., "createProduct") for i18n lookup
+                  const stepKey = stepId.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                  const tips = t(`plan.journeyMap.modal.tips.${stepKey}`, { returnObjects: true }) as string[];
+                  if (tips && Array.isArray(tips)) {
+                    return tips.map((tip, idx) => (
+                      <li key={idx}>• {tip}</li>
+                    ));
+                  }
+                  return null;
+                })()}
               </ul>
             </div>
           )}

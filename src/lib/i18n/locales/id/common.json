@@ -175,6 +175,53 @@
         "markComplete": "Tandai Selesai",
         "markingComplete": "Menandai Selesai...",
         "tipsTitle": "\uD83D\uDCA1 Tips Sukses",
+        "tips": {
+          "createIngredient": [
+            "Mulai dengan bahan dasar seperti Biji Kopi, Susu, dan Gula",
+            "Tetapkan biaya satuan dan jumlah dasar yang realistis",
+            "Gunakan nama yang jelas dan deskriptif untuk memudahkan identifikasi"
+          ],
+          "createProduct": [
+            "Buat produk sederhana terlebih dahulu (misal: Espresso, Latte)",
+            "Pastikan perhitungan HPP akurat",
+            "Tambahkan deskripsi detail untuk kejelasan"
+          ],
+          "createMenu": [
+            "Beri nama menu yang jelas dan deskriptif",
+            "Setel status ke \"Aktif\" jika sudah siap",
+            "Tambahkan catatan tentang tujuan atau target menu"
+          ],
+          "createBranch": [
+            "Gunakan nama lokasi yang spesifik (misal: \"Toko Pusat\")",
+            "Sertakan alamat atau informasi area",
+            "Setel cabang sebagai aktif untuk operasional"
+          ],
+          "addProductToMenu": [
+            "Tetapkan harga yang kompetitif untuk produk Anda",
+            "Kelompokkan produk berdasarkan kategori",
+            "Gunakan urutan tampilan untuk menyorot item populer"
+          ],
+          "addItemToWarehouse": [
+            "Mulai dengan jumlah yang cukup untuk produksi",
+            "Gunakan kalkulator HPP untuk perhitungan biaya yang akurat",
+            "Tambahkan catatan batch untuk keperluan pelacakan"
+          ],
+          "createProductionAllocation": [
+            "Alokasikan jumlah realistis berdasarkan permintaan",
+            "Periksa stok sebelum alokasi",
+            "Tambahkan catatan produksi untuk referensi"
+          ],
+          "changeProductionBatchStatus": [
+            "Ikuti alur kerja: Pending → Dalam Proses → Selesai",
+            "Pantau perubahan stok setelah selesai",
+            "Catat jumlah output aktual saat menyelesaikan"
+          ],
+          "recordSales": [
+            "Catat penjualan dengan waktu yang akurat",
+            "Pastikan stok cukup sebelum mencatat penjualan",
+            "Pantau pengurangan inventori setelah penjualan"
+          ]
+        },
         "status": {
           "completed": "Selesai",
           "ready": "Siap Dimulai",
