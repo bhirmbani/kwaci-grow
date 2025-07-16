@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Progress } from '../ui/progress'
-import { Wallet, TrendingUp, TrendingDown, AlertTriangle, DollarSign, CreditCard } from 'lucide-react'
+import { Wallet, TrendingUp, TrendingDown, AlertTriangle, DollarSign, CreditCard, Clock } from 'lucide-react'
 import { DashboardService, type FinancialOverview } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
 import { useCurrentBusinessId } from '../../lib/stores/businessStore'
@@ -62,12 +62,12 @@ export function FinancialOverviewSection() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Wallet className="h-5 w-5" />
-            Financial Overview
+            {t('dashboard.financialOverview.title')}
           </CardTitle>
-          <CardDescription>No business selected</CardDescription>
+          <CardDescription>{t('dashboard.noBusinessSelected')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Please select a business to view financial overview.</p>
+          <p className="text-muted-foreground">{t('dashboard.selectBusinessToView')}</p>
         </CardContent>
       </Card>
     )
@@ -90,11 +90,11 @@ export function FinancialOverviewSection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Available Cash</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.financialOverview.metrics.availableCash')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(financialData?.availableCash || 0)}</p>
                 )}
@@ -107,7 +107,7 @@ export function FinancialOverviewSection() {
                   variant={financialData.availableCash > 0 ? "default" : "destructive"}
                   className="text-xs"
                 >
-                  {financialData.availableCash > 0 ? 'Positive' : 'Negative'}
+                  {financialData.availableCash > 0 ? t('dashboard.financialOverview.metrics.positive') : t('dashboard.financialOverview.metrics.negative')}
                 </Badge>
               </div>
             )}
@@ -119,11 +119,11 @@ export function FinancialOverviewSection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Monthly Expenses</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.financialOverview.metrics.monthlyExpenses')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(financialData?.totalExpenses || 0)}</p>
                 )}
@@ -133,7 +133,7 @@ export function FinancialOverviewSection() {
             {financialData && (
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground">
-                  Burn rate: {formatCurrency(financialData.monthlyBurnRate)}/month
+                  {t('dashboard.financialOverview.metrics.burnRate')}: {formatCurrency(financialData.monthlyBurnRate)}/month
                 </p>
               </div>
             )}
@@ -145,11 +145,11 @@ export function FinancialOverviewSection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Net Position</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.financialOverview.metrics.netPosition')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(financialData?.netPosition || 0)}</p>
                 )}
@@ -183,27 +183,40 @@ export function FinancialOverviewSection() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Cash Runway</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.financialOverview.metrics.cashRunway')}</p>
                 {loading ? (
-                  <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
+                  <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
-                ) : financialData ? (
-                  <p className="text-2xl font-bold">
-                    {calculateRunwayMonths(financialData)} 
-                    <span className="text-sm font-normal text-muted-foreground ml-1">months</span>
-                  </p>
+                  <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">0</p>
+                  <p className="text-2xl font-bold">
+                    {calculateRunwayMonths(financialData)} {t('dashboard.financialOverview.metrics.months')}
+                  </p>
                 )}
               </div>
-              <AlertTriangle className="h-8 w-8 text-yellow-500" />
+              <Clock className="h-8 w-8 text-blue-500" />
             </div>
             {financialData && (
               <div className="mt-4">
-                <p className="text-xs text-muted-foreground">
-                  At current burn rate
-                </p>
+                {(() => {
+                  const months = calculateRunwayMonths(financialData)
+                  let variant: "default" | "secondary" | "destructive" = "default"
+                  let label = "Good"
+                  
+                  if (months < 3) {
+                    variant = "destructive"
+                    label = "Critical"
+                  } else if (months < 6) {
+                    variant = "secondary"
+                    label = "Caution"
+                  }
+                  
+                  return (
+                    <Badge variant={variant} className="text-xs">
+                      {label}
+                    </Badge>
+                  )
+                })()}
               </div>
             )}
           </CardContent>
@@ -216,17 +229,17 @@ export function FinancialOverviewSection() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5" />
-              Financial Health Summary
+              {t('dashboard.financialOverview.summary.title')}
             </CardTitle>
             <CardDescription>
-              Overview of your business financial position
+              {t('dashboard.financialOverview.summary.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Cash Flow Indicator */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Cash Flow Status</span>
+                <span className="text-sm font-medium">{t('dashboard.financialOverview.summary.cashFlowStatus')}</span>
                 {(() => {
                   const health = getFinancialHealthStatus(financialData)
                   return (
@@ -242,8 +255,8 @@ export function FinancialOverviewSection() {
               />
               <p className="text-xs text-muted-foreground">
                 {financialData.netPosition >= 0 
-                  ? 'Positive cash flow - business is generating more revenue than expenses'
-                  : 'Negative cash flow - expenses exceed revenue, monitor closely'
+                  ? t('dashboard.financialOverview.summary.positiveCashFlow')
+                  : t('dashboard.financialOverview.summary.negativeCashFlow')
                 }
               </p>
             </div>
@@ -251,20 +264,20 @@ export function FinancialOverviewSection() {
             {/* Key Insights */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold">Revenue vs Expenses</h4>
+                <h4 className="text-sm font-semibold">{t('dashboard.financialOverview.summary.revenueVsExpenses')}</h4>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Monthly Revenue</span>
+                    <span className="text-muted-foreground">{t('dashboard.financialOverview.summary.monthlyRevenue')}</span>
                     <span className="font-medium">
                       {formatCurrency(financialData.netPosition + financialData.totalExpenses)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Monthly Expenses</span>
+                    <span className="text-muted-foreground">{t('dashboard.financialOverview.summary.monthlyExpenses')}</span>
                     <span className="font-medium">{formatCurrency(financialData.totalExpenses)}</span>
                   </div>
                   <div className="flex justify-between text-sm font-semibold border-t pt-1">
-                    <span>Net Result</span>
+                    <span>{t('dashboard.financialOverview.summary.netResult')}</span>
                     <span className={financialData.netPosition >= 0 ? 'text-green-600' : 'text-red-600'}>
                       {formatCurrency(financialData.netPosition)}
                     </span>
@@ -273,19 +286,19 @@ export function FinancialOverviewSection() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold">Financial Recommendations</h4>
+                <h4 className="text-sm font-semibold">{t('dashboard.financialOverview.summary.recommendations')}</h4>
                 <div className="space-y-1 text-sm text-muted-foreground">
                   {financialData.netPosition < 0 && (
-                    <p>• Focus on increasing revenue or reducing expenses</p>
+                    <p>{t('dashboard.financialOverview.summary.focusOnRevenue')}</p>
                   )}
                   {calculateRunwayMonths(financialData) < 3 && financialData.availableCash > 0 && (
-                    <p>• Consider cost optimization - runway is less than 3 months</p>
+                    <p>{t('dashboard.financialOverview.summary.considerOptimization')}</p>
                   )}
                   {financialData.netPosition > 0 && (
-                    <p>• Consider reinvesting profits for business growth</p>
+                    <p>{t('dashboard.financialOverview.summary.considerReinvestment')}</p>
                   )}
                   {financialData.availableCash <= 0 && (
-                    <p>• Immediate attention needed - negative cash position</p>
+                    <p>{t('dashboard.financialOverview.summary.immediateAttention')}</p>
                   )}
                 </div>
               </div>

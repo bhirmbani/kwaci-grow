@@ -128,19 +128,8 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
     }
   }
 
-  const getPeriodLabel = (period: TimePeriod): string => {
-    switch (period) {
-      case 'today': return t('dashboard.branchPerformance.periodLabels.today')
-      case 'week': return t('dashboard.branchPerformance.periodLabels.week')
-      case 'month': return t('dashboard.branchPerformance.periodLabels.month')
-      case 'quarter': return t('dashboard.branchPerformance.periodLabels.quarter')
-      default: return t('dashboard.branchPerformance.periodLabels.today')
-    }
-  }
-
   // Calculate summary statistics
   const totalRevenue = branchData.reduce((sum, branch) => sum + branch.totalRevenue, 0)
-  const totalTransactions = branchData.reduce((sum, branch) => sum + branch.totalTransactions, 0)
   const averageRevenuePerBranch = branchData.length > 0 ? totalRevenue / branchData.length : 0
   const topPerformer = branchData.find(branch => branch.performanceRank === 1)
 
@@ -150,12 +139,12 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5" />
-            Branch Performance
+            {t('dashboard.branchPerformance.title')}
           </CardTitle>
-          <CardDescription>No business selected</CardDescription>
+          <CardDescription>{t('dashboard.branchPerformance.noBusinessSelected.title')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Please select a business to view branch performance.</p>
+          <p className="text-muted-foreground">{t('dashboard.branchPerformance.noBusinessSelected.description')}</p>
         </CardContent>
       </Card>
     )
@@ -165,9 +154,9 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Branch Performance</h2>
+        <h2 className="text-2xl font-bold">{t('dashboard.branchPerformance.title')}</h2>
         <p className="text-muted-foreground">
-          Sales performance comparison across branches for {getPeriodLabel(selectedPeriod).toLowerCase()}
+          {t('dashboard.branchPerformance.description', { period: t(`dashboard.branchPerformance.periods.${selectedPeriod}`) })}
         </p>
       </div>
 
@@ -178,11 +167,11 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Branches</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.branchPerformance.metrics.activeBranches')}</p>
                 {loading ? (
                   <div className="h-8 w-16 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{branchData.length}</p>
                 )}
@@ -192,7 +181,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
             {!loading && !error && (
               <div className="mt-4">
                 <Badge variant="secondary" className="text-xs">
-                  {branchData.length > 0 ? 'Operational' : 'No branches'}
+                  {branchData.length > 0 ? t('dashboard.branchPerformance.badges.operational') : t('dashboard.branchPerformance.badges.noBranches')}
                 </Badge>
               </div>
             )}
@@ -204,11 +193,11 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.branchPerformance.metrics.totalRevenue')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(totalRevenue)}</p>
                 )}
@@ -218,7 +207,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
             {!loading && !error && (
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground">
-                  Across all branches
+                  {t('dashboard.branchPerformance.labels.acrossAllBranches')}
                 </p>
               </div>
             )}
@@ -230,11 +219,11 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg per Branch</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.branchPerformance.metrics.avgPerBranch')}</p>
                 {loading ? (
                   <div className="h-8 w-24 bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : (
                   <p className="text-2xl font-bold">{formatCurrency(averageRevenuePerBranch)}</p>
                 )}
@@ -244,7 +233,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
             {!loading && !error && (
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground">
-                  Revenue per branch
+                  {t('dashboard.branchPerformance.labels.revenuePerBranch')}
                 </p>
               </div>
             )}
@@ -256,11 +245,11 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-muted-foreground">Top Performer</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.branchPerformance.metrics.topPerformer')}</p>
                 {loading ? (
                   <div className="h-8 w-full bg-muted animate-pulse rounded mt-2" />
                 ) : error ? (
-                  <p className="text-sm text-destructive">Error loading</p>
+                  <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : topPerformer ? (
                   <div className="mt-2">
                     <p className="text-lg font-bold truncate">{topPerformer.branchName}</p>
@@ -269,7 +258,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                     </p>
                   </div>
                 ) : (
-                  <p className="text-lg font-bold text-muted-foreground">No data</p>
+                  <p className="text-lg font-bold text-muted-foreground">{t('dashboard.branchPerformance.labels.noData')}</p>
                 )}
               </div>
               <Crown className="h-8 w-8 text-yellow-500 flex-shrink-0" />
@@ -284,19 +273,19 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5" />
-              Branch Performance Comparison
+              {t('dashboard.branchPerformance.comparison.title')}
             </CardTitle>
             <CardDescription>
-              Detailed performance metrics for each branch ({getPeriodLabel(selectedPeriod)})
+              {t('dashboard.branchPerformance.comparison.description', { period: t(`dashboard.branchPerformance.periods.${selectedPeriod}`) })}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {branchData.length === 0 ? (
               <div className="text-center py-8">
                 <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Branch Data</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('dashboard.branchPerformance.emptyState.title')}</h3>
                 <p className="text-muted-foreground">
-                  No branches found or no sales data available for the selected period.
+                  {t('dashboard.branchPerformance.emptyState.description')}
                 </p>
               </div>
             ) : (
@@ -311,7 +300,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                           onClick={() => handleSort('rank')}
                           className="h-auto p-0 font-semibold"
                         >
-                          Rank {getSortIcon('rank')}
+                          {t('dashboard.branchPerformance.columns.rank')} {getSortIcon('rank')}
                         </Button>
                       </TableHead>
                       <TableHead>
@@ -321,7 +310,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                           onClick={() => handleSort('name')}
                           className="h-auto p-0 font-semibold"
                         >
-                          Branch {getSortIcon('name')}
+                          {t('dashboard.branchPerformance.columns.branch')} {getSortIcon('name')}
                         </Button>
                       </TableHead>
                       <TableHead>
@@ -331,7 +320,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                           onClick={() => handleSort('revenue')}
                           className="h-auto p-0 font-semibold"
                         >
-                          Revenue {getSortIcon('revenue')}
+                          {t('dashboard.branchPerformance.columns.revenue')} {getSortIcon('revenue')}
                         </Button>
                       </TableHead>
                       <TableHead>
@@ -341,7 +330,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                           onClick={() => handleSort('transactions')}
                           className="h-auto p-0 font-semibold"
                         >
-                          Transactions {getSortIcon('transactions')}
+                          {t('dashboard.branchPerformance.columns.transactions')} {getSortIcon('transactions')}
                         </Button>
                       </TableHead>
                       <TableHead>
@@ -351,10 +340,10 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                           onClick={() => handleSort('averageOrderValue')}
                           className="h-auto p-0 font-semibold"
                         >
-                          Avg Order {getSortIcon('averageOrderValue')}
+                          {t('dashboard.branchPerformance.columns.avgOrderValue')} {getSortIcon('averageOrderValue')}
                         </Button>
                       </TableHead>
-                      <TableHead>Performance</TableHead>
+                      <TableHead>{t('dashboard.branchPerformance.columns.performance')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -395,7 +384,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                               <TrendingDown className="h-4 w-4 text-red-500" />
                             )}
                             <span className="text-sm text-muted-foreground">
-                              {branch.totalRevenue > averageRevenuePerBranch ? 'Above' : 'Below'} average
+                              {branch.totalRevenue > averageRevenuePerBranch ? t('dashboard.branchPerformance.labels.aboveAverage') : t('dashboard.branchPerformance.labels.belowAverage')}
                             </span>
                           </div>
                         </TableCell>
@@ -414,13 +403,13 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
         <Card>
           <CardContent className="p-8 text-center">
             <Building2 className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Branch Data</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('dashboard.branchPerformance.error.title')}</h3>
             <p className="text-muted-foreground mb-4">{error}</p>
             <button 
               onClick={() => loadBranchData(selectedPeriod)}
               className="text-sm text-primary hover:underline"
             >
-              Try again
+              {t('dashboard.branchPerformance.error.tryAgain')}
             </button>
           </CardContent>
         </Card>
