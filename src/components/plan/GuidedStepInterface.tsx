@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,16 +23,23 @@ interface StepValidation {
 
 export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterfaceProps) {
   const { getStepStatus, completeStep, autoCheckCompletion } = useJourney()
+  const { t } = useTranslation()
   const [validation, setValidation] = useState<StepValidation>({
     isValid: false,
-    message: 'Checking requirements...',
+    message: t('plan.journeyMap.guidedSteps.checkingRequirements'),
     suggestions: []
   })
   const [isCompleting, setIsCompleting] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const { t } = useTranslation()
 
   const stepInfo = JOURNEY_STEP_INFO[stepId]
   const status = getStepStatus(stepId)
+  const cleanTitle = stepInfo.title
+    .replace(/^Create /, '')
+    .replace(/^Add /, '')
+    .replace(/^Change /, '')
+    .replace(/^Record /, '')
 
   // Route mapping for each journey step
   const STEP_ROUTES: Record<JourneyStepId, string> = {
@@ -56,7 +64,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
         if (isValid) {
           return {
             isValid: true,
-            message: 'Requirements met! You can mark this step as complete.',
+            message: t('plan.journeyMap.guidedSteps.requirementsMet'),
             suggestions: []
           }
         }
@@ -166,15 +174,15 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
         default:
           return {
             isValid: false,
-            message: 'Step validation not configured.',
+            message: t('plan.journeyMap.guidedSteps.validationNotConfigured'),
             suggestions: []
           }
       }
     } catch (error) {
       return {
         isValid: false,
-        message: 'Error checking step requirements.',
-        suggestions: ['Please try again or contact support.']
+        message: t('plan.journeyMap.guidedSteps.validationError'),
+        suggestions: [t('plan.journeyMap.guidedSteps.tryAgain')]
       }
     }
   }
@@ -236,13 +244,15 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
   const getStatusText = () => {
     switch (status) {
       case 'completed':
-        return 'Completed'
+        return t('plan.journeyMap.guidedSteps.status.completed')
       case 'unlocked':
-        return validation.isValid ? 'Ready to Complete' : 'In Progress'
+        return validation.isValid
+          ? t('plan.journeyMap.guidedSteps.status.ready')
+          : t('plan.journeyMap.guidedSteps.status.inProgress')
       case 'locked':
-        return 'Locked'
+        return t('plan.journeyMap.guidedSteps.status.locked')
       default:
-        return 'Unknown'
+        return t('plan.journeyMap.guidedSteps.status.unknown')
     }
   }
 
@@ -254,7 +264,10 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="text-lg">
-              Step {stepInfo.order}: {stepInfo.title}
+              {t('plan.journeyMap.modal.stepLabel', {
+                number: stepInfo.order,
+                title: stepInfo.title
+              })}
             </CardTitle>
             <CardDescription>
               {stepInfo.description}
@@ -271,7 +284,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
         {/* Progress Indicator */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Progress</span>
+            <span>{t('plan.journeyMap.guidedSteps.progress')}</span>
             <span>{status === 'completed' ? '100%' : validation.isValid ? '90%' : '0%'}</span>
           </div>
           <Progress 
@@ -282,7 +295,9 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
 
         {/* Instructions */}
         <div className="space-y-2">
-          <h4 className="font-medium text-sm">Instructions</h4>
+          <h4 className="font-medium text-sm">
+            {t('plan.journeyMap.guidedSteps.instructions')}
+          </h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
             {stepInfo.instructions}
           </p>
@@ -318,7 +333,9 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
                     className="h-auto p-0 text-xs"
                   >
                     <Lightbulb className="h-3 w-3 mr-1" />
-                    {showDetails ? 'Hide' : 'Show'} suggestions
+                    {showDetails
+                      ? t('plan.journeyMap.guidedSteps.hideSuggestions')
+                      : t('plan.journeyMap.guidedSteps.showSuggestions')}
                   </Button>
                   
                   {showDetails && (
@@ -347,7 +364,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
               <Button asChild variant="outline">
                 <Link to={STEP_ROUTES[stepId]}>
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Go to {stepInfo.title.replace('Create ', '').replace('Add ', '').replace('Change ', '').replace('Record ', '')}
+                  {t('plan.journeyMap.guidedSteps.goTo', { title: cleanTitle })}
                 </Link>
               </Button>
             )}
@@ -360,7 +377,9 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
                 disabled={isCompleting}
                 className="bg-green-600 hover:bg-green-700"
               >
-                {isCompleting ? 'Completing...' : 'Mark as Complete'}
+                {isCompleting
+                  ? t('plan.journeyMap.guidedSteps.completing')
+                  : t('plan.journeyMap.guidedSteps.markComplete')}
               </Button>
             )}
           </div>
