@@ -132,6 +132,87 @@
       }
     }
   },
+  "plan": {
+    "title": "Rencana",
+    "description": "Panduan onboarding dan perencanaan operasional untuk kedai kopi Anda",
+    "tabs": {
+      "journey": "Peta Perjalanan",
+      "planningDashboard": "Dasbor Perencanaan"
+    },
+    "journeyMap": {
+      "loading": "Memuat progres perjalanan...",
+      "error": "Gagal memuat progres perjalanan",
+      "title": "Perjalanan Penyiapan Kedai Kopi",
+      "description": "Selesaikan 9 langkah untuk menyiapkan operasional kedai kopi Anda",
+      "autoCheck": "Cek Otomatis",
+      "reset": "Atur Ulang",
+      "overallProgress": "Progres Keseluruhan",
+      "complete": "{{percentage}}% Selesai",
+      "nextStep": "Langkah Selanjutnya: {{title}}",
+      "start": "Mulai",
+      "completeTitle": "🎉 Perjalanan Selesai!",
+      "completeDescription": "Selamat! Anda telah menyelesaikan semua langkah penyiapan kedai kopi.",
+      "tabs": {
+        "map": "Peta Perjalanan",
+        "guided": "Langkah Panduan"
+      },
+      "stepsMap": {
+        "title": "Peta Langkah Perjalanan",
+        "description": "Klik langkah yang terbuka untuk melihat instruksi dan memulai",
+        "bonus": "Bonus",
+        "status": {
+          "completed": "Selesai",
+          "ready": "Siap",
+          "locked": "Terkunci"
+        }
+      }
+    },
+    "planningDashboard": {
+      "loading": "Memuat data dasbor...",
+      "title": "Dasbor Perencanaan",
+      "description": "Buat dan kelola rencana operasional harian, mingguan, dan bulanan untuk kedai kopi Anda",
+      "stats": {
+        "activePlans": "Rencana Aktif",
+        "goalsAchieved": "Target Tercapai",
+        "tasksCompleted": "Tugas Selesai",
+        "completionRate": "Tingkat Penyelesaian"
+      },
+      "templates": {
+        "title": "Template Perencanaan",
+        "description": "Template kilat untuk berbagai skenario perencanaan",
+        "default": "Default",
+        "duration": "Estimasi durasi {{hours}}j",
+        "useTemplate": "Gunakan Template"
+      },
+      "journey": {
+        "title": "Progres Perjalanan Penyiapan",
+        "description": "Selesaikan perjalanan penyiapan kedai kopi untuk membuka fitur perencanaan lanjutan",
+        "overallProgress": "Progres Keseluruhan",
+        "incompleteTitle": "Selesaikan Perjalanan Penyiapan",
+        "incompleteDescription": "Selesaikan penyiapan kedai kopi Anda untuk membuka semua fitur dan template perencanaan.",
+        "completeTitle": "🎉 Penyiapan Selesai!",
+        "completeDescription": "Kedai kopi Anda sepenuhnya siap. Anda dapat membuat rencana operasional komprehensif."
+      },
+      "recentPlans": {
+        "title": "Rencana Terbaru",
+        "noPlansTitle": "Belum Ada Rencana",
+        "noPlansDescription": "Buat rencana operasional pertama Anda untuk memulai perencanaan terstruktur.",
+        "createFirst": "Buat Rencana Pertama",
+        "view": "Lihat Rencana"
+      },
+      "analytics": {
+        "title": "Analitik Perencanaan",
+        "description": "Ikhtisar performa dan wawasan perencanaan Anda",
+        "planDistribution": "Distribusi Rencana",
+        "statusOverview": "Ringkasan Status",
+        "performanceMetrics": "Metrik Performa",
+        "averageTaskDuration": "Durasi Tugas Rata-rata",
+        "mostUsedTemplate": "Template Paling Sering Digunakan",
+        "totalPlansCreated": "Total Rencana Dibuat",
+        "goalCategories": "Kategori Target"
+      }
+    }
+  },
   "dashboard": {
     "title": "Dasbor Bisnis",
     "description": "Ringkasan komprehensif operasi dan kinerja bisnis Anda",

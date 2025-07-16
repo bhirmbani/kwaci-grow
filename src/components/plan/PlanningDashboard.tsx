@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ export function PlanningDashboard() {
   const { getCompletionPercentage } = useJourney()
   const navigate = useNavigate()
   const currentBusinessId = useCurrentBusinessId()
+  const { t } = useTranslation()
 
   const journeyCompletion = useMemo(() => getCompletionPercentage(), [getCompletionPercentage])
 
@@ -115,8 +117,8 @@ export function PlanningDashboard() {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight">Planning Dashboard</h2>
-          <p className="text-muted-foreground">Loading dashboard data...</p>
+          <h2 className="text-2xl font-bold tracking-tight">{t('plan.planningDashboard.title')}</h2>
+          <p className="text-muted-foreground">{t('plan.planningDashboard.loading')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
@@ -138,9 +140,9 @@ export function PlanningDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Planning Dashboard</h2>
+        <h2 className="text-2xl font-bold tracking-tight">{t('plan.planningDashboard.title')}</h2>
         <p className="text-muted-foreground">
-          Create and manage daily, weekly, and monthly operational plans for your coffee shop
+          {t('plan.planningDashboard.description')}
         </p>
       </div>
 
@@ -153,7 +155,7 @@ export function PlanningDashboard() {
                 <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Plans</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('plan.planningDashboard.stats.activePlans')}</p>
                 <p className="text-2xl font-bold">{analytics?.activePlans || 0}</p>
               </div>
             </div>
@@ -167,7 +169,7 @@ export function PlanningDashboard() {
                 <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Goals Achieved</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('plan.planningDashboard.stats.goalsAchieved')}</p>
                 <p className="text-2xl font-bold">{analytics?.totalGoalsAchieved || 0}</p>
               </div>
             </div>
@@ -181,7 +183,7 @@ export function PlanningDashboard() {
                 <CheckCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Tasks Completed</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('plan.planningDashboard.stats.tasksCompleted')}</p>
                 <p className="text-2xl font-bold">{analytics?.totalTasksCompleted || 0}</p>
               </div>
             </div>
@@ -195,7 +197,7 @@ export function PlanningDashboard() {
                 <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Completion Rate</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('plan.planningDashboard.stats.completionRate')}</p>
                 <p className="text-2xl font-bold">{analytics?.averageCompletionRate.toFixed(0) || 0}%</p>
               </div>
             </div>
@@ -208,10 +210,10 @@ export function PlanningDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Planning Templates
+            {t('plan.planningDashboard.templates.title')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Quick start templates for different planning scenarios
+            {t('plan.planningDashboard.templates.description')}
           </p>
         </CardHeader>
         <CardContent>
@@ -254,14 +256,14 @@ export function PlanningDashboard() {
                           {template.difficulty.charAt(0).toUpperCase() + template.difficulty.slice(1)}
                         </Badge>
                         {template.isDefault && (
-                          <Badge variant="default" className="text-xs">Default</Badge>
+                          <Badge variant="default" className="text-xs">{t('plan.planningDashboard.templates.default')}</Badge>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Est. {Math.round(template.estimatedDuration / 60)}h duration
+                        {t('plan.planningDashboard.templates.duration', { hours: Math.round(template.estimatedDuration / 60) })}
                       </div>
                       <Button size="sm" className="w-full" onClick={() => handleUseTemplate(template)}>
-                        Use Template
+                        {t('plan.planningDashboard.templates.useTemplate')}
                       </Button>
                     </div>
                   </CardContent>
@@ -277,17 +279,17 @@ export function PlanningDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Coffee className="h-5 w-5" />
-            Setup Journey Progress
+            {t('plan.planningDashboard.journey.title')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Complete your coffee shop setup journey to unlock advanced planning features
+            {t('plan.planningDashboard.journey.description')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Overall Progress</span>
-              <span className="text-sm text-muted-foreground">{journeyCompletion}% Complete</span>
+              <span className="text-sm font-medium">{t('plan.planningDashboard.journey.overallProgress')}</span>
+              <span className="text-sm text-muted-foreground">{t('plan.journeyMap.complete', { percentage: journeyCompletion })}</span>
             </div>
             <Progress value={journeyCompletion} className="h-2" />
 
@@ -297,10 +299,10 @@ export function PlanningDashboard() {
                   <AlertTriangle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <div>
                     <h4 className="font-medium text-blue-900 dark:text-blue-100">
-                      Complete Setup Journey
+                      {t('plan.planningDashboard.journey.incompleteTitle')}
                     </h4>
                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                      Finish setting up your coffee shop to unlock all planning features and templates.
+                      {t('plan.planningDashboard.journey.incompleteDescription')}
                     </p>
                   </div>
                 </div>
@@ -311,10 +313,10 @@ export function PlanningDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <div>
                     <h4 className="font-medium text-green-900 dark:text-green-100">
-                      🎉 Setup Complete!
+                      {t('plan.planningDashboard.journey.completeTitle')}
                     </h4>
                     <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                      Your coffee shop is fully set up. You can now create comprehensive operational plans.
+                      {t('plan.planningDashboard.journey.completeDescription')}
                     </p>
                   </div>
                 </div>
@@ -328,7 +330,7 @@ export function PlanningDashboard() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Recent Plans</CardTitle>
+            <CardTitle>{t('plan.planningDashboard.recentPlans.title')}</CardTitle>
             <CreatePlanSheet onPlanCreated={loadDashboardData} />
           </div>
         </CardHeader>
@@ -337,13 +339,13 @@ export function PlanningDashboard() {
             {recentPlans.length === 0 ? (
               <div className="text-center py-8">
                 <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Plans Yet</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('plan.planningDashboard.recentPlans.noPlansTitle')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Create your first operational plan to get started with structured planning.
+                  {t('plan.planningDashboard.recentPlans.noPlansDescription')}
                 </p>
                 <CreatePlanSheet
                   onPlanCreated={loadDashboardData}
-                  triggerText="Create Your First Plan"
+                  triggerText={t('plan.planningDashboard.recentPlans.createFirst')}
                 />
               </div>
             ) : (
@@ -366,7 +368,7 @@ export function PlanningDashboard() {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => handleViewPlan(plan)}>
-                      View Plan
+                      {t('plan.planningDashboard.recentPlans.view')}
                     </Button>
                   </div>
                 ))}
@@ -382,16 +384,16 @@ export function PlanningDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              Planning Analytics
+              {t('plan.planningDashboard.analytics.title')}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Overview of your planning performance and insights
+              {t('plan.planningDashboard.analytics.description')}
             </p>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="font-medium">Plan Distribution</h4>
+                <h4 className="font-medium">{t('plan.planningDashboard.analytics.planDistribution')}</h4>
                 <div className="space-y-2">
                   {Object.entries(analytics.plansByType).map(([type, count]) => (
                     <div key={type} className="flex items-center justify-between">
@@ -401,7 +403,7 @@ export function PlanningDashboard() {
                   ))}
                 </div>
 
-                <h4 className="font-medium mt-4">Status Overview</h4>
+                <h4 className="font-medium mt-4">{t('plan.planningDashboard.analytics.statusOverview')}</h4>
                 <div className="space-y-2">
                   {Object.entries(analytics.plansByStatus).map(([status, count]) => (
                     <div key={status} className="flex items-center justify-between">
@@ -415,31 +417,31 @@ export function PlanningDashboard() {
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-medium">Performance Metrics</h4>
+                <h4 className="font-medium">{t('plan.planningDashboard.analytics.performanceMetrics')}</h4>
                 <div className="space-y-3">
                   <div className="space-y-1">
                     <div className="flex justify-between text-sm">
-                      <span>Average Task Duration</span>
+                      <span>{t('plan.planningDashboard.analytics.averageTaskDuration')}</span>
                       <span>{Math.round(analytics.averageTaskDuration)} min</span>
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex justify-between text-sm">
-                      <span>Most Used Template</span>
+                      <span>{t('plan.planningDashboard.analytics.mostUsedTemplate')}</span>
                       <span>{analytics.mostUsedTemplate}</span>
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex justify-between text-sm">
-                      <span>Total Plans Created</span>
+                      <span>{t('plan.planningDashboard.analytics.totalPlansCreated')}</span>
                       <span>{analytics.totalPlans}</span>
                     </div>
                   </div>
                 </div>
 
-                <h4 className="font-medium mt-4">Goal Categories</h4>
+                <h4 className="font-medium mt-4">{t('plan.planningDashboard.analytics.goalCategories')}</h4>
                 <div className="space-y-2">
                   {Object.entries(analytics.goalsByCategory).slice(0, 3).map(([category, count]) => (
                     <div key={category} className="flex items-center justify-between">
