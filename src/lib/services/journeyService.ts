@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { db } from '../db'
 import type { JourneyProgress } from '../db/schema'
 import { getCurrentBusinessId, requireBusinessId } from './businessContext'
+import i18next from '../i18n'
 
 // Journey step definitions
 export const JOURNEY_STEPS = {
@@ -32,9 +33,9 @@ export interface JourneyStepInfo {
 export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   [JOURNEY_STEPS.CREATE_INGREDIENT]: {
     id: JOURNEY_STEPS.CREATE_INGREDIENT,
-    title: 'Create Ingredient',
-    description: 'Set up your first ingredient for coffee production',
-    instructions: 'Navigate to the Ingredients page and create at least one ingredient (e.g., Coffee Beans, Milk, Sugar)',
+    title: 'plan.planningDashboard.journey.createIngredient.title',
+    description: 'plan.planningDashboard.journey.createIngredient.description',
+    instructions: 'plan.planningDashboard.journey.createIngredient.instructions',
     order: 1,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -45,9 +46,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CREATE_PRODUCT]: {
     id: JOURNEY_STEPS.CREATE_PRODUCT,
-    title: 'Create Product',
-    description: 'Create a coffee product with COGS calculation',
-    instructions: 'Go to Products page and create a product using your ingredients with proper COGS calculation',
+    title: 'plan.planningDashboard.journey.createProduct.title',
+    description: 'plan.planningDashboard.journey.createProduct.description',
+    instructions: 'plan.planningDashboard.journey.createProduct.instructions',
     order: 2,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -58,9 +59,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CREATE_MENU]: {
     id: JOURNEY_STEPS.CREATE_MENU,
-    title: 'Create Menu',
-    description: 'Set up your coffee shop menu',
-    instructions: 'Create a menu in the Menus section to organize your products',
+    title: 'plan.planningDashboard.journey.createMenu.title',
+    description: 'plan.planningDashboard.journey.createMenu.description',
+    instructions: 'plan.planningDashboard.journey.createMenu.instructions',
     order: 3,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -71,9 +72,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CREATE_BRANCH]: {
     id: JOURNEY_STEPS.CREATE_BRANCH,
-    title: 'Create Branch',
-    description: 'Set up your coffee shop branch location',
-    instructions: 'Create a branch location for your coffee shop operations',
+    title: 'plan.planningDashboard.journey.createBranch.title',
+    description: 'plan.planningDashboard.journey.createBranch.description',
+    instructions: 'plan.planningDashboard.journey.createBranch.instructions',
     order: 4,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -84,9 +85,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.ADD_PRODUCT_TO_MENU]: {
     id: JOURNEY_STEPS.ADD_PRODUCT_TO_MENU,
-    title: 'Add Product to Menu',
-    description: 'Associate your product with the menu',
-    instructions: 'Add your created product to the menu with pricing information',
+    title: 'plan.planningDashboard.journey.addProductToMenu.title',
+    description: 'plan.planningDashboard.journey.addProductToMenu.description',
+    instructions: 'plan.planningDashboard.journey.addProductToMenu.instructions',
     order: 5,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -97,9 +98,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.ADD_ITEM_TO_WAREHOUSE]: {
     id: JOURNEY_STEPS.ADD_ITEM_TO_WAREHOUSE,
-    title: 'Add Item to Warehouse',
-    description: 'Stock your warehouse with ingredients',
-    instructions: 'Go to Warehouse and add ingredients to your inventory using the COGS calculator',
+    title: 'plan.planningDashboard.journey.addItemToWarehouse.title',
+    description: 'plan.planningDashboard.journey.addItemToWarehouse.description',
+    instructions: 'plan.planningDashboard.journey.addItemToWarehouse.instructions',
     order: 6,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -110,9 +111,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CREATE_PRODUCTION_ALLOCATION]: {
     id: JOURNEY_STEPS.CREATE_PRODUCTION_ALLOCATION,
-    title: 'Create Production Allocation',
-    description: 'Allocate ingredients for production',
-    instructions: 'Use the Quick Production Allocation feature to reserve ingredients for production',
+    title: 'plan.planningDashboard.journey.createProductionAllocation.title',
+    description: 'plan.planningDashboard.journey.createProductionAllocation.description',
+    instructions: 'plan.planningDashboard.journey.createProductionAllocation.instructions',
     order: 7,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -123,9 +124,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CHANGE_PRODUCTION_BATCH_STATUS]: {
     id: JOURNEY_STEPS.CHANGE_PRODUCTION_BATCH_STATUS,
-    title: 'Complete Production Batch',
-    description: 'Mark production batch as completed',
-    instructions: 'Change a production batch status from Pending → In Progress → Completed',
+    title: 'plan.planningDashboard.journey.changeProductionBatchStatus.title',
+    description: 'plan.planningDashboard.journey.changeProductionBatchStatus.description',
+    instructions: 'plan.planningDashboard.journey.changeProductionBatchStatus.instructions',
     order: 8,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -139,9 +140,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.RECORD_SALES]: {
     id: JOURNEY_STEPS.RECORD_SALES,
-    title: 'Record Sales',
-    description: 'Record your first sales transaction',
-    instructions: 'Go to Operations and record a sales transaction for your products',
+    title: 'plan.planningDashboard.journey.recordSales.title',
+    description: 'plan.planningDashboard.journey.recordSales.description',
+    instructions: 'plan.planningDashboard.journey.recordSales.instructions',
     order: 9,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()
@@ -152,9 +153,9 @@ export const JOURNEY_STEP_INFO: Record<JourneyStepId, JourneyStepInfo> = {
   },
   [JOURNEY_STEPS.CREATE_SALES_TARGET]: {
     id: JOURNEY_STEPS.CREATE_SALES_TARGET,
-    title: 'Create Sales Target',
-    description: 'Set daily sales targets for your products (Bonus Step)',
-    instructions: 'Use the calendar-based interface to set daily sales targets for your products. This helps track performance and plan operations.',
+    title: 'plan.planningDashboard.journey.createSalesTarget.title',
+    description: 'plan.planningDashboard.journey.createSalesTarget.description',
+    instructions: 'plan.planningDashboard.journey.createSalesTarget.instructions',
     order: 10,
     validationFn: async () => {
       const businessId = getCurrentBusinessId()

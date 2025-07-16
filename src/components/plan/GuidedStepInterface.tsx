@@ -31,7 +31,6 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
   })
   const [isCompleting, setIsCompleting] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
-  const { t } = useTranslation()
 
   const stepInfo = JOURNEY_STEP_INFO[stepId]
   const status = getStepStatus(stepId)

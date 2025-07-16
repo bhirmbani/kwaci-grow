@@ -228,7 +228,57 @@
         "incompleteTitle": "Selesaikan Perjalanan Penyiapan",
         "incompleteDescription": "Selesaikan penyiapan kedai kopi Anda untuk membuka semua fitur dan template perencanaan.",
         "completeTitle": "🎉 Penyiapan Selesai!",
-        "completeDescription": "Kedai kopi Anda sepenuhnya siap. Anda dapat membuat rencana operasional komprehensif."
+        "completeDescription": "Kedai kopi Anda sepenuhnya siap. Anda dapat membuat rencana operasional komprehensif.",
+        "createIngredient": {
+          "title": "Buat Bahan Baku",
+          "description": "Tambahkan bahan baku utama seperti Kopi, Susu, dan Gula untuk memulai perencanaan.",
+          "instructions": "Mulai dengan bahan dasar seperti Kopi, Susu, dan Gula. Tetapkan biaya satuan dan jumlah dasar yang realistis. Gunakan nama yang jelas dan deskriptif untuk setiap bahan."
+        },
+        "createProduct": {
+          "title": "Buat Produk",
+          "description": "Buat produk kopi utama seperti Espresso, Latte, dan Cappuccino.",
+          "instructions": "Tambahkan produk utama yang akan dijual di kedai kopi Anda. Pastikan setiap produk memiliki komposisi bahan yang jelas."
+        },
+        "createMenu": {
+          "title": "Buat Menu",
+          "description": "Susun menu kedai kopi Anda dengan produk yang telah dibuat.",
+          "instructions": "Buat menu yang menarik dan mudah dipahami pelanggan. Sertakan semua produk utama."
+        },
+        "createBranch": {
+          "title": "Buat Cabang",
+          "description": "Tambahkan cabang atau lokasi kedai kopi Anda.",
+          "instructions": "Masukkan detail lokasi dan informasi penting untuk setiap cabang."
+        },
+        "addProductToMenu": {
+          "title": "Tambahkan Produk ke Menu",
+          "description": "Hubungkan produk ke menu yang tersedia.",
+          "instructions": "Pastikan setiap produk yang dibuat sudah masuk ke dalam menu yang sesuai."
+        },
+        "addItemToWarehouse": {
+          "title": "Tambahkan Item ke Gudang",
+          "description": "Masukkan stok awal bahan baku ke gudang.",
+          "instructions": "Catat jumlah stok awal untuk setiap bahan baku di gudang."
+        },
+        "createProductionAllocation": {
+          "title": "Buat Alokasi Produksi",
+          "description": "Rencanakan alokasi bahan baku untuk produksi harian.",
+          "instructions": "Tentukan bahan baku yang akan digunakan untuk setiap batch produksi."
+        },
+        "changeProductionBatchStatus": {
+          "title": "Ubah Status Batch Produksi",
+          "description": "Perbarui status batch produksi setelah selesai.",
+          "instructions": "Tandai batch produksi sebagai selesai setelah proses produksi berakhir."
+        },
+        "recordSales": {
+          "title": "Catat Penjualan",
+          "description": "Rekam transaksi penjualan harian kedai kopi Anda.",
+          "instructions": "Masukkan data penjualan setiap hari untuk memantau performa bisnis."
+        },
+        "createSalesTarget": {
+          "title": "Buat Target Penjualan",
+          "description": "Tetapkan target penjualan harian untuk setiap produk.",
+          "instructions": "Tentukan target penjualan yang realistis untuk setiap produk di menu."
+        }
       },
       "recentPlans": {
         "title": "Rencana Terbaru",
@@ -250,452 +300,6 @@
       }
     }
   },
-  "dashboard": {
-    "title": "Dasbor Bisnis",
-    "description": "Ringkasan komprehensif operasi dan kinerja bisnis Anda",
-    "lastUpdated": "Terakhir diperbarui",
-    "refresh": "Segarkan",
-    "realTimeData": "Data real-time",
-    "dataUpdatesAutomatically": "Data dasbor diperbarui secara otomatis saat Anda beralih konteks bisnis",
-    "welcome": {
-      "title": "Selamat Datang di KWACI Grow",
-      "description": "Dasbor manajemen bisnis komprehensif Anda",
-      "selectBusiness": "Silakan pilih bisnis dari sidebar untuk melihat dasbor Anda dan mulai mengelola operasi.",
-      "multiBusinessEnabled": "Dukungan multi-bisnis diaktifkan"
-    },
-    "noBusinessSelected": "Tidak ada bisnis yang dipilih",
-    "selectBusinessToView": "Silakan pilih bisnis untuk melihat",
-    "errorLoading": "Kesalahan memuat",
-    "tryAgain": "Coba lagi",
-    "salesAnalytics": {
-      "title": "Analitik Penjualan",
-      "description": "Wawasan pendapatan dan transaksi untuk {{period}}",
-      "selectPeriod": "Pilih periode",
-      "periods": {
-        "today": "Hari Ini",
-        "week": "Minggu Ini",
-        "month": "Bulan Ini",
-        "quarter": "3 Bulan Terakhir"
-      },
-      "metrics": {
-        "totalRevenue": "Total Pendapatan",
-        "transactions": "Transaksi",
-        "avgOrderValue": "Nilai Rata-rata Pesanan",
-        "topProduct": "Produk Terlaris",
-        "perTransactionAverage": "Rata-rata per transaksi",
-        "sold": "terjual",
-        "noSales": "Tidak ada penjualan",
-        "active": "Aktif"
-      },
-      "hourlyChart": {
-        "title": "Penjualan Per Jam Hari Ini",
-        "description": "Distribusi pendapatan dan transaksi sepanjang hari",
-        "peakHours": "Jam Sibuk"
-      },
-      "noData": {
-        "title": "Tidak Ada Data Penjualan",
-        "description": "Tidak ada penjualan tercatat untuk {{period}}. Mulai catat penjualan untuk melihat analitik di sini."
-      }
-    },
-    "financialOverview": {
-      "title": "Ringkasan Keuangan",
-      "description": "Posisi keuangan saat ini dan wawasan arus kas",
-      "metrics": {
-        "availableCash": "Kas Tersedia",
-        "monthlyExpenses": "Biaya Bulanan",
-        "netPosition": "Posisi Bersih",
-        "cashRunway": "Runway Kas",
-        "burnRate": "Tingkat pembakaran",
-        "months": "bulan",
-        "atCurrentBurnRate": "Pada tingkat pembakaran saat ini",
-        "positive": "Positif",
-        "negative": "Negatif"
-      },
-      "healthStatus": {
-        "healthy": "Sehat",
-        "caution": "Hati-hati",
-        "critical": "Kritis"
-      },
-      "summary": {
-        "title": "Ringkasan Kesehatan Keuangan",
-        "description": "Ringkasan posisi keuangan bisnis Anda",
-        "cashFlowStatus": "Status Arus Kas",
-        "positiveCashFlow": "Arus kas positif - bisnis menghasilkan lebih banyak pendapatan daripada biaya",
-        "negativeCashFlow": "Arus kas negatif - biaya melebihi pendapatan, pantau dengan cermat",
-        "revenueVsExpenses": "Pendapatan vs Biaya",
-        "monthlyRevenue": "Pendapatan Bulanan",
-        "monthlyExpenses": "Biaya Bulanan",
-        "netResult": "Hasil Bersih",
-        "recommendations": "Rekomendasi Keuangan",
-        "focusOnRevenue": "• Fokus pada peningkatan pendapatan atau pengurangan biaya",
-        "considerOptimization": "• Pertimbangkan optimisasi biaya - runway kurang dari 3 bulan",
-        "considerReinvestment": "• Pertimbangkan reinvestasi keuntungan untuk pertumbuhan bisnis",
-        "immediateAttention": "• Perhatian segera diperlukan - posisi kas negatif"
-      },
-      "error": {
-        "title": "Tidak Dapat Memuat Data Keuangan"
-      }
-    },
-    "operationsStatus": {
-      "title": "Status Operasional",
-      "description": "Status batch produksi dan alur kerja operasional",
-      "overview": "Ringkasan Operasional",
-      "metrics": {
-        "incompleteBatches": "Batch Belum Selesai",
-        "overdueBatches": "Batch Terlambat",
-        "urgentBatches": "Batch Mendesak",
-        "onTimeRate": "Tingkat Tepat Waktu",
-        "batchesCompletedOnTime": "Batch diselesaikan tepat waktu"
-      },
-      "status": {
-        "pending": "Menunggu",
-        "inProgress": "Sedang Berlangsung",
-        "completed": "Selesai",
-        "cancelled": "Dibatalkan"
-      },
-      "priority": {
-        "overdue": "Terlambat",
-        "urgent": "Mendesak",
-        "normal": "Normal"
-      },
-      "badges": {
-        "active": "Aktif",
-        "allComplete": "Semua Selesai",
-        "attentionNeeded": "Perlu Perhatian",
-        "onTrack": "Sesuai Jadwal",
-        "monitorClosely": "Pantau Ketat"
-      },
-      "columns": {
-        "batchNumber": "No. Batch",
-        "product": "Produk",
-        "quantity": "Kuantitas",
-        "status": "Status",
-        "priority": "Prioritas",
-        "created": "Dibuat",
-        "age": "Umur",
-        "target": "Target",
-        "notSpecified": "Tidak ditentukan"
-      },
-      "incompleteBatches": {
-        "title": "Batch Produksi Belum Selesai",
-        "description": "Batch produksi yang memerlukan perhatian atau penyelesaian"
-      },
-      "emptyState": {
-        "title": "Semua Batch Selesai",
-        "description": "Tidak ada batch produksi yang belum selesai. Kerja bagus dalam menjaga produksi!"
-      },
-      "error": {
-        "title": "Tidak Dapat Memuat Data Operasional",
-        "loading": "Gagal memuat",
-        "tryAgain": "Coba lagi"
-      },
-      "noBusinessSelected": {
-        "title": "Tidak ada bisnis dipilih",
-        "description": "Silakan pilih bisnis untuk melihat status operasional."
-      }
-    },
-    "inventoryAlerts": {
-      "title": "Peringatan Inventori",
-      "description": "Level stok dan peringatan inventori rendah",
-      "overview": "Ringkasan Inventori",
-      "metrics": {
-        "criticalAlerts": "Peringatan Kritis",
-        "lowStockAlerts": "Peringatan Stok Rendah",
-        "itemsBelowThreshold": "Item Di Bawah Ambang Batas",
-        "stockHealth": "Kesehatan Stok"
-      },
-      "summary": {
-        "title": "Ringkasan Inventori",
-        "criticalItems": "Item Kritis",
-        "lowStockItems": "Item Stok Rendah",
-        "totalItems": "Total Item"
-      },
-      "alertLevels": {
-        "critical": "Kritis",
-        "lowStock": "Stok Rendah",
-        "normal": "Normal"
-      },
-      "badges": {
-        "immediateAction": "Tindakan Segera",
-        "noCriticalIssues": "Tidak Ada Masalah Kritis",
-        "monitorClosely": "Pantau Ketat",
-        "stockLevelsGood": "Level Stok Baik",
-        "requireAttention": "Perlu Perhatian",
-        "allWellStocked": "Semua Stok Cukup",
-        "excellentHealth": "Kesehatan Sangat Baik",
-        "goodOverall": "Baik Secara Keseluruhan"
-      },
-      "columns": {
-        "ingredient": "Bahan",
-        "currentStock": "Stok Saat Ini",
-        "threshold": "Ambang Batas",
-        "stockLevel": "Level Stok",
-        "alertLevel": "Level Peringatan",
-        "actionNeeded": "Tindakan Diperlukan"
-      },
-      "actions": {
-        "outOfStock": "Stok habis - Pesan segera",
-        "reorderUrgently": "Pesan ulang mendesak",
-        "planReorderSoon": "Rencanakan pesan ulang segera",
-        "monitorLevels": "Pantau level"
-      },
-      "progress": {
-        "ofThreshold": "% dari ambang batas"
-      },
-      "lowStockIngredients": {
-        "title": "Bahan Stok Rendah",
-        "description": "Bahan yang berada di bawah ambang batas stok rendah"
-      },
-      "emptyState": {
-        "title": "Semua Level Stok Baik",
-        "description": "Tidak ada bahan yang berada di bawah ambang batas stok rendah. Pertahankan manajemen inventori yang baik!"
-      },
-      "error": {
-        "title": "Tidak Dapat Memuat Data Inventori",
-        "loading": "Gagal memuat",
-        "tryAgain": "Coba lagi"
-      },
-      "noBusinessSelected": {
-        "title": "Tidak ada bisnis dipilih",
-        "description": "Silakan pilih bisnis untuk melihat peringatan inventori."
-      }
-    },
-    "branchPerformance": {
-      "title": "Kinerja Cabang",
-      "description": "Perbandingan kinerja penjualan di semua cabang untuk {{period}}",
-      "periods": {
-        "today": "hari ini",
-        "week": "minggu ini",
-        "month": "bulan ini",
-        "quarter": "3 bulan terakhir"
-      },
-      "periodLabels": {
-        "today": "Hari Ini",
-        "week": "Minggu Ini",
-        "month": "Bulan Ini",
-        "quarter": "3 Bulan Terakhir"
-      },
-      "metrics": {
-        "activeBranches": "Cabang Aktif",
-        "totalRevenue": "Total Pendapatan",
-        "avgPerBranch": "Rata-rata per Cabang",
-        "topPerformer": "Performa Terbaik"
-      },
-      "summary": {
-        "title": "Ringkasan Kinerja",
-        "topPerformer": "Performa Terbaik",
-        "totalBranches": "Total Cabang",
-        "avgRevenue": "Rata-rata Pendapatan"
-      },
-      "badges": {
-        "operational": "Operasional",
-        "noBranches": "Tidak ada cabang"
-      },
-      "labels": {
-        "acrossAllBranches": "Di semua cabang",
-        "revenuePerBranch": "Pendapatan per cabang",
-        "noData": "Tidak ada data",
-        "aboveAverage": "Di atas rata-rata",
-        "belowAverage": "Di bawah rata-rata"
-      },
-      "columns": {
-        "rank": "Peringkat",
-        "branch": "Cabang",
-        "revenue": "Pendapatan",
-        "transactions": "Transaksi",
-        "avgOrderValue": "Rata-rata Pesanan",
-        "performance": "Kinerja"
-      },
-      "comparison": {
-        "title": "Perbandingan Kinerja Cabang",
-        "description": "Metrik kinerja detail untuk setiap cabang ({{period}})"
-      },
-      "performanceLabels": {
-        "excellent": "Sangat Baik",
-        "good": "Baik",
-        "average": "Rata-rata",
-        "belowAverage": "Di Bawah Rata-rata"
-      },
-      "emptyState": {
-        "title": "Tidak Ada Data Cabang",
-        "description": "Tidak ada cabang ditemukan atau tidak ada data penjualan tersedia untuk periode yang dipilih."
-      },
-      "error": {
-        "title": "Tidak Dapat Memuat Data Cabang",
-        "loading": "Gagal memuat",
-        "tryAgain": "Coba lagi"
-      },
-      "noBusinessSelected": {
-        "title": "Tidak ada bisnis dipilih",
-        "description": "Silakan pilih bisnis untuk melihat kinerja cabang."
-      }
-    }
-  },
-  "cogs": {
-    "playground": {
-      "title": "Playground HPP",
-      "sandboxBadge": "Lingkungan Sandbox",
-      "saveToDatabase": "Simpan ke Database",
-      "description": {
-        "welcome": "Selamat datang di COGS Playground!",
-        "line1": "Ini adalah lingkungan sandbox untuk bereksperimen dengan kombinasi bahan dan produk",
-        "line2": "untuk menghitung Harga Pokok Penjualan (HPP) sebelum menyimpan ke database.",
-        "line3": "Semua data di sini bersifat sementara sampai Anda memilih untuk menyimpannya."
-      },
-      "badges": {
-        "realTime": "Perhitungan HPP real-time",
-        "temporaryIngredients": "Bahan sementara",
-        "productExperimentation": "Eksperimen produk",
-        "optionalSave": "Opsional simpan ke database"
-      },
-      "tabs": {
-        "ingredients": "Bahan",
-        "products": "Produk"
-      },
-      "gettingStarted": {
-        "title": "Mulai",
-        "description": "Ikuti langkah berikut untuk mulai bereksperimen dengan perhitungan HPP:",
-        "steps": {
-          "createIngredients": {
-            "title": "Buat Bahan",
-            "description": "Tambahkan bahan sementara dengan biaya, jumlah, dan unit"
-          },
-          "buildProducts": {
-            "title": "Buat Produk",
-            "description": "Kombinasikan bahan untuk membuat produk dan lihat HPP secara real-time"
-          },
-          "saveWhenReady": {
-            "title": "Simpan Jika Siap",
-            "description": "Jika sudah puas dengan percobaan Anda, simpan ke database"
-          }
-        }
-      }
-    },
-    "saveDialog": {
-      "title": "Simpan ke Database",
-      "description": "Ini akan menyimpan bahan dan produk sementara ke database secara permanen. Hanya item aktif yang akan disimpan.",
-      "noDataTitle": "Tidak ada data aktif untuk disimpan",
-      "noDataDescription": "Buat bahan atau produk aktif terlebih dahulu.",
-      "ingredientsToSave": "Bahan yang Disimpan",
-      "productsToSave": "Produk yang Disimpan",
-      "saveSummary": "Ringkasan Simpan",
-      "totalIngredients": "Total Bahan",
-      "totalProducts": "Total Produk",
-      "saving": "Menyimpan...",
-      "success": "Berhasil disimpan ke database!",
-      "failure": "Gagal menyimpan ke database"
-    },
-    "tempIngredientList": {
-      "title": "Bahan Sementara",
-      "sandboxBadge": "Sandbox",
-      "addIngredient": "Tambah Bahan",
-      "description": "Buat bahan untuk percobaan HPP. Data ini tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
-      "emptyMessage": "Belum ada bahan sementara",
-      "addFirst": "Tambah Bahan Pertama Anda",
-      "table": {
-        "name": "Nama",
-        "category": "Kategori",
-        "baseCost": "Biaya Dasar",
-        "baseQuantity": "Jumlah Dasar",
-        "unitCost": "Biaya per Unit",
-        "unit": "Unit",
-        "status": "Status",
-        "actions": "Aksi",
-        "active": "Aktif",
-        "inactive": "Nonaktif"
-      }
-    },
-    "tempProductList": {
-      "title": "Produk Sementara",
-      "sandboxBadge": "Sandbox",
-      "addProduct": "Tambah Produk",
-      "description": "Buat produk dengan komposisi bahan untuk percobaan HPP. Data ini tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
-      "noIngredientsWarning": "Buat beberapa bahan aktif terlebih dahulu sebelum menambah produk.",
-      "emptyMessage": "Belum ada produk sementara",
-      "addFirst": "Tambah Produk Pertama Anda",
-      "table": {
-        "productName": "Nama Produk",
-        "description": "Deskripsi",
-        "ingredients": "Bahan",
-        "cogsPerCup": "HPP per Cangkir",
-        "status": "Status",
-        "actions": "Aksi",
-        "noIngredientsBadge": "Tidak ada bahan",
-        "ingredientCount": "{{count}} bahan",
-        "ingredientCount_plural": "{{count}} bahan",
-        "active": "Aktif",
-        "inactive": "Nonaktif"
-      },
-      "summary": {
-        "title": "Ringkasan Playground",
-        "totalProducts": "Total Produk",
-        "activeProducts": "Produk Aktif",
-        "avgCogsPerCup": "Rata-rata HPP per Cangkir",
-        "totalIngredientsUsed": "Total Bahan Digunakan"
-      }
-    },
-    "tempIngredientForm": {
-      "addTitle": "Tambah Bahan Sementara",
-      "editTitle": "Edit Bahan Sementara",
-      "description": "Buat bahan untuk percobaan HPP. Data ini bersifat sementara dan tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
-      "fields": {
-        "name": "Nama Bahan *",
-        "baseUnitCost": "Biaya Unit Dasar *",
-        "baseUnitQuantity": "Jumlah Unit Dasar *",
-        "unit": "Unit *",
-        "category": "Kategori",
-        "supplierInfo": "Informasi Pemasok",
-        "note": "Catatan",
-        "isActive": "Bahan aktif",
-        "selectUnit": "Pilih unit",
-        "selectCategory": "Pilih kategori",
-        "noCategory": "Tidak Ada Kategori",
-        "costBaseHelp": "Biaya untuk jumlah dasar",
-        "quantityHelp": "Jumlah dalam unit dasar",
-        "unitHelp": "Satuan ukuran",
-        "supplierPlaceholder": "Masukkan detail pemasok",
-        "notePlaceholder": "Catatan tambahan tentang bahan ini"
-      },
-      "buttons": {
-        "add": "Tambah Bahan",
-        "update": "Perbarui Bahan",
-        "adding": "Menambah...",
-        "updating": "Memperbarui...",
-        "cancel": "Batal"
-      }
-    },
-    "tempProductForm": {
-      "addTitle": "Tambah Produk Sementara",
-      "editTitle": "Edit Produk Sementara",
-      "description": "Buat produk dengan komposisi bahan untuk percobaan HPP. Data ini bersifat sementara dan tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
-      "fields": {
-        "name": "Nama Produk *",
-        "description": "Deskripsi",
-        "note": "Catatan",
-        "isActive": "Produk aktif",
-        "usagePerCup": "Penggunaan per Cangkir",
-        "ingredient": "Bahan",
-        "noteOptional": "Catatan (opsional)",
-        "selectIngredient": "Pilih bahan",
-        "additionalNotes": "Catatan tambahan",
-        "totalCogsPerCup": "Total HPP per Cangkir"
-      },
-      "buttons": {
-        "add": "Tambah Produk",
-        "update": "Perbarui Produk",
-        "adding": "Menambah...",
-        "updating": "Memperbarui...",
-        "cancel": "Batal",
-        "addIngredient": "Tambah Bahan"
-      },
-      "table": {
-        "ingredient": "Bahan",
-        "usagePerCup": "Penggunaan per Cangkir",
-        "costPerCup": "Biaya per Cangkir",
-        "note": "Catatan",
-        "actions": "Aksi"
-      },
-      "emptyIngredients": "Belum ada bahan yang ditambahkan"
-    }
-  }
+  "dashboard": {},
+  "cogs": {}
 }

@@ -103,11 +103,11 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
               <DialogTitle className="text-xl">
                 {t('plan.journeyMap.modal.stepLabel', {
                   number: stepInfo.order,
-                  title: stepInfo.title
+                  title: t(stepInfo.title)
                 })}
               </DialogTitle>
               <DialogDescription className="text-base">
-                {stepInfo.description}
+                {t(stepInfo.description)}
               </DialogDescription>
             </div>
             <Badge className={`${getStatusColor()} flex items-center gap-1`}>
@@ -125,7 +125,7 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
             </h3>
             <div className="bg-muted/50 rounded-lg p-4">
               <p className="text-sm leading-relaxed">
-                {stepInfo.instructions}
+                {t(stepInfo.instructions)}
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
                 <Button asChild>
                   <Link to={route} onClick={onClose}>
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    {t('plan.journeyMap.modal.goTo', { title: cleanTitle })}
+                    {t('plan.journeyMap.modal.goTo', { title: t(cleanTitle) })}
                   </Link>
                 </Button>
               )}

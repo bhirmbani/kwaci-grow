@@ -228,7 +228,57 @@
         "incompleteTitle": "Complete Setup Journey",
         "incompleteDescription": "Finish setting up your coffee shop to unlock all planning features and templates.",
         "completeTitle": "🎉 Setup Complete!",
-        "completeDescription": "Your coffee shop is fully set up. You can now create comprehensive operational plans."
+        "completeDescription": "Your coffee shop is fully set up. You can now create comprehensive operational plans.",
+        "createIngredient": {
+          "title": "Add Your First Ingredient",
+          "description": "Start by adding an ingredient to your inventory. Ingredients are the building blocks for your products.",
+          "instructions": "Go to the Ingredients section and click 'Add Ingredient'. Fill in the details and save."
+        },
+        "createProduct": {
+          "title": "Create Your First Product",
+          "description": "Now create a product using your ingredients. Products are what you sell to customers.",
+          "instructions": "Go to the Products section, click 'Add Product', and define its composition."
+        },
+        "createMenu": {
+          "title": "Build Your Menu",
+          "description": "Add your products to a menu so customers can order them.",
+          "instructions": "Navigate to Menus, create a new menu, and add products."
+        },
+        "createBranch": {
+          "title": "Add a Branch",
+          "description": "Set up your first branch location for sales and operations.",
+          "instructions": "Go to Branches, click 'Add Branch', and enter the location details."
+        },
+        "addProductToMenu": {
+          "title": "Add Product to Menu",
+          "description": "Link your products to the menu for customer ordering.",
+          "instructions": "Edit your menu and add the products you want to offer."
+        },
+        "addItemToWarehouse": {
+          "title": "Stock Your Warehouse",
+          "description": "Add items to your warehouse to track inventory levels.",
+          "instructions": "Go to Warehouse, click 'Add Item', and specify quantities."
+        },
+        "createProductionAllocation": {
+          "title": "Set Up Production Allocation",
+          "description": "Allocate ingredients for production batches.",
+          "instructions": "Navigate to Production, create a batch, and allocate ingredients."
+        },
+        "changeProductionBatchStatus": {
+          "title": "Update Production Batch Status",
+          "description": "Track the progress of your production batches.",
+          "instructions": "Go to Production, select a batch, and update its status."
+        },
+        "recordSales": {
+          "title": "Record Your First Sale",
+          "description": "Start tracking sales to monitor business performance.",
+          "instructions": "Go to Sales, click 'Record Sale', and enter transaction details."
+        },
+        "createSalesTarget": {
+          "title": "Set a Sales Target",
+          "description": "Define daily sales goals for your team.",
+          "instructions": "Go to Sales Targets, click 'Add Target', and set your goals."
+        }
       },
       "recentPlans": {
         "title": "Recent Plans",
