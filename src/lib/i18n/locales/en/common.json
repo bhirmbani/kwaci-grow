@@ -493,5 +493,172 @@
         "description": "Please select a business to view branch performance."
       }
     }
+  },
+  "cogs": {
+    "playground": {
+      "title": "COGS Playground",
+      "sandboxBadge": "Sandbox Environment",
+      "saveToDatabase": "Save to Database",
+      "description": {
+        "welcome": "Welcome to the COGS Playground!",
+        "line1": "This is a sandbox environment where you can experiment with ingredient and product combinations",
+        "line2": "to calculate Cost of Goods Sold (COGS) before committing data to your database.",
+        "line3": "All data here is temporary until you choose to save it."
+      },
+      "badges": {
+        "realTime": "Real-time COGS calculations",
+        "temporaryIngredients": "Temporary ingredients",
+        "productExperimentation": "Product experimentation",
+        "optionalSave": "Optional database save"
+      },
+      "tabs": {
+        "ingredients": "Ingredients",
+        "products": "Products"
+      },
+      "gettingStarted": {
+        "title": "Getting Started",
+        "description": "Follow these steps to start experimenting with COGS calculations:",
+        "steps": {
+          "createIngredients": {
+            "title": "Create Ingredients",
+            "description": "Add temporary ingredients with costs, quantities, and units"
+          },
+          "buildProducts": {
+            "title": "Build Products",
+            "description": "Combine ingredients to create products and see real-time COGS"
+          },
+          "saveWhenReady": {
+            "title": "Save When Ready",
+            "description": "When satisfied with your experiments, save to database"
+          }
+        }
+      }
+    },
+    "saveDialog": {
+      "title": "Save to Database",
+      "description": "This will permanently save your temporary ingredients and products to the database. Only active items will be saved.",
+      "noDataTitle": "No active data to save",
+      "noDataDescription": "Create some active ingredients or products first.",
+      "ingredientsToSave": "Ingredients to Save",
+      "productsToSave": "Products to Save",
+      "saveSummary": "Save Summary",
+      "totalIngredients": "Total Ingredients",
+      "totalProducts": "Total Products",
+      "saving": "Saving...",
+      "success": "Successfully saved to database!",
+      "failure": "Failed to save to database"
+    },
+    "tempIngredientList": {
+      "title": "Temporary Ingredients",
+      "sandboxBadge": "Sandbox",
+      "addIngredient": "Add Ingredient",
+      "description": "Create ingredients for COGS experimentation. These won't be saved to the database until you choose to save them.",
+      "emptyMessage": "No temporary ingredients yet",
+      "addFirst": "Add Your First Ingredient",
+      "table": {
+        "name": "Name",
+        "category": "Category",
+        "baseCost": "Base Cost",
+        "baseQuantity": "Base Quantity",
+        "unitCost": "Unit Cost",
+        "unit": "Unit",
+        "status": "Status",
+        "actions": "Actions",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "tempProductList": {
+      "title": "Temporary Products",
+      "sandboxBadge": "Sandbox",
+      "addProduct": "Add Product",
+      "description": "Create products with ingredient compositions for COGS experimentation. These won't be saved to the database until you choose to save them.",
+      "noIngredientsWarning": "Create some active ingredients first before adding products.",
+      "emptyMessage": "No temporary products yet",
+      "addFirst": "Add Your First Product",
+      "table": {
+        "productName": "Product Name",
+        "description": "Description",
+        "ingredients": "Ingredients",
+        "cogsPerCup": "COGS per Cup",
+        "status": "Status",
+        "actions": "Actions",
+        "noIngredientsBadge": "No ingredients",
+        "ingredientCount": "{{count}} ingredient",
+        "ingredientCount_plural": "{{count}} ingredients",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "summary": {
+        "title": "Playground Summary",
+        "totalProducts": "Total Products",
+        "activeProducts": "Active Products",
+        "avgCogsPerCup": "Avg COGS per Cup",
+        "totalIngredientsUsed": "Total Ingredients Used"
+      }
+    },
+    "tempIngredientForm": {
+      "addTitle": "Add Temporary Ingredient",
+      "editTitle": "Edit Temporary Ingredient",
+      "description": "Create ingredients for COGS experimentation. This data is temporary and won't be saved to the database until you choose to save it.",
+      "fields": {
+        "name": "Ingredient Name *",
+        "baseUnitCost": "Base Unit Cost *",
+        "baseUnitQuantity": "Base Unit Quantity *",
+        "unit": "Unit *",
+        "category": "Category",
+        "supplierInfo": "Supplier Information",
+        "note": "Notes",
+        "isActive": "Active ingredient",
+        "selectUnit": "Select unit",
+        "selectCategory": "Select category",
+        "noCategory": "No Category",
+        "costBaseHelp": "Cost for the base quantity",
+        "quantityHelp": "Quantity in the base unit",
+        "unitHelp": "Unit of measurement",
+        "supplierPlaceholder": "Enter supplier details",
+        "notePlaceholder": "Additional notes about this ingredient"
+      },
+      "buttons": {
+        "add": "Add Ingredient",
+        "update": "Update Ingredient",
+        "adding": "Adding...",
+        "updating": "Updating...",
+        "cancel": "Cancel"
+      }
+    },
+    "tempProductForm": {
+      "addTitle": "Add Temporary Product",
+      "editTitle": "Edit Temporary Product",
+      "description": "Create products with ingredient compositions for COGS experimentation. This data is temporary and won't be saved to the database until you choose to save it.",
+      "fields": {
+        "name": "Product Name *",
+        "description": "Description",
+        "note": "Notes",
+        "isActive": "Active product",
+        "usagePerCup": "Usage per Cup",
+        "ingredient": "Ingredient",
+        "noteOptional": "Note (optional)",
+        "selectIngredient": "Select ingredient",
+        "additionalNotes": "Additional notes",
+        "totalCogsPerCup": "Total COGS per Cup"
+      },
+      "buttons": {
+        "add": "Add Product",
+        "update": "Update Product",
+        "adding": "Adding...",
+        "updating": "Updating...",
+        "cancel": "Cancel",
+        "addIngredient": "Add Ingredient"
+      },
+      "table": {
+        "ingredient": "Ingredient",
+        "usagePerCup": "Usage per Cup",
+        "costPerCup": "Cost per Cup",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "emptyIngredients": "No ingredients added yet"
+    }
   }
 }

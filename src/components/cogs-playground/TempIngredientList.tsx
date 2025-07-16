@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +17,7 @@ interface TempIngredientListProps {
 }
 
 export function TempIngredientList({ ingredients, onAdd, onEdit, onDelete }: TempIngredientListProps) {
+  const { t } = useTranslation()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingIngredient, setEditingIngredient] = useState<TempIngredient | undefined>()
 
@@ -51,43 +53,43 @@ export function TempIngredientList({ ingredients, onAdd, onEdit, onDelete }: Tem
           <div className="flex items-center gap-2">
             <CardTitle className="flex items-center gap-2">
               <Beaker className="h-5 w-5" />
-              Temporary Ingredients
+              {t('cogs.tempIngredientList.title')}
             </CardTitle>
             <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-              Sandbox
+              {t('cogs.tempIngredientList.sandboxBadge')}
             </Badge>
           </div>
           <Button onClick={() => setIsFormOpen(true)} size="sm">
             <Plus className="h-4 w-4 mr-2" />
-            Add Ingredient
+            {t('cogs.tempIngredientList.addIngredient')}
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
-          Create ingredients for COGS experimentation. These won't be saved to the database until you choose to save them.
+          {t('cogs.tempIngredientList.description')}
         </p>
       </CardHeader>
       <CardContent>
         {ingredients.length === 0 ? (
           <div className="text-center py-8">
             <Beaker className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">No temporary ingredients yet</p>
+            <p className="text-muted-foreground mb-4">{t('cogs.tempIngredientList.emptyMessage')}</p>
             <Button onClick={() => setIsFormOpen(true)} variant="outline">
               <Plus className="h-4 w-4 mr-2" />
-              Add Your First Ingredient
+              {t('cogs.tempIngredientList.addFirst')}
             </Button>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Base Cost</TableHead>
-                <TableHead>Base Quantity</TableHead>
-                <TableHead>Unit Cost</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.name')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.category')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.baseCost')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.baseQuantity')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.unitCost')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.unit')}</TableHead>
+                <TableHead>{t('cogs.tempIngredientList.table.status')}</TableHead>
+                <TableHead className="w-[100px]">{t('cogs.tempIngredientList.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -116,7 +118,7 @@ export function TempIngredientList({ ingredients, onAdd, onEdit, onDelete }: Tem
                   </TableCell>
                   <TableCell>
                     <Badge variant={ingredient.isActive ? "default" : "secondary"}>
-                      {ingredient.isActive ? "Active" : "Inactive"}
+                      {ingredient.isActive ? t('cogs.tempIngredientList.table.active') : t('cogs.tempIngredientList.table.inactive')}
                     </Badge>
                   </TableCell>
                   <TableCell>

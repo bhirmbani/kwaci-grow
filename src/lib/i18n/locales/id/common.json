@@ -493,5 +493,172 @@
         "description": "Silakan pilih bisnis untuk melihat kinerja cabang."
       }
     }
+  },
+  "cogs": {
+    "playground": {
+      "title": "Playground HPP",
+      "sandboxBadge": "Lingkungan Sandbox",
+      "saveToDatabase": "Simpan ke Database",
+      "description": {
+        "welcome": "Selamat datang di COGS Playground!",
+        "line1": "Ini adalah lingkungan sandbox untuk bereksperimen dengan kombinasi bahan dan produk",
+        "line2": "untuk menghitung Harga Pokok Penjualan (HPP) sebelum menyimpan ke database.",
+        "line3": "Semua data di sini bersifat sementara sampai Anda memilih untuk menyimpannya."
+      },
+      "badges": {
+        "realTime": "Perhitungan HPP real-time",
+        "temporaryIngredients": "Bahan sementara",
+        "productExperimentation": "Eksperimen produk",
+        "optionalSave": "Opsional simpan ke database"
+      },
+      "tabs": {
+        "ingredients": "Bahan",
+        "products": "Produk"
+      },
+      "gettingStarted": {
+        "title": "Mulai",
+        "description": "Ikuti langkah berikut untuk mulai bereksperimen dengan perhitungan HPP:",
+        "steps": {
+          "createIngredients": {
+            "title": "Buat Bahan",
+            "description": "Tambahkan bahan sementara dengan biaya, jumlah, dan unit"
+          },
+          "buildProducts": {
+            "title": "Buat Produk",
+            "description": "Kombinasikan bahan untuk membuat produk dan lihat HPP secara real-time"
+          },
+          "saveWhenReady": {
+            "title": "Simpan Jika Siap",
+            "description": "Jika sudah puas dengan percobaan Anda, simpan ke database"
+          }
+        }
+      }
+    },
+    "saveDialog": {
+      "title": "Simpan ke Database",
+      "description": "Ini akan menyimpan bahan dan produk sementara ke database secara permanen. Hanya item aktif yang akan disimpan.",
+      "noDataTitle": "Tidak ada data aktif untuk disimpan",
+      "noDataDescription": "Buat bahan atau produk aktif terlebih dahulu.",
+      "ingredientsToSave": "Bahan yang Disimpan",
+      "productsToSave": "Produk yang Disimpan",
+      "saveSummary": "Ringkasan Simpan",
+      "totalIngredients": "Total Bahan",
+      "totalProducts": "Total Produk",
+      "saving": "Menyimpan...",
+      "success": "Berhasil disimpan ke database!",
+      "failure": "Gagal menyimpan ke database"
+    },
+    "tempIngredientList": {
+      "title": "Bahan Sementara",
+      "sandboxBadge": "Sandbox",
+      "addIngredient": "Tambah Bahan",
+      "description": "Buat bahan untuk percobaan HPP. Data ini tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
+      "emptyMessage": "Belum ada bahan sementara",
+      "addFirst": "Tambah Bahan Pertama Anda",
+      "table": {
+        "name": "Nama",
+        "category": "Kategori",
+        "baseCost": "Biaya Dasar",
+        "baseQuantity": "Jumlah Dasar",
+        "unitCost": "Biaya per Unit",
+        "unit": "Unit",
+        "status": "Status",
+        "actions": "Aksi",
+        "active": "Aktif",
+        "inactive": "Nonaktif"
+      }
+    },
+    "tempProductList": {
+      "title": "Produk Sementara",
+      "sandboxBadge": "Sandbox",
+      "addProduct": "Tambah Produk",
+      "description": "Buat produk dengan komposisi bahan untuk percobaan HPP. Data ini tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
+      "noIngredientsWarning": "Buat beberapa bahan aktif terlebih dahulu sebelum menambah produk.",
+      "emptyMessage": "Belum ada produk sementara",
+      "addFirst": "Tambah Produk Pertama Anda",
+      "table": {
+        "productName": "Nama Produk",
+        "description": "Deskripsi",
+        "ingredients": "Bahan",
+        "cogsPerCup": "HPP per Cangkir",
+        "status": "Status",
+        "actions": "Aksi",
+        "noIngredientsBadge": "Tidak ada bahan",
+        "ingredientCount": "{{count}} bahan",
+        "ingredientCount_plural": "{{count}} bahan",
+        "active": "Aktif",
+        "inactive": "Nonaktif"
+      },
+      "summary": {
+        "title": "Ringkasan Playground",
+        "totalProducts": "Total Produk",
+        "activeProducts": "Produk Aktif",
+        "avgCogsPerCup": "Rata-rata HPP per Cangkir",
+        "totalIngredientsUsed": "Total Bahan Digunakan"
+      }
+    },
+    "tempIngredientForm": {
+      "addTitle": "Tambah Bahan Sementara",
+      "editTitle": "Edit Bahan Sementara",
+      "description": "Buat bahan untuk percobaan HPP. Data ini bersifat sementara dan tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
+      "fields": {
+        "name": "Nama Bahan *",
+        "baseUnitCost": "Biaya Unit Dasar *",
+        "baseUnitQuantity": "Jumlah Unit Dasar *",
+        "unit": "Unit *",
+        "category": "Kategori",
+        "supplierInfo": "Informasi Pemasok",
+        "note": "Catatan",
+        "isActive": "Bahan aktif",
+        "selectUnit": "Pilih unit",
+        "selectCategory": "Pilih kategori",
+        "noCategory": "Tidak Ada Kategori",
+        "costBaseHelp": "Biaya untuk jumlah dasar",
+        "quantityHelp": "Jumlah dalam unit dasar",
+        "unitHelp": "Satuan ukuran",
+        "supplierPlaceholder": "Masukkan detail pemasok",
+        "notePlaceholder": "Catatan tambahan tentang bahan ini"
+      },
+      "buttons": {
+        "add": "Tambah Bahan",
+        "update": "Perbarui Bahan",
+        "adding": "Menambah...",
+        "updating": "Memperbarui...",
+        "cancel": "Batal"
+      }
+    },
+    "tempProductForm": {
+      "addTitle": "Tambah Produk Sementara",
+      "editTitle": "Edit Produk Sementara",
+      "description": "Buat produk dengan komposisi bahan untuk percobaan HPP. Data ini bersifat sementara dan tidak akan disimpan ke database sampai Anda memilih untuk menyimpannya.",
+      "fields": {
+        "name": "Nama Produk *",
+        "description": "Deskripsi",
+        "note": "Catatan",
+        "isActive": "Produk aktif",
+        "usagePerCup": "Penggunaan per Cangkir",
+        "ingredient": "Bahan",
+        "noteOptional": "Catatan (opsional)",
+        "selectIngredient": "Pilih bahan",
+        "additionalNotes": "Catatan tambahan",
+        "totalCogsPerCup": "Total HPP per Cangkir"
+      },
+      "buttons": {
+        "add": "Tambah Produk",
+        "update": "Perbarui Produk",
+        "adding": "Menambah...",
+        "updating": "Memperbarui...",
+        "cancel": "Batal",
+        "addIngredient": "Tambah Bahan"
+      },
+      "table": {
+        "ingredient": "Bahan",
+        "usagePerCup": "Penggunaan per Cangkir",
+        "costPerCup": "Biaya per Cangkir",
+        "note": "Catatan",
+        "actions": "Aksi"
+      },
+      "emptyIngredients": "Belum ada bahan yang ditambahkan"
+    }
   }
 }

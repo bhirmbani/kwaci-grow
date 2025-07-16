@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,6 +33,7 @@ interface TempProductFormProps {
 }
 
 export function TempProductForm({ isOpen, onClose, onSave, product, availableIngredients }: TempProductFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -161,23 +163,23 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
       <SheetContent className="w-[800px] sm:w-[800px] h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            {isEditing ? 'Edit Temporary Product' : 'Add Temporary Product'}
+            {isEditing ? t('cogs.tempProductForm.editTitle') : t('cogs.tempProductForm.addTitle')}
           </SheetTitle>
           <SheetDescription>
-            Create products with ingredient compositions for COGS experimentation. This data is temporary and won't be saved to the database until you choose to save it.
+            {t('cogs.tempProductForm.description')}
           </SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Product Name *</Label>
+            <Label htmlFor="name">{t('cogs.tempProductForm.fields.name')}</Label>
             <Input
               id="name"
               {...register('name', {
                 required: 'Product name is required',
                 validate: (value) => value.trim() !== '' || 'Product name is required'
               })}
-              placeholder="Enter product name"
+              placeholder={t('cogs.tempProductForm.fields.name')}
             />
             {errors.name && (
               <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -185,21 +187,21 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('cogs.tempProductForm.fields.description')}</Label>
             <Textarea
               id="description"
               {...register('description')}
-              placeholder="Enter product description"
+              placeholder={t('cogs.tempProductForm.fields.description')}
               rows={3}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="note">Notes</Label>
+            <Label htmlFor="note">{t('cogs.tempProductForm.fields.note')}</Label>
             <Textarea
               id="note"
               {...register('note')}
-              placeholder="Additional notes about this product"
+              placeholder={t('cogs.tempProductForm.fields.additionalNotes')}
               rows={2}
             />
           </div>
@@ -210,14 +212,14 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
               checked={watch('isActive')}
               onCheckedChange={(checked) => setValue('isActive', checked)}
             />
-            <Label htmlFor="isActive">Active product</Label>
+            <Label htmlFor="isActive">{t('cogs.tempProductForm.fields.isActive')}</Label>
           </div>
 
           {/* Ingredients Section */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Product Ingredients</CardTitle>
+                <CardTitle className="text-lg">{t('cogs.tempProductForm.table.ingredient')}</CardTitle>
                 <Button
                   type="button"
                   onClick={() => setIsAddingIngredient(!isAddingIngredient)}
@@ -225,12 +227,12 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                   size="sm"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Ingredient
+                  {t('cogs.tempProductForm.buttons.addIngredient')}
                 </Button>
               </div>
               {getAvailableIngredients().length === 0 && (
                 <p className="text-sm text-muted-foreground">
-                  No active temporary ingredients available. Create some ingredients first.
+                  {t('cogs.tempProductForm.noIngredientsWarning')}
                 </p>
               )}
             </CardHeader>
@@ -239,10 +241,10 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                 <div className="space-y-4 p-4 border rounded-lg mb-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label>Ingredient</Label>
+                      <Label>{t('cogs.tempProductForm.fields.ingredient')}</Label>
                       <Select value={selectedIngredientId} onValueChange={setSelectedIngredientId}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select ingredient" />
+                          <SelectValue placeholder={t('cogs.tempProductForm.fields.selectIngredient')} />
                         </SelectTrigger>
                         <SelectContent>
                           {getAvailableIngredients().map((ingredient) => (
@@ -254,7 +256,7 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                       </Select>
                     </div>
                     <div>
-                      <Label>Usage per Cup</Label>
+                      <Label>{t('cogs.tempProductForm.fields.usagePerCup')}</Label>
                       <Input
                         type="number"
                         step="0.01"
@@ -266,17 +268,17 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                     </div>
                   </div>
                   <div>
-                    <Label>Note (optional)</Label>
+                    <Label>{t('cogs.tempProductForm.fields.noteOptional')}</Label>
                     <Input
                       value={ingredientNote}
                       onChange={(e) => setIngredientNote(e.target.value)}
-                      placeholder="Additional notes"
+                      placeholder={t('cogs.tempProductForm.fields.additionalNotes')}
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Button type="button" onClick={handleAddIngredient}>Add</Button>
+                    <Button type="button" onClick={handleAddIngredient}>{t('cogs.tempProductForm.buttons.addIngredient')}</Button>
                     <Button type="button" variant="outline" onClick={() => setIsAddingIngredient(false)}>
-                      Cancel
+                      {t('cogs.tempProductForm.buttons.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -287,11 +289,11 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Ingredient</TableHead>
-                        <TableHead>Usage per Cup</TableHead>
-                        <TableHead>Cost per Cup</TableHead>
-                        <TableHead>Note</TableHead>
-                        <TableHead className="w-[80px]">Actions</TableHead>
+                        <TableHead>{t('cogs.tempProductForm.table.ingredient')}</TableHead>
+                        <TableHead>{t('cogs.tempProductForm.table.usagePerCup')}</TableHead>
+                        <TableHead>{t('cogs.tempProductForm.table.costPerCup')}</TableHead>
+                        <TableHead>{t('cogs.tempProductForm.table.note')}</TableHead>
+                        <TableHead className="w-[80px]">{t('cogs.tempProductForm.table.actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -344,7 +346,7 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
                 </div>
               ) : (
                 <p className="text-center text-muted-foreground py-4">
-                  No ingredients added yet
+                  {t('cogs.tempProductForm.emptyIngredients')}
                 </p>
               )}
             </CardContent>
@@ -356,8 +358,8 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? (isEditing ? 'Updating...' : 'Adding...')
-                : (isEditing ? 'Update Product' : 'Add Product')
+                ? (isEditing ? t('cogs.tempProductForm.buttons.updating') : t('cogs.tempProductForm.buttons.adding'))
+                : (isEditing ? t('cogs.tempProductForm.buttons.update') : t('cogs.tempProductForm.buttons.add'))
               }
             </Button>
             <Button
@@ -366,7 +368,7 @@ export function TempProductForm({ isOpen, onClose, onSave, product, availableIng
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('cogs.tempProductForm.buttons.cancel')}
             </Button>
           </div>
         </form>

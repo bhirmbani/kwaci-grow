@@ -387,6 +387,7 @@ export interface TranslationResources {
         }
       }
     }
+    cogs: Record<string, any>
   }
 }
 

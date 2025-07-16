@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,6 +31,7 @@ interface TempIngredientFormProps {
 }
 
 export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: TempIngredientFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -110,23 +112,23 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
       <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            {isEditing ? 'Edit Temporary Ingredient' : 'Add Temporary Ingredient'}
+            {isEditing ? t('cogs.tempIngredientForm.editTitle') : t('cogs.tempIngredientForm.addTitle')}
           </SheetTitle>
           <SheetDescription>
-            Create ingredients for COGS experimentation. This data is temporary and won't be saved to the database until you choose to save it.
+            {t('cogs.tempIngredientForm.description')}
           </SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Ingredient Name *</Label>
+            <Label htmlFor="name">{t('cogs.tempIngredientForm.fields.name')}</Label>
             <Input
               id="name"
               {...register('name', {
                 required: 'Ingredient name is required',
                 validate: (value) => value.trim() !== '' || 'Ingredient name is required'
               })}
-              placeholder="Enter ingredient name"
+              placeholder={t('cogs.tempIngredientForm.fields.name')}
             />
             {errors.name && (
               <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -135,7 +137,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="baseUnitCost">Base Unit Cost *</Label>
+              <Label htmlFor="baseUnitCost">{t('cogs.tempIngredientForm.fields.baseUnitCost')}</Label>
               <Input
                 id="baseUnitCost"
                 type="number"
@@ -149,7 +151,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
                 placeholder="0.00"
               />
               <p className="text-xs text-muted-foreground">
-                Cost for the base quantity
+                {t('cogs.tempIngredientForm.fields.costBaseHelp')}
               </p>
               {errors.baseUnitCost && (
                 <p className="text-sm text-red-600">{errors.baseUnitCost.message}</p>
@@ -157,7 +159,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="baseUnitQuantity">Base Unit Quantity *</Label>
+              <Label htmlFor="baseUnitQuantity">{t('cogs.tempIngredientForm.fields.baseUnitQuantity')}</Label>
               <Input
                 id="baseUnitQuantity"
                 type="number"
@@ -171,7 +173,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
                 placeholder="1.00"
               />
               <p className="text-xs text-muted-foreground">
-                Quantity in the base unit
+                {t('cogs.tempIngredientForm.fields.quantityHelp')}
               </p>
               {errors.baseUnitQuantity && (
                 <p className="text-sm text-red-600">{errors.baseUnitQuantity.message}</p>
@@ -179,10 +181,10 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="unit">Unit *</Label>
+              <Label htmlFor="unit">{t('cogs.tempIngredientForm.fields.unit')}</Label>
               <Select value={watch('unit')} onValueChange={(value) => setValue('unit', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select unit" />
+                  <SelectValue placeholder={t('cogs.tempIngredientForm.fields.selectUnit')} />
                 </SelectTrigger>
                 <SelectContent>
                   {UNIT_OPTIONS.map((unit) => (
@@ -193,19 +195,19 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                Unit of measurement
+                {t('cogs.tempIngredientForm.fields.unitHelp')}
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t('cogs.tempIngredientForm.fields.category')}</Label>
             <Select value={watch('category')} onValueChange={(value) => setValue('category', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder={t('cogs.tempIngredientForm.fields.selectCategory')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__NONE__">No Category</SelectItem>
+                <SelectItem value="__NONE__">{t('cogs.tempIngredientForm.fields.noCategory')}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.name}>
                     {category.name}
@@ -216,21 +218,21 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="supplierInfo">Supplier Information</Label>
+            <Label htmlFor="supplierInfo">{t('cogs.tempIngredientForm.fields.supplierInfo')}</Label>
             <Textarea
               id="supplierInfo"
               {...register('supplierInfo')}
-              placeholder="Enter supplier details"
+              placeholder={t('cogs.tempIngredientForm.fields.supplierPlaceholder')}
               rows={2}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="note">Notes</Label>
+            <Label htmlFor="note">{t('cogs.tempIngredientForm.fields.note')}</Label>
             <Textarea
               id="note"
               {...register('note')}
-              placeholder="Additional notes about this ingredient"
+              placeholder={t('cogs.tempIngredientForm.fields.notePlaceholder')}
               rows={3}
             />
           </div>
@@ -241,7 +243,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
               checked={watch('isActive')}
               onCheckedChange={(checked) => setValue('isActive', checked)}
             />
-            <Label htmlFor="isActive">Active ingredient</Label>
+            <Label htmlFor="isActive">{t('cogs.tempIngredientForm.fields.isActive')}</Label>
           </div>
 
           <div className="flex items-center gap-3 pt-4">
@@ -250,8 +252,8 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? (isEditing ? 'Updating...' : 'Adding...')
-                : (isEditing ? 'Update Ingredient' : 'Add Ingredient')
+                ? (isEditing ? t('cogs.tempIngredientForm.buttons.updating') : t('cogs.tempIngredientForm.buttons.adding'))
+                : (isEditing ? t('cogs.tempIngredientForm.buttons.update') : t('cogs.tempIngredientForm.buttons.add'))
               }
             </Button>
             <Button
@@ -260,7 +262,7 @@ export function TempIngredientForm({ isOpen, onClose, onSave, ingredient }: Temp
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('cogs.tempIngredientForm.buttons.cancel')}
             </Button>
           </div>
         </form>
