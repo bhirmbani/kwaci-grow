@@ -265,11 +265,11 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
             <CardTitle className="text-lg">
               {t('plan.journeyMap.modal.stepLabel', {
                 number: stepInfo.order,
-                title: stepInfo.title
+                title: t(stepInfo.title)
               })}
             </CardTitle>
             <CardDescription>
-              {stepInfo.description}
+              {t(stepInfo.description)}
             </CardDescription>
           </div>
           <Badge className={`${getStatusColor()} flex items-center gap-1`}>
@@ -298,7 +298,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
             {t('plan.journeyMap.guidedSteps.instructions')}
           </h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            {stepInfo.instructions}
+            {t(stepInfo.instructions)}
           </p>
         </div>
 
@@ -363,7 +363,7 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
               <Button asChild variant="outline">
                 <Link to={STEP_ROUTES[stepId]}>
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  {t('plan.journeyMap.guidedSteps.goTo', { title: cleanTitle })}
+                  {t('plan.journeyMap.guidedSteps.goTo', { title: t(cleanTitle) })}
                 </Link>
               </Button>
             )}

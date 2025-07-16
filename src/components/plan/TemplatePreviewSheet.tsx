@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import {
   Sheet,
   SheetContent,
@@ -34,6 +35,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
   const [loading, setLoading] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const loadTemplateDetails = async () => {
     if (!template) return
@@ -107,7 +109,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
             {template.name}
           </SheetTitle>
           <SheetDescription>
-            Preview template details and create a new operational plan
+            {t('plan.templatePreviewSheet.previewDescription', 'Preview template details and create a new operational plan')}
           </SheetDescription>
         </SheetHeader>
 
@@ -115,25 +117,25 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
           {/* Template Overview */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Template Overview</CardTitle>
+              <CardTitle className="text-lg">{t('plan.templatePreviewSheet.overview', 'Template Overview')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">{template.description}</p>
               
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="secondary">
-                  {template.type.charAt(0).toUpperCase() + template.type.slice(1)}
+                  {t(`plan.templatePreviewSheet.type.${template.type}`, template.type.charAt(0).toUpperCase() + template.type.slice(1))}
                 </Badge>
                 <Badge variant="outline" className={getDifficultyColor()}>
-                  {template.difficulty.charAt(0).toUpperCase() + template.difficulty.slice(1)}
+                  {t(`plan.templatePreviewSheet.difficulty.${template.difficulty}`, template.difficulty.charAt(0).toUpperCase() + template.difficulty.slice(1))}
                 </Badge>
                 {template.isDefault && (
-                  <Badge variant="default">Default</Badge>
+                  <Badge variant="default">{t('plan.templatePreviewSheet.default', 'Default')}</Badge>
                 )}
               </div>
 
               <div className="text-sm text-muted-foreground">
-                Estimated Duration: {Math.round(template.estimatedDuration / 60)} hours
+                {t('plan.templatePreviewSheet.estimatedDuration', { duration: Math.round(template.estimatedDuration / 60) })}
               </div>
             </CardContent>
           </Card>
@@ -143,7 +145,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
             <Card>
               <CardContent className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                Loading template details...
+                {t('plan.templatePreviewSheet.loading', 'Loading template details...')}
               </CardContent>
             </Card>
           ) : templateDetails ? (
@@ -154,7 +156,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Target className="h-5 w-5" />
-                      Goals ({templateDetails.goals.length})
+                      {t('plan.templatePreviewSheet.goals', { count: templateDetails.goals.length })}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -164,7 +166,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                           <h4 className="font-medium">{goal.title}</h4>
                           <p className="text-sm text-muted-foreground">{goal.description}</p>
                           <div className="text-xs text-muted-foreground mt-1">
-                            Target: {goal.defaultTargetValue} {goal.unit}
+                            {t('plan.templatePreviewSheet.goalTarget', { value: goal.defaultTargetValue, unit: goal.unit })}
                           </div>
                         </div>
                       ))}
@@ -179,7 +181,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <CheckSquare className="h-5 w-5" />
-                      Tasks ({templateDetails.tasks.length})
+                      {t('plan.templatePreviewSheet.tasks', { count: templateDetails.tasks.length })}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -190,10 +192,10 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                           <p className="text-sm text-muted-foreground">{task.description}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant="outline" className="text-xs">
-                              {task.priority}
+                              {t(`plan.templatePreviewSheet.priority.${task.priority}`, task.priority)}
                             </Badge>
                             <span className="text-xs text-muted-foreground">
-                              Est. {task.estimatedDuration}min
+                              {t('plan.templatePreviewSheet.taskEst', { duration: task.estimatedDuration })}
                             </span>
                           </div>
                         </div>
@@ -209,7 +211,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <BarChart3 className="h-5 w-5" />
-                      Metrics ({templateDetails.metrics.length})
+                      {t('plan.templatePreviewSheet.metrics', { count: templateDetails.metrics.length })}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -220,13 +222,13 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
                           <p className="text-sm text-muted-foreground">{metric.description}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Badge variant="outline" className="text-xs">
-                              {metric.category}
+                              {t(`plan.templatePreviewSheet.metricCategory.${metric.category}`, metric.category)}
                             </Badge>
                             <span className="text-xs text-muted-foreground">
-                              Target: {metric.defaultTargetValue} {metric.unit}
+                              {t('plan.templatePreviewSheet.metricTarget', { value: metric.defaultTargetValue, unit: metric.unit })}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              Track: {metric.trackingFrequency}
+                              {t('plan.templatePreviewSheet.metricTrack', { frequency: metric.trackingFrequency })}
                             </span>
                           </div>
                         </div>
@@ -245,15 +247,15 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
             {!showCreateForm ? (
               <>
                 <Button onClick={() => setShowCreateForm(true)} className="flex-1">
-                  Create Plan from Template
+                  {t('plan.templatePreviewSheet.createPlan', 'Create Plan from Template')}
                 </Button>
                 <Button variant="outline" onClick={onClose}>
-                  Close
+                  {t('plan.templatePreviewSheet.close', 'Close')}
                 </Button>
               </>
             ) : (
               <Button variant="outline" onClick={() => setShowCreateForm(false)} className="w-full">
-                Back to Preview
+                {t('plan.templatePreviewSheet.backToPreview', 'Back to Preview')}
               </Button>
             )}
           </div>
@@ -262,7 +264,7 @@ export function TemplatePreviewSheet({ template, isOpen, onClose, onPlanCreated 
           {showCreateForm && (
             <Card>
               <CardHeader>
-                <CardTitle>Create Plan from Template</CardTitle>
+                <CardTitle>{t('plan.templatePreviewSheet.createPlan', 'Create Plan from Template')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <CreatePlanForm

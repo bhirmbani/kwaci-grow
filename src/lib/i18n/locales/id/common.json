@@ -139,6 +139,43 @@
       "journey": "Peta Perjalanan",
       "planningDashboard": "Dasbor Perencanaan"
     },
+    "templatePreviewSheet": {
+      "previewDescription": "Pratinjau detail template dan buat rencana operasional baru",
+      "overview": "Ringkasan Template",
+      "type": {
+        "daily": "Harian",
+        "weekly": "Mingguan",
+        "monthly": "Bulanan"
+      },
+      "difficulty": {
+        "beginner": "Pemula",
+        "intermediate": "Menengah",
+        "advanced": "Lanjutan"
+      },
+      "default": "Default",
+      "estimatedDuration": "Perkiraan Durasi: {{duration}} jam",
+      "loading": "Memuat detail template...",
+      "goals": "Tujuan ({{count}})",
+      "goalTarget": "Target: {{value}} {{unit}}",
+      "tasks": "Tugas ({{count}})",
+      "priority": {
+        "low": "Rendah",
+        "medium": "Sedang",
+        "high": "Tinggi"
+      },
+      "taskEst": "Perk. {{duration}}menit",
+      "metrics": "Metrik ({{count}})",
+      "metricCategory": {
+        "performance": "Performa",
+        "quality": "Kualitas",
+        "efficiency": "Efisiensi"
+      },
+      "metricTarget": "Target: {{value}} {{unit}}",
+      "metricTrack": "Lacak: {{frequency}}",
+      "createPlan": "Buat Rencana dari Template",
+      "close": "Tutup",
+      "backToPreview": "Kembali ke Pratinjau"
+    },
     "journeyMap": {
       "loading": "Memuat progres perjalanan...",
       "error": "Gagal memuat progres perjalanan",

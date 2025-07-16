@@ -139,6 +139,43 @@
       "journey": "Journey Map",
       "planningDashboard": "Planning Dashboard"
     },
+    "templatePreviewSheet": {
+      "previewDescription": "Preview template details and create a new operational plan",
+      "overview": "Template Overview",
+      "type": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "difficulty": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+      },
+      "default": "Default",
+      "estimatedDuration": "Estimated Duration: {{duration}} hours",
+      "loading": "Loading template details...",
+      "goals": "Goals ({{count}})",
+      "goalTarget": "Target: {{value}} {{unit}}",
+      "tasks": "Tasks ({{count}})",
+      "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "taskEst": "Est. {{duration}}min",
+      "metrics": "Metrics ({{count}})",
+      "metricCategory": {
+        "performance": "Performance",
+        "quality": "Quality",
+        "efficiency": "Efficiency"
+      },
+      "metricTarget": "Target: {{value}} {{unit}}",
+      "metricTrack": "Track: {{frequency}}",
+      "createPlan": "Create Plan from Template",
+      "close": "Close",
+      "backToPreview": "Back to Preview"
+    },
     "journeyMap": {
       "loading": "Loading journey progress...",
       "error": "Error loading journey progress",

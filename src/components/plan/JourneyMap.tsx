@@ -200,10 +200,10 @@ export function JourneyMap() {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-blue-900 dark:text-blue-100">
-                      {t('plan.journeyMap.nextStep', { title: nextStep.title })}
+                      {t('plan.journeyMap.nextStep', { title: t(nextStep.title) })}
                     </h4>
                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                      {nextStep.description}
+                      {t(nextStep.description)}
                     </p>
                   </div>
                   <Button
