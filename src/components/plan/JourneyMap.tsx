@@ -296,12 +296,12 @@ export function JourneyMap() {
                             {getStepIcon(step.id)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium truncate">{step.title}</h3>
+                            <h3 className="font-medium truncate">{t(step.title)}</h3>
                           </div>
                         </div>
 
                         <p className="text-sm opacity-90 line-clamp-2">
-                          {step.description}
+                          {t(step.description)}
                         </p>
 
                         {/* Status Badge */}

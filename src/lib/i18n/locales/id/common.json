@@ -232,6 +232,62 @@
       "guidedSteps": {
         "checkingRequirements": "Memeriksa persyaratan...",
         "requirementsMet": "Persyaratan terpenuhi! Anda dapat menandai langkah ini sebagai selesai.",
+        "validation": {
+          "createIngredient": {
+            "message": "Silakan buat minimal satu bahan untuk melanjutkan.",
+            "suggestion1": "Buka bagian Bahan dan tambahkan bahan baru.",
+            "suggestion2": "Pastikan semua detail bahan yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan bahan Anda sebelum melanjutkan."
+          },
+          "createProduct": {
+            "message": "Silakan buat minimal satu produk untuk melanjutkan.",
+            "suggestion1": "Buka bagian Produk dan tambahkan produk baru.",
+            "suggestion2": "Pastikan semua detail produk yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan produk Anda sebelum melanjutkan."
+          },
+          "createMenu": {
+            "message": "Silakan buat minimal satu menu untuk melanjutkan.",
+            "suggestion1": "Buka bagian Menu dan tambahkan menu baru.",
+            "suggestion2": "Pastikan semua detail menu yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan menu Anda sebelum melanjutkan."
+          },
+          "createBranch": {
+            "message": "Silakan buat minimal satu cabang untuk melanjutkan.",
+            "suggestion1": "Buka bagian Cabang dan tambahkan cabang baru.",
+            "suggestion2": "Pastikan semua detail cabang yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan cabang Anda sebelum melanjutkan."
+          },
+          "addProductToMenu": {
+            "message": "Silakan tambahkan minimal satu produk ke menu untuk melanjutkan.",
+            "suggestion1": "Buka bagian Menu dan tambahkan produk ke menu.",
+            "suggestion2": "Pastikan setiap menu memiliki minimal satu produk.",
+            "suggestion3": "Simpan menu Anda setelah menambahkan produk."
+          },
+          "addItemToWarehouse": {
+            "message": "Silakan tambahkan minimal satu item ke gudang untuk melanjutkan.",
+            "suggestion1": "Buka bagian Gudang dan tambahkan item baru.",
+            "suggestion2": "Pastikan semua detail item yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan item gudang Anda sebelum melanjutkan."
+          },
+          "createProductionAllocation": {
+            "message": "Silakan buat minimal satu alokasi produksi untuk melanjutkan.",
+            "suggestion1": "Buka bagian Alokasi Produksi dan tambahkan alokasi baru.",
+            "suggestion2": "Pastikan semua detail alokasi yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan alokasi Anda sebelum melanjutkan."
+          },
+          "changeProductionBatchStatus": {
+            "message": "Silakan perbarui status batch produksi untuk melanjutkan.",
+            "suggestion1": "Buka bagian Batch Produksi dan perbarui statusnya.",
+            "suggestion2": "Pastikan status batch mencerminkan progres saat ini.",
+            "suggestion3": "Simpan perubahan Anda setelah memperbarui status."
+          },
+          "recordSales": {
+            "message": "Silakan catat minimal satu penjualan untuk melanjutkan.",
+            "suggestion1": "Buka bagian Penjualan dan catat penjualan baru.",
+            "suggestion2": "Pastikan semua detail penjualan yang diperlukan sudah diisi.",
+            "suggestion3": "Simpan catatan penjualan Anda sebelum melanjutkan."
+          }
+        },
         "validationNotConfigured": "Validasi langkah belum dikonfigurasi.",
         "validationError": "Terjadi kesalahan saat memeriksa persyaratan langkah.",
         "tryAgain": "Silakan coba lagi atau hubungi dukungan.",

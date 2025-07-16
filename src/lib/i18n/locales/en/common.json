@@ -232,6 +232,62 @@
       "guidedSteps": {
         "checkingRequirements": "Checking requirements...",
         "requirementsMet": "Requirements met! You can mark this step as complete.",
+        "validation": {
+          "createIngredient": {
+            "message": "Please create at least one ingredient to proceed.",
+            "suggestion1": "Go to the Ingredients section and add a new ingredient.",
+            "suggestion2": "Ensure you have filled in all required ingredient details.",
+            "suggestion3": "Save your ingredient before continuing."
+          },
+          "createProduct": {
+            "message": "Please create at least one product to proceed.",
+            "suggestion1": "Go to the Products section and add a new product.",
+            "suggestion2": "Ensure you have filled in all required product details.",
+            "suggestion3": "Save your product before continuing."
+          },
+          "createMenu": {
+            "message": "Please create at least one menu to proceed.",
+            "suggestion1": "Go to the Menus section and add a new menu.",
+            "suggestion2": "Ensure you have filled in all required menu details.",
+            "suggestion3": "Save your menu before continuing."
+          },
+          "createBranch": {
+            "message": "Please create at least one branch to proceed.",
+            "suggestion1": "Go to the Branches section and add a new branch.",
+            "suggestion2": "Ensure you have filled in all required branch details.",
+            "suggestion3": "Save your branch before continuing."
+          },
+          "addProductToMenu": {
+            "message": "Please add at least one product to a menu to proceed.",
+            "suggestion1": "Go to the Menus section and add products to a menu.",
+            "suggestion2": "Ensure each menu has at least one product.",
+            "suggestion3": "Save your menu after adding products."
+          },
+          "addItemToWarehouse": {
+            "message": "Please add at least one item to the warehouse to proceed.",
+            "suggestion1": "Go to the Warehouse section and add a new item.",
+            "suggestion2": "Ensure you have filled in all required item details.",
+            "suggestion3": "Save your warehouse item before continuing."
+          },
+          "createProductionAllocation": {
+            "message": "Please create at least one production allocation to proceed.",
+            "suggestion1": "Go to the Production Allocation section and add a new allocation.",
+            "suggestion2": "Ensure you have filled in all required allocation details.",
+            "suggestion3": "Save your allocation before continuing."
+          },
+          "changeProductionBatchStatus": {
+            "message": "Please update the production batch status to proceed.",
+            "suggestion1": "Go to the Production Batches section and update the status.",
+            "suggestion2": "Ensure the batch status reflects the current progress.",
+            "suggestion3": "Save your changes after updating the status."
+          },
+          "recordSales": {
+            "message": "Please record at least one sale to proceed.",
+            "suggestion1": "Go to the Sales section and record a new sale.",
+            "suggestion2": "Ensure you have filled in all required sales details.",
+            "suggestion3": "Save your sales record before continuing."
+          }
+        },
         "validationNotConfigured": "Step validation not configured.",
         "validationError": "Error checking step requirements.",
         "tryAgain": "Please try again or contact support.",

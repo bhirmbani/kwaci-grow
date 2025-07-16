@@ -74,99 +74,99 @@ export function GuidedStepInterface({ stepId, onStepComplete }: GuidedStepInterf
         case 'create-ingredient':
           return {
             isValid: false,
-            message: 'No ingredients found in your system.',
+            message: t('plan.journeyMap.guidedSteps.validation.createIngredient.message'),
             suggestions: [
-              'Create at least one ingredient (e.g., Coffee Beans, Milk, Sugar)',
-              'Set realistic base unit costs and quantities',
-              'Use clear, descriptive names for easy identification'
+              t('plan.journeyMap.guidedSteps.validation.createIngredient.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.createIngredient.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.createIngredient.suggestion3')
             ]
           }
 
         case 'create-product':
           return {
             isValid: false,
-            message: 'No products found in your system.',
+            message: t('plan.journeyMap.guidedSteps.validation.createProduct.message'),
             suggestions: [
-              'Create a product using your ingredients',
-              'Ensure COGS calculations are accurate',
-              'Add detailed descriptions for clarity'
+              t('plan.journeyMap.guidedSteps.validation.createProduct.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.createProduct.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.createProduct.suggestion3')
             ]
           }
 
         case 'create-menu':
           return {
             isValid: false,
-            message: 'No menus found in your system.',
+            message: t('plan.journeyMap.guidedSteps.validation.createMenu.message'),
             suggestions: [
-              'Create a menu to organize your products',
-              'Give your menu a clear, descriptive name',
-              'Set the status to "Active" when ready'
+              t('plan.journeyMap.guidedSteps.validation.createMenu.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.createMenu.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.createMenu.suggestion3')
             ]
           }
 
         case 'create-branch':
           return {
             isValid: false,
-            message: 'No branches found in your system.',
+            message: t('plan.journeyMap.guidedSteps.validation.createBranch.message'),
             suggestions: [
-              'Create a branch location for your coffee shop',
-              'Use specific location names (e.g., "Downtown Store")',
-              'Include address or area information'
+              t('plan.journeyMap.guidedSteps.validation.createBranch.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.createBranch.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.createBranch.suggestion3')
             ]
           }
 
         case 'add-product-to-menu':
           return {
             isValid: false,
-            message: 'No products have been added to any menu.',
+            message: t('plan.journeyMap.guidedSteps.validation.addProductToMenu.message'),
             suggestions: [
-              'Add your created products to a menu',
-              'Set competitive pricing for your products',
-              'Organize products by categories'
+              t('plan.journeyMap.guidedSteps.validation.addProductToMenu.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.addProductToMenu.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.addProductToMenu.suggestion3')
             ]
           }
 
         case 'add-item-to-warehouse':
           return {
             isValid: false,
-            message: 'No items found in warehouse inventory.',
+            message: t('plan.journeyMap.guidedSteps.validation.addItemToWarehouse.message'),
             suggestions: [
-              'Add ingredients to your warehouse inventory',
-              'Start with sufficient quantities for production',
-              'Use the COGS calculator for accurate costing'
+              t('plan.journeyMap.guidedSteps.validation.addItemToWarehouse.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.addItemToWarehouse.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.addItemToWarehouse.suggestion3')
             ]
           }
 
         case 'create-production-allocation':
           return {
             isValid: false,
-            message: 'No production batches found.',
+            message: t('plan.journeyMap.guidedSteps.validation.createProductionAllocation.message'),
             suggestions: [
-              'Create a production batch allocation',
-              'Allocate realistic quantities based on demand',
-              'Check stock levels before allocation'
+              t('plan.journeyMap.guidedSteps.validation.createProductionAllocation.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.createProductionAllocation.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.createProductionAllocation.suggestion3')
             ]
           }
 
         case 'change-production-batch-status':
           return {
             isValid: false,
-            message: 'No completed production batches found.',
+            message: t('plan.journeyMap.guidedSteps.validation.changeProductionBatchStatus.message'),
             suggestions: [
-              'Complete a production batch workflow',
-              'Follow: Pending → In Progress → Completed',
-              'Monitor stock level changes after completion'
+              t('plan.journeyMap.guidedSteps.validation.changeProductionBatchStatus.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.changeProductionBatchStatus.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.changeProductionBatchStatus.suggestion3')
             ]
           }
 
         case 'record-sales':
           return {
             isValid: false,
-            message: 'No sales records found.',
+            message: t('plan.journeyMap.guidedSteps.validation.recordSales.message'),
             suggestions: [
-              'Record your first sales transaction',
-              'Use accurate timestamps and product details',
-              'Ensure sufficient stock before recording sales'
+              t('plan.journeyMap.guidedSteps.validation.recordSales.suggestion1'),
+              t('plan.journeyMap.guidedSteps.validation.recordSales.suggestion2'),
+              t('plan.journeyMap.guidedSteps.validation.recordSales.suggestion3')
             ]
           }
 
