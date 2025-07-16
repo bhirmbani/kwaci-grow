@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -53,6 +54,8 @@ export function JourneyMap() {
     resetProgress,
     autoCheckCompletion
   } = useJourney()
+
+  const { t } = useTranslation()
   
   const [selectedStep, setSelectedStep] = useState<JourneyStepId | null>(null)
   const [isResetting, setIsResetting] = useState(false)
@@ -118,7 +121,7 @@ export function JourneyMap() {
         <CardContent className="p-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading journey progress...</p>
+            <p className="text-muted-foreground">{t('plan.journeyMap.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -130,7 +133,7 @@ export function JourneyMap() {
       <Card>
         <CardContent className="p-6">
           <div className="text-center text-red-500">
-            <p>Error loading journey progress: {error}</p>
+            <p>{t('plan.journeyMap.error')}: {error}</p>
           </div>
         </CardContent>
       </Card>
@@ -146,10 +149,10 @@ export function JourneyMap() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Coffee className="h-5 w-5" />
-                Coffee Shop Setup Journey
+                {t('plan.journeyMap.title')}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Complete all 9 steps to fully set up your coffee shop operations
+                {t('plan.journeyMap.description')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -160,7 +163,7 @@ export function JourneyMap() {
                 className="flex items-center gap-1"
               >
                 <RotateCcw className="h-4 w-4" />
-                Auto Check
+                {t('plan.journeyMap.autoCheck')}
               </Button>
               <Button
                 variant="outline"
@@ -170,7 +173,7 @@ export function JourneyMap() {
                 className="flex items-center gap-1"
               >
                 <RotateCcw className="h-4 w-4" />
-                Reset
+                {t('plan.journeyMap.reset')}
               </Button>
             </div>
           </div>
@@ -180,8 +183,8 @@ export function JourneyMap() {
             {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Overall Progress</span>
-                <span className="text-muted-foreground">{completionPercentage}% Complete</span>
+                <span className="font-medium">{t('plan.journeyMap.overallProgress')}</span>
+                <span className="text-muted-foreground">{t('plan.journeyMap.complete', { percentage: completionPercentage })}</span>
               </div>
               <Progress value={completionPercentage} className="h-2" />
             </div>
@@ -197,7 +200,7 @@ export function JourneyMap() {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-blue-900 dark:text-blue-100">
-                      Next Step: {nextStep.title}
+                      {t('plan.journeyMap.nextStep', { title: nextStep.title })}
                     </h4>
                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
                       {nextStep.description}
@@ -207,7 +210,7 @@ export function JourneyMap() {
                     onClick={() => setSelectedStep(nextStep.id)}
                     className="bg-blue-500 hover:bg-blue-600"
                   >
-                    Start
+                    {t('plan.journeyMap.start')}
                   </Button>
                 </div>
               </div>
@@ -219,10 +222,10 @@ export function JourneyMap() {
                   <CheckCircle className="h-8 w-8 text-green-500" />
                   <div>
                     <h4 className="font-medium text-green-900 dark:text-green-100">
-                      🎉 Journey Complete!
+                      {t('plan.journeyMap.completeTitle')}
                     </h4>
                     <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                      Congratulations! You've completed all setup steps for your coffee shop.
+                      {t('plan.journeyMap.completeDescription')}
                     </p>
                   </div>
                 </div>
@@ -237,20 +240,20 @@ export function JourneyMap() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="map" className="flex items-center gap-2">
             <Map className="h-4 w-4" />
-            Journey Map
+            {t('plan.journeyMap.tabs.map')}
           </TabsTrigger>
           <TabsTrigger value="guided" className="flex items-center gap-2">
             <List className="h-4 w-4" />
-            Guided Steps
+            {t('plan.journeyMap.tabs.guided')}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="map">
           <Card>
             <CardHeader>
-              <CardTitle>Journey Steps Map</CardTitle>
+              <CardTitle>{t('plan.journeyMap.stepsMap.title')}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Click on any unlocked step to view instructions and get started
+                {t('plan.journeyMap.stepsMap.description')}
               </p>
             </CardHeader>
             <CardContent>
@@ -276,7 +279,7 @@ export function JourneyMap() {
                       {isBonusStep && (
                         <div className="absolute -top-1 -right-1">
                           <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 border-purple-300">
-                            Bonus
+                            {t('plan.journeyMap.stepsMap.bonus')}
                           </Badge>
                         </div>
                       )}
@@ -313,8 +316,11 @@ export function JourneyMap() {
                                 : 'bg-gray-500 text-white'
                             }`}
                           >
-                            {status === 'completed' ? 'Completed' :
-                             status === 'unlocked' ? 'Ready' : 'Locked'}
+                            {status === 'completed'
+                              ? t('plan.journeyMap.stepsMap.status.completed')
+                              : status === 'unlocked'
+                              ? t('plan.journeyMap.stepsMap.status.ready')
+                              : t('plan.journeyMap.stepsMap.status.locked')}
                           </Badge>
                         </div>
                       </div>

@@ -132,6 +132,87 @@
       }
     }
   },
+  "plan": {
+    "title": "Plan",
+    "description": "Guided onboarding and operational planning for your coffee shop",
+    "tabs": {
+      "journey": "Journey Map",
+      "planningDashboard": "Planning Dashboard"
+    },
+    "journeyMap": {
+      "loading": "Loading journey progress...",
+      "error": "Error loading journey progress",
+      "title": "Coffee Shop Setup Journey",
+      "description": "Complete all 9 steps to fully set up your coffee shop operations",
+      "autoCheck": "Auto Check",
+      "reset": "Reset",
+      "overallProgress": "Overall Progress",
+      "complete": "{{percentage}}% Complete",
+      "nextStep": "Next Step: {{title}}",
+      "start": "Start",
+      "completeTitle": "🎉 Journey Complete!",
+      "completeDescription": "Congratulations! You've completed all setup steps for your coffee shop.",
+      "tabs": {
+        "map": "Journey Map",
+        "guided": "Guided Steps"
+      },
+      "stepsMap": {
+        "title": "Journey Steps Map",
+        "description": "Click on any unlocked step to view instructions and get started",
+        "bonus": "Bonus",
+        "status": {
+          "completed": "Completed",
+          "ready": "Ready",
+          "locked": "Locked"
+        }
+      }
+    },
+    "planningDashboard": {
+      "loading": "Loading dashboard data...",
+      "title": "Planning Dashboard",
+      "description": "Create and manage daily, weekly, and monthly operational plans for your coffee shop",
+      "stats": {
+        "activePlans": "Active Plans",
+        "goalsAchieved": "Goals Achieved",
+        "tasksCompleted": "Tasks Completed",
+        "completionRate": "Completion Rate"
+      },
+      "templates": {
+        "title": "Planning Templates",
+        "description": "Quick start templates for different planning scenarios",
+        "default": "Default",
+        "duration": "Est. {{hours}}h duration",
+        "useTemplate": "Use Template"
+      },
+      "journey": {
+        "title": "Setup Journey Progress",
+        "description": "Complete your coffee shop setup journey to unlock advanced planning features",
+        "overallProgress": "Overall Progress",
+        "incompleteTitle": "Complete Setup Journey",
+        "incompleteDescription": "Finish setting up your coffee shop to unlock all planning features and templates.",
+        "completeTitle": "🎉 Setup Complete!",
+        "completeDescription": "Your coffee shop is fully set up. You can now create comprehensive operational plans."
+      },
+      "recentPlans": {
+        "title": "Recent Plans",
+        "noPlansTitle": "No Plans Yet",
+        "noPlansDescription": "Create your first operational plan to get started with structured planning.",
+        "createFirst": "Create Your First Plan",
+        "view": "View Plan"
+      },
+      "analytics": {
+        "title": "Planning Analytics",
+        "description": "Overview of your planning performance and insights",
+        "planDistribution": "Plan Distribution",
+        "statusOverview": "Status Overview",
+        "performanceMetrics": "Performance Metrics",
+        "averageTaskDuration": "Average Task Duration",
+        "mostUsedTemplate": "Most Used Template",
+        "totalPlansCreated": "Total Plans Created",
+        "goalCategories": "Goal Categories"
+      }
+    }
+  },
   "dashboard": {
     "title": "Business Dashboard",
     "description": "Comprehensive overview of your business operations and performance",

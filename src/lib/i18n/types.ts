@@ -137,6 +137,87 @@ export interface TranslationResources {
         }
       }
     }
+    plan: {
+      title: string
+      description: string
+      tabs: {
+        journey: string
+        planningDashboard: string
+      }
+      journeyMap: {
+        loading: string
+        error: string
+        title: string
+        description: string
+        autoCheck: string
+        reset: string
+        overallProgress: string
+        complete: string
+        nextStep: string
+        start: string
+        completeTitle: string
+        completeDescription: string
+        tabs: {
+          map: string
+          guided: string
+        }
+        stepsMap: {
+          title: string
+          description: string
+          bonus: string
+          status: {
+            completed: string
+            ready: string
+            locked: string
+          }
+        }
+      }
+      planningDashboard: {
+        loading: string
+        title: string
+        description: string
+        stats: {
+          activePlans: string
+          goalsAchieved: string
+          tasksCompleted: string
+          completionRate: string
+        }
+        templates: {
+          title: string
+          description: string
+          default: string
+          duration: string
+          useTemplate: string
+        }
+        journey: {
+          title: string
+          description: string
+          overallProgress: string
+          incompleteTitle: string
+          incompleteDescription: string
+          completeTitle: string
+          completeDescription: string
+        }
+        recentPlans: {
+          title: string
+          noPlansTitle: string
+          noPlansDescription: string
+          createFirst: string
+          view: string
+        }
+        analytics: {
+          title: string
+          description: string
+          planDistribution: string
+          statusOverview: string
+          performanceMetrics: string
+          averageTaskDuration: string
+          mostUsedTemplate: string
+          totalPlansCreated: string
+          goalCategories: string
+        }
+      }
+    }
     dashboard: {
       title: string
       description: string
