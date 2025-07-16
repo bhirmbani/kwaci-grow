@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -26,13 +27,14 @@ interface SaveToDatabaseDialogProps {
   onSaveComplete: () => void
 }
 
-export function SaveToDatabaseDialog({ 
+export function SaveToDatabaseDialog({
   isOpen, 
   onClose, 
   ingredients, 
   products, 
   onSaveComplete 
 }: SaveToDatabaseDialogProps) {
+  const { t } = useTranslation()
   const [isSaving, setIsSaving] = useState(false)
   const [saveResult, setSaveResult] = useState<{
     success: boolean
@@ -100,7 +102,7 @@ export function SaveToDatabaseDialog({
 
       setSaveResult({
         success: true,
-        message: 'Successfully saved to database!',
+        message: t('cogs.saveDialog.success'),
         details: `Saved ${activeIngredients.length} ingredients and ${activeProducts.length} products.`
       })
 
@@ -113,7 +115,7 @@ export function SaveToDatabaseDialog({
     } catch (error) {
       setSaveResult({
         success: false,
-        message: 'Failed to save to database',
+        message: t('cogs.saveDialog.failure'),
         details: error instanceof Error ? error.message : 'An unexpected error occurred'
       })
     } finally {
@@ -136,11 +138,10 @@ export function SaveToDatabaseDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Database className="h-5 w-5" />
-            Save to Database
+            {t('cogs.saveDialog.title')}
           </DialogTitle>
           <DialogDescription>
-            This will permanently save your temporary ingredients and products to the database. 
-            Only active items will be saved.
+            {t('cogs.saveDialog.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -168,9 +169,9 @@ export function SaveToDatabaseDialog({
           {!hasDataToSave ? (
             <div className="text-center py-8">
               <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No active data to save</p>
+              <p className="text-muted-foreground">{t('cogs.saveDialog.noDataTitle')}</p>
               <p className="text-sm text-muted-foreground mt-2">
-                Create some active ingredients or products first.
+                {t('cogs.saveDialog.noDataDescription')}
               </p>
             </div>
           ) : (
@@ -180,7 +181,7 @@ export function SaveToDatabaseDialog({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Beaker className="h-4 w-4" />
-                    <h4 className="font-medium">Ingredients to Save ({activeIngredients.length})</h4>
+                    <h4 className="font-medium">{t('cogs.saveDialog.ingredientsToSave')} ({activeIngredients.length})</h4>
                   </div>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
                     {activeIngredients.map((ingredient) => (
@@ -207,7 +208,7 @@ export function SaveToDatabaseDialog({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Package className="h-4 w-4" />
-                    <h4 className="font-medium">Products to Save ({activeProducts.length})</h4>
+                    <h4 className="font-medium">{t('cogs.saveDialog.productsToSave')} ({activeProducts.length})</h4>
                   </div>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
                     {activeProducts.map((product) => {
@@ -232,14 +233,14 @@ export function SaveToDatabaseDialog({
 
               {/* Summary Stats */}
               <div className="p-4 bg-primary/5 rounded-lg border">
-                <h4 className="font-medium mb-2">Save Summary</h4>
+                <h4 className="font-medium mb-2">{t('cogs.saveDialog.saveSummary')}</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground">Total Ingredients</p>
+                    <p className="text-muted-foreground">{t('cogs.saveDialog.totalIngredients')}</p>
                     <p className="font-medium">{activeIngredients.length}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Total Products</p>
+                    <p className="text-muted-foreground">{t('cogs.saveDialog.totalProducts')}</p>
                     <p className="font-medium">{activeProducts.length}</p>
                   </div>
                 </div>
@@ -250,13 +251,13 @@ export function SaveToDatabaseDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isSaving}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             disabled={isSaving || !hasDataToSave || saveResult?.success}
           >
-            {isSaving ? 'Saving...' : 'Save to Database'}
+            {isSaving ? t('cogs.saveDialog.saving') : t('cogs.saveDialog.title')}
           </Button>
         </DialogFooter>
       </DialogContent>

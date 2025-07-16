@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -20,6 +21,7 @@ import { generateTempId } from './types'
 import type { TempIngredient, TempProduct, COGSPlaygroundState } from './types'
 
 export function COGSPlayground() {
+  const { t } = useTranslation()
   const [state, setState] = useState<COGSPlaygroundState>({
     ingredients: [],
     products: []
@@ -105,10 +107,10 @@ export function COGSPlayground() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <PlayCircle className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">COGS Playground</h1>
+            <h1 className="text-2xl font-bold">{t('cogs.playground.title')}</h1>
           </div>
           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-            Sandbox Environment
+            {t('cogs.playground.sandboxBadge')}
           </Badge>
         </div>
         <Button 
@@ -117,7 +119,7 @@ export function COGSPlayground() {
           className="gap-2"
         >
           <Save className="h-4 w-4" />
-          Save to Database
+          {t('cogs.playground.saveToDatabase')}
         </Button>
       </div>
 
@@ -126,28 +128,26 @@ export function COGSPlayground() {
         <Info className="h-4 w-4" />
         <AlertDescription>
           <div className="space-y-2">
-            <p className="font-medium">Welcome to the COGS Playground!</p>
+            <p className="font-medium">{t('cogs.playground.description.welcome')}</p>
             <p className="text-sm">
-              This is a sandbox environment where you can experiment with ingredient and product combinations 
-              to calculate Cost of Goods Sold (COGS) before committing data to your database. 
-              All data here is temporary until you choose to save it.
+              {t('cogs.playground.description.line1')} {t('cogs.playground.description.line2')} {t('cogs.playground.description.line3')}
             </p>
             <div className="flex flex-wrap gap-2 mt-3">
               <Badge variant="outline" className="text-xs">
                 <Calculator className="h-3 w-3 mr-1" />
-                Real-time COGS calculations
+                {t('cogs.playground.badges.realTime')}
               </Badge>
               <Badge variant="outline" className="text-xs">
                 <Beaker className="h-3 w-3 mr-1" />
-                Temporary ingredients
+                {t('cogs.playground.badges.temporaryIngredients')}
               </Badge>
               <Badge variant="outline" className="text-xs">
                 <Package className="h-3 w-3 mr-1" />
-                Product experimentation
+                {t('cogs.playground.badges.productExperimentation')}
               </Badge>
               <Badge variant="outline" className="text-xs">
                 <Database className="h-3 w-3 mr-1" />
-                Optional database save
+                {t('cogs.playground.badges.optionalSave')}
               </Badge>
             </div>
           </div>
@@ -159,11 +159,11 @@ export function COGSPlayground() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="ingredients" className="flex items-center gap-2">
             <Beaker className="h-4 w-4" />
-            Ingredients ({state.ingredients.length})
+            {t('cogs.playground.tabs.ingredients')} ({state.ingredients.length})
           </TabsTrigger>
           <TabsTrigger value="products" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
-            Products ({state.products.length})
+            {t('cogs.playground.tabs.products')} ({state.products.length})
           </TabsTrigger>
         </TabsList>
 
@@ -193,13 +193,13 @@ export function COGSPlayground() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <PlayCircle className="h-5 w-5" />
-              Getting Started
+              {t('cogs.playground.gettingStarted.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p className="text-muted-foreground">
-                Follow these steps to start experimenting with COGS calculations:
+                {t('cogs.playground.gettingStarted.description')}
               </p>
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="flex items-start gap-3 p-4 border rounded-lg">
@@ -207,9 +207,9 @@ export function COGSPlayground() {
                     <span className="text-sm font-bold text-primary">1</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Create Ingredients</h4>
+                    <h4 className="font-medium">{t('cogs.playground.gettingStarted.steps.createIngredients.title')}</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Add temporary ingredients with costs, quantities, and units
+                      {t('cogs.playground.gettingStarted.steps.createIngredients.description')}
                     </p>
                   </div>
                 </div>
@@ -218,9 +218,9 @@ export function COGSPlayground() {
                     <span className="text-sm font-bold text-primary">2</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Build Products</h4>
+                    <h4 className="font-medium">{t('cogs.playground.gettingStarted.steps.buildProducts.title')}</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Combine ingredients to create products and see real-time COGS
+                      {t('cogs.playground.gettingStarted.steps.buildProducts.description')}
                     </p>
                   </div>
                 </div>
@@ -229,9 +229,9 @@ export function COGSPlayground() {
                     <span className="text-sm font-bold text-primary">3</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Save When Ready</h4>
+                    <h4 className="font-medium">{t('cogs.playground.gettingStarted.steps.saveWhenReady.title')}</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      When satisfied with your experiments, save to database
+                      {t('cogs.playground.gettingStarted.steps.saveWhenReady.description')}
                     </p>
                   </div>
                 </div>

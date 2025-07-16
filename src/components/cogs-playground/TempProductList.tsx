@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +20,7 @@ interface TempProductListProps {
 }
 
 export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete }: TempProductListProps) {
+  const { t } = useTranslation()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<TempProduct | undefined>()
 
@@ -66,10 +68,10 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
           <div className="flex items-center gap-2">
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              Temporary Products
+              {t('cogs.tempProductList.title')}
             </CardTitle>
             <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-              Sandbox
+              {t('cogs.tempProductList.sandboxBadge')}
             </Badge>
           </div>
           <Button 
@@ -78,15 +80,15 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
             disabled={!hasActiveIngredients}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Product
+            {t('cogs.tempProductList.addProduct')}
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
-          Create products with ingredient compositions for COGS experimentation. These won't be saved to the database until you choose to save them.
+          {t('cogs.tempProductList.description')}
         </p>
         {!hasActiveIngredients && (
           <p className="text-sm text-amber-600">
-            Create some active ingredients first before adding products.
+            {t('cogs.tempProductList.noIngredientsWarning')}
           </p>
         )}
       </CardHeader>
@@ -94,15 +96,15 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
         {products.length === 0 ? (
           <div className="text-center py-8">
             <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">No temporary products yet</p>
+            <p className="text-muted-foreground mb-4">{t('cogs.tempProductList.emptyMessage')}</p>
             {hasActiveIngredients ? (
               <Button onClick={() => setIsFormOpen(true)} variant="outline">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Your First Product
+                {t('cogs.tempProductList.addFirst')}
               </Button>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Create some ingredients first to get started
+                {t('cogs.tempProductList.noIngredientsWarning')}
               </p>
             )}
           </div>
@@ -110,12 +112,12 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Product Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Ingredients</TableHead>
-                <TableHead>COGS per Cup</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead>{t('cogs.tempProductList.table.productName')}</TableHead>
+                <TableHead>{t('cogs.tempProductList.table.description')}</TableHead>
+                <TableHead>{t('cogs.tempProductList.table.ingredients')}</TableHead>
+                <TableHead>{t('cogs.tempProductList.table.cogsPerCup')}</TableHead>
+                <TableHead>{t('cogs.tempProductList.table.status')}</TableHead>
+                <TableHead className="w-[100px]">{t('cogs.tempProductList.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -164,7 +166,7 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
                     </TableCell>
                     <TableCell>
                       <Badge variant={product.isActive ? "default" : "secondary"}>
-                        {product.isActive ? "Active" : "Inactive"}
+                        {product.isActive ? t('cogs.tempProductList.table.active') : t('cogs.tempProductList.table.inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -195,18 +197,18 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
         {/* Summary Section */}
         {products.length > 0 && (
           <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <h4 className="font-medium mb-2">Playground Summary</h4>
+            <h4 className="font-medium mb-2">{t('cogs.tempProductList.summary.title')}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Total Products</p>
+                <p className="text-muted-foreground">{t('cogs.tempProductList.summary.totalProducts')}</p>
                 <p className="font-medium">{products.length}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Active Products</p>
+                <p className="text-muted-foreground">{t('cogs.tempProductList.summary.activeProducts')}</p>
                 <p className="font-medium">{products.filter(p => p.isActive).length}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Avg COGS per Cup</p>
+                <p className="text-muted-foreground">{t('cogs.tempProductList.summary.avgCogsPerCup')}</p>
                 <p className="font-medium">
                   {formatCurrency(
                     products.length > 0 
@@ -216,7 +218,7 @@ export function TempProductList({ products, ingredients, onAdd, onEdit, onDelete
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground">Total Ingredients Used</p>
+                <p className="text-muted-foreground">{t('cogs.tempProductList.summary.totalIngredientsUsed')}</p>
                 <p className="font-medium">
                   {new Set(products.flatMap(p => p.ingredients.map(i => i.ingredientId))).size}
                 </p>
