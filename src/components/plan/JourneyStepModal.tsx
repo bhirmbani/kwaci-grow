@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -31,10 +32,16 @@ const STEP_ROUTES: Record<JourneyStepId, string> = {
 export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalProps) {
   const { getStepStatus, completeStep } = useJourney()
   const [isCompleting, setIsCompleting] = useState(false)
+  const { t } = useTranslation()
   
   const stepInfo = JOURNEY_STEP_INFO[stepId]
   const status = getStepStatus(stepId)
   const route = STEP_ROUTES[stepId]
+  const cleanTitle = stepInfo.title
+    .replace(/^Create /, '')
+    .replace(/^Add /, '')
+    .replace(/^Change /, '')
+    .replace(/^Record /, '')
 
   const handleCompleteStep = async () => {
     setIsCompleting(true)
@@ -75,13 +82,13 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
   const getStatusText = () => {
     switch (status) {
       case 'completed':
-        return 'Completed'
+        return t('plan.journeyMap.modal.status.completed')
       case 'unlocked':
-        return 'Ready to Start'
+        return t('plan.journeyMap.modal.status.ready')
       case 'locked':
-        return 'Locked'
+        return t('plan.journeyMap.modal.status.locked')
       default:
-        return 'Unknown'
+        return t('plan.journeyMap.modal.status.unknown')
     }
   }
 
@@ -94,7 +101,10 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <DialogTitle className="text-xl">
-                Step {stepInfo.order}: {stepInfo.title}
+                {t('plan.journeyMap.modal.stepLabel', {
+                  number: stepInfo.order,
+                  title: stepInfo.title
+                })}
               </DialogTitle>
               <DialogDescription className="text-base">
                 {stepInfo.description}
@@ -110,7 +120,9 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
         <div className="space-y-6">
           {/* Instructions */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Instructions</h3>
+            <h3 className="font-semibold text-lg">
+              {t('plan.journeyMap.modal.instructions')}
+            </h3>
             <div className="bg-muted/50 rounded-lg p-4">
               <p className="text-sm leading-relaxed">
                 {stepInfo.instructions}
@@ -127,7 +139,7 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
                 <Button asChild>
                   <Link to={route} onClick={onClose}>
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    Go to {stepInfo.title.replace('Create ', '').replace('Add ', '').replace('Change ', '').replace('Record ', '')}
+                    {t('plan.journeyMap.modal.goTo', { title: cleanTitle })}
                   </Link>
                 </Button>
               )}
@@ -135,14 +147,14 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
               {status === 'locked' && (
                 <Button disabled variant="outline">
                   <Lock className="h-4 w-4 mr-2" />
-                  Complete Previous Steps First
+                  {t('plan.journeyMap.modal.completePrev')}
                 </Button>
               )}
             </div>
 
             <div className="flex items-center gap-2">
               <Button variant="outline" onClick={onClose}>
-                Close
+                {t('plan.journeyMap.modal.close')}
               </Button>
               
               {status === 'unlocked' && (
@@ -151,7 +163,9 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
                   disabled={isCompleting}
                   className="bg-green-600 hover:bg-green-700"
                 >
-                  {isCompleting ? 'Marking Complete...' : 'Mark as Complete'}
+                  {isCompleting
+                    ? t('plan.journeyMap.modal.markingComplete')
+                    : t('plan.journeyMap.modal.markComplete')}
                 </Button>
               )}
             </div>
@@ -161,7 +175,7 @@ export function JourneyStepModal({ stepId, isOpen, onClose }: JourneyStepModalPr
           {status !== 'locked' && (
             <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
-                💡 Tips for Success
+                {t('plan.journeyMap.modal.tipsTitle')}
               </h4>
               <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
                 {stepId === 'create-ingredient' && (

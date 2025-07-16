@@ -165,6 +165,43 @@
           "ready": "Siap",
           "locked": "Terkunci"
         }
+      },
+      "modal": {
+        "stepLabel": "Langkah {{number}}: {{title}}",
+        "instructions": "Instruksi",
+        "goTo": "Menuju {{title}}",
+        "completePrev": "Selesaikan Langkah Sebelumnya Dahulu",
+        "close": "Tutup",
+        "markComplete": "Tandai Selesai",
+        "markingComplete": "Menandai Selesai...",
+        "tipsTitle": "\uD83D\uDCA1 Tips Sukses",
+        "status": {
+          "completed": "Selesai",
+          "ready": "Siap Dimulai",
+          "locked": "Terkunci",
+          "unknown": "Tidak Diketahui"
+        }
+      },
+      "guidedSteps": {
+        "checkingRequirements": "Memeriksa persyaratan...",
+        "requirementsMet": "Persyaratan terpenuhi! Anda dapat menandai langkah ini sebagai selesai.",
+        "validationNotConfigured": "Validasi langkah belum dikonfigurasi.",
+        "validationError": "Terjadi kesalahan saat memeriksa persyaratan langkah.",
+        "tryAgain": "Silakan coba lagi atau hubungi dukungan.",
+        "progress": "Progres",
+        "instructions": "Instruksi",
+        "showSuggestions": "Tampilkan saran",
+        "hideSuggestions": "Sembunyikan saran",
+        "goTo": "Menuju {{title}}",
+        "markComplete": "Tandai Selesai",
+        "completing": "Menyelesaikan...",
+        "status": {
+          "completed": "Selesai",
+          "ready": "Siap Diselesaikan",
+          "inProgress": "Sedang Berjalan",
+          "locked": "Terkunci",
+          "unknown": "Tidak Diketahui"
+        }
       }
     },
     "planningDashboard": {

@@ -165,6 +165,43 @@
           "ready": "Ready",
           "locked": "Locked"
         }
+      },
+      "modal": {
+        "stepLabel": "Step {{number}}: {{title}}",
+        "instructions": "Instructions",
+        "goTo": "Go to {{title}}",
+        "completePrev": "Complete Previous Steps First",
+        "close": "Close",
+        "markComplete": "Mark as Complete",
+        "markingComplete": "Marking Complete...",
+        "tipsTitle": "\uD83D\uDCA1 Tips for Success",
+        "status": {
+          "completed": "Completed",
+          "ready": "Ready to Start",
+          "locked": "Locked",
+          "unknown": "Unknown"
+        }
+      },
+      "guidedSteps": {
+        "checkingRequirements": "Checking requirements...",
+        "requirementsMet": "Requirements met! You can mark this step as complete.",
+        "validationNotConfigured": "Step validation not configured.",
+        "validationError": "Error checking step requirements.",
+        "tryAgain": "Please try again or contact support.",
+        "progress": "Progress",
+        "instructions": "Instructions",
+        "showSuggestions": "Show suggestions",
+        "hideSuggestions": "Hide suggestions",
+        "goTo": "Go to {{title}}",
+        "markComplete": "Mark as Complete",
+        "completing": "Completing...",
+        "status": {
+          "completed": "Completed",
+          "ready": "Ready to Complete",
+          "inProgress": "In Progress",
+          "locked": "Locked",
+          "unknown": "Unknown"
+        }
       }
     },
     "planningDashboard": {
