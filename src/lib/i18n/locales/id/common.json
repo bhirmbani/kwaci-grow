@@ -1258,7 +1258,8 @@
         "baseUnitQuantity": "Jumlah Satuan Dasar *",
         "unit": "Unit *",
         "supplierInfo": "Informasi Supplier",
-        "note": "Catatan"
+        "note": "Catatan",
+        "activeStatus": "Status Aktif"
       },
       "placeholders": {
         "name": "Masukkan nama bahan",
@@ -1267,7 +1268,9 @@
         "baseUnitQuantity": "1.00",
         "selectUnit": "Pilih atau masukkan unit...",
         "supplierInfo": "Nama supplier, kontak, dll.",
-        "note": "Catatan tambahan tentang bahan ini"
+        "note": "Catatan tambahan tentang bahan ini",
+        "costBaseHelp": "Masukkan biaya per satuan dasar (misal, per gram, per ml)",
+        "quantityHelp": "Masukkan jumlah dalam satuan dasar (misal, gram, ml)"
       },
       "costPreview": "Pratinjau Biaya:",
       "activeStatus": "Status Aktif",

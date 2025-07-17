@@ -1258,7 +1258,8 @@
         "baseUnitQuantity": "Base Unit Quantity *",
         "unit": "Unit *",
         "supplierInfo": "Supplier Information",
-        "note": "Notes"
+        "note": "Notes",
+        "activeStatus": "Active Status"
       },
       "placeholders": {
         "name": "Enter ingredient name",
@@ -1267,7 +1268,9 @@
         "baseUnitQuantity": "1.00",
         "selectUnit": "Select or enter unit...",
         "supplierInfo": "Supplier name, contact, etc.",
-        "note": "Additional notes about this ingredient"
+        "note": "Additional notes about this ingredient",
+        "costBaseHelp": "Enter the cost per base unit (e.g., per gram, per ml)",
+        "quantityHelp": "Enter the quantity in base units (e.g., grams, ml)"
       },
       "costPreview": "Cost Preview:",
       "activeStatus": "Active Status",
