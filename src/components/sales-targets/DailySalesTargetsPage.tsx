@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { Target, Calendar as CalendarIcon, AlertCircle, RefreshCw } from "lucide-react"
+import { useTranslation } from 'react-i18next'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,6 +24,7 @@ import { useCurrentBusinessId } from "@/lib/stores/businessStore"
 import type { Branch } from "@/lib/db/schema"
 
 export default function DailySalesTargetsPage() {
+  const { t } = useTranslation()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedBranchId, setSelectedBranchId] = useState<string>("")
   const [branches, setBranches] = useState<Branch[]>([])
@@ -64,7 +66,7 @@ export default function DailySalesTargetsPage() {
       }
     } catch (err) {
       console.error('Error loading branches:', err)
-      setError('Failed to load branches. Please refresh the page.')
+      setError(t('salesTargets.errors.loadBranches'))
       setSelectedBranchId("")
       setProductTargets([])
     }
@@ -96,7 +98,7 @@ export default function DailySalesTargetsPage() {
       setProductTargets(targets)
     } catch (err) {
       console.error('Error loading targets:', err)
-      setError('Failed to load sales targets. Please try again.')
+      setError(t('salesTargets.errors.loadTargets'))
     } finally {
       setLoading(false)
     }
@@ -161,7 +163,7 @@ export default function DailySalesTargetsPage() {
       await loadTargetsForDate(selectedDate, selectedBranchId)
     } catch (err) {
       console.error('Error updating target:', err)
-      throw new Error('Failed to update target. Please try again.')
+      throw new Error(t('salesTargets.errors.updateTarget'))
     } finally {
       setUpdating(false)
     }
@@ -185,10 +187,10 @@ export default function DailySalesTargetsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Target className="h-8 w-8" />
-            Daily Sales Targets
+            {t('salesTargets.dailyPage.title')}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Set and manage daily sales targets for your menu products
+            {t('salesTargets.dailyPage.description')}
           </p>
         </div>
         
@@ -196,7 +198,7 @@ export default function DailySalesTargetsPage() {
           {/* Branch Selector */}
           <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select branch" />
+              <SelectValue placeholder={t('salesTargets.dailyPage.selectBranchPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {branches.filter(b => b.isActive).map((branch) => (
@@ -258,25 +260,25 @@ export default function DailySalesTargetsPage() {
                     <div className="text-2xl font-bold text-primary">
                       {dailyTotals.totalTargets}
                     </div>
-                    <div className="text-sm text-muted-foreground">Total Items</div>
+                    <div className="text-sm text-muted-foreground">{t('salesTargets.dailyPage.summary.totalItems')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-600">
                       {formatCurrency(dailyTotals.totalRevenue)}
                     </div>
-                    <div className="text-sm text-muted-foreground">Est. Revenue</div>
+                    <div className="text-sm text-muted-foreground">{t('salesTargets.dailyPage.summary.estRevenue')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">
                       {dailyTotals.activeTargets}
                     </div>
-                    <div className="text-sm text-muted-foreground">Active Products</div>
+                    <div className="text-sm text-muted-foreground">{t('salesTargets.dailyPage.summary.activeProducts')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-purple-600">
                       {targetsByMenu.size}
                     </div>
-                    <div className="text-sm text-muted-foreground">Active Menus</div>
+                    <div className="text-sm text-muted-foreground">{t('salesTargets.dailyPage.summary.activeMenus')}</div>
                   </div>
                 </div>
               </CardContent>
@@ -320,13 +322,13 @@ export default function DailySalesTargetsPage() {
               <CardContent className="p-12">
                 <div className="text-center">
                   <Target className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Active Menus</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('salesTargets.dailyPage.noActiveMenusTitle')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    No active menus found for the selected branch and date.
+                    {t('salesTargets.dailyPage.noActiveMenusDescription')}
                   </p>
                   <Button variant="outline" onClick={handleRefresh}>
                     <RefreshCw className="h-4 w-4 mr-2" />
-                    Refresh
+                    {t('common.refresh')}
                   </Button>
                 </div>
               </CardContent>
@@ -339,9 +341,9 @@ export default function DailySalesTargetsPage() {
               <CardContent className="p-12">
                 <div className="text-center">
                   <AlertCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Select a Branch</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('salesTargets.dailyPage.selectBranchTitle')}</h3>
                   <p className="text-muted-foreground">
-                    Please select a branch to view and manage sales targets.
+                    {t('salesTargets.dailyPage.selectBranchDescription')}
                   </p>
                 </div>
               </CardContent>

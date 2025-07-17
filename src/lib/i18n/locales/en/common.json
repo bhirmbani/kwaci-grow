@@ -1220,5 +1220,64 @@
       "noBranches": "No branches yet",
       "noBranchesHint": "Create a branch to start assigning menus"
     }
+  },
+  "salesTargets": {
+    "errors": {
+      "loadBranches": "Failed to load branches. Please refresh the page.",
+      "loadTargets": "Failed to load sales targets. Please try again.",
+      "updateTarget": "Failed to update target. Please try again.",
+      "loadMonthlyTargets": "Failed to load monthly targets. Please try again."
+    },
+    "dailyPage": {
+      "title": "Daily Sales Targets",
+      "description": "Set and manage daily sales targets for your menu products",
+      "selectBranchPlaceholder": "Select branch",
+      "summary": {
+        "totalItems": "Total Items",
+        "estRevenue": "Est. Revenue",
+        "activeProducts": "Active Products",
+        "activeMenus": "Active Menus"
+      },
+      "noActiveMenusTitle": "No Active Menus",
+      "noActiveMenusDescription": "No active menus found for the selected branch and date.",
+      "selectBranchTitle": "Select a Branch",
+      "selectBranchDescription": "Please select a branch to view and manage sales targets"
+    },
+    "calendar": {
+      "noBusiness": "Please select a business to view sales targets",
+      "noBranch": "Please select a branch to view sales targets",
+      "invalidBranch": "Selected branch is not available in the current business",
+      "totalTargets": "Total Targets",
+      "estRevenue": "Est. Revenue",
+      "items": "{{count}} items",
+      "noMenusForDate": "No active menus found for this date",
+      "menusCount": "Menus ({{count}})",
+      "menuSummary": "{{products}} products • {{total}} target items"
+    },
+    "menuSection": {
+      "productsBadge": "{{active}}/{{total}} products",
+      "itemsBadge": "{{count}} items",
+      "noProductsTitle": "No Products",
+      "noProductsDescription": "This menu doesn't have any products assigned yet.",
+      "table": {
+        "product": "Product",
+        "price": "Price",
+        "targetQty": "Target Qty",
+        "estRevenue": "Est. Revenue",
+        "actions": "Actions"
+      },
+      "summary": {
+        "menuTotal": "Menu Total",
+        "activeLabel": "{{count}} active"
+      }
+    },
+    "productRow": {
+      "notePlaceholder": "Add a note (optional)...",
+      "saveTooltip": "Save (Ctrl+Enter)",
+      "cancelTooltip": "Cancel (Esc)",
+      "editTooltip": "Edit target",
+      "noteLabel": "Note: {{note}}",
+      "targetMinError": "Target must be 0 or greater"
+    }
   }
 }
