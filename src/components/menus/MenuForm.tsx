@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -27,6 +28,7 @@ interface MenuFormProps {
 
 export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
   const isEditing = !!menu
+  const { t } = useTranslation()
 
   const form = useForm<MenuFormData>({
     resolver: zodResolver(menuFormSchema),
@@ -98,14 +100,14 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
 
       {/* Menu Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Menu Name *</Label>
+        <Label htmlFor="name">{t('menus.menuForm.fields.name')}</Label>
         <Input
           id="name"
-          placeholder="Enter menu name"
+          placeholder={t('menus.menuForm.placeholders.name')}
           {...register('name')}
         />
         <p className="text-xs text-muted-foreground">
-          A descriptive name for your menu (e.g., "Morning Coffee Menu", "Afternoon Specials")
+          {t('menus.menuForm.help.name')}
         </p>
         {errors.name && (
           <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -114,15 +116,15 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
 
       {/* Description */}
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t('menus.menuForm.fields.description')}</Label>
         <Textarea
           id="description"
-          placeholder="Enter menu description"
+          placeholder={t('menus.menuForm.placeholders.description')}
           rows={3}
           {...register('description')}
         />
         <p className="text-xs text-muted-foreground">
-          Optional description of the menu and its purpose
+          {t('menus.menuForm.help.description')}
         </p>
         {errors.description && (
           <p className="text-sm text-red-600">{errors.description.message}</p>
@@ -132,11 +134,11 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
       {/* Status */}
       <div className="flex flex-row items-center justify-between rounded-lg border p-4">
         <div className="space-y-0.5">
-          <Label className="text-base">Active Status</Label>
+          <Label className="text-base">{t('menus.menuForm.fields.activeStatus')}</Label>
           <p className="text-sm text-muted-foreground">
             {watchedStatus === 'active'
-              ? 'Menu is active and available for use'
-              : 'Menu is inactive and hidden from operations'
+              ? t('menus.menuForm.statusHelp.active')
+              : t('menus.menuForm.statusHelp.inactive')
             }
           </p>
         </div>
@@ -151,15 +153,15 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
 
       {/* Note */}
       <div className="space-y-2">
-        <Label htmlFor="note">Note</Label>
+        <Label htmlFor="note">{t('menus.menuForm.fields.note')}</Label>
         <Textarea
           id="note"
-          placeholder="Add any additional notes or comments"
+          placeholder={t('menus.menuForm.placeholders.note')}
           rows={2}
           {...register('note')}
         />
         <p className="text-xs text-muted-foreground">
-          Optional notes for internal reference
+          {t('menus.menuForm.help.note')}
         </p>
         {errors.note && (
           <p className="text-sm text-red-600">{errors.note.message}</p>
@@ -173,8 +175,8 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
           disabled={isSubmitting}
         >
           {isSubmitting
-            ? (isEditing ? 'Updating...' : 'Creating...')
-            : (isEditing ? 'Update Menu' : 'Create Menu')
+            ? (isEditing ? t('menus.menuForm.buttons.updating') : t('menus.menuForm.buttons.creating'))
+            : (isEditing ? t('menus.menuForm.buttons.update') : t('menus.menuForm.buttons.create'))
           }
         </Button>
         <Button
@@ -183,19 +185,19 @@ export function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('menus.menuForm.buttons.cancel')}
         </Button>
       </div>
 
       {/* Help Text */}
       {!isEditing && (
         <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p className="font-medium mb-1">Next steps:</p>
+          <p className="font-medium mb-1">{t('menus.menuForm.nextSteps.title')}</p>
           <ul className="space-y-1">
-            <li>• After creating the menu, you can add products with pricing</li>
-            <li>• Assign the menu to specific branches/locations</li>
-            <li>• Set daily sales targets for each branch</li>
-            <li>• Use the menu in your daily operations</li>
+            <li>• {t('menus.menuForm.nextSteps.step1')}</li>
+            <li>• {t('menus.menuForm.nextSteps.step2')}</li>
+            <li>• {t('menus.menuForm.nextSteps.step3')}</li>
+            <li>• {t('menus.menuForm.nextSteps.step4')}</li>
           </ul>
         </div>
       )}

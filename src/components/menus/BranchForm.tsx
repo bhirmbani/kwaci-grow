@@ -255,12 +255,12 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
       {/* Help Text */}
       {!isEditing && (
         <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p className="font-medium mb-1">Branch Management:</p>
+          <p className="font-medium mb-1">{t('menus.branchForm.helpTitle')}</p>
           <ul className="space-y-1">
-            <li>• Branches represent physical locations where you serve customers</li>
-            <li>• Each branch can have multiple menus assigned to it</li>
-            <li>• Use branches to manage location-specific offerings and targets</li>
-            <li>• Inactive branches are hidden but can be reactivated later</li>
+            <li>• {t('menus.branchForm.helpItems.0')}</li>
+            <li>• {t('menus.branchForm.helpItems.1')}</li>
+            <li>• {t('menus.branchForm.helpItems.2')}</li>
+            <li>• {t('menus.branchForm.helpItems.3')}</li>
           </ul>
         </div>
       )}
