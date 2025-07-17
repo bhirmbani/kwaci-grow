@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,6 +10,7 @@ import { useStockLevels, useLowStockAlerts } from '@/hooks/useStock'
 
 
 export function StockLevels() {
+  const { t } = useTranslation()
   const {
     stockLevels,
     loading,
@@ -52,7 +54,7 @@ export function StockLevels() {
     if (newReservation < 0) {
       setReservationMessage({
         type: 'error',
-        text: 'Reservation quantity cannot be negative'
+        text: t('warehouse.stock.reservation.negative')
       })
       return
     }
@@ -69,20 +71,20 @@ export function StockLevels() {
         setEditingReservation(null)
         setReservationMessage({
           type: 'success',
-          text: `Reservation updated successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+          text: t('warehouse.stock.reservation.updated', { stock: result.availableStock?.toFixed(1) || 0 })
         })
         // Clear success message after 3 seconds
         setTimeout(() => setReservationMessage(null), 3000)
       } else {
         setReservationMessage({
           type: 'error',
-          text: result.error || 'Failed to update reservation'
+          text: result.error || t('warehouse.stock.reservation.failed')
         })
       }
     } catch {
       setReservationMessage({
         type: 'error',
-        text: 'An unexpected error occurred while updating reservation'
+        text: t('warehouse.stock.reservation.unexpected')
       })
     }
   }
@@ -105,19 +107,19 @@ export function StockLevels() {
       if (result.success) {
         setReservationMessage({
           type: 'success',
-          text: `Reserved ${quantity} ${unit} successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+          text: t('warehouse.stock.reservation.reserved', { quantity, unit, stock: result.availableStock?.toFixed(1) || 0 })
         })
         setTimeout(() => setReservationMessage(null), 3000)
       } else {
         setReservationMessage({
           type: 'error',
-          text: result.error || 'Failed to reserve stock'
+          text: result.error || t('warehouse.stock.reservation.reserveFailed')
         })
       }
     } catch {
       setReservationMessage({
         type: 'error',
-        text: 'An unexpected error occurred while reserving stock'
+        text: t('warehouse.stock.reservation.reserveUnexpected')
       })
     }
   }
@@ -134,19 +136,19 @@ export function StockLevels() {
       if (result.success) {
         setReservationMessage({
           type: 'success',
-          text: `Unreserved ${quantity} ${unit} successfully. Available stock: ${result.availableStock?.toFixed(1) || 0}`
+          text: t('warehouse.stock.reservation.unreserved', { quantity, unit, stock: result.availableStock?.toFixed(1) || 0 })
         })
         setTimeout(() => setReservationMessage(null), 3000)
       } else {
         setReservationMessage({
           type: 'error',
-          text: result.error || 'Failed to unreserve stock'
+          text: result.error || t('warehouse.stock.reservation.unreserveFailed')
         })
       }
     } catch {
       setReservationMessage({
         type: 'error',
-        text: 'An unexpected error occurred while unreserving stock'
+        text: t('warehouse.stock.reservation.unreserveUnexpected')
       })
     }
   }
@@ -157,7 +159,7 @@ export function StockLevels() {
         <CardContent className="p-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading stock levels...</p>
+            <p className="text-muted-foreground">{t('warehouse.stock.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -170,7 +172,7 @@ export function StockLevels() {
         <CardContent className="p-6">
           <div className="text-center text-destructive">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
-            <p>Error loading stock levels: {error}</p>
+            <p>{t('warehouse.stock.error')}: {error}</p>
           </div>
         </CardContent>
       </Card>
@@ -183,7 +185,7 @@ export function StockLevels() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Current Stock Levels
+            {t('warehouse.stock.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -196,9 +198,9 @@ export function StockLevels() {
               />
               <Package className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold mb-2 mt-4">No Stock Data</h3>
+            <h3 className="text-lg font-semibold mb-2 mt-4">{t('warehouse.stock.noData.title')}</h3>
             <p className="text-muted-foreground">
-              Stock levels will appear here after you add items to the warehouse.
+              {t('warehouse.stock.noData.description')}
             </p>
           </div>
         </CardContent>
@@ -214,7 +216,7 @@ export function StockLevels() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
               <AlertTriangle className="h-5 w-5" />
-              Low Stock Alerts ({alerts.length})
+              {t('warehouse.stock.alerts', { count: alerts.length })}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -225,10 +227,10 @@ export function StockLevels() {
                     {alert.ingredientName}
                   </div>
                   <div className="text-sm text-orange-700 dark:text-orange-300">
-                    {alert.currentStock.toFixed(1)} {alert.unit} remaining
+                    {t('warehouse.stock.alert.remaining', { count: alert.currentStock.toFixed(1), unit: alert.unit })}
                   </div>
                   <div className="text-xs text-orange-600 dark:text-orange-400">
-                    Threshold: {alert.lowStockThreshold} {alert.unit}
+                    {t('warehouse.stock.alert.threshold', { threshold: alert.lowStockThreshold, unit: alert.unit })}
                   </div>
                 </div>
               ))}
@@ -264,20 +266,20 @@ export function StockLevels() {
             Current Stock Levels
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Real-time inventory levels and low stock thresholds
+            {t('warehouse.stock.description')}
           </p>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ingredient</TableHead>
-                <TableHead className="text-right">Current Stock</TableHead>
-                <TableHead className="text-right">Reserved</TableHead>
-                <TableHead className="text-right">Available</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-center">Low Stock Alert</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
+                <TableHead>{t('warehouse.stock.table.ingredient')}</TableHead>
+                <TableHead className="text-right">{t('warehouse.stock.table.currentStock')}</TableHead>
+                <TableHead className="text-right">{t('warehouse.stock.table.reserved')}</TableHead>
+                <TableHead className="text-right">{t('warehouse.stock.table.available')}</TableHead>
+                <TableHead className="text-center">{t('warehouse.stock.table.status')}</TableHead>
+                <TableHead className="text-center">{t('warehouse.stock.table.lowStockAlert')}</TableHead>
+                <TableHead className="text-center">{t('warehouse.stock.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -342,7 +344,7 @@ export function StockLevels() {
                             variant="ghost"
                             className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => handleReservationEdit(stock.id, reservedStock)}
-                            title="Edit reservation"
+                            title={t('warehouse.stock.table.editReservation')}
                           >
                             <Edit3 className="h-3 w-3" />
                           </Button>
@@ -359,17 +361,17 @@ export function StockLevels() {
                         {isLowStock ? (
                           <>
                             <AlertTriangle className="h-3 w-3 mr-1" />
-                            Low Stock
+                            {t('warehouse.stock.table.low')}
                           </>
                         ) : availableStock > stock.lowStockThreshold * 2 ? (
                           <>
                             <TrendingUp className="h-3 w-3 mr-1" />
-                            Good
+                            {t('warehouse.stock.table.good')}
                           </>
                         ) : (
                           <>
                             <TrendingUp className="h-3 w-3 mr-1" />
-                            Moderate
+                            {t('warehouse.stock.table.moderate')}
                           </>
                         )}
                       </Badge>
@@ -416,7 +418,7 @@ export function StockLevels() {
                               variant="outline"
                               onClick={() => handleThresholdEdit(stock.id, stock.lowStockThreshold)}
                               className="h-8 px-2"
-                              title="Edit low stock threshold"
+                              title={t('warehouse.stock.table.editThreshold')}
                             >
                               <Settings className="h-3 w-3" />
                             </Button>
@@ -426,7 +428,7 @@ export function StockLevels() {
                                 variant="outline"
                                 onClick={() => handleQuickUnreserve(stock.ingredientName, stock.unit, reservedStock)}
                                 className="h-8 px-2 text-orange-600 hover:text-orange-700"
-                                title="Release all reservations"
+                                title={t('warehouse.stock.table.releaseReservations')}
                               >
                                 <X className="h-3 w-3" />
                               </Button>
@@ -437,7 +439,7 @@ export function StockLevels() {
                                 variant="outline"
                                 onClick={() => handleQuickReserve(stock.ingredientName, stock.unit, Math.min(10, availableStock))}
                                 className="h-8 px-2 text-blue-600 hover:text-blue-700"
-                                title={`Quick reserve ${Math.min(10, availableStock)} ${stock.unit}`}
+                                title={t('warehouse.stock.table.quickReserve', { quantity: Math.min(10, availableStock), unit: stock.unit })}
                               >
                                 +{Math.min(10, availableStock)}
                               </Button>
@@ -457,7 +459,7 @@ export function StockLevels() {
             <div className="bg-muted/50 rounded-lg p-4">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-1">
                 <Package className="h-4 w-4" />
-                Total Ingredients
+                {t('warehouse.stock.summary.totalIngredients')}
               </div>
               <div className="text-2xl font-bold">{stockLevels.length}</div>
             </div>
@@ -465,7 +467,7 @@ export function StockLevels() {
             <div className="bg-muted/50 rounded-lg p-4">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-1">
                 <AlertTriangle className="h-4 w-4" />
-                Low Stock Items
+                {t('warehouse.stock.summary.lowStockItems')}
               </div>
               <div className="text-2xl font-bold text-orange-600">{alerts.length}</div>
             </div>
@@ -473,7 +475,7 @@ export function StockLevels() {
             <div className="bg-muted/50 rounded-lg p-4">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-1">
                 <TrendingUp className="h-4 w-4" />
-                Well Stocked
+                {t('warehouse.stock.summary.wellStocked')}
               </div>
               <div className="text-2xl font-bold text-green-600">
                 {stockLevels.filter(s => s.currentStock > s.lowStockThreshold * 2).length}

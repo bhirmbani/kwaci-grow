@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +15,7 @@ interface WarehouseBatchListProps {
 }
 
 export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
+  const { t } = useTranslation()
   const [searchTerm, setSearchTerm] = useState('')
   const [expandedBatches, setExpandedBatches] = useState<Set<string>>(new Set())
 
@@ -41,12 +43,12 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
         <CardContent className="p-12">
           <div className="text-center">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Warehouse Batches</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('warehouse.batchList.noBatches.title')}</h3>
             <p className="text-muted-foreground mb-4">
-              You haven't added any items to the warehouse yet.
+              {t('warehouse.batchList.noBatches.description')}
             </p>
             <p className="text-sm text-muted-foreground">
-              Use the COGS Calculator to create your first warehouse batch.
+              {t('warehouse.batchList.noBatches.hint')}
             </p>
           </div>
         </CardContent>
@@ -61,14 +63,14 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Warehouse Batches ({batches.length})
+            {t('warehouse.batchList.title', { count: batches.length })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search batches, ingredients, or notes..."
+              placeholder={t('warehouse.batchList.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1"
@@ -107,14 +109,14 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
                             </div>
                             <div className="flex items-center gap-1">
                               <ShoppingCart className="h-3 w-3" />
-                              {batch.items.length} items
+                              {t('warehouse.batchList.items', { count: batch.items.length })}
                             </div>
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-semibold">{formatCurrency(totalValue)}</p>
-                        <Badge variant="secondary">{batch.items.length} ingredients</Badge>
+                        <Badge variant="secondary">{t('warehouse.batchList.ingredients', { count: batch.items.length })}</Badge>
                       </div>
                     </div>
                     {batch.note && (
@@ -128,14 +130,14 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
                 <CollapsibleContent>
                   <CardContent className="pt-0">
                     <div className="border-t pt-4">
-                      <h4 className="font-medium mb-3">Batch Items</h4>
+                      <h4 className="font-medium mb-3">{t('warehouse.batchList.batchItems')}</h4>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Ingredient</TableHead>
-                            <TableHead className="text-right">Quantity</TableHead>
-                            <TableHead className="text-right">Unit Cost</TableHead>
-                            <TableHead className="text-right">Total Cost</TableHead>
+                            <TableHead>{t('warehouse.batchList.table.ingredient')}</TableHead>
+                            <TableHead className="text-right">{t('warehouse.batchList.table.quantity')}</TableHead>
+                            <TableHead className="text-right">{t('warehouse.batchList.table.unitCost')}</TableHead>
+                            <TableHead className="text-right">{t('warehouse.batchList.table.totalCost')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -176,16 +178,16 @@ export function WarehouseBatchList({ batches }: WarehouseBatchListProps) {
           <CardContent className="p-8">
             <div className="text-center">
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('warehouse.batchList.noResults.title')}</h3>
               <p className="text-muted-foreground">
-                No batches match your search term "{searchTerm}"
+                {t('warehouse.batchList.noResults.description', { term: searchTerm })}
               </p>
               <Button 
                 variant="outline" 
                 onClick={() => setSearchTerm('')}
                 className="mt-4"
               >
-                Clear Search
+                {t('warehouse.batchList.noResults.clear')}
               </Button>
             </div>
           </CardContent>

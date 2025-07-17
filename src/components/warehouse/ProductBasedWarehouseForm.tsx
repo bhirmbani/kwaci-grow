@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -62,6 +63,7 @@ interface CalculatedIngredient {
 }
 
 export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFormProps) {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [selectedProduct, setSelectedProduct] = useState<ProductWithIngredients | null>(null)
   const [loading, setLoading] = useState(false)
@@ -88,7 +90,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
         setProducts(allProducts)
       } catch (error) {
         console.error('Failed to load products:', error)
-        setMessage({ type: 'error', text: 'Failed to load products' })
+        setMessage({ type: 'error', text: t('warehouse.form.messages.failedLoadProducts') })
       } finally {
         setLoading(false)
       }
@@ -112,7 +114,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       }
     } catch (error) {
       console.error('Failed to load product ingredients:', error)
-      setMessage({ type: 'error', text: 'Failed to load product ingredients' })
+      setMessage({ type: 'error', text: t('warehouse.form.messages.failedLoadIngredients') })
     } finally {
       setLoading(false)
     }
@@ -173,7 +175,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       setMessage(null)
 
       if (calculatedIngredients.length === 0) {
-        setMessage({ type: 'error', text: 'No ingredients found for the selected product' })
+        setMessage({ type: 'error', text: t('warehouse.form.messages.noIngredients') })
         return
       }
 
@@ -183,7 +185,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       if (itemsToAdd.length === 0) {
         setMessage({
           type: 'error',
-          text: 'Current stock levels are sufficient for the selected quantity. No items need to be added.'
+          text: t('warehouse.form.messages.stockSufficient')
         })
         return
       }
@@ -214,7 +216,12 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
 
       setMessage({
         type: 'success',
-        text: `Successfully added ${itemsToAdd.length} ingredients to warehouse batch #${batch.batchNumber} for ${data.numberOfCups} cups of ${selectedProduct?.name}`
+        text: t('warehouse.form.messages.successAdd', {
+          count: itemsToAdd.length,
+          batch: batch.batchNumber,
+          cups: data.numberOfCups,
+          product: selectedProduct?.name
+        })
       })
 
       // Reset form
@@ -226,7 +233,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
 
     } catch (error) {
       console.error('Failed to add items to warehouse:', error)
-      setMessage({ type: 'error', text: 'Failed to add items to warehouse' })
+      setMessage({ type: 'error', text: t('warehouse.form.messages.failedAdd') })
     } finally {
       setSubmitting(false)
     }
@@ -237,23 +244,23 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
       {/* Header */}
       <div className="flex items-center gap-2">
         <Package className="h-5 w-5" />
-        <h3 className="text-lg font-semibold">Add Items to Warehouse</h3>
+        <h3 className="text-lg font-semibold">{t('warehouse.form.header')}</h3>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Product Selection and Cups Input */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Product & Quantity</CardTitle>
-            </CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">{t('warehouse.form.productQuantity')}</CardTitle>
+          </CardHeader>
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="productId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product</FormLabel>
+                    <FormLabel>{t('warehouse.form.fields.product')}</FormLabel>
                     <Select
                       value={field.value}
                       onValueChange={(value) => {
@@ -263,7 +270,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Choose a product to calculate ingredients for..." />
+                          <SelectValue placeholder={t('warehouse.form.placeholders.product')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -284,13 +291,13 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                 name="numberOfCups"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Cups to Prepare</FormLabel>
+                    <FormLabel>{t('warehouse.form.fields.numberOfCups')}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         min="1"
                         step="1"
-                        placeholder="Enter number of cups..."
+                        placeholder={t('warehouse.form.placeholders.numberOfCups')}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
                       />
@@ -298,7 +305,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                     <FormMessage />
                     {selectedProduct && (
                       <p className="text-xs text-muted-foreground">
-                        Ingredient quantities will be auto-calculated based on the product recipe
+                        {t('warehouse.form.autoCalcHint')}
                       </p>
                     )}
                   </FormItem>
@@ -319,10 +326,10 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                     <div className="space-y-1 leading-none">
                       <FormLabel className="flex items-center gap-2">
                         <Zap className="h-4 w-4" />
-                        Smart Stock Calculation
+                        {t('warehouse.form.fields.smartStock')}
                       </FormLabel>
                       <p className="text-xs text-muted-foreground">
-                        Only add the deficit amount needed to reach target quantities based on current stock levels
+                        {t('warehouse.form.smartStockHint')}
                       </p>
                     </div>
                   </FormItem>
@@ -334,10 +341,10 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                 name="batchNote"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Batch Note (Optional)</FormLabel>
+                    <FormLabel>{t('warehouse.form.fields.batchNote')}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Add a note for this warehouse batch..."
+                        placeholder={t('warehouse.form.placeholders.batchNote')}
                         {...field}
                       />
                     </FormControl>
@@ -354,29 +361,29 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   {smartStockCalculation ? <Zap className="h-4 w-4" /> : <Calculator className="h-4 w-4" />}
-                  {smartStockCalculation ? 'Smart Stock Calculation' : 'Calculated Ingredients'} for {numberOfCups} cups of {selectedProduct.name}
+                  {t(smartStockCalculation ? 'warehouse.form.calculated.titleSmart' : 'warehouse.form.calculated.titleDefault')} {t('warehouse.form.calculated.forCups', { cups: numberOfCups, product: selectedProduct.name })}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   {smartStockCalculation
-                    ? 'Only deficit amounts needed to reach target quantities will be added. '
-                    : 'Quantities and costs are automatically calculated based on the product recipe. '
+                    ? t('warehouse.form.calculated.explanationSmart')
+                    : t('warehouse.form.calculated.explanation')
                   }
-                  Actual quantities are rounded up to minimum purchase units based on ingredient packaging.
+                  {t('warehouse.form.calculated.roundedInfo')}
                 </p>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Ingredient</TableHead>
-                      <TableHead>Current Stock</TableHead>
-                      <TableHead>Usage per Cup</TableHead>
-                      <TableHead>Required Quantity</TableHead>
-                      <TableHead>Theoretical Need</TableHead>
-                      <TableHead>Actual Quantity to Add</TableHead>
-                      <TableHead>Purchase Info</TableHead>
-                      <TableHead>Cost per Unit</TableHead>
-                      <TableHead>Total Cost</TableHead>
+                      <TableHead>{t('warehouse.form.table.ingredient')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.currentStock')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.usagePerCup')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.requiredQuantity')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.theoreticalNeed')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.actualQuantityToAdd')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.purchaseInfo')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.costPerUnit')}</TableHead>
+                      <TableHead>{t('warehouse.form.table.totalCost')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -408,7 +415,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                             <span className={`text-sm ${ingredient.quantityToAdd === 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
                               {ingredient.quantityToAdd.toFixed(2)} {ingredient.unit}
                               {ingredient.quantityToAdd === 0 && smartStockCalculation && (
-                                <span className="text-xs text-green-600 ml-1">✓ Sufficient</span>
+                                <span className="text-xs text-green-600 ml-1">✓ {t('warehouse.form.table.sufficient')}</span>
                               )}
                             </span>
                           </TableCell>
@@ -419,7 +426,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                               </span>
                               {ingredient.actualQuantityToAdd !== ingredient.quantityToAdd && ingredient.actualQuantityToAdd > 0 && (
                                 <p className="text-xs text-orange-600">
-                                  Rounded up from {ingredient.quantityToAdd.toFixed(2)} {ingredient.unit}
+                                  {t('warehouse.form.table.roundedUpFrom', { quantity: ingredient.quantityToAdd.toFixed(2), unit: ingredient.unit })}
                                 </p>
                               )}
                             </div>
@@ -434,7 +441,7 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                                   <span className="text-muted-foreground"> each</span>
                                 </>
                               ) : (
-                                <span className="text-green-600">No purchase needed</span>
+                                <span className="text-green-600">{t('warehouse.form.table.noPurchaseNeeded')}</span>
                               )}
                             </div>
                           </TableCell>
@@ -457,19 +464,19 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
                 {/* Total Cost Summary */}
                 <div className="mt-4 p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">Total Batch Cost:</span>
+                    <span className="font-medium">{t('warehouse.form.totalCost.label')}</span>
                     <span className="text-lg font-bold">{formatCurrency(totalBatchCost)}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
                     {smartStockCalculation
-                      ? `Cost for deficit amounts to reach ${numberOfCups} cups of ${selectedProduct.name}`
-                      : `Cost for ${numberOfCups} cups of ${selectedProduct.name}`
+                      ? t('warehouse.form.totalCost.costForDeficit', { cups: numberOfCups, product: selectedProduct.name })
+                      : t('warehouse.form.totalCost.costFor', { cups: numberOfCups, product: selectedProduct.name })
                     }
                   </p>
                   {smartStockCalculation && totalBatchCost === 0 && (
                     <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
                       <span>✓</span>
-                      Current stock levels are sufficient for the selected quantity
+                      {t('warehouse.form.totalCost.sufficient')}
                     </p>
                   )}
                 </div>
@@ -492,10 +499,10 @@ export function ProductBasedWarehouseForm({ onSuccess }: ProductBasedWarehouseFo
           >
             <Plus className="h-4 w-4 mr-2" />
             {submitting
-              ? 'Adding to Warehouse...'
+              ? t('warehouse.form.buttons.submitAdding')
               : smartStockCalculation && calculatedIngredients.every(ing => ing.actualQuantityToAdd === 0)
-                ? 'No Items Need to be Added'
-                : `Add ${calculatedIngredients.filter(ing => ing.actualQuantityToAdd > 0).length} Ingredients to Warehouse`
+                ? t('warehouse.form.buttons.submitNoItems')
+                : t('warehouse.form.buttons.submitAdd', { count: calculatedIngredients.filter(ing => ing.actualQuantityToAdd > 0).length })
             }
           </Button>
 

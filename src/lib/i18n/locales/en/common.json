@@ -2185,7 +2185,188 @@
       "targetQuantity": "Target Quantity:",
       "revenueLabel": "Revenue:",
       "profitLabel": "Profit:",
-      "profitMargin": "Profit Margin:"
+    "profitMargin": "Profit Margin:"
+    }
+  },
+  "warehouse": {
+    "sheet": {
+      "triggerAria": "Add items to warehouse",
+      "title": "Add to Warehouse",
+      "description": "Add ingredient items to warehouse stock by selecting products and their ingredients"
+    },
+    "form": {
+      "header": "Add Items to Warehouse",
+      "productQuantity": "Product & Quantity",
+      "fields": {
+        "product": "Product",
+        "numberOfCups": "Number of Cups to Prepare",
+        "smartStock": "Smart Stock Calculation",
+        "batchNote": "Batch Note (Optional)"
+      },
+      "placeholders": {
+        "product": "Choose a product to calculate ingredients for...",
+        "numberOfCups": "Enter number of cups...",
+        "batchNote": "Add a note for this warehouse batch..."
+      },
+      "autoCalcHint": "Ingredient quantities will be auto-calculated based on the product recipe",
+      "smartStockHint": "Only add the deficit amount needed to reach target quantities based on current stock levels",
+      "calculated": {
+        "titleSmart": "Smart Stock Calculation",
+        "titleDefault": "Calculated Ingredients",
+        "forCups": "for {{cups}} cups of {{product}}",
+        "explanationSmart": "Only deficit amounts needed to reach target quantities will be added.",
+        "explanation": "Quantities and costs are automatically calculated based on the product recipe.",
+        "roundedInfo": "Actual quantities are rounded up to minimum purchase units based on ingredient packaging."
+      },
+      "table": {
+        "ingredient": "Ingredient",
+        "currentStock": "Current Stock",
+        "usagePerCup": "Usage per Cup",
+        "requiredQuantity": "Required Quantity",
+        "theoreticalNeed": "Theoretical Need",
+        "actualQuantityToAdd": "Actual Quantity to Add",
+        "purchaseInfo": "Purchase Info",
+        "costPerUnit": "Cost per Unit",
+        "totalCost": "Total Cost",
+        "sufficient": "Sufficient",
+        "noPurchaseNeeded": "No purchase needed",
+        "roundedUpFrom": "Rounded up from {{quantity}} {{unit}}"
+      },
+      "totalCost": {
+        "label": "Total Batch Cost:",
+        "costForDeficit": "Cost for deficit amounts to reach {{cups}} cups of {{product}}",
+        "costFor": "Cost for {{cups}} cups of {{product}}",
+        "sufficient": "Current stock levels are sufficient for the selected quantity"
+      },
+      "buttons": {
+        "submitAdding": "Adding to Warehouse...",
+        "submitNoItems": "No Items Need to be Added",
+        "submitAdd": "Add {{count}} Ingredients to Warehouse"
+      },
+      "messages": {
+        "failedLoadProducts": "Failed to load products",
+        "failedLoadIngredients": "Failed to load product ingredients",
+        "noIngredients": "No ingredients found for the selected product",
+        "stockSufficient": "Current stock levels are sufficient for the selected quantity. No items need to be added.",
+        "successAdd": "Successfully added {{count}} ingredients to warehouse batch #{{batch}} for {{cups}} cups of {{product}}",
+        "failedAdd": "Failed to add items to warehouse"
+      }
+    },
+    "stock": {
+      "loading": "Loading stock levels...",
+      "error": "Error loading stock levels",
+      "title": "Current Stock Levels",
+      "description": "Real-time inventory levels and low stock thresholds",
+      "noData": {
+        "title": "No Stock Data",
+        "description": "Stock levels will appear here after you add items to the warehouse."
+      },
+      "alerts": "Low Stock Alerts ({{count}})",
+      "alert": {
+        "remaining": "{{count}} {{unit}} remaining",
+        "threshold": "Threshold: {{threshold}} {{unit}}"
+      },
+      "reservation": {
+        "negative": "Reservation quantity cannot be negative",
+        "updated": "Reservation updated successfully. Available stock: {{stock}}",
+        "failed": "Failed to update reservation",
+        "unexpected": "An unexpected error occurred while updating reservation",
+        "reserved": "Reserved {{quantity}} {{unit}} successfully. Available stock: {{stock}}",
+        "reserveFailed": "Failed to reserve stock",
+        "reserveUnexpected": "An unexpected error occurred while reserving stock",
+        "unreserved": "Unreserved {{quantity}} {{unit}} successfully. Available stock: {{stock}}",
+        "unreserveFailed": "Failed to unreserve stock",
+        "unreserveUnexpected": "An unexpected error occurred while unreserving stock"
+      },
+      "table": {
+        "ingredient": "Ingredient",
+        "currentStock": "Current Stock",
+        "reserved": "Reserved",
+        "available": "Available",
+        "status": "Status",
+        "lowStockAlert": "Low Stock Alert",
+        "actions": "Actions",
+        "low": "Low Stock",
+        "good": "Good",
+        "moderate": "Moderate",
+        "editReservation": "Edit reservation",
+        "editThreshold": "Edit low stock threshold",
+        "releaseReservations": "Release all reservations",
+        "quickReserve": "Quick reserve {{quantity}} {{unit}}"
+      },
+      "summary": {
+        "totalIngredients": "Total Ingredients",
+        "lowStockItems": "Low Stock Items",
+        "wellStocked": "Well Stocked"
+      }
+    },
+    "batchList": {
+      "noBatches": {
+        "title": "No Warehouse Batches",
+        "description": "You haven't added any items to the warehouse yet.",
+        "hint": "Use the COGS Calculator to create your first warehouse batch."
+      },
+      "title": "Warehouse Batches ({{count}})",
+      "searchPlaceholder": "Search batches, ingredients, or notes...",
+      "batchItems": "Batch Items",
+      "table": {
+        "ingredient": "Ingredient",
+        "quantity": "Quantity",
+        "unitCost": "Unit Cost",
+        "totalCost": "Total Cost"
+      },
+      "items": "{{count}} items",
+      "ingredients": "{{count}} ingredients",
+      "noResults": {
+        "title": "No Results Found",
+        "description": "No batches match your search term \"{{term}}\"",
+        "clear": "Clear Search"
+      }
+    },
+    "calendar": {
+      "title": "Warehouse Calendar",
+      "batchesFor": "Batches for {{date}}",
+      "noActivity": {
+        "title": "No Warehouse Activity",
+        "description": "No warehouse batches have been created yet. Use the COGS Calculator to add your first batch."
+      },
+      "days": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      },
+      "batchCount": "{{count}} batch{{plural}}"
+    },
+    "management": {
+      "title": "Warehouse Management",
+      "description": "Manage your inventory and track stock additions",
+      "tabs": {
+        "overview": "Overview",
+        "stock": "Stock Levels",
+        "production": "Quick Production Allocation",
+        "batches": "Batches",
+        "calendar": "Calendar"
+      },
+      "overview": {
+        "recentBatches": "Recent Batches",
+        "noBatches": "No warehouse batches yet",
+        "addFirstBatch": "Use the COGS Calculator to add your first batch",
+        "inventorySummary": "Inventory Summary",
+        "noInventory": "No inventory data available",
+        "mostStockedIngredients": "Most Stocked Ingredients",
+        "viewAllBatches": "View All Batches ({{count}})"
+      }
+    },
+    "stats": {
+      "totalBatches": "Total Batches",
+      "totalItems": "Total Items",
+      "totalValue": "Total Value",
+      "latestBatch": "Latest Batch",
+      "none": "None"
     }
   }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -14,6 +15,7 @@ import { AddToWarehouseSheet } from './AddToWarehouseSheet'
 import { useStockLevels } from '@/hooks/useStock'
 
 export function WarehouseManagement() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'overview' | 'stock' | 'batches' | 'calendar' | 'production'>('overview')
   const { batches, loading, error, loadBatches } = useWarehouse()
   const { stats, loading: statsLoading, loadStats } = useWarehouseStats()
@@ -54,9 +56,9 @@ export function WarehouseManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Warehouse Management</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('warehouse.management.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your inventory and track stock additions
+            {t('warehouse.management.description')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -72,23 +74,23 @@ export function WarehouseManagement() {
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            Overview
+            {t('warehouse.management.tabs.overview')}
           </TabsTrigger>
           <TabsTrigger value="stock" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
-            Stock Levels
+            {t('warehouse.management.tabs.stock')}
           </TabsTrigger>
           <TabsTrigger value="production" className="flex items-center gap-2">
             <Factory className="h-4 w-4" />
-            Quick Production Allocation
+            {t('warehouse.management.tabs.production')}
           </TabsTrigger>
           <TabsTrigger value="batches" className="flex items-center gap-2">
             <List className="h-4 w-4" />
-            Batches
+            {t('warehouse.management.tabs.batches')}
           </TabsTrigger>
           <TabsTrigger value="calendar" className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            Calendar
+            {t('warehouse.management.tabs.calendar')}
           </TabsTrigger>
         </TabsList>
 
@@ -99,16 +101,16 @@ export function WarehouseManagement() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Package className="h-5 w-5" />
-                  Recent Batches
+                  {t('warehouse.management.overview.recentBatches')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {batches.length === 0 ? (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No warehouse batches yet</p>
+                    <p className="text-muted-foreground">{t('warehouse.management.overview.noBatches')}</p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Use the COGS Calculator to add your first batch
+                      {t('warehouse.management.overview.addFirstBatch')}
                     </p>
                   </div>
                 ) : (
@@ -134,7 +136,7 @@ export function WarehouseManagement() {
                         className="w-full"
                         onClick={() => setActiveTab('batches')}
                       >
-                        View All Batches ({batches.length})
+                        {t('warehouse.management.overview.viewAllBatches', { count: batches.length })}
                       </Button>
                     )}
                   </div>
@@ -147,19 +149,19 @@ export function WarehouseManagement() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5" />
-                  Inventory Summary
+                  {t('warehouse.management.overview.inventorySummary')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {batches.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No inventory data available</p>
+                    <p className="text-muted-foreground">{t('warehouse.management.overview.noInventory')}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {/* Top ingredients by quantity */}
                     <div>
-                      <h4 className="font-medium mb-2">Most Stocked Ingredients</h4>
+                      <h4 className="font-medium mb-2">{t('warehouse.management.overview.mostStockedIngredients')}</h4>
                       <div className="space-y-2">
                         {getTopIngredients(batches).slice(0, 5).map((ingredient, index) => (
                           <div key={ingredient.name} className="flex items-center justify-between text-sm">
