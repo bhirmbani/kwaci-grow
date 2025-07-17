@@ -1305,7 +1305,7 @@
         "sold": "{{count}} sold"
       },
       "recordsTitle": "Sales Records",
-      "recordsDescription": "Recent sales for {{date}}{{branch ? ` at ${branch}` : ''}}",
+      "recordsDescription": "Recent sales for {{date}} at {{branch}}",
       "loading": "Loading sales records...",
       "noRecords": "No sales records found for this date",
       "addButton": "Add sales",

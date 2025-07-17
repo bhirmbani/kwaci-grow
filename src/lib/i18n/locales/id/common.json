@@ -1305,7 +1305,8 @@
         "sold": "terjual {{count}}"
       },
       "recordsTitle": "Catatan Penjualan",
-      "recordsDescription": "Penjualan terbaru untuk {{date}}{{branch ? ` di ${branch}` : ''}}",
+      "recordsDescription": "Penjualan terbaru untuk {{date}} di {{branch}}",
+
       "loading": "Memuat catatan penjualan...",
       "noRecords": "Tidak ada catatan penjualan untuk tanggal ini",
       "addButton": "Tambah penjualan",

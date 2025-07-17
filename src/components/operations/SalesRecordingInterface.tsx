@@ -246,7 +246,7 @@ export function SalesRecordingInterface() {
             <CardDescription>
               {t('operations.salesRecording.recordsDescription', {
                 date: format(new Date(selectedDate), 'PPP'),
-                branch: selectedBranch ? branches.find((b) => b.id === selectedBranch)?.name : null
+                branch: selectedBranch ? branches.find((b) => b.id === selectedBranch)?.name : t('operations.salesRecording.allBranches').toLowerCase()
               })}
             </CardDescription>
           </CardHeader>
