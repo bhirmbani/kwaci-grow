@@ -2561,5 +2561,104 @@
       "releaseConfirm": "Are you sure you want to release the reservation of {{quantity}} {{unit}} of {{ingredient}}? This will make the stock available again.",
       "release": "Release Reservation"
     }
+  },
+  "fixedAssets": {
+    "title": "Fixed Assets",
+    "description": "Manage fixed assets and automatic depreciation calculations.",
+    "assetInventory": "Asset Inventory",
+    "sheet": {
+      "addTitle": "Add New Fixed Asset",
+      "editTitle": "Edit Fixed Asset",
+      "addDescription": "Add a new fixed asset with automatic depreciation tracking.",
+      "editDescription": "Update the asset information and depreciation settings."
+    },
+    "summary": {
+      "totalAssets": "Total Assets",
+      "assetsDesc": "Fixed assets in inventory",
+      "totalPurchaseCost": "Total Purchase Cost",
+      "purchaseCostDesc": "Original investment value",
+      "currentValue": "Current Value",
+      "currentValueDesc": "After depreciation calculation",
+      "totalDepreciation": "Total Depreciation",
+      "totalDepreciationDesc": "{{rate}}% of original value",
+      "explanationTitle": "Understanding Fixed Assets & Depreciation",
+      "explanation": {
+        "p1": "<strong>Fixed Assets</strong> are long-term items your business owns, like equipment, furniture, or technology.",
+        "p2": "<strong>Depreciation</strong> spreads the cost of these assets over their useful life. For example, a ₹60,000 coffee machine used for 5 years costs ₹12,000 per year (₹1,000 per month) in depreciation.",
+        "p3": "<strong>Current Value</strong> shows what the asset is worth today after accounting for wear and age.",
+        "p4": "This system automatically creates monthly depreciation entries in your Fixed Costs to accurately reflect your business expenses."
+      }
+    },
+    "table": {
+      "emptyTitle": "No fixed assets found.",
+      "emptyDescription": "Click the + button to add your first asset.",
+      "columns": {
+        "name": "Asset Name",
+        "category": "Category",
+        "purchaseDate": "Purchase Date",
+        "purchaseCost": "Purchase Cost",
+        "currentValue": "Current Value",
+        "depreciation": "Depreciation Period",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "fully": "Fully Depreciated",
+        "mostly": "Mostly Depreciated",
+        "half": "Half Depreciated",
+        "recent": "Recently Purchased",
+        "percent": "{{percent}}% depreciated"
+      },
+      "menu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete Asset",
+      "deleteConfirm": "Are you sure you want to delete \"{{name}}\"? This will also remove the corresponding depreciation entry from Fixed Costs. This action cannot be undone.",
+      "deleting": "Deleting..."
+    },
+    "form": {
+      "fields": {
+        "name": "Asset Name",
+        "category": "Category",
+        "purchaseDate": "Purchase Date",
+        "purchaseCost": "Purchase Cost (IDR)",
+        "depreciation": "Depreciation Period",
+        "customDuration": "Custom Duration (Months)",
+        "note": "Note (Optional)"
+      },
+      "placeholders": {
+        "name": "e.g., Coffee Machine, POS System",
+        "selectCategory": "Select or create category...",
+        "pickDate": "Pick a date",
+        "purchaseCost": "0",
+        "customDuration": "36",
+        "note": "Additional information about this asset..."
+      },
+      "preview": {
+        "title": "Depreciation Preview",
+        "currentValue": "Current Value",
+        "totalDepreciation": "Total Depreciation",
+        "monthlyDepreciation": "Monthly Depreciation",
+        "remainingMonths": "Remaining Months"
+      },
+      "buttons": {
+        "create": "Create Asset",
+        "update": "Update Asset",
+        "saving": "Saving...",
+        "cancel": "Cancel"
+      }
+    },
+    "categoryCombobox": {
+      "searchPlaceholder": "Search categories...",
+      "emptyText": "No categories found.",
+      "manage": "Manage Categories",
+      "deleteTitle": "Delete Category",
+      "alertDescription": "Select a category to delete. You can only delete categories that are not in use.",
+      "confirmTitle": "Delete Category \"{{name}}\"",
+      "inUseMessage": "Cannot delete \"{{name}}\". It is currently used by {{count}} asset(s). Please reassign or delete those assets first.",
+      "confirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "deleting": "Deleting...",
+      "creating": "Creating category..."
+    }
   }
 }

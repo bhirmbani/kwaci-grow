@@ -2561,5 +2561,104 @@
       "releaseConfirm": "Yakin ingin melepas reservasi {{quantity}} {{unit}} {{ingredient}}? Ini akan membuat stok tersedia kembali.",
       "release": "Lepaskan Reservasi"
     }
+  },
+  "fixedAssets": {
+    "title": "Aset Tetap",
+    "description": "Kelola aset tetap dan perhitungan depresiasi otomatis.",
+    "assetInventory": "Inventaris Aset",
+    "sheet": {
+      "addTitle": "Tambah Aset Tetap",
+      "editTitle": "Ubah Aset Tetap",
+      "addDescription": "Tambahkan aset tetap baru dengan pelacakan depresiasi otomatis.",
+      "editDescription": "Perbarui informasi aset dan pengaturan depresiasi."
+    },
+    "summary": {
+      "totalAssets": "Total Aset",
+      "assetsDesc": "Aset tetap dalam inventaris",
+      "totalPurchaseCost": "Total Biaya Pembelian",
+      "purchaseCostDesc": "Nilai investasi awal",
+      "currentValue": "Nilai Saat Ini",
+      "currentValueDesc": "Setelah perhitungan depresiasi",
+      "totalDepreciation": "Total Depresiasi",
+      "totalDepreciationDesc": "{{rate}}% dari nilai awal",
+      "explanationTitle": "Memahami Aset Tetap & Depresiasi",
+      "explanation": {
+        "p1": "<strong>Aset Tetap</strong> adalah barang jangka panjang milik usaha Anda seperti peralatan, furnitur, atau teknologi.",
+        "p2": "<strong>Depresiasi</strong> membagi biaya aset selama masa manfaatnya. Contoh: mesin kopi Rp60.000.000 dipakai 5 tahun berarti Rp12.000.000 per tahun (Rp1.000.000 per bulan).",
+        "p3": "<strong>Nilai Saat Ini</strong> menunjukkan berapa nilai aset setelah memperhitungkan usia dan pemakaian.",
+        "p4": "Sistem ini otomatis membuat entri depresiasi bulanan di Biaya Tetap agar laporan keuangan akurat."
+      }
+    },
+    "table": {
+      "emptyTitle": "Belum ada aset tetap.",
+      "emptyDescription": "Klik tombol + untuk menambahkan aset pertama Anda.",
+      "columns": {
+        "name": "Nama Aset",
+        "category": "Kategori",
+        "purchaseDate": "Tanggal Beli",
+        "purchaseCost": "Biaya Beli",
+        "currentValue": "Nilai Saat Ini",
+        "depreciation": "Periode Depresiasi",
+        "status": "Status",
+        "actions": "Aksi"
+      },
+      "status": {
+        "fully": "Sudah Habis",
+        "mostly": "Hampir Habis",
+        "half": "Setengah Jalan",
+        "recent": "Baru Dibeli",
+        "percent": "{{percent}}% terdepresiasi"
+      },
+      "menu": "Buka menu",
+      "edit": "Ubah",
+      "delete": "Hapus",
+      "deleteTitle": "Hapus Aset",
+      "deleteConfirm": "Apakah Anda yakin ingin menghapus \"{{name}}\"? Ini juga akan menghapus entri depresiasi terkait dari Biaya Tetap. Tindakan ini tidak dapat dibatalkan.",
+      "deleting": "Menghapus..."
+    },
+    "form": {
+      "fields": {
+        "name": "Nama Aset",
+        "category": "Kategori",
+        "purchaseDate": "Tanggal Beli",
+        "purchaseCost": "Biaya Pembelian (IDR)",
+        "depreciation": "Periode Depresiasi",
+        "customDuration": "Durasi Kustom (Bulan)",
+        "note": "Catatan (Opsional)"
+      },
+      "placeholders": {
+        "name": "misal, Mesin Kopi, Sistem POS",
+        "selectCategory": "Pilih atau buat kategori...",
+        "pickDate": "Pilih tanggal",
+        "purchaseCost": "0",
+        "customDuration": "36",
+        "note": "Informasi tambahan tentang aset ini..."
+      },
+      "preview": {
+        "title": "Pratinjau Depresiasi",
+        "currentValue": "Nilai Saat Ini",
+        "totalDepreciation": "Total Depresiasi",
+        "monthlyDepreciation": "Depresiasi Bulanan",
+        "remainingMonths": "Sisa Bulan"
+      },
+      "buttons": {
+        "create": "Buat Aset",
+        "update": "Perbarui Aset",
+        "saving": "Menyimpan...",
+        "cancel": "Batal"
+      }
+    },
+    "categoryCombobox": {
+      "searchPlaceholder": "Cari kategori...",
+      "emptyText": "Tidak ada kategori.",
+      "manage": "Kelola Kategori",
+      "deleteTitle": "Hapus Kategori",
+      "alertDescription": "Pilih kategori yang ingin dihapus. Hanya kategori yang tidak digunakan yang dapat dihapus.",
+      "confirmTitle": "Hapus Kategori \"{{name}}\"",
+      "inUseMessage": "Tidak dapat menghapus \"{{name}}\". Saat ini digunakan oleh {{count}} aset.",
+      "confirmMessage": "Apakah Anda yakin ingin menghapus \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
+      "deleting": "Menghapus...",
+      "creating": "Membuat kategori..."
+    }
   }
 }

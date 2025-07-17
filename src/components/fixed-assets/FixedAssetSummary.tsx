@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TrendingDown, Package, DollarSign, Calculator } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/utils/formatters'
@@ -17,6 +18,7 @@ export const FixedAssetSummary = memo(function FixedAssetSummary({
   summary,
   loading = false
 }: FixedAssetSummaryProps) {
+  const { t } = useTranslation()
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -44,52 +46,52 @@ export const FixedAssetSummary = memo(function FixedAssetSummary({
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('fixedAssets.summary.totalAssets')}</CardTitle>
           <Package className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{summary.totalAssets}</div>
           <p className="text-xs text-muted-foreground">
-            Fixed assets in inventory
+            {t('fixedAssets.summary.assetsDesc')}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Purchase Cost</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('fixedAssets.summary.totalPurchaseCost')}</CardTitle>
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(summary.totalPurchaseCost)}</div>
           <p className="text-xs text-muted-foreground">
-            Original investment value
+            {t('fixedAssets.summary.purchaseCostDesc')}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Current Value</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('fixedAssets.summary.currentValue')}</CardTitle>
           <Calculator className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(summary.totalCurrentValue)}</div>
           <p className="text-xs text-muted-foreground">
-            After depreciation calculation
+            {t('fixedAssets.summary.currentValueDesc')}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Depreciation</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('fixedAssets.summary.totalDepreciation')}</CardTitle>
           <TrendingDown className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(summary.totalDepreciation)}</div>
           <p className="text-xs text-muted-foreground">
-            {depreciationRate.toFixed(1)}% of original value
+            {t('fixedAssets.summary.totalDepreciationDesc', { rate: depreciationRate.toFixed(1) })}
           </p>
         </CardContent>
       </Card>
@@ -99,28 +101,19 @@ export const FixedAssetSummary = memo(function FixedAssetSummary({
 
 // Explanatory component for non-financial users
 export const DepreciationExplanation = memo(function DepreciationExplanation() {
+  const { t } = useTranslation()
   return (
     <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">
-          Understanding Fixed Assets & Depreciation
+          {t('fixedAssets.summary.explanationTitle')}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
-        <p>
-          <strong>Fixed Assets</strong> are long-term items your business owns, like equipment, furniture, or technology.
-        </p>
-        <p>
-          <strong>Depreciation</strong> spreads the cost of these assets over their useful life. For example, 
-          a ₹60,000 coffee machine used for 5 years costs ₹12,000 per year (₹1,000 per month) in depreciation.
-        </p>
-        <p>
-          <strong>Current Value</strong> shows what the asset is worth today after accounting for wear and age.
-        </p>
-        <p className="text-xs">
-          This system automatically creates monthly depreciation entries in your Fixed Costs to accurately 
-          reflect your business expenses.
-        </p>
+        <p dangerouslySetInnerHTML={{ __html: t('fixedAssets.summary.explanation.p1') }} />
+        <p dangerouslySetInnerHTML={{ __html: t('fixedAssets.summary.explanation.p2') }} />
+        <p dangerouslySetInnerHTML={{ __html: t('fixedAssets.summary.explanation.p3') }} />
+        <p className="text-xs" dangerouslySetInnerHTML={{ __html: t('fixedAssets.summary.explanation.p4') }} />
       </CardContent>
     </Card>
   )

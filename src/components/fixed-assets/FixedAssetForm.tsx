@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,6 +67,7 @@ const DEPRECIATION_PRESETS = [
 ]
 
 export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitProp }: FixedAssetFormProps) {
+  const { t } = useTranslation()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [useCustomDuration, setUseCustomDuration] = useState(false)
@@ -187,9 +189,9 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Asset Name</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.name')}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Coffee Machine, POS System" {...field} />
+                <Input placeholder={t('fixedAssets.form.placeholders.name')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -201,12 +203,12 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="categoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.category')}</FormLabel>
               <FormControl>
                 <AssetCategoryCombobox
                   value={field.value}
                   onValueChange={field.onChange}
-                  placeholder="Select or create category..."
+                  placeholder={t('fixedAssets.form.placeholders.selectCategory')}
                 />
               </FormControl>
               <FormMessage />
@@ -219,7 +221,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="purchaseDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Purchase Date</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.purchaseDate')}</FormLabel>
               <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -233,7 +235,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
                       {field.value ? (
                         format(new Date(field.value), "PPP")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>{t('fixedAssets.form.placeholders.pickDate')}</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -264,11 +266,11 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="purchaseCost"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Purchase Cost (IDR)</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.purchaseCost')}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
-                  placeholder="0"
+                  placeholder={t('fixedAssets.form.placeholders.purchaseCost')}
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
@@ -279,7 +281,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
         />
 
         <div className="space-y-4">
-          <FormLabel>Depreciation Period</FormLabel>
+          <FormLabel>{t('fixedAssets.form.fields.depreciation')}</FormLabel>
           <Select
             value={useCustomDuration ? '0' : (
               DEPRECIATION_PRESETS.find(preset => preset.value === form.getValues('depreciationMonths'))?.value.toString() || '0'
@@ -287,7 +289,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
             onValueChange={handleDepreciationPresetChange}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select depreciation period" />
+              <SelectValue placeholder={t('fixedAssets.form.placeholders.depreciation')} />
             </SelectTrigger>
             <SelectContent>
               {DEPRECIATION_PRESETS.map((preset) => (
@@ -304,11 +306,11 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
               name="depreciationMonths"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Custom Duration (Months)</FormLabel>
+                  <FormLabel>{t('fixedAssets.form.fields.customDuration')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="36"
+                      placeholder={t('fixedAssets.form.placeholders.customDuration')}
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -325,25 +327,25 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
 
         {currentValue !== null && (
           <div className="p-4 bg-muted/50 rounded-lg">
-            <h4 className="text-sm font-medium mb-2">Depreciation Preview</h4>
+            <h4 className="text-sm font-medium mb-2">{t('fixedAssets.form.preview.title')}</h4>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Current Value</p>
+                <p className="text-muted-foreground">{t('fixedAssets.form.preview.currentValue')}</p>
                 <p className="font-medium">{formatCurrency(currentValue)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Total Depreciation</p>
+                <p className="text-muted-foreground">{t('fixedAssets.form.preview.totalDepreciation')}</p>
                 <p className="font-medium">{formatCurrency(form.getValues('purchaseCost') - currentValue)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Monthly Depreciation</p>
+                <p className="text-muted-foreground">{t('fixedAssets.form.preview.monthlyDepreciation')}</p>
                 <p className="font-medium">{formatCurrency(form.getValues('purchaseCost') / form.getValues('depreciationMonths'))}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Remaining Months</p>
+                <p className="text-muted-foreground">{t('fixedAssets.form.preview.remainingMonths')}</p>
                 <p className="font-medium">
-                  {Math.max(0, form.getValues('depreciationMonths') - 
-                    ((new Date().getFullYear() - new Date(form.getValues('purchaseDate')).getFullYear()) * 12 + 
+                  {Math.max(0, form.getValues('depreciationMonths') -
+                    ((new Date().getFullYear() - new Date(form.getValues('purchaseDate')).getFullYear()) * 12 +
                      (new Date().getMonth() - new Date(form.getValues('purchaseDate')).getMonth())))} months
                 </p>
               </div>
@@ -356,16 +358,16 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Note (Optional)</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.note')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Additional information about this asset..."
+                  placeholder={t('fixedAssets.form.placeholders.note')}
                   className="resize-none"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                Add any additional context or documentation about this asset
+                {t('fixedAssets.form.placeholders.note')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -380,10 +382,10 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
 
         <div className="flex gap-3 pt-4">
           <Button type="submit" disabled={isSubmitting} className="flex-1">
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Asset' : 'Create Asset'}
+            {isSubmitting ? t('fixedAssets.form.buttons.saving') : isEditing ? t('fixedAssets.form.buttons.update') : t('fixedAssets.form.buttons.create')}
           </Button>
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-            Cancel
+            {t('fixedAssets.form.buttons.cancel')}
           </Button>
         </div>
       </form>
