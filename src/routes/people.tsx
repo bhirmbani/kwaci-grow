@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Plus, Users, UserCheck, Edit, Trash2 } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
@@ -15,6 +16,7 @@ import { formatCurrency } from '../utils/formatters'
 import type { Employee } from '../lib/db/schema'
 
 function PeoplePage() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,7 +35,7 @@ function PeoplePage() {
       setEmployees(data)
     } catch (error) {
       console.error('Failed to load employees:', error)
-      toast.error('Failed to load employees')
+      toast.error(t('people.employees.toast.loadError'))
     } finally {
       setLoading(false)
     }
@@ -50,10 +52,10 @@ function PeoplePage() {
       await loadEmployees()
       setEmployeeSheetOpen(false)
       setEditingEmployee(undefined)
-      toast.success('Employee created successfully')
+      toast.success(t('people.employees.toast.createSuccess'))
     } catch (error) {
       console.error('Failed to create employee:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to create employee')
+      toast.error(error instanceof Error ? error.message : t('people.employees.toast.createError'))
       throw error
     } finally {
       setIsSubmitting(false)
@@ -69,10 +71,10 @@ function PeoplePage() {
       await loadEmployees()
       setEmployeeSheetOpen(false)
       setEditingEmployee(undefined)
-      toast.success('Employee updated successfully')
+      toast.success(t('people.employees.toast.updateSuccess'))
     } catch (error) {
       console.error('Failed to update employee:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to update employee')
+      toast.error(error instanceof Error ? error.message : t('people.employees.toast.updateError'))
       throw error
     } finally {
       setIsSubmitting(false)
@@ -84,10 +86,10 @@ function PeoplePage() {
       setDeletingId(employeeId)
       await EmployeeService.delete(employeeId)
       await loadEmployees()
-      toast.success('Employee deleted successfully')
+      toast.success(t('people.employees.toast.deleteSuccess'))
     } catch (error) {
       console.error('Failed to delete employee:', error)
-      toast.error('Failed to delete employee')
+      toast.error(t('people.employees.toast.deleteError'))
     } finally {
       setDeletingId(null)
     }
@@ -106,11 +108,15 @@ function PeoplePage() {
   const getEmploymentStatusBadge = (status: Employee['employmentStatus']) => {
     switch (status) {
       case 'Active':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            {t('people.employees.badges.active')}
+          </Badge>
+        )
       case 'Inactive':
-        return <Badge variant="secondary">Inactive</Badge>
+        return <Badge variant="secondary">{t('people.employees.badges.inactive')}</Badge>
       case 'Terminated':
-        return <Badge variant="destructive">Terminated</Badge>
+        return <Badge variant="destructive">{t('people.employees.badges.terminated')}</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -120,8 +126,12 @@ function PeoplePage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">No Business Selected</h2>
-          <p className="text-muted-foreground">Please select a business to manage employees.</p>
+          <h2 className="text-xl font-semibold mb-2">
+            {t('people.page.noBusiness.title')}
+          </h2>
+          <p className="text-muted-foreground">
+            {t('people.page.noBusiness.description')}
+          </p>
         </div>
       </div>
     )
@@ -132,9 +142,9 @@ function PeoplePage() {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">People Management</h1>
+          <h1 className="text-3xl font-bold">{t('people.page.title')}</h1>
           <p className="text-muted-foreground">
-            Manage employees and point-of-contact assignments
+            {t('people.page.description')}
           </p>
         </div>
       </div>
@@ -145,29 +155,30 @@ function PeoplePage() {
           <div>
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Users className="h-6 w-6" />
-              Employees
+              {t('people.employees.title')}
             </h2>
             <p className="text-muted-foreground">
-              Manage employee information and details
+              {t('people.employees.description')}
             </p>
           </div>
           <Sheet open={employeeSheetOpen} onOpenChange={setEmployeeSheetOpen}>
             <SheetTrigger asChild>
               <Button onClick={handleAddEmployee}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Employee
+                {t('people.employees.addButton')}
               </Button>
             </SheetTrigger>
             <SheetContent className="w-full sm:max-w-2xl">
               <SheetHeader>
                 <SheetTitle>
-                  {editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+                  {editingEmployee
+                    ? t('people.employees.editTitle')
+                    : t('people.employees.createTitle')}
                 </SheetTitle>
                 <SheetDescription>
-                  {editingEmployee 
-                    ? 'Update employee information and details'
-                    : 'Add a new employee with complete information'
-                  }
+                  {editingEmployee
+                    ? t('people.employees.editDescription')
+                    : t('people.employees.createDescription')}
                 </SheetDescription>
               </SheetHeader>
               <div className="mt-6">
@@ -187,30 +198,30 @@ function PeoplePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Employee List</CardTitle>
+            <CardTitle>{t('people.employees.listTitle')}</CardTitle>
             <CardDescription>
-              All employees in your organization
+              {t('people.employees.listDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="text-center py-8">Loading employees...</div>
+              <div className="text-center py-8">{t('people.employees.loading')}</div>
             ) : employees.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                No employees found. Add your first employee to get started.
+                {t('people.employees.empty')}
               </div>
             ) : (
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Position</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Hire Date</TableHead>
-                      <TableHead>Salary</TableHead>
-                      <TableHead className="w-[120px]">Actions</TableHead>
+                      <TableHead>{t('people.employees.table.employee')}</TableHead>
+                      <TableHead>{t('people.employees.table.position')}</TableHead>
+                      <TableHead>{t('people.employees.table.department')}</TableHead>
+                      <TableHead>{t('people.employees.table.status')}</TableHead>
+                      <TableHead>{t('people.employees.table.hireDate')}</TableHead>
+                      <TableHead>{t('people.employees.table.salary')}</TableHead>
+                      <TableHead className="w-[120px]">{t('people.employees.table.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -242,7 +253,9 @@ function PeoplePage() {
                           {new Date(employee.hireDate).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          {employee.salary ? formatCurrency(employee.salary) : 'Not specified'}
+                          {employee.salary
+                            ? formatCurrency(employee.salary)
+                            : t('people.employees.notSpecified')}
                         </TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
@@ -261,7 +274,7 @@ function PeoplePage() {
                               className="text-destructive hover:text-destructive"
                             >
                               {deletingId === employee.id ? (
-                                'Deleting...'
+                                t('people.employees.deleting')
                               ) : (
                                 <Trash2 className="h-4 w-4" />
                               )}
@@ -282,7 +295,9 @@ function PeoplePage() {
       <div className="border-t pt-8">
         <div className="flex items-center gap-2 mb-6">
           <UserCheck className="h-6 w-6" />
-          <h2 className="text-2xl font-bold">Point of Contact Management</h2>
+          <h2 className="text-2xl font-bold">
+            {t('people.poc.sectionTitle')}
+          </h2>
         </div>
         <PocAssignmentSection onRefresh={loadEmployees} />
       </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -63,6 +64,7 @@ interface EmployeeFormProps {
 }
 
 export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = false }: EmployeeFormProps) {
+  const { t } = useTranslation()
   const [dobCalendarOpen, setDobCalendarOpen] = useState(false)
   const [hireDateCalendarOpen, setHireDateCalendarOpen] = useState(false)
   const isEditing = !!employee
@@ -99,16 +101,16 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         {/* Personal Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Personal Information</h3>
+          <h3 className="text-lg font-medium">{t('people.forms.employee.sections.personal')}</h3>
           
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name *</FormLabel>
+                <FormLabel>{t('people.forms.employee.fields.fullName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter full name" {...field} />
+                  <Input placeholder={t('people.forms.employee.placeholders.fullName')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,9 +123,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="companyIdNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company ID Number *</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.companyIdNumber')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., EMP001" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.companyIdNumber')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,9 +137,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="nationalIdNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>National ID Number</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.nationalIdNumber')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 1234567890123456" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.nationalIdNumber')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,7 +152,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
             name="dateOfBirth"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Date of Birth</FormLabel>
+                <FormLabel>{t('people.forms.employee.fields.dateOfBirth')}</FormLabel>
                 <Popover open={dobCalendarOpen} onOpenChange={setDobCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -164,7 +166,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t('people.forms.employee.pickDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -193,7 +195,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
 
         {/* Professional Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Professional Information</h3>
+          <h3 className="text-lg font-medium">{t('people.forms.employee.sections.professional')}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -201,9 +203,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="position"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Position/Job Title *</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.position')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Barista, Manager" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.position')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -215,9 +217,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="department"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Department *</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.department')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Operations, Management" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.department')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -231,9 +233,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="jobLevel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Job Level</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.jobLevel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Junior, Senior, Manager" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.jobLevel')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,11 +247,11 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="salary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Salary (IDR)</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.salary')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="e.g., 5000000" 
+                    <Input
+                      type="number"
+                      placeholder={t('people.forms.employee.placeholders.salary')}
                       {...field}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
                     />
@@ -265,7 +267,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
             name="hireDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Hire Date *</FormLabel>
+                <FormLabel>{t('people.forms.employee.fields.hireDate')}</FormLabel>
                 <Popover open={hireDateCalendarOpen} onOpenChange={setHireDateCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -279,7 +281,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t('people.forms.employee.pickDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -308,17 +310,17 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
             name="employmentStatus"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Employment Status</FormLabel>
+                <FormLabel>{t('people.forms.employee.fields.employmentStatus')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select employment status" />
+                      <SelectValue placeholder={t('people.forms.employee.fields.employmentStatus')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Inactive">Inactive</SelectItem>
-                    <SelectItem value="Terminated">Terminated</SelectItem>
+                    <SelectItem value="Active">{t('people.employees.badges.active')}</SelectItem>
+                    <SelectItem value="Inactive">{t('people.employees.badges.inactive')}</SelectItem>
+                    <SelectItem value="Terminated">{t('people.employees.badges.terminated')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -329,7 +331,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
 
         {/* Contact Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Contact Information</h3>
+          <h3 className="text-lg font-medium">{t('people.forms.employee.sections.contact')}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -337,9 +339,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.phone')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., +62812345678" {...field} />
+                    <Input placeholder={t('people.forms.employee.placeholders.phone')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -351,9 +353,9 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.email')}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="e.g., employee@company.com" {...field} />
+                    <Input type="email" placeholder={t('people.forms.employee.placeholders.email')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -368,10 +370,10 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Additional Notes</FormLabel>
+              <FormLabel>{t('people.forms.employee.fields.note')}</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Any additional information about the employee..."
+                <Textarea
+                  placeholder={t('people.forms.employee.placeholders.note')}
                   className="min-h-[100px]"
                   {...field}
                 />
@@ -384,10 +386,14 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
         {/* Form Actions */}
         <div className="flex justify-end space-x-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t('people.forms.employee.buttons.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Employee' : 'Create Employee'}
+            {isSubmitting
+              ? t('people.forms.employee.buttons.saving')
+              : isEditing
+                ? t('people.forms.employee.buttons.update')
+                : t('people.forms.employee.buttons.create')}
           </Button>
         </div>
       </form>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -37,6 +38,7 @@ interface PocAssignmentFormProps {
 }
 
 export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: PocAssignmentFormProps) {
+  const { t } = useTranslation()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [branches, setBranches] = useState<Branch[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,21 +88,21 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
   }
 
   if (loading) {
-    return <div className="p-4 text-center">Loading employees and branches...</div>
+    return <div className="p-4 text-center">{t('people.forms.poc.loading')}</div>
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Assign Point of Contact</h3>
+          <h3 className="text-lg font-medium">{t('people.forms.poc.title')}</h3>
           
           <FormField
             control={form.control}
             name="employeeId"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Employee *</FormLabel>
+                <FormLabel>{t('people.forms.poc.fields.employee')}</FormLabel>
                 <Popover open={employeeComboOpen} onOpenChange={setEmployeeComboOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -114,16 +116,16 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
                       >
                         {field.value
                           ? employees.find((employee) => employee.id === field.value)?.name
-                          : "Select employee"}
+                          : t('people.forms.poc.selectEmployee')}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Search employees..." />
+                      <CommandInput placeholder={t('people.forms.poc.placeholders.searchEmployees')} />
                       <CommandList>
-                        <CommandEmpty>No employee found.</CommandEmpty>
+                        <CommandEmpty>{t('people.forms.poc.noEmployee')}</CommandEmpty>
                         <CommandGroup>
                           {employees.map((employee) => (
                             <CommandItem
@@ -165,7 +167,7 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
             name="branchId"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Branch *</FormLabel>
+                <FormLabel>{t('people.forms.poc.fields.branch')}</FormLabel>
                 <Popover open={branchComboOpen} onOpenChange={setBranchComboOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -179,16 +181,16 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
                       >
                         {field.value
                           ? branches.find((branch) => branch.id === field.value)?.name
-                          : "Select branch"}
+                          : t('people.forms.poc.selectBranch')}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Search branches..." />
+                      <CommandInput placeholder={t('people.forms.poc.placeholders.searchBranches')} />
                       <CommandList>
-                        <CommandEmpty>No branch found.</CommandEmpty>
+                        <CommandEmpty>{t('people.forms.poc.noBranch')}</CommandEmpty>
                         <CommandGroup>
                           {branches.map((branch) => (
                             <CommandItem
@@ -230,7 +232,7 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
             name="assignedDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Assignment Date *</FormLabel>
+                <FormLabel>{t('people.forms.poc.fields.assignedDate')}</FormLabel>
                 <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -244,7 +246,7 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t('people.forms.poc.pickDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -275,8 +277,8 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Any additional notes about this assignment..."
+                  <Textarea
+                    placeholder={t('people.forms.poc.placeholders.notes')}
                     className="min-h-[80px]"
                     {...field}
                   />
@@ -290,10 +292,12 @@ export function PocAssignmentForm({ onSubmit, onCancel, isSubmitting = false }: 
         {/* Form Actions */}
         <div className="flex justify-end space-x-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t('people.forms.poc.buttons.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Assigning...' : 'Assign POC'}
+            {isSubmitting
+              ? t('people.forms.poc.buttons.assigning')
+              : t('people.forms.poc.buttons.assign')}
           </Button>
         </div>
       </form>
@@ -330,33 +334,33 @@ export function PocAssignmentManager({
   }
 
   if (isLoading) {
-    return <div className="p-4 text-center">Loading POC assignments...</div>
+    return <div className="p-4 text-center">{t('people.poc.manager.loading')}</div>
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Current POC Assignments</CardTitle>
+        <CardTitle>{t('people.poc.managerTitle')}</CardTitle>
         <CardDescription>
-          Manage point of contact assignments for branches
+          {t('people.poc.managerDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {assignments.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No POC assignments found. Assign employees as points of contact for branches.
+            {t('people.poc.noAssignments')}
           </div>
         ) : (
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Branch</TableHead>
-                  <TableHead>Assigned Date</TableHead>
-                  <TableHead>Notes</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableHead>{t('people.poc.table.employee')}</TableHead>
+                  <TableHead>{t('people.poc.table.position')}</TableHead>
+                  <TableHead>{t('people.poc.table.branch')}</TableHead>
+                  <TableHead>{t('people.poc.table.date')}</TableHead>
+                  <TableHead>{t('people.poc.table.notes')}</TableHead>
+                  <TableHead className="w-[100px]">{t('people.poc.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -403,7 +407,7 @@ export function PocAssignmentManager({
                         className="text-destructive hover:text-destructive"
                       >
                         {removingId === assignment.id ? (
-                          'Removing...'
+                          t('people.poc.manager.removing')
                         ) : (
                           <Trash2 className="h-4 w-4" />
                         )}
@@ -473,23 +477,23 @@ export function PocAssignmentSection({ onRefresh }: PocAssignmentSectionProps) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">POC Assignments</h2>
+          <h2 className="text-2xl font-bold">{t('people.poc.sectionTitle')}</h2>
           <p className="text-muted-foreground">
-            Assign employees as points of contact for specific branches
+            {t('people.poc.description')}
           </p>
         </div>
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Assign POC
+              {t('people.poc.assignButton')}
             </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>Assign Point of Contact</SheetTitle>
+              <SheetTitle>{t('people.poc.sheetTitle')}</SheetTitle>
               <SheetDescription>
-                Assign an employee as a point of contact for a branch
+                {t('people.poc.sheetDescription')}
               </SheetDescription>
             </SheetHeader>
             <div className="mt-6">

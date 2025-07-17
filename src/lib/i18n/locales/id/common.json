@@ -1427,7 +1427,144 @@
         "dailyRevenue": "Pendapatan Harian",
         "dailyProfit": "Laba Harian",
         "monthlyRevenue": "Pendapatan Bulanan",
-        "monthlyProfit": "Laba Bulanan"
+      "monthlyProfit": "Laba Bulanan"
+      }
+    }
+  },
+  "people": {
+    "page": {
+      "title": "Manajemen Karyawan",
+      "description": "Kelola karyawan dan penugasan point-of-contact",
+      "noBusiness": {
+        "title": "Tidak Ada Bisnis Dipilih",
+        "description": "Silakan pilih bisnis untuk mengelola karyawan"
+      }
+    },
+    "employees": {
+      "title": "Karyawan",
+      "description": "Kelola informasi dan detail karyawan",
+      "addButton": "Tambah Karyawan",
+      "editTitle": "Edit Karyawan",
+      "createTitle": "Tambah Karyawan Baru",
+      "editDescription": "Perbarui informasi dan detail karyawan",
+      "createDescription": "Tambahkan karyawan baru dengan informasi lengkap",
+      "listTitle": "Daftar Karyawan",
+      "listDescription": "Semua karyawan di organisasi Anda",
+      "loading": "Memuat karyawan...",
+      "empty": "Belum ada karyawan. Tambahkan karyawan pertama Anda.",
+      "table": {
+        "employee": "Karyawan",
+        "position": "Posisi",
+        "department": "Departemen",
+        "status": "Status",
+        "hireDate": "Tanggal Masuk",
+        "salary": "Gaji",
+        "actions": "Aksi"
+      },
+      "badges": {
+        "active": "Aktif",
+        "inactive": "Tidak Aktif",
+        "terminated": "Diberhentikan"
+      },
+      "notSpecified": "Tidak ditentukan",
+      "deleting": "Menghapus..."
+    },
+    "toast": {
+      "loadError": "Gagal memuat karyawan",
+      "createSuccess": "Karyawan berhasil dibuat",
+      "createError": "Gagal membuat karyawan",
+      "updateSuccess": "Karyawan berhasil diperbarui",
+      "updateError": "Gagal memperbarui karyawan",
+      "deleteSuccess": "Karyawan berhasil dihapus",
+      "deleteError": "Gagal menghapus karyawan"
+    },
+    "poc": {
+      "sectionTitle": "Manajemen POC",
+      "description": "Tetapkan karyawan sebagai point of contact untuk cabang",
+      "assignButton": "Tetapkan POC",
+      "sheetTitle": "Tetapkan Point of Contact",
+      "sheetDescription": "Tetapkan karyawan sebagai point of contact untuk cabang",
+      "managerTitle": "Daftar POC Saat Ini",
+      "managerDescription": "Kelola penugasan point of contact untuk cabang",
+      "noAssignments": "Belum ada penugasan POC. Tetapkan karyawan sebagai point of contact untuk cabang.",
+      "table": {
+        "employee": "Karyawan",
+        "position": "Posisi",
+        "branch": "Cabang",
+        "date": "Tanggal Penugasan",
+        "notes": "Catatan",
+        "actions": "Aksi"
+      },
+      "noNotes": "Tidak ada catatan",
+      "removing": "Menghapus...",
+      "loading": "Memuat penugasan POC..."
+    },
+    "forms": {
+      "employee": {
+        "sections": {
+          "personal": "Informasi Pribadi",
+          "professional": "Informasi Profesional",
+          "contact": "Informasi Kontak"
+        },
+        "fields": {
+          "fullName": "Nama Lengkap *",
+          "companyIdNumber": "Nomor ID Perusahaan *",
+          "nationalIdNumber": "Nomor ID Nasional",
+          "dateOfBirth": "Tanggal Lahir",
+          "position": "Posisi/Jabatan *",
+          "department": "Departemen *",
+          "jobLevel": "Level Jabatan",
+          "salary": "Gaji (IDR)",
+          "hireDate": "Tanggal Masuk *",
+          "employmentStatus": "Status Karyawan",
+          "phone": "Nomor Telepon",
+          "email": "Alamat Email",
+          "note": "Catatan Tambahan"
+        },
+        "placeholders": {
+          "fullName": "Masukkan nama lengkap",
+          "companyIdNumber": "mis. EMP001",
+          "nationalIdNumber": "mis. 1234567890123456",
+          "position": "mis. Barista, Manajer",
+          "department": "mis. Operasional, Manajemen",
+          "jobLevel": "mis. Junior, Senior, Manajer",
+          "salary": "mis. 5000000",
+          "phone": "mis. +62812345678",
+          "email": "mis. karyawan@perusahaan.com",
+          "note": "Informasi tambahan tentang karyawan..."
+        },
+        "pickDate": "Pilih tanggal",
+        "buttons": {
+          "cancel": "Batal",
+          "create": "Buat Karyawan",
+          "update": "Perbarui Karyawan",
+          "saving": "Menyimpan..."
+        }
+      },
+      "poc": {
+        "title": "Tetapkan Point of Contact",
+        "fields": {
+          "employee": "Karyawan *",
+          "branch": "Cabang *",
+          "assignedDate": "Tanggal Penugasan *",
+          "note": "Catatan"
+        },
+        "placeholders": {
+          "searchEmployees": "Cari karyawan...",
+          "searchBranches": "Cari cabang...",
+          "notes": "Catatan tambahan tentang penugasan ini..."
+        },
+        "selectEmployee": "Pilih karyawan",
+        "selectBranch": "Pilih cabang",
+        "pickDate": "Pilih tanggal",
+        "noEmployee": "Karyawan tidak ditemukan.",
+        "noBranch": "Cabang tidak ditemukan.",
+        "loading": "Memuat karyawan dan cabang...",
+        "buttons": {
+          "assign": "Tetapkan POC",
+          "assigning": "Menetapkan...",
+          "cancel": "Batal"
+        }
       }
     }
   }
