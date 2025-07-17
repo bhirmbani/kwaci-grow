@@ -1,6 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { BookOpen, Calculator, Receipt, TrendingUp, DollarSign, PieChart, ChevronRight, Search } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import {
+  BookOpen,
+  Calculator,
+  Receipt,
+  TrendingUp,
+  DollarSign,
+  PieChart,
+  ChevronRight,
+  Search,
+} from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
@@ -9,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Link } from '@tanstack/react-router'
 
 function LearnPage() {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeModule, setActiveModule] = useState('accounting')
 
@@ -16,40 +27,40 @@ function LearnPage() {
   const learningModules = [
     {
       id: 'accounting',
-      title: 'Accounting & Financial Management',
-      description: 'Learn essential accounting concepts for your coffee shop business',
+      title: t('learn.modules.accounting.title'),
+      description: t('learn.modules.accounting.description'),
       icon: Receipt,
       color: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800',
       route: '/accounting',
-      available: true
+      available: true,
     },
     {
       id: 'operations',
-      title: 'Operations & Sales Management',
-      description: 'Understanding sales targets, recording, and operational metrics',
+      title: t('learn.modules.operations.title'),
+      description: t('learn.modules.operations.description'),
       icon: TrendingUp,
       color: 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800',
       route: '/operations',
-      available: false
+      available: false,
     },
     {
       id: 'warehouse',
-      title: 'Inventory & Warehouse Management',
-      description: 'Stock management, inventory tracking, and warehouse operations',
+      title: t('learn.modules.warehouse.title'),
+      description: t('learn.modules.warehouse.description'),
       icon: Calculator,
       color: 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
       route: '/warehouse',
-      available: false
+      available: false,
     },
     {
       id: 'analytics',
-      title: 'Business Analytics & Reporting',
-      description: 'Understanding financial reports, metrics, and business intelligence',
+      title: t('learn.modules.analytics.title'),
+      description: t('learn.modules.analytics.description'),
       icon: PieChart,
       color: 'bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800',
       route: '/analytics',
-      available: false
-    }
+      available: false,
+    },
   ]
 
   // Accounting learning content
@@ -201,10 +212,10 @@ function LearnPage() {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <BookOpen className="h-8 w-8 text-blue-600" />
-          Learning Hub
+          {t('learn.page.title')}
         </h1>
         <p className="text-muted-foreground">
-          Master financial concepts and business management skills for your coffee shop
+          {t('learn.page.description')}
         </p>
       </div>
 
@@ -212,7 +223,7 @@ function LearnPage() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search learning topics..."
+          placeholder={t('learn.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -238,11 +249,11 @@ function LearnPage() {
                   </div>
                   {module.available ? (
                     <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                      Available
+                      {t('learn.available')}
                     </Badge>
                   ) : (
                     <Badge variant="outline">
-                      Coming Soon
+                      {t('learn.comingSoon')}
                     </Badge>
                   )}
                 </div>
@@ -250,22 +261,22 @@ function LearnPage() {
               <CardContent className="pt-0">
                 <div className="flex items-center justify-between">
                   {module.available ? (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => setActiveModule(module.id)}
                       className="flex items-center gap-2"
                     >
-                      Start Learning
+                      {t('learn.startLearning')}
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   ) : (
                     <Button variant="outline" size="sm" disabled>
-                      Coming Soon
+                      {t('learn.comingSoon')}
                     </Button>
                   )}
                   <Link to={module.route} className="text-sm text-muted-foreground hover:text-foreground">
-                    View {module.title.split(' ')[0]} Section →
+                    {t('learn.viewSection', { section: module.title.split(' ')[0] })}
                   </Link>
                 </div>
               </CardContent>
@@ -280,19 +291,19 @@ function LearnPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Receipt className="h-5 w-5" />
-              Accounting & Financial Management Learning
+              {t('learn.accounting.title')}
             </CardTitle>
             <CardDescription>
-              Essential financial concepts every coffee shop owner should understand
+              {t('learn.accounting.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="basic-concepts" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="basic-concepts">Basics</TabsTrigger>
-                <TabsTrigger value="transaction-types">Transactions</TabsTrigger>
-                <TabsTrigger value="financial-health">Financial Health</TabsTrigger>
-                <TabsTrigger value="cost-management">Cost Management</TabsTrigger>
+                <TabsTrigger value="basic-concepts">{t('learn.tabs.basics')}</TabsTrigger>
+                <TabsTrigger value="transaction-types">{t('learn.tabs.transactions')}</TabsTrigger>
+                <TabsTrigger value="financial-health">{t('learn.tabs.financialHealth')}</TabsTrigger>
+                <TabsTrigger value="cost-management">{t('learn.tabs.costManagement')}</TabsTrigger>
               </TabsList>
               
               {filteredTopics.map((section) => (
@@ -307,17 +318,17 @@ function LearnPage() {
                         </CardHeader>
                         <CardContent className="space-y-3">
                           <div>
-                            <h4 className="font-medium text-sm text-muted-foreground mb-1">Definition</h4>
+                          <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('learn.section.definition')}</h4>
                             <p className="text-sm">{topic.definition}</p>
                           </div>
                           <div>
-                            <h4 className="font-medium text-sm text-muted-foreground mb-1">Coffee Shop Example</h4>
+                          <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('learn.section.example')}</h4>
                             <p className="text-sm bg-amber-50 dark:bg-amber-950/20 p-3 rounded-md border border-amber-200 dark:border-amber-800">
                               {topic.example}
                             </p>
                           </div>
                           <div>
-                            <h4 className="font-medium text-sm text-muted-foreground mb-1">How it works in our app</h4>
+                          <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('learn.section.context')}</h4>
                             <p className="text-sm bg-blue-50 dark:bg-blue-950/20 p-3 rounded-md border border-blue-200 dark:border-blue-800">
                               {topic.context}
                             </p>
@@ -332,30 +343,30 @@ function LearnPage() {
 
             {/* Quick Links to Related Sections */}
             <div className="mt-8 p-4 bg-muted rounded-lg">
-              <h3 className="font-semibold mb-3">Ready to apply what you've learned?</h3>
+              <h3 className="font-semibold mb-3">{t('learn.quickLinks.title')}</h3>
               <div className="flex flex-wrap gap-2">
                 <Button asChild variant="outline" size="sm">
                   <Link to="/accounting">
                     <Receipt className="h-4 w-4 mr-2" />
-                    Go to Accounting
+                    {t('learn.quickLinks.goToAccounting')}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <Link to="/cogs">
                     <Calculator className="h-4 w-4 mr-2" />
-                    COGS Calculator
+                    {t('learn.quickLinks.cogsCalculator')}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <Link to="/analytics">
                     <TrendingUp className="h-4 w-4 mr-2" />
-                    View Analytics
+                    {t('learn.quickLinks.viewAnalytics')}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="sm">
                   <Link to="/">
                     <DollarSign className="h-4 w-4 mr-2" />
-                    Financial Dashboard
+                    {t('learn.quickLinks.financialDashboard')}
                   </Link>
                 </Button>
               </div>
@@ -369,9 +380,9 @@ function LearnPage() {
         <Card>
           <CardContent className="text-center py-12">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Learning Module Coming Soon</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('learn.comingSoonMessage.title')}</h3>
             <p className="text-muted-foreground">
-              We're working on comprehensive learning materials for this module.
+              {t('learn.comingSoonMessage.description')}
             </p>
           </CardContent>
         </Card>

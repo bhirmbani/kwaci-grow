@@ -2658,7 +2658,62 @@
       "inUseMessage": "Cannot delete \"{{name}}\". It is currently used by {{count}} asset(s). Please reassign or delete those assets first.",
       "confirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
       "deleting": "Deleting...",
-      "creating": "Creating category..."
+    "creating": "Creating category..."
+    }
+  },
+  "learn": {
+    "page": {
+      "title": "Learning Hub",
+      "description": "Master financial concepts and business management skills for your coffee shop"
+    },
+    "searchPlaceholder": "Search learning topics...",
+    "modules": {
+      "accounting": {
+        "title": "Accounting & Financial Management",
+        "description": "Learn essential accounting concepts for your coffee shop business"
+      },
+      "operations": {
+        "title": "Operations & Sales Management",
+        "description": "Understanding sales targets, recording, and operational metrics"
+      },
+      "warehouse": {
+        "title": "Inventory & Warehouse Management",
+        "description": "Stock management, inventory tracking, and warehouse operations"
+      },
+      "analytics": {
+        "title": "Business Analytics & Reporting",
+        "description": "Understanding financial reports, metrics, and business intelligence"
+      }
+    },
+    "available": "Available",
+    "comingSoon": "Coming Soon",
+    "startLearning": "Start Learning",
+    "viewSection": "View {{section}} Section →",
+    "quickLinks": {
+      "title": "Ready to apply what you've learned?",
+      "goToAccounting": "Go to Accounting",
+      "cogsCalculator": "COGS Calculator",
+      "viewAnalytics": "View Analytics",
+      "financialDashboard": "Financial Dashboard"
+    },
+    "comingSoonMessage": {
+      "title": "Learning Module Coming Soon",
+      "description": "We're working on comprehensive learning materials for this module."
+    },
+    "tabs": {
+      "basics": "Basics",
+      "transactions": "Transactions",
+      "financialHealth": "Financial Health",
+      "costManagement": "Cost Management"
+    },
+    "section": {
+      "definition": "Definition",
+      "example": "Coffee Shop Example",
+      "context": "How it works in our app"
+    },
+    "accounting": {
+      "title": "Accounting & Financial Management Learning",
+      "description": "Essential financial concepts every coffee shop owner should understand"
     }
   }
 }

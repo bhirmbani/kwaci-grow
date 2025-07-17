@@ -2658,7 +2658,62 @@
       "inUseMessage": "Tidak dapat menghapus \"{{name}}\". Saat ini digunakan oleh {{count}} aset.",
       "confirmMessage": "Apakah Anda yakin ingin menghapus \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
       "deleting": "Menghapus...",
-      "creating": "Membuat kategori..."
+    "creating": "Membuat kategori..."
+    }
+  },
+  "learn": {
+    "page": {
+      "title": "Pusat Belajar",
+      "description": "Pelajari konsep keuangan dan manajemen bisnis untuk kedai kopi Anda"
+    },
+    "searchPlaceholder": "Cari topik pembelajaran...",
+    "modules": {
+      "accounting": {
+        "title": "Akuntansi & Manajemen Keuangan",
+        "description": "Pelajari konsep akuntansi penting untuk bisnis kedai kopi Anda"
+      },
+      "operations": {
+        "title": "Manajemen Operasional & Penjualan",
+        "description": "Memahami target penjualan, pencatatan, dan metrik operasional"
+      },
+      "warehouse": {
+        "title": "Manajemen Inventori & Gudang",
+        "description": "Pengelolaan stok, pelacakan inventori, dan operasi gudang"
+      },
+      "analytics": {
+        "title": "Analitik Bisnis & Pelaporan",
+        "description": "Memahami laporan keuangan, metrik, dan business intelligence"
+      }
+    },
+    "available": "Tersedia",
+    "comingSoon": "Segera Hadir",
+    "startLearning": "Mulai Belajar",
+    "viewSection": "Lihat bagian {{section}} →",
+    "quickLinks": {
+      "title": "Siap menerapkan yang sudah dipelajari?",
+      "goToAccounting": "Buka Akuntansi",
+      "cogsCalculator": "Kalkulator HPP",
+      "viewAnalytics": "Lihat Analitik",
+      "financialDashboard": "Dasbor Keuangan"
+    },
+    "comingSoonMessage": {
+      "title": "Modul Pembelajaran Segera Hadir",
+      "description": "Kami sedang menyiapkan materi pembelajaran lengkap untuk modul ini."
+    },
+    "tabs": {
+      "basics": "Dasar",
+      "transactions": "Transaksi",
+      "financialHealth": "Kesehatan Keuangan",
+      "costManagement": "Manajemen Biaya"
+    },
+    "section": {
+      "definition": "Definisi",
+      "example": "Contoh Kedai Kopi",
+      "context": "Cara kerjanya di aplikasi"
+    },
+    "accounting": {
+      "title": "Pembelajaran Akuntansi & Manajemen Keuangan",
+      "description": "Konsep keuangan penting yang harus dipahami pemilik kedai kopi"
     }
   }
 }
