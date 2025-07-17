@@ -1045,13 +1045,24 @@
       "noIngredients": "Belum ada bahan pada produk ini.",
       "addIngredientsPrompt": "Tambahkan bahan untuk melihat perhitungan HPP.",
       "titleFor": "Perhitungan HPP untuk {{name}}",
-      "whatIs": { "title": "Apa itu HPP?", "text": "HPP (Harga Pokok Penjualan) adalah total biaya bahan yang dibutuhkan untuk membuat satu cangkir produk ini." },
+      "whatIs": {
+        "title": "Apa itu HPP?",
+        "text": "HPP (Harga Pokok Penjualan) adalah total biaya bahan yang dibutuhkan untuk membuat satu cangkir produk ini."
+      },
       "totalCogsPerCup": "Total HPP per Cangkir",
       "ingredientCount": "{{count}} bahan",
       "ingredientBreakdown": "Rincian Bahan",
-      "table": { "ingredient": "Bahan", "usagePerCup": "Penggunaan", "costPerCup": "Biaya per Cangkir", "percentOfTotal": "% dari Total" },
-      "formula": { "title": "Rumus Perhitungan:", "formula": "Biaya per Cangkir = (Biaya Satuan ÷ Jumlah Satuan) × Penggunaan", "example": "Contoh: Jika susu seharga Rp20.000 per 1000ml dan digunakan 100ml per cangkir, maka biaya per cangkir = (20.000 ÷ 1000) × 100 = Rp2.000" }
+      "table": {
+        "ingredient": "Bahan",
+        "usagePerCup": "Penggunaan",
+        "costPerCup": "Biaya per Cangkir",
+        "percentOfTotal": "% dari Total"
+      },
+      "formula": {
+        "title": "Rumus Perhitungan:",
+        "formula": "Biaya per Cangkir = (Biaya Satuan ÷ Jumlah Satuan) × Penggunaan",
+        "example": "Contoh: Jika susu seharga Rp20.000 per 1000ml dan digunakan 100ml per cangkir, maka biaya per cangkir = (20.000 ÷ 1000) × 100 = Rp2.000"
+      }
     }
-  },
-
+  }
 }
