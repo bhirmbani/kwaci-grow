@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +20,7 @@ interface ProductionBatchListProps {
 }
 
 export function ProductionBatchList({ batches, onStockLevelsChanged }: ProductionBatchListProps) {
+  const { t } = useTranslation()
   const [selectedBatch, setSelectedBatch] = useState<ProductionBatchWithItems | null>(null)
   const [editingBatch, setEditingBatch] = useState<ProductionBatchWithItems | null>(null)
   const [editNote, setEditNote] = useState('')
@@ -158,21 +160,21 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
           </CardTitle>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Label htmlFor="status-filter">Filter by Status:</Label>
+              <Label htmlFor="status-filter">{t('production.batchList.filter')}</Label>
               <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="all">{t('production.batchList.allStatuses')}</SelectItem>
+                  <SelectItem value="Pending">{t('operationsStatus.status.pending')}</SelectItem>
+                  <SelectItem value="In Progress">{t('operationsStatus.status.inProgress')}</SelectItem>
+                  <SelectItem value="Completed">{t('operationsStatus.status.completed')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="text-sm text-muted-foreground">
-              Showing {filteredBatches.length} of {optimisticBatches.length} batches
+              {t('production.batchList.showing', { shown: filteredBatches.length, total: optimisticBatches.length })}
             </div>
           </div>
         </CardHeader>
@@ -181,22 +183,21 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
             <div className="text-center py-8">
               <Factory className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                {statusFilter === 'all' 
-                  ? 'No production batches found. Create your first batch using Quick Production Allocation.'
-                  : `No ${statusFilter.toLowerCase()} batches found.`
-                }
+                {statusFilter === 'all'
+                  ? t('production.batchList.noBatches.all')
+                  : t('production.batchList.noBatches.status', { status: statusFilter.toLowerCase() })}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Batch #</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('production.batchList.table.batch')}</TableHead>
+                  <TableHead>{t('production.batchList.table.status')}</TableHead>
+                  <TableHead>{t('production.batchList.table.created')}</TableHead>
+                  <TableHead>{t('production.batchList.table.items')}</TableHead>
+                  <TableHead>{t('production.batchList.table.note')}</TableHead>
+                  <TableHead>{t('production.batchList.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -231,9 +232,9 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                           </SheetTrigger>
                           <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
                             <SheetHeader>
-                              <SheetTitle>Production Batch #{selectedBatch?.batchNumber}</SheetTitle>
+                              <SheetTitle>{t('production.batchList.viewDetails')} #{selectedBatch?.batchNumber}</SheetTitle>
                               <SheetDescription>
-                                View and manage production batch details
+                                {t('production.batchList.viewDetails')}
                               </SheetDescription>
                             </SheetHeader>
                             {selectedBatch && (
@@ -259,18 +260,18 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                                     </Select>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className="font-medium">Created:</span>
+                                    <span className="font-medium">{t('production.batchList.table.created')}</span>
                                     <span>{new Date(selectedBatch.dateCreated).toLocaleString()}</span>
                                   </div>
                                   <div className="flex items-start justify-between">
-                                    <span className="font-medium">Note:</span>
-                                    <span className="text-right max-w-xs">{selectedBatch.note || 'No note'}</span>
+                                    <span className="font-medium">{t('production.batchList.table.note')}</span>
+                                    <span className="text-right max-w-xs">{selectedBatch.note || t('production.batchList.noNote')}</span>
                                   </div>
                                 </div>
 
                                 {/* Items List */}
                                 <div className="space-y-2">
-                                  <h4 className="font-medium">Allocated Ingredients:</h4>
+                                  <h4 className="font-medium">{t('production.batchList.allocated')}</h4>
                                   <div className="border rounded-lg">
                                     <Table>
                                       <TableHeader>
@@ -315,25 +316,25 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                           </SheetTrigger>
                           <SheetContent className="h-full overflow-y-auto">
                             <SheetHeader>
-                              <SheetTitle>Edit Batch #{editingBatch?.batchNumber}</SheetTitle>
+                              <SheetTitle>{t('production.batchList.updateNote')} #{editingBatch?.batchNumber}</SheetTitle>
                               <SheetDescription>
-                                Update the production batch note
+                                {t('production.batchList.updateNote')}
                               </SheetDescription>
                             </SheetHeader>
                             <div className="space-y-4 mt-6">
                               <div className="space-y-2">
-                                <Label htmlFor="edit-note">Batch Note</Label>
+                                <Label htmlFor="edit-note">{t('production.batchList.batchNote')}</Label>
                                 <Textarea
                                   id="edit-note"
                                   value={editNote}
                                   onChange={(e) => setEditNote(e.target.value)}
-                                  placeholder="Add a note about this production batch..."
+                                  placeholder={t('production.batchList.updateNote')}
                                   rows={4}
                                 />
                               </div>
                               <div className="flex gap-2">
                                 <Button onClick={handleUpdateNote} className="flex-1">
-                                  Save Changes
+                                  {t('production.batchList.save')}
                                 </Button>
                                 <Button 
                                   variant="outline" 
@@ -343,7 +344,7 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                                   }}
                                   className="flex-1"
                                 >
-                                  Cancel
+                                  {t('production.batchList.cancel')}
                                 </Button>
                               </div>
                             </div>
@@ -359,20 +360,18 @@ export function ProductionBatchList({ batches, onStockLevelsChanged }: Productio
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Production Batch</AlertDialogTitle>
+                              <AlertDialogTitle>{t('production.batchList.deleteTitle')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete Production Batch #{batch.batchNumber}? 
-                                {batch.status !== 'Completed' && ' This will release all reserved stock.'}
-                                This action cannot be undone.
+                                {t('production.batchList.deleteConfirm', { batch: batch.batchNumber, releaseStock: batch.status !== 'Completed' ? t('production.batchList.releaseStock', { defaultValue: '' }) : '' })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{t('production.batchList.cancel')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeleteBatch(batch.id)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
-                                Delete Batch
+                                {t('production.batchList.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

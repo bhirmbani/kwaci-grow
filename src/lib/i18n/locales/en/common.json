@@ -2455,6 +2455,111 @@
         "all": "Showing {{shown}} active batch{{plural}}."
       },
       "viewAll": "View all {{count}} batch{{plural}} in Production page."
+    },
+    "management": {
+      "title": "Production Management",
+      "description": "Manage production batches and track ingredient allocations",
+      "tabs": {
+        "overview": "Overview",
+        "batches": "Production Batches",
+        "reservations": "Reserved Operations"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "description": "Common production management tasks",
+        "viewAllBatches": "View All Production Batches",
+        "manageReservations": "Manage Stock Reservations"
+      },
+      "stats": {
+        "totalBatches": "Total Batches",
+        "totalBatchesDesc": "Production batches created",
+        "pending": "Pending",
+        "pendingDesc": "Awaiting production start",
+        "inProgress": "In Progress",
+        "inProgressDesc": "Currently in production",
+        "completed": "Completed",
+        "completedDesc": "Production finished",
+        "latestBatch": "Latest Production Batch",
+        "batchNumber": "Batch Number:",
+        "status": "Status:",
+        "created": "Created:",
+        "note": "Note:"
+      }
+    },
+    "batchList": {
+      "filter": "Filter by Status:",
+      "allStatuses": "All Statuses",
+      "showing": "Showing {{shown}} of {{total}} batches",
+      "noBatches": {
+        "all": "No production batches found. Create your first batch using Quick Production Allocation.",
+        "status": "No {{status}} batches found."
+      },
+      "table": {
+        "batch": "Batch #",
+        "status": "Status",
+        "created": "Created",
+        "items": "Items",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "viewDetails": "View and manage production batch details",
+      "batchNote": "Batch Note",
+      "updateNote": "Update the production batch note",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "deleteTitle": "Delete Production Batch",
+      "deleteConfirm": "Are you sure you want to delete Production Batch #{{batch}}? {{releaseStock}} This action cannot be undone.",
+      "releaseStock": "This will release all reserved stock.",
+      "delete": "Delete Batch",
+      "noNote": "No note",
+      "allocated": "Allocated Ingredients:"
+    },
+    "reservations": {
+      "stats": {
+        "total": "Total Reservations",
+        "manual": "Manual Reservations",
+        "production": "Production Reservations"
+      },
+      "title": "Reserved Operations",
+      "description": "Manage all stock reservations and their purposes",
+      "create": "Create Reservation",
+      "createTitle": "Create Manual Reservation",
+      "createDescription": "Reserve stock for manual purposes or future orders",
+      "selectStock": "Select Ingredient from Stock",
+      "chooseStock": "Choose an ingredient from available stock",
+      "noStockItems": "No stock items available for reservation",
+      "selected": "Selected: {{ingredient}}",
+      "available": "Available for reservation:",
+      "unit": "Unit",
+      "quantity": "Quantity to Reserve",
+      "reason": "Reason (Optional)",
+      "reasonPlaceholder": "Reason for this reservation...",
+      "creating": "Creating...",
+      "selectFirst": "Select Ingredient First",
+      "invalidQuantity": "Invalid Quantity",
+      "invalidQuantityButton": "Invalid Quantity",
+      "validQuantity": "\u2713 Valid reservation quantity",
+      "createAction": "Create Reservation",
+      "noStockWarning": "No stock available for reservation. Add items to warehouse first.",
+      "filter": "Filter by Purpose:",
+      "allPurposes": "All Purposes",
+      "manual": "Manual Reservations",
+      "productionPurpose": "Production Batches",
+      "showing": "Showing {{shown}} of {{total}} reservations",
+      "noReservations": {
+        "all": "No stock reservations found.",
+        "purpose": "No {{purpose}} reservations found."
+      },
+      "table": {
+        "ingredient": "Ingredient",
+        "quantity": "Quantity",
+        "purpose": "Purpose",
+        "date": "Reserved Date",
+        "actions": "Actions"
+      },
+      "releaseTitle": "Release Reservation",
+      "releaseConfirm": "Are you sure you want to release the reservation of {{quantity}} {{unit}} of {{ingredient}}? This will make the stock available again.",
+      "release": "Release Reservation"
     }
   }
 }
