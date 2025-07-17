@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Filter, Download, TrendingUp, TrendingDown, DollarSign, Receipt, RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,6 +32,7 @@ export function AccountingDashboard() {
   const currentBusiness = useCurrentBusiness()
   const [showFilters, setShowFilters] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  const { t } = useTranslation()
 
   // Always call useAccounting hook to prevent unmounting issues
   const {
@@ -90,9 +92,11 @@ export function AccountingDashboard() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Accounting</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('accounting.dashboard.title')}
+            </h1>
             <p className="text-muted-foreground">
-              Comprehensive financial transaction management
+              {t('accounting.dashboard.tagline')}
             </p>
           </div>
         </div>
@@ -100,7 +104,7 @@ export function AccountingDashboard() {
         <Alert>
           <Receipt className="h-4 w-4" />
           <AlertDescription>
-            Please select a business to view accounting information.
+            {t('accounting.dashboard.selectBusiness')}
           </AlertDescription>
         </Alert>
       </div>
@@ -113,22 +117,24 @@ export function AccountingDashboard() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Accounting</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('accounting.dashboard.title')}
+            </h1>
             <p className="text-muted-foreground">
-              Financial management for {currentBusiness.name}
+              {t('accounting.dashboard.description', { business: currentBusiness.name })}
             </p>
           </div>
         </div>
-        
+
         <Alert variant="destructive">
           <Receipt className="h-4 w-4" />
           <AlertDescription>
             {error}
           </AlertDescription>
         </Alert>
-        
+
         <Button onClick={refetch} variant="outline">
-          Try Again
+          {t('accounting.dashboard.tryAgain')}
         </Button>
       </div>
     )
@@ -139,9 +145,11 @@ export function AccountingDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Accounting</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('accounting.dashboard.title')}
+          </h1>
           <p className="text-muted-foreground">
-            Financial management for {currentBusiness.name}
+            {t('accounting.dashboard.description', { business: currentBusiness.name })}
           </p>
         </div>
         
@@ -152,7 +160,7 @@ export function AccountingDashboard() {
             onClick={() => setShowFilters(!showFilters)}
           >
             <Filter className="h-4 w-4 mr-2" />
-            Filters
+            {t('accounting.dashboard.filters')}
           </Button>
 
           <Button
@@ -162,7 +170,7 @@ export function AccountingDashboard() {
             disabled={loading || summaryLoading}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading || summaryLoading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('accounting.dashboard.refresh')}
           </Button>
 
           <Button
@@ -172,12 +180,12 @@ export function AccountingDashboard() {
             disabled={!currentBusiness || transactions.length === 0 || !financialSummary}
           >
             <Download className="h-4 w-4 mr-2" />
-            Export
+            {t('accounting.dashboard.export')}
           </Button>
 
           {/* Last refresh indicator */}
           <div className="text-xs text-muted-foreground">
-            Updated: {lastRefresh.toLocaleTimeString()}
+            {t('accounting.dashboard.updated', { time: lastRefresh.toLocaleTimeString() })}
           </div>
         </div>
       </div>
@@ -193,7 +201,9 @@ export function AccountingDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.dashboard.totalTransactions')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <TotalTransactionsExplanation summary={financialSummary} transactionCount={transactions.length} />
               <Receipt className="h-4 w-4 text-muted-foreground" />
@@ -206,14 +216,16 @@ export function AccountingDashboard() {
               <div className="text-2xl font-bold">{transactions.length}</div>
             )}
             <p className="text-xs text-muted-foreground">
-              All transaction types
+              {t('accounting.dashboard.allTypes')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sales Income</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.dashboard.salesIncome')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <SalesIncomeExplanation summary={financialSummary} />
               <TrendingUp className="h-4 w-4 text-green-600" />
@@ -228,14 +240,16 @@ export function AccountingDashboard() {
               </div>
             )}
             <p className="text-xs text-muted-foreground">
-              Revenue from sales
+              {t('accounting.dashboard.salesRevenue')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Operating Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.dashboard.operatingExpenses')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <OperatingExpensesExplanation summary={financialSummary} />
               <TrendingDown className="h-4 w-4 text-red-600" />
@@ -250,14 +264,16 @@ export function AccountingDashboard() {
               </div>
             )}
             <p className="text-xs text-muted-foreground">
-              Operational costs
+              {t('accounting.dashboard.operationalCosts')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Net Position</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.dashboard.netPosition')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <NetPositionExplanation summary={financialSummary} />
               <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -276,7 +292,7 @@ export function AccountingDashboard() {
               </div>
             )}
             <p className="text-xs text-muted-foreground">
-              Income minus expenses
+              {t('accounting.dashboard.incomeMinusExpenses')}
             </p>
           </CardContent>
         </Card>
@@ -296,23 +312,23 @@ export function AccountingDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Recent Transactions</CardTitle>
+              <CardTitle>{t('accounting.dashboard.recentTransactions')}</CardTitle>
               <CardDescription>
-                All financial transactions across your business
+                {t('accounting.dashboard.allTransactions')}
               </CardDescription>
             </div>
             
             {currentFilters && (
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">
-                  Filtered
+                  {t('accounting.dashboard.filtered')}
                 </Badge>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
                 >
-                  Clear
+                  {t('accounting.dashboard.clear')}
                 </Button>
               </div>
             )}
