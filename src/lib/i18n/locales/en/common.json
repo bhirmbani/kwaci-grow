@@ -1426,7 +1426,7 @@
         "dailyRevenue": "Daily Revenue",
         "dailyProfit": "Daily Profit",
         "monthlyRevenue": "Monthly Revenue",
-      "monthlyProfit": "Monthly Profit"
+        "monthlyProfit": "Monthly Profit"
       }
     }
   },
@@ -1586,7 +1586,95 @@
       "burnRate": "Monthly Burn Rate",
       "cashFlow": "Cash Flow",
       "netIncome": "Net Income",
-      "alertsTitle": "Health Alerts & Recommendations"
+      "alertsTitle": "Health Alerts & Recommendations",
+      "badges": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "fair": "Fair",
+        "poor": "Poor"
+      },
+      "noDataPrompt": "Record some transactions to see your business health indicators.",
+      "alerts": {
+        "negativeProfitMargin": {
+          "title": "Negative Profit Margin",
+          "message": "Your business is operating at a {{value}}% loss.",
+          "recommendation": "Review expenses and consider increasing prices or reducing costs."
+        },
+        "lowProfitMargin": {
+          "title": "Low Profit Margin",
+          "message": "Profit margin of {{value}}% is below healthy levels.",
+          "recommendation": "Aim for at least 10-15% profit margin for sustainable growth."
+        },
+        "excellentProfitability": {
+          "title": "Excellent Profitability",
+          "message": "Strong profit margin of {{value}}%.",
+          "recommendation": "Consider reinvesting profits for growth opportunities."
+        },
+        "negativeCashFlow": {
+          "title": "Negative Cash Flow",
+          "message": "Cash outflow of {{value}}.",
+          "recommendation": "Focus on increasing income and managing expenses."
+        },
+        "lowCashReserves": {
+          "title": "Low Cash Reserves",
+          "message": "Cash flow covers less than 3 months of expenses.",
+          "recommendation": "Build cash reserves for financial stability."
+        },
+        "highVariableCosts": {
+          "title": "High Variable Costs",
+          "message": "Variable costs are {{value}}% of income.",
+          "recommendation": "Review supplier costs and operational efficiency."
+        },
+        "highFixedCosts": {
+          "title": "High Fixed Costs",
+          "message": "Fixed costs are {{value}}% of income.",
+          "recommendation": "Consider reducing fixed expenses or increasing revenue."
+        },
+        "growthOpportunity": {
+          "title": "Growth Opportunity",
+          "message": "Strong financial position enables expansion.",
+          "recommendation": "Consider investing in marketing, inventory, or new locations."
+        }
+      },
+      "sheets": {
+        "healthScore": {
+          "title": "Financial Health Score Explained",
+          "description": "Understanding your overall business health scoring methodology",
+          "cards": {
+            "whatIs": "What is Financial Health Score?",
+            "scoreRanges": "Score Ranges & Meanings",
+            "scoringFactors": "Scoring Factors",
+            "currentScore": "Your Current Score",
+            "componentScores": "Component Scores",
+            "improving": "Improving Your Score"
+          }
+        },
+        "keyMetrics": {
+          "title": "Key Metrics Explained",
+          "description": "Understanding the four pillars of financial health assessment",
+          "cards": {
+            "whatAre": "What are Key Metrics?",
+            "profitability": "1. Profitability",
+            "liquidity": "2. Liquidity",
+            "efficiency": "3. Efficiency",
+            "growth": "4. Growth",
+            "improving": "Improving Key Metrics"
+          }
+        },
+        "quickStats": {
+          "title": "Quick Stats Explained",
+          "description": "Understanding key performance indicators at a glance",
+          "cards": {
+            "whatAre": "What are Quick Stats?",
+            "profitMargin": "1. Profit Margin %",
+            "burnRate": "2. Monthly Burn Rate",
+            "cashFlow": "3. Cash Flow",
+            "netIncome": "4. Net Income",
+            "benchmarks": "Coffee Shop Benchmarks",
+            "using": "Using Quick Stats for Decisions"
+          }
+        }
+      }
     },
     "transactionForm": {
       "fields": {

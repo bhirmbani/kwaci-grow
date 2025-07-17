@@ -118,23 +118,23 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
     if (summary.profitMargin < 0) {
       alerts.push({
         type: 'error',
-        title: 'Negative Profit Margin',
-        message: `Your business is operating at a ${Math.abs(summary.profitMargin).toFixed(1)}% loss.`,
-        recommendation: 'Review expenses and consider increasing prices or reducing costs.'
+        title: t('accounting.health.alerts.negativeProfitMargin.title'),
+        message: t("accounting.health.alerts.negativeProfitMargin.message", { value: Math.abs(summary.profitMargin).toFixed(1) }),
+        recommendation: t('accounting.health.alerts.negativeProfitMargin.recommendation')
       })
     } else if (summary.profitMargin < 5) {
       alerts.push({
         type: 'warning',
-        title: 'Low Profit Margin',
-        message: `Profit margin of ${summary.profitMargin.toFixed(1)}% is below healthy levels.`,
-        recommendation: 'Aim for at least 10-15% profit margin for sustainable growth.'
+        title: t('accounting.health.alerts.lowProfitMargin.title'),
+        message: t("accounting.health.alerts.lowProfitMargin.message", { value: summary.profitMargin.toFixed(1) }),
+        recommendation: t('accounting.health.alerts.lowProfitMargin.recommendation')
       })
     } else if (summary.profitMargin >= 20) {
       alerts.push({
         type: 'success',
-        title: 'Excellent Profitability',
-        message: `Strong profit margin of ${summary.profitMargin.toFixed(1)}%.`,
-        recommendation: 'Consider reinvesting profits for growth opportunities.'
+        title: t('accounting.health.alerts.excellentProfitability.title'),
+        message: t("accounting.health.alerts.excellentProfitability.message", { value: summary.profitMargin.toFixed(1) }),
+        recommendation: t('accounting.health.alerts.excellentProfitability.recommendation')
       })
     }
 
@@ -142,16 +142,16 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
     if (summary.cashFlow < 0) {
       alerts.push({
         type: 'error',
-        title: 'Negative Cash Flow',
-        message: `Cash outflow of ${formatCurrency(Math.abs(summary.cashFlow))}.`,
-        recommendation: 'Focus on increasing income and managing expenses.'
+        title: t('accounting.health.alerts.negativeCashFlow.title'),
+        message: t("accounting.health.alerts.negativeCashFlow.message", { value: formatCurrency(Math.abs(summary.cashFlow)) }),
+        recommendation: t('accounting.health.alerts.negativeCashFlow.recommendation')
       })
     } else if (summary.cashFlow < summary.burnRate * 3) {
       alerts.push({
         type: 'warning',
-        title: 'Low Cash Reserves',
-        message: 'Cash flow covers less than 3 months of expenses.',
-        recommendation: 'Build cash reserves for financial stability.'
+        title: t('accounting.health.alerts.lowCashReserves.title'),
+        message: t('accounting.health.alerts.lowCashReserves.message'),
+        recommendation: t('accounting.health.alerts.lowCashReserves.recommendation')
       })
     }
 
@@ -163,18 +163,18 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
       if (variableCostRatio > 0.6) {
         alerts.push({
           type: 'warning',
-          title: 'High Variable Costs',
-          message: `Variable costs are ${(variableCostRatio * 100).toFixed(1)}% of income.`,
-          recommendation: 'Review supplier costs and operational efficiency.'
+          title: t('accounting.health.alerts.highVariableCosts.title'),
+          message: t("accounting.health.alerts.highVariableCosts.message", { value: (variableCostRatio * 100).toFixed(1) }),
+          recommendation: t('accounting.health.alerts.highVariableCosts.recommendation')
         })
       }
 
       if (fixedCostRatio > 0.4) {
         alerts.push({
           type: 'warning',
-          title: 'High Fixed Costs',
-          message: `Fixed costs are ${(fixedCostRatio * 100).toFixed(1)}% of income.`,
-          recommendation: 'Consider reducing fixed expenses or increasing revenue.'
+          title: t('accounting.health.alerts.highFixedCosts.title'),
+          message: t("accounting.health.alerts.highFixedCosts.message", { value: (fixedCostRatio * 100).toFixed(1) }),
+          recommendation: t('accounting.health.alerts.highFixedCosts.recommendation')
         })
       }
     }
@@ -183,9 +183,9 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
     if (summary.netIncome > 0 && summary.profitMargin > 15) {
       alerts.push({
         type: 'info',
-        title: 'Growth Opportunity',
-        message: 'Strong financial position enables expansion.',
-        recommendation: 'Consider investing in marketing, inventory, or new locations.'
+        title: t('accounting.health.alerts.growthOpportunity.title'),
+        message: t('accounting.health.alerts.growthOpportunity.message'),
+        recommendation: t('accounting.health.alerts.growthOpportunity.recommendation')
       })
     }
 
@@ -221,7 +221,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              Record some transactions to see your business health indicators.
+              {t('accounting.health.noDataPrompt')}
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -237,10 +237,10 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
   }
 
   const getHealthBadge = (score: number) => {
-    if (score >= 80) return { variant: 'default' as const, label: 'Excellent' }
-    if (score >= 60) return { variant: 'secondary' as const, label: 'Good' }
-    if (score >= 40) return { variant: 'outline' as const, label: 'Fair' }
-    return { variant: 'destructive' as const, label: 'Poor' }
+    if (score >= 80) return { variant: 'default' as const, label: t('accounting.health.badges.excellent') }
+    if (score >= 60) return { variant: 'secondary' as const, label: t('accounting.health.badges.good') }
+    if (score >= 40) return { variant: 'outline' as const, label: t('accounting.health.badges.fair') }
+    return { variant: 'destructive' as const, label: t('accounting.health.badges.poor') }
   }
 
   const overallBadge = getHealthBadge(healthMetrics.overall)

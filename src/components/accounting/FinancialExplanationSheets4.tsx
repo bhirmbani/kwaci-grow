@@ -5,6 +5,7 @@
  */
 
 import { Info, TrendingDown, DollarSign, Target, CheckCircle, BarChart3, Activity, Zap, Gauge, TrendingUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -134,6 +135,7 @@ function ScoreDisplay({ score, label, description }: ScoreDisplayProps) {
 
 // Key Metrics Explanation
 export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, efficiencyScore, growthScore }: ExplanationProps) => {
+  const { t } = useTranslation()
   return (
       <Sheet>
         <SheetTrigger asChild>
@@ -145,15 +147,15 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
               <Gauge className="h-5 w-5" />
-              Key Metrics Explained
+              {t('accounting.health.sheets.keyMetrics.title')}
             </SheetTitle>
             <SheetDescription>
-              Understanding the four pillars of financial health assessment
+              {t('accounting.health.sheets.keyMetrics.description')}
             </SheetDescription>
           </SheetHeader>
           
           <div className="mt-6 space-y-6">
-            <ExplanationCard title="What are Key Metrics?" icon={<BarChart3 className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.whatAre')} icon={<BarChart3 className="h-5 w-5" />}>
               <p className="text-sm text-muted-foreground">
                 Key Metrics are the four fundamental areas that determine your coffee shop's financial health: Profitability, Liquidity, Efficiency, and Growth. Each metric provides insights into different aspects of your business performance.
               </p>
@@ -162,7 +164,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
               </p>
             </ExplanationCard>
 
-            <ExplanationCard title="1. Profitability" icon={<DollarSign className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.profitability')} icon={<DollarSign className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Measures how effectively your coffee shop converts revenue into profit.
@@ -188,7 +190,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="2. Liquidity" icon={<Activity className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.liquidity')} icon={<Activity className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Measures your ability to meet short-term obligations and maintain cash flow.
@@ -216,7 +218,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="3. Efficiency" icon={<Zap className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.efficiency')} icon={<Zap className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Measures how well you control costs and utilize resources to generate revenue.
@@ -244,7 +246,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="4. Growth" icon={<TrendingUp className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.growth')} icon={<TrendingUp className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Measures revenue trends and your business's potential for expansion.
@@ -272,7 +274,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="Improving Key Metrics" icon={<Target className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.keyMetrics.cards.improving')} icon={<Target className="h-5 w-5" />}>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>• <strong>Profitability:</strong> Optimize pricing, reduce waste, improve product mix</p>
                 <p>• <strong>Liquidity:</strong> Manage inventory, speed up collections, build cash reserves</p>
@@ -288,6 +290,7 @@ export const KeyMetricsExplanation = ({ profitabilityScore, liquidityScore, effi
 
 // Quick Stats Explanation
 export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationProps) => {
+  const { t } = useTranslation()
   return (
       <Sheet>
         <SheetTrigger asChild>
@@ -299,15 +302,15 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5" />
-              Quick Stats Explained
+              {t('accounting.health.sheets.quickStats.title')}
             </SheetTitle>
             <SheetDescription>
-              Understanding key performance indicators at a glance
+              {t('accounting.health.sheets.quickStats.description')}
             </SheetDescription>
           </SheetHeader>
           
           <div className="mt-6 space-y-6">
-            <ExplanationCard title="What are Quick Stats?" icon={<Activity className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.whatAre')} icon={<Activity className="h-5 w-5" />}>
               <p className="text-sm text-muted-foreground">
                 Quick Stats provide instant insights into your coffee shop's most important financial metrics. These four key indicators give you a rapid assessment of business performance without diving into detailed reports.
               </p>
@@ -316,7 +319,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </p>
             </ExplanationCard>
 
-            <ExplanationCard title="1. Profit Margin %" icon={<Target className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.profitMargin')} icon={<Target className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Shows what percentage of each dollar in sales becomes profit.
@@ -346,7 +349,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="2. Monthly Burn Rate" icon={<TrendingDown className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.burnRate')} icon={<TrendingDown className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   The amount of cash your business spends each month to operate.
@@ -375,7 +378,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="3. Cash Flow" icon={<Activity className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.cashFlow')} icon={<Activity className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   The net amount of cash moving in and out of your business.
@@ -406,7 +409,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="4. Net Income" icon={<DollarSign className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.netIncome')} icon={<DollarSign className="h-5 w-5" />}>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Your business's bottom line - total income minus total expenses.
@@ -438,7 +441,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="Coffee Shop Benchmarks" icon={<Target className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.benchmarks')} icon={<Target className="h-5 w-5" />}>
               <div className="space-y-3">
                 <Benchmark
                   metric="Profit Margin"
@@ -459,7 +462,7 @@ export const QuickStatsExplanation = ({ summary, monthlyBurnRate }: ExplanationP
               </div>
             </ExplanationCard>
 
-            <ExplanationCard title="Using Quick Stats for Decisions" icon={<CheckCircle className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.quickStats.cards.using')} icon={<CheckCircle className="h-5 w-5" />}>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>• <strong>Daily Monitoring:</strong> Check these metrics every morning</p>
                 <p>• <strong>Trend Analysis:</strong> Compare with previous weeks/months</p>
