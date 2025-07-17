@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -80,6 +81,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
   const [submitError, setSubmitError] = useState<string | null>(null)
   const isEditing = !!expense
   const predefinedCategories = useExpenseCategories()
+  const { t } = useTranslation()
 
   const form = useForm<RecurringExpenseFormData>({
     resolver: zodResolver(recurringExpenseFormSchema),
@@ -138,9 +140,9 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Expense Name</FormLabel>
+              <FormLabel>{t('recurringExpenses.form.fields.name')}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Office Rent, Employee Salary" {...field} />
+                <Input placeholder={t('recurringExpenses.form.placeholders.name')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -152,10 +154,10 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description (Optional)</FormLabel>
+              <FormLabel>{t('recurringExpenses.form.fields.description')}</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Additional details about this expense..."
+                <Textarea
+                  placeholder={t('recurringExpenses.form.placeholders.description')}
                   className="resize-none"
                   rows={3}
                   {...field}
@@ -172,14 +174,14 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount (IDR)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
+              <FormLabel>{t('recurringExpenses.form.fields.amount')}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
                     placeholder="0"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -191,18 +193,18 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             name="frequency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Frequency</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select frequency" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
-                  </SelectContent>
-                </Select>
+              <FormLabel>{t('recurringExpenses.form.fields.frequency')}</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                      <SelectValue placeholder={t('recurringExpenses.form.placeholders.frequency')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                    <SelectItem value="monthly">{t('recurringExpenses.form.frequency.monthly')}</SelectItem>
+                    <SelectItem value="yearly">{t('recurringExpenses.form.frequency.yearly')}</SelectItem>
+                </SelectContent>
+              </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -214,14 +216,14 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('recurringExpenses.form.fields.category')}</FormLabel>
               <FormControl>
                 <Combobox
                   options={categoryOptions}
                   value={field.value}
                   onValueChange={field.onChange}
-                  placeholder="Select or create category..."
-                  searchPlaceholder="Search categories..."
+                  placeholder={t('recurringExpenses.form.placeholders.category')}
+                  searchPlaceholder={t('recurringExpenses.form.placeholders.searchCategories')}
                   showCreateOption={true}
                 />
               </FormControl>
@@ -236,7 +238,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>{t('recurringExpenses.form.fields.startDate')}</FormLabel>
                 <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -250,7 +252,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t('recurringExpenses.form.placeholders.pickDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -282,7 +284,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             name="endDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>End Date (Optional)</FormLabel>
+                <FormLabel>{t('recurringExpenses.form.fields.endDate')}</FormLabel>
                 <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -296,7 +298,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>No end date</span>
+                          <span>{t('recurringExpenses.form.placeholders.noEndDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -313,7 +315,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                           setEndDateOpen(false)
                         }}
                       >
-                        Clear Date
+                        {t('recurringExpenses.form.placeholders.clearDate')}
                       </Button>
                     </div>
                     <Calendar
@@ -336,7 +338,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
                   </PopoverContent>
                 </Popover>
                 <FormDescription className="text-xs text-muted-foreground">
-                  Leave empty for ongoing expenses
+                  {t('recurringExpenses.form.descriptions.leaveEmpty')}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -349,10 +351,10 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Note (Optional)</FormLabel>
+              <FormLabel>{t('recurringExpenses.form.fields.note')}</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Additional notes or comments..."
+                <Textarea
+                  placeholder={t('recurringExpenses.form.placeholders.note')}
                   className="resize-none"
                   rows={3}
                   {...field}
@@ -376,10 +378,14 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             onClick={onCancel}
             disabled={isSubmitting}
           >
-            Cancel
+            {t('recurringExpenses.form.buttons.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : isEditing ? 'Update Expense' : 'Create Expense'}
+            {isSubmitting
+              ? t('recurringExpenses.form.buttons.saving')
+              : isEditing
+                ? t('recurringExpenses.form.buttons.update')
+                : t('recurringExpenses.form.buttons.create')}
           </Button>
         </div>
       </form>

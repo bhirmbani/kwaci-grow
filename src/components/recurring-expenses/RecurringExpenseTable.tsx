@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { 
   Edit, 
@@ -52,6 +53,7 @@ export function RecurringExpenseTable({
   const [frequencyFilter, setFrequencyFilter] = useState<string>('')
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const { t } = useTranslation()
 
   // Get unique categories for filter
   const categories = useMemo(() => {
@@ -137,11 +139,11 @@ export function RecurringExpenseTable({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recurring Expenses</CardTitle>
+          <CardTitle>{t('recurringExpenses.table.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
-            Loading expenses...
+            {t('common.loading')}
           </div>
         </CardContent>
       </Card>
@@ -151,13 +153,13 @@ export function RecurringExpenseTable({
   return (
     <Card className="bg-card border-border">
       <CardHeader className="bg-card !important">
-        <CardTitle className="text-card-foreground">Recurring Expenses</CardTitle>
+        <CardTitle className="text-card-foreground">{t('recurringExpenses.table.title')}</CardTitle>
         
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <div className="flex-1">
             <Input
-              placeholder="Search expenses..."
+              placeholder={t('recurringExpenses.table.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-sm"
@@ -167,10 +169,10 @@ export function RecurringExpenseTable({
           <div className="flex gap-2">
             <Select value={categoryFilter || 'all-categories'} onValueChange={(value) => setCategoryFilter(value === 'all-categories' ? '' : value)}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={t('recurringExpenses.table.headers.category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-categories">All Categories</SelectItem>
+                <SelectItem value="all-categories">{t('recurringExpenses.table.categoryFilterAll')}</SelectItem>
                 {categories.map(category => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -181,19 +183,19 @@ export function RecurringExpenseTable({
 
             <Select value={frequencyFilter || 'all-frequencies'} onValueChange={(value) => setFrequencyFilter(value === 'all-frequencies' ? '' : value)}>
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Frequency" />
+                <SelectValue placeholder={t('recurringExpenses.table.headers.frequency')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all-frequencies">All</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
+                <SelectItem value="all-frequencies">{t('recurringExpenses.table.frequencyFilterAll')}</SelectItem>
+                <SelectItem value="monthly">{t('recurringExpenses.form.frequency.monthly')}</SelectItem>
+                <SelectItem value="yearly">{t('recurringExpenses.form.frequency.yearly')}</SelectItem>
               </SelectContent>
             </Select>
 
             {(searchTerm || categoryFilter || frequencyFilter) && (
               <Button variant="outline" size="sm" onClick={clearFilters}>
                 <Filter className="h-4 w-4 mr-2" />
-                Clear
+                {t('recurringExpenses.table.actions.clear')}
               </Button>
             )}
           </div>
@@ -203,24 +205,23 @@ export function RecurringExpenseTable({
       <CardContent className="bg-card !important">
         {filteredAndSortedExpenses.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            {expenses.length === 0 
-              ? "No recurring expenses found. Create your first expense to get started."
-              : "No expenses match your current filters."
-            }
+            {expenses.length === 0
+              ? t('recurringExpenses.table.noExpenses')
+              : t('recurringExpenses.table.noMatch')}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <SortableHeader field="name">Name</SortableHeader>
-                  <SortableHeader field="amount">Amount</SortableHeader>
-                  <SortableHeader field="frequency">Frequency</SortableHeader>
-                  <SortableHeader field="category">Category</SortableHeader>
-                  <SortableHeader field="startDate">Start Date</SortableHeader>
-                  <SortableHeader field="endDate">End Date</SortableHeader>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[50px]">Actions</TableHead>
+                  <SortableHeader field="name">{t('recurringExpenses.table.headers.name')}</SortableHeader>
+                  <SortableHeader field="amount">{t('recurringExpenses.table.headers.amount')}</SortableHeader>
+                  <SortableHeader field="frequency">{t('recurringExpenses.table.headers.frequency')}</SortableHeader>
+                  <SortableHeader field="category">{t('recurringExpenses.table.headers.category')}</SortableHeader>
+                  <SortableHeader field="startDate">{t('recurringExpenses.table.headers.startDate')}</SortableHeader>
+                  <SortableHeader field="endDate">{t('recurringExpenses.table.headers.endDate')}</SortableHeader>
+                  <TableHead>{t('recurringExpenses.table.headers.status')}</TableHead>
+                  <TableHead className="w-[50px]">{t('recurringExpenses.table.headers.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -259,48 +260,48 @@ export function RecurringExpenseTable({
                     <TableCell>
                       {expense.endDate 
                         ? format(new Date(expense.endDate), 'MMM dd, yyyy')
-                        : <span className="text-muted-foreground">Ongoing</span>
+                        : <span className="text-muted-foreground">{t('recurringExpenses.table.ongoing')}</span>
                       }
                     </TableCell>
                     <TableCell>
                       <Badge variant={expense.isActive ? 'default' : 'secondary'}>
-                        {expense.isActive ? 'Active' : 'Inactive'}
+                        {expense.isActive ? t('recurringExpenses.table.status.active') : t('recurringExpenses.table.status.inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
+                            <span className="sr-only">{t('recurringExpenses.table.actions.openMenu')}</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('recurringExpenses.table.headers.actions')}</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => onEdit(expense)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Edit
+                            {t('recurringExpenses.table.actions.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => onToggleActive(expense)}>
                             {expense.isActive ? (
                               <>
                                 <EyeOff className="mr-2 h-4 w-4" />
-                                Deactivate
+                                {t('recurringExpenses.table.actions.deactivate')}
                               </>
                             ) : (
                               <>
                                 <Eye className="mr-2 h-4 w-4" />
-                                Activate
+                                {t('recurringExpenses.table.actions.activate')}
                               </>
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => onDelete(expense)}
                             className="text-red-600 focus:text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            {t('recurringExpenses.table.actions.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
