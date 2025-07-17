@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MenuAnalyticsTable } from '../components/MenuAnalyticsTable'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -7,6 +8,7 @@ import { useAppSetting } from '../hooks/useAppSetting'
 import { APP_SETTING_KEYS } from '../lib/db/schema'
 
 function Analytics() {
+  const { t } = useTranslation()
   // App settings
   const {
     value: daysPerMonth,
@@ -27,7 +29,7 @@ function Analytics() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg">Loading analytics...</div>
+        <div className="text-lg">{t('analytics.loading')}</div>
       </div>
     )
   }
@@ -36,16 +38,16 @@ function Analytics() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Menu Analytics</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('analytics.page.title')}</h1>
           <p className="text-muted-foreground">
-            Menu-based income projections and profit analysis organized by menu structure
+            {t('analytics.page.description')}
           </p>
         </div>
 
         {/* Configuration Controls */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="days-per-month">Days per Month</Label>
+            <Label htmlFor="days-per-month">{t('analytics.controls.daysPerMonth')}</Label>
             <Input
               id="days-per-month"
               type="number"
