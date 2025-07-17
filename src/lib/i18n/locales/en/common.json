@@ -1430,6 +1430,102 @@
       }
     }
   },
+  "accounting": {
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Common accounting tasks and financial management tools",
+      "badges": {
+        "income": "Income",
+        "expense": "Expense",
+        "capital": "Capital",
+        "asset": "Asset"
+      },
+      "actions": {
+        "recordSale": {
+          "title": "Record Sale",
+          "description": "Add sales income transaction"
+        },
+        "addExpense": {
+          "title": "Add Expense",
+          "description": "Record operating expense"
+        },
+        "capitalInvestment": {
+          "title": "Capital Investment",
+          "description": "Record capital injection"
+        },
+        "assetPurchase": {
+          "title": "Asset Purchase",
+          "description": "Add fixed asset"
+        },
+        "inventory": {
+          "title": "Inventory",
+          "description": "Manage stock & purchases"
+        },
+        "cogsCalculator": {
+          "title": "COGS Calculator",
+          "description": "Calculate product costs"
+        },
+        "reports": {
+          "title": "Financial Reports",
+          "description": "View detailed reports"
+        }
+      },
+      "sheet": {
+        "title": "Add Transaction",
+        "description": "Record a new financial transaction"
+      },
+      "gettingStarted": {
+        "title": "Getting Started",
+        "items": [
+          "Record sales and income transactions",
+          "Add operating and recurring expenses",
+          "Track capital investments and assets",
+          "Monitor financial health and cash flow"
+        ]
+      }
+    },
+    "transactionForm": {
+      "fields": {
+        "transactionType": "Transaction Type",
+        "category": "Category",
+        "amount": "Amount (IDR)",
+        "description": "Description",
+        "date": "Date",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price (IDR)",
+        "frequency": "Frequency",
+        "usefulLife": "Estimated Useful Life (Years)",
+        "unit": "Unit",
+        "baseUnitCost": "Base Unit Cost (IDR)",
+        "usagePerCup": "Usage Per Cup",
+        "note": "Note (Optional)"
+      },
+      "placeholders": {
+        "transactionType": "Select transaction type",
+        "category": "Select category",
+        "description": "Transaction description",
+        "date": "Pick a date",
+        "frequency": "Select frequency",
+        "unit": "e.g., ml, g, piece",
+        "note": "Additional notes about this transaction"
+      },
+      "descriptions": {
+        "unitPrice": "Price per unit sold",
+        "usefulLife": "Used for depreciation calculations",
+        "baseUnitCost": "Cost per base unit (e.g., per liter, per kg)",
+        "usagePerCup": "Amount used per cup/serving"
+      },
+      "frequency": {
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "other": "Other",
+      "buttons": {
+        "create": "Create Transaction",
+        "update": "Update Transaction"
+      }
+    }
+  },
   "people": {
     "page": {
       "title": "People Management",

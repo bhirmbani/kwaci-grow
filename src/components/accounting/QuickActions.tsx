@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Plus,
   CreditCard,
@@ -34,8 +35,8 @@ import type { TransactionType } from '@/lib/types/accounting'
 
 interface QuickAction {
   id: string
-  title: string
-  description: string
+  titleKey: string
+  descriptionKey: string
   icon: React.ComponentType<{ className?: string }>
   action: 'sheet' | 'navigate' | 'external'
   target?: string
@@ -47,8 +48,8 @@ interface QuickAction {
 const QUICK_ACTIONS: QuickAction[] = [
   {
     id: 'record-sale',
-    title: 'Record Sale',
-    description: 'Add sales income transaction',
+    titleKey: 'accounting.quickActions.actions.recordSale.title',
+    descriptionKey: 'accounting.quickActions.actions.recordSale.description',
     icon: TrendingUp,
     action: 'sheet',
     variant: 'default',
@@ -57,8 +58,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'add-expense',
-    title: 'Add Expense',
-    description: 'Record operating expense',
+    titleKey: 'accounting.quickActions.actions.addExpense.title',
+    descriptionKey: 'accounting.quickActions.actions.addExpense.description',
     icon: CreditCard,
     action: 'sheet',
     variant: 'outline',
@@ -67,8 +68,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'capital-investment',
-    title: 'Capital Investment',
-    description: 'Record capital injection',
+    titleKey: 'accounting.quickActions.actions.capitalInvestment.title',
+    descriptionKey: 'accounting.quickActions.actions.capitalInvestment.description',
     icon: DollarSign,
     action: 'sheet',
     variant: 'secondary',
@@ -77,8 +78,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'asset-purchase',
-    title: 'Asset Purchase',
-    description: 'Add fixed asset',
+    titleKey: 'accounting.quickActions.actions.assetPurchase.title',
+    descriptionKey: 'accounting.quickActions.actions.assetPurchase.description',
     icon: Building,
     action: 'sheet',
     variant: 'outline',
@@ -87,8 +88,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'warehouse',
-    title: 'Inventory',
-    description: 'Manage stock & purchases',
+    titleKey: 'accounting.quickActions.actions.inventory.title',
+    descriptionKey: 'accounting.quickActions.actions.inventory.description',
     icon: Package,
     action: 'navigate',
     target: '/warehouse',
@@ -96,8 +97,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'cogs-calculator',
-    title: 'COGS Calculator',
-    description: 'Calculate product costs',
+    titleKey: 'accounting.quickActions.actions.cogsCalculator.title',
+    descriptionKey: 'accounting.quickActions.actions.cogsCalculator.description',
     icon: Calculator,
     action: 'navigate',
     target: '/cogs',
@@ -105,8 +106,8 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     id: 'reports',
-    title: 'Financial Reports',
-    description: 'View detailed reports',
+    titleKey: 'accounting.quickActions.actions.reports.title',
+    descriptionKey: 'accounting.quickActions.actions.reports.description',
     icon: FileText,
     action: 'navigate',
     target: '/reports',
@@ -115,6 +116,7 @@ const QUICK_ACTIONS: QuickAction[] = [
 ]
 
 export function QuickActions() {
+  const { t } = useTranslation()
   const [selectedAction, setSelectedAction] = useState<QuickAction | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
@@ -150,15 +152,15 @@ export function QuickActions() {
             variant="default" 
             className="absolute top-1 right-1 text-xs px-1.5 py-0.5 z-10"
           >
-            {action.badge}
+          {t(`accounting.quickActions.badges.${action.badge.toLowerCase()}`, action.badge)}
           </Badge>
         )}
         <div className="flex-shrink-0 mt-1">
           <action.icon className="h-5 w-5" />
         </div>
         <div className="text-center flex-1 flex flex-col justify-center px-1 min-h-0">
-          <div className="font-medium text-xs leading-none mb-1 line-clamp-1">{action.title}</div>
-          <div className="text-xs text-muted-foreground leading-none line-clamp-2">{action.description}</div>
+          <div className="font-medium text-xs leading-none mb-1 line-clamp-1">{t(action.titleKey)}</div>
+          <div className="text-xs text-muted-foreground leading-none line-clamp-2">{t(action.descriptionKey)}</div>
         </div>
         <div className="flex-shrink-0 h-1"></div>
       </Button>
@@ -185,10 +187,10 @@ export function QuickActions() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            Quick Actions
+            {t('accounting.quickActions.title')}
           </CardTitle>
           <CardDescription>
-            Common accounting tasks and financial management tools
+            {t('accounting.quickActions.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -202,12 +204,12 @@ export function QuickActions() {
 
           {/* Additional Help Text */}
           <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <h4 className="font-medium text-sm mb-2">Getting Started</h4>
+            <h4 className="font-medium text-sm mb-2">{t('accounting.quickActions.gettingStarted.title')}</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Record sales and income transactions</li>
-              <li>• Add operating and recurring expenses</li>
-              <li>• Track capital investments and assets</li>
-              <li>• Monitor financial health and cash flow</li>
+              <li>• {t('accounting.quickActions.gettingStarted.items.0')}</li>
+              <li>• {t('accounting.quickActions.gettingStarted.items.1')}</li>
+              <li>• {t('accounting.quickActions.gettingStarted.items.2')}</li>
+              <li>• {t('accounting.quickActions.gettingStarted.items.3')}</li>
             </ul>
           </div>
         </CardContent>
@@ -218,10 +220,10 @@ export function QuickActions() {
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           <SheetHeader>
             <SheetTitle>
-              {selectedAction?.title || 'Add Transaction'}
+              {selectedAction ? t(selectedAction.titleKey) : t('accounting.quickActions.sheet.title')}
             </SheetTitle>
             <SheetDescription>
-              {selectedAction?.description || 'Record a new financial transaction'}
+              {selectedAction ? t(selectedAction.descriptionKey) : t('accounting.quickActions.sheet.description')}
             </SheetDescription>
           </SheetHeader>
           <div className="mt-6">

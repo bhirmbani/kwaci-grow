@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -174,12 +175,13 @@ const COMMON_CATEGORIES = {
   RECURRING_EXPENSE: ['Rent', 'Utilities', 'Insurance', 'Subscriptions', 'Salaries']
 }
 
-export function TransactionForm({ 
-  transaction, 
-  onSuccess, 
-  onCancel, 
-  defaultType = 'OPERATING_EXPENSE' 
+export function TransactionForm({
+  transaction,
+  onSuccess,
+  onCancel,
+  defaultType = 'OPERATING_EXPENSE'
 }: TransactionFormProps) {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const { createTransaction, updateTransaction } = useAccounting()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -324,7 +326,7 @@ export function TransactionForm({
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Transaction Type</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.transactionType')}</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
@@ -332,7 +334,7 @@ export function TransactionForm({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select transaction type" />
+                    <SelectValue placeholder={t('accounting.transactionForm.placeholders.transactionType')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -357,11 +359,11 @@ export function TransactionForm({
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.category')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={t('accounting.transactionForm.placeholders.category')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -370,7 +372,7 @@ export function TransactionForm({
                       {category}
                     </SelectItem>
                   ))}
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="Other">{t('accounting.transactionForm.other')}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -384,7 +386,7 @@ export function TransactionForm({
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount (IDR)</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.amount')}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -406,9 +408,9 @@ export function TransactionForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.description')}</FormLabel>
               <FormControl>
-                <Input placeholder="Transaction description" {...field} />
+                <Input placeholder={t('accounting.transactionForm.placeholders.description')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -421,7 +423,7 @@ export function TransactionForm({
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.date')}</FormLabel>
               <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -435,7 +437,7 @@ export function TransactionForm({
                       {field.value ? (
                         format(new Date(field.value), "PPP")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>{t('accounting.transactionForm.placeholders.date')}</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -469,7 +471,7 @@ export function TransactionForm({
               name="quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.quantity')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -488,7 +490,7 @@ export function TransactionForm({
               name="unitPrice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Unit Price (IDR)</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.unitPrice')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -500,7 +502,7 @@ export function TransactionForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Price per unit sold
+                    {t('accounting.transactionForm.descriptions.unitPrice')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -516,16 +518,16 @@ export function TransactionForm({
               name="frequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frequency</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.frequency')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select frequency" />
+                        <SelectValue placeholder={t('accounting.transactionForm.placeholders.frequency')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
+                      <SelectItem value="monthly">{t('accounting.transactionForm.frequency.monthly')}</SelectItem>
+                      <SelectItem value="yearly">{t('accounting.transactionForm.frequency.yearly')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -541,7 +543,7 @@ export function TransactionForm({
             name="estimatedUsefulLifeYears"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Estimated Useful Life (Years)</FormLabel>
+                <FormLabel>{t('accounting.transactionForm.fields.usefulLife')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -552,7 +554,7 @@ export function TransactionForm({
                   />
                 </FormControl>
                 <FormDescription>
-                  Used for depreciation calculations
+                  {t('accounting.transactionForm.descriptions.usefulLife')}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -567,9 +569,9 @@ export function TransactionForm({
               name="unit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Unit</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.unit')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., ml, g, piece" {...field} />
+                    <Input placeholder={t('accounting.transactionForm.placeholders.unit')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -580,7 +582,7 @@ export function TransactionForm({
               name="baseUnitCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Base Unit Cost (IDR)</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.baseUnitCost')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -592,7 +594,7 @@ export function TransactionForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Cost per base unit (e.g., per liter, per kg)
+                    {t('accounting.transactionForm.descriptions.baseUnitCost')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -603,7 +605,7 @@ export function TransactionForm({
               name="usagePerCup"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Usage Per Cup</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.usagePerCup')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -615,7 +617,7 @@ export function TransactionForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    Amount used per cup/serving
+                    {t('accounting.transactionForm.descriptions.usagePerCup')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -630,10 +632,10 @@ export function TransactionForm({
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Note (Optional)</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.note')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Additional notes about this transaction"
+                  placeholder={t('accounting.transactionForm.placeholders.note')}
                   className="resize-none"
                   {...field}
                 />
@@ -653,11 +655,11 @@ export function TransactionForm({
         {/* Form Actions */}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isEditing ? 'Update Transaction' : 'Create Transaction'}
+            {isEditing ? t('accounting.transactionForm.buttons.update') : t('accounting.transactionForm.buttons.create')}
           </Button>
         </div>
       </form>

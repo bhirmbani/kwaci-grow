@@ -1431,6 +1431,102 @@
       }
     }
   },
+  "accounting": {
+    "quickActions": {
+      "title": "Tindakan Cepat",
+      "description": "Tugas akuntansi umum dan alat manajemen keuangan",
+      "badges": {
+        "income": "Pemasukan",
+        "expense": "Pengeluaran",
+        "capital": "Modal",
+        "asset": "Aset"
+      },
+      "actions": {
+        "recordSale": {
+          "title": "Catat Penjualan",
+          "description": "Tambah transaksi pendapatan penjualan"
+        },
+        "addExpense": {
+          "title": "Tambah Pengeluaran",
+          "description": "Catat biaya operasional"
+        },
+        "capitalInvestment": {
+          "title": "Investasi Modal",
+          "description": "Catat injeksi modal"
+        },
+        "assetPurchase": {
+          "title": "Pembelian Aset",
+          "description": "Tambah aset tetap"
+        },
+        "inventory": {
+          "title": "Inventori",
+          "description": "Kelola stok & pembelian"
+        },
+        "cogsCalculator": {
+          "title": "Kalkulator HPP",
+          "description": "Hitung biaya produk"
+        },
+        "reports": {
+          "title": "Laporan Keuangan",
+          "description": "Lihat laporan detail"
+        }
+      },
+      "sheet": {
+        "title": "Tambah Transaksi",
+        "description": "Catat transaksi keuangan baru"
+      },
+      "gettingStarted": {
+        "title": "Memulai",
+        "items": [
+          "Catat transaksi penjualan dan pemasukan",
+          "Tambahkan biaya operasional dan berulang",
+          "Lacak investasi modal dan aset",
+          "Pantau kesehatan keuangan dan arus kas"
+        ]
+      }
+    },
+    "transactionForm": {
+      "fields": {
+        "transactionType": "Tipe Transaksi",
+        "category": "Kategori",
+        "amount": "Jumlah (IDR)",
+        "description": "Deskripsi",
+        "date": "Tanggal",
+        "quantity": "Kuantitas",
+        "unitPrice": "Harga Satuan (IDR)",
+        "frequency": "Frekuensi",
+        "usefulLife": "Umur Manfaat (Tahun)",
+        "unit": "Satuan",
+        "baseUnitCost": "Biaya Satuan Dasar (IDR)",
+        "usagePerCup": "Penggunaan Per Cup",
+        "note": "Catatan (Opsional)"
+      },
+      "placeholders": {
+        "transactionType": "Pilih tipe transaksi",
+        "category": "Pilih kategori",
+        "description": "Deskripsi transaksi",
+        "date": "Pilih tanggal",
+        "frequency": "Pilih frekuensi",
+        "unit": "misal: ml, g, pcs",
+        "note": "Catatan tambahan mengenai transaksi"
+      },
+      "descriptions": {
+        "unitPrice": "Harga per unit terjual",
+        "usefulLife": "Digunakan untuk perhitungan depresiasi",
+        "baseUnitCost": "Biaya per satuan dasar (misal per liter, per kg)",
+        "usagePerCup": "Jumlah yang digunakan per sajian"
+      },
+      "frequency": {
+        "monthly": "Bulanan",
+        "yearly": "Tahunan"
+      },
+      "other": "Lainnya",
+      "buttons": {
+        "create": "Buat Transaksi",
+        "update": "Perbarui Transaksi"
+      }
+    }
+  },
   "people": {
     "page": {
       "title": "Manajemen Karyawan",
