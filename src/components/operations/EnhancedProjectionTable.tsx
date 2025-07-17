@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { TrendingUp, Calculator, Target, DollarSign } from 'lucide-react'
 
@@ -55,6 +56,7 @@ interface ProjectionSummary {
 }
 
 export function EnhancedProjectionTable() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [branches, setBranches] = useState<Branch[]>([])
   const [menus, setMenus] = useState<MenuWithProducts[]>([])
@@ -210,20 +212,20 @@ export function EnhancedProjectionTable() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Enhanced Income Projections
+            {t('operations.projections.title')}
           </CardTitle>
           <CardDescription>
-            Multi-product projections based on actual sales performance and targets
+            {t('operations.projections.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Branch Selection */}
             <div className="space-y-2">
-              <Label>Branch</Label>
+              <Label>{t('operations.projections.branch')}</Label>
               <Select value={selectedBranch} onValueChange={setSelectedBranch}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a branch" />
+                  <SelectValue placeholder={t('operations.projections.selectBranch')} />
                 </SelectTrigger>
                 <SelectContent>
                   {branches.map((branch) => (
@@ -237,10 +239,10 @@ export function EnhancedProjectionTable() {
 
             {/* Menu Selection */}
             <div className="space-y-2">
-              <Label>Menu</Label>
+              <Label>{t('operations.projections.menu')}</Label>
               <Select value={selectedMenu} onValueChange={setSelectedMenu}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a menu" />
+                  <SelectValue placeholder={t('operations.projections.selectMenu')} />
                 </SelectTrigger>
                 <SelectContent>
                   {menus.map((menu) => (
@@ -254,7 +256,7 @@ export function EnhancedProjectionTable() {
 
             {/* Reference Date */}
             <div className="space-y-2">
-              <Label>Reference Date</Label>
+              <Label>{t('operations.projections.referenceDate')}</Label>
               <Input
                 type="date"
                 value={referenceDate}
@@ -265,7 +267,7 @@ export function EnhancedProjectionTable() {
 
             {/* Days Per Month */}
             <div className="space-y-2">
-              <Label>Days Per Month</Label>
+              <Label>{t('operations.projections.daysPerMonth')}</Label>
               <Input
                 type="number"
                 min="1"
@@ -277,14 +279,14 @@ export function EnhancedProjectionTable() {
 
             {/* Use Actual Data Toggle */}
             <div className="space-y-2">
-              <Label>Use Actual Sales Data</Label>
+              <Label>{t('operations.projections.useActual')}</Label>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={useActualData}
                   onCheckedChange={setUseActualData}
                 />
                 <span className="text-sm text-muted-foreground">
-                  {useActualData ? 'Using actual sales' : 'Using targets only'}
+                  {useActualData ? t('operations.projections.usingActual') : t('operations.projections.usingTargets')}
                 </span>
               </div>
             </div>
@@ -299,7 +301,7 @@ export function EnhancedProjectionTable() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Daily Revenue</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('operations.projections.summary.dailyRevenue')}</p>
                   <p className="text-2xl font-bold">{formatCurrency(summary.totalDailyRevenue)}</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-500" />
@@ -311,7 +313,7 @@ export function EnhancedProjectionTable() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Daily Profit</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('operations.projections.summary.dailyProfit')}</p>
                   <p className="text-2xl font-bold">{formatCurrency(summary.totalDailyProfit)}</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-blue-500" />
@@ -323,7 +325,7 @@ export function EnhancedProjectionTable() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Monthly Revenue</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('operations.projections.summary.monthlyRevenue')}</p>
                   <p className="text-2xl font-bold">{formatCurrency(summary.totalMonthlyRevenue)}</p>
                 </div>
                 <DollarSign className="h-8 w-8 text-green-600" />
@@ -335,7 +337,7 @@ export function EnhancedProjectionTable() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Avg Performance</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('operations.projections.summary.avgPerformance')}</p>
                   <p className={`text-2xl font-bold ${getPerformanceColor(summary.averagePerformance)}`}>
                     {summary.averagePerformance.toFixed(1)}%
                   </p>
@@ -350,23 +352,23 @@ export function EnhancedProjectionTable() {
       {/* Projections Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Product Projections</CardTitle>
+          <CardTitle>{t('operations.projections.tableTitle')}</CardTitle>
           <CardDescription>
-            Individual product performance and revenue projections
+            {t('operations.projections.tableDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">Loading projections...</div>
+              <div className="text-muted-foreground">{t('operations.projections.loading')}</div>
             </div>
           ) : !selectedBranch || !selectedMenu ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">Please select a branch and menu to view projections</div>
+              <div className="text-muted-foreground">{t('operations.projections.selectBranchMenu')}</div>
             </div>
           ) : projections.length === 0 ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">No products found for the selected menu</div>
+              <div className="text-muted-foreground">{t('operations.projections.noProducts')}</div>
             </div>
           ) : (
             <div
@@ -376,15 +378,15 @@ export function EnhancedProjectionTable() {
               <Table>
                 <TableHeader className="sticky top-0 bg-background">
                   <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead className="text-right">Target Qty</TableHead>
-                    {useActualData && <TableHead className="text-right">Actual Sales</TableHead>}
-                    {useActualData && <TableHead className="text-right">Performance</TableHead>}
-                    <TableHead className="text-right">Unit Price</TableHead>
-                    <TableHead className="text-right">Daily Revenue</TableHead>
-                    <TableHead className="text-right">Daily Profit</TableHead>
-                    <TableHead className="text-right">Monthly Revenue</TableHead>
-                    <TableHead className="text-right">Monthly Profit</TableHead>
+                    <TableHead>{t('operations.projections.table.product')}</TableHead>
+                    <TableHead className="text-right">{t('operations.projections.table.targetQty')}</TableHead>
+                    {useActualData && <TableHead className="text-right">{t('operations.projections.table.actualSales')}</TableHead>}
+                    {useActualData && <TableHead className="text-right">{t('operations.projections.table.performance')}</TableHead>}
+                    <TableHead className="text-right">{t('operations.projections.table.unitPrice')}</TableHead>
+                    <TableHead className="text-right">{t('operations.projections.table.dailyRevenue')}</TableHead>
+                    <TableHead className="text-right">{t('operations.projections.table.dailyProfit')}</TableHead>
+                    <TableHead className="text-right">{t('operations.projections.table.monthlyRevenue')}</TableHead>
+                    <TableHead className="text-right">{t('operations.projections.table.monthlyProfit')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

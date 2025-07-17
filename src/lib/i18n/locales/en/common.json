@@ -1279,5 +1279,155 @@
       "noteLabel": "Note: {{note}}",
       "targetMinError": "Target must be 0 or greater"
     }
+  },
+  "operations": {
+    "page": {
+      "title": "Operations",
+      "description": "Transform daily sales targets into operational pipeline with real-time tracking and analytics"
+    },
+    "tabs": {
+      "recording": "Sales Recording",
+      "analysis": "Target Analysis",
+      "analytics": "Analytics",
+      "projections": "Projections"
+    },
+    "salesRecording": {
+      "filtersTitle": "Filters",
+      "date": "Date",
+      "branch": "Branch",
+      "allBranches": "All branches",
+      "summary": {
+        "totalSales": "Total Sales",
+        "totalRevenue": "Total Revenue",
+        "avgOrderValue": "Avg Order Value",
+        "topProduct": "Top Product",
+        "none": "None",
+        "sold": "{{count}} sold"
+      },
+      "recordsTitle": "Sales Records",
+      "recordsDescription": "Recent sales for {{date}}{{branch ? ` at ${branch}` : ''}}",
+      "loading": "Loading sales records...",
+      "noRecords": "No sales records found for this date",
+      "addButton": "Add sales",
+      "sheetTitle": "Record New Sale",
+      "sheetDescription": "Record a new sale with product details, quantity, and pricing information."
+    },
+    "salesRecordForm": {
+      "fields": {
+        "branch": "Branch",
+        "menu": "Menu",
+        "product": "Product",
+        "saleDate": "Sale Date",
+        "saleTime": "Sale Time",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price (IDR)",
+        "totalAmount": "Total Amount",
+        "note": "Note (Optional)"
+      },
+      "placeholders": {
+        "branch": "Select a branch",
+        "menu": "Select a menu",
+        "product": "Select a product",
+        "pickDate": "Pick a date",
+        "note": "Additional notes about this sale..."
+      },
+      "buttons": {
+        "setCurrentTime": "Set current time",
+        "record": "Record Sale"
+      }
+    },
+    "targetAnalysis": {
+      "title": "Target vs Actual Analysis",
+      "description": "Real-time comparison between daily sales targets and actual performance",
+      "date": "Date",
+      "branch": "Branch",
+      "allBranches": "All branches",
+      "loading": "Loading analysis...",
+      "noTargets": "No targets found for this date",
+      "progress": "Progress",
+      "expected": "Expected: {{value}}%",
+      "timeRemaining": "Time remaining: {{value}}",
+      "target": "Target",
+      "actual": "Actual",
+      "variance": "Variance",
+      "salesCount": "Sales Count: {{count}} items",
+      "unknownMenu": "Unknown Menu",
+      "unknownBranch": "Unknown Branch"
+    },
+    "analytics": {
+      "filtersTitle": "Analytics Filters",
+      "filtersDescription": "Filter analytics data by time range and branch",
+      "timeRange": "Time Range",
+      "range": {
+        "today": "Today",
+        "week": "Last 7 Days",
+        "month": "Last 30 Days",
+        "custom": "Custom Range"
+      },
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "branch": "Branch",
+      "allBranches": "All branches",
+      "tabs": {
+        "hourly": "Hourly Analysis",
+        "products": "Product Popularity",
+        "progress": "Daily Progress"
+      },
+      "hourly": {
+        "title": "Hourly Profitability Analysis",
+        "description": "Revenue and profit breakdown by hour of day"
+      },
+      "products": {
+        "title": "Product Popularity",
+        "description": "Top-selling products by quantity and revenue",
+        "byQuantity": "By Quantity",
+        "byRevenue": "By Revenue",
+        "noData": "No product data available"
+      },
+      "progress": {
+        "title": "Daily Progress Tracking",
+        "description": "Real-time progress towards daily sales targets",
+        "requireSingleDate": "Progress tracking requires a single date selection",
+        "noTargets": "No sales targets found for this date",
+        "selectSpecificDate": "Please select a specific date to view daily progress",
+        "createTargets": "Create sales targets for {{date}} to track progress"
+      },
+      "loadingChart": "Loading chart..."
+    },
+    "projections": {
+      "title": "Enhanced Income Projections",
+      "description": "Multi-product projections based on actual sales performance and targets",
+      "branch": "Branch",
+      "selectBranch": "Select a branch",
+      "menu": "Menu",
+      "selectMenu": "Select a menu",
+      "referenceDate": "Reference Date",
+      "daysPerMonth": "Days Per Month",
+      "useActual": "Use Actual Sales Data",
+      "usingActual": "Using actual sales",
+      "usingTargets": "Using targets only",
+      "loading": "Loading projections...",
+      "selectBranchMenu": "Please select a branch and menu to view projections",
+      "noProducts": "No products found for the selected menu",
+      "summary": {
+        "dailyRevenue": "Daily Revenue",
+        "dailyProfit": "Daily Profit",
+        "monthlyRevenue": "Monthly Revenue",
+        "avgPerformance": "Avg Performance"
+      },
+      "tableTitle": "Product Projections",
+      "tableDescription": "Individual product performance and revenue projections",
+      "table": {
+        "product": "Product",
+        "targetQty": "Target Qty",
+        "actualSales": "Actual Sales",
+        "performance": "Performance",
+        "unitPrice": "Unit Price",
+        "dailyRevenue": "Daily Revenue",
+        "dailyProfit": "Daily Profit",
+        "monthlyRevenue": "Monthly Revenue",
+        "monthlyProfit": "Monthly Profit"
+      }
+    }
   }
 }

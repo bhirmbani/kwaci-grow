@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format, subDays, startOfDay, endOfDay } from 'date-fns'
 import { BarChart3, PieChart, Calendar, Filter, Download } from 'lucide-react'
 
@@ -39,6 +40,7 @@ interface AnalyticsFilters {
 }
 
 export function AnalyticsDashboard() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [filters, setFilters] = useState<AnalyticsFilters>({
     startDate: format(new Date(), 'yyyy-MM-dd'),
@@ -241,33 +243,33 @@ export function AnalyticsDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Analytics Filters
+            {t('operations.analytics.filtersTitle')}
           </CardTitle>
           <CardDescription>
-            Filter analytics data by time range and branch
+            {t('operations.analytics.filtersDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Time Range Presets */}
             <div className="space-y-2">
-              <Label>Time Range</Label>
+              <Label>{t('operations.analytics.timeRange')}</Label>
               <Select value={filters.timeRange} onValueChange={handleTimeRangeChange}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">Last 7 Days</SelectItem>
-                  <SelectItem value="month">Last 30 Days</SelectItem>
-                  <SelectItem value="custom">Custom Range</SelectItem>
+                  <SelectItem value="today">{t('operations.analytics.range.today')}</SelectItem>
+                  <SelectItem value="week">{t('operations.analytics.range.week')}</SelectItem>
+                  <SelectItem value="month">{t('operations.analytics.range.month')}</SelectItem>
+                  <SelectItem value="custom">{t('operations.analytics.range.custom')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Start Date */}
             <div className="space-y-2">
-              <Label>Start Date</Label>
+              <Label>{t('operations.analytics.startDate')}</Label>
               <Input
                 type="date"
                 value={filters.startDate}
@@ -278,7 +280,7 @@ export function AnalyticsDashboard() {
 
             {/* End Date */}
             <div className="space-y-2">
-              <Label>End Date</Label>
+              <Label>{t('operations.analytics.endDate')}</Label>
               <Input
                 type="date"
                 value={filters.endDate}
@@ -290,13 +292,13 @@ export function AnalyticsDashboard() {
 
             {/* Branch Filter */}
             <div className="space-y-2">
-              <Label>Branch</Label>
+              <Label>{t('operations.analytics.branch')}</Label>
               <Select value={filters.branchId || "all"} onValueChange={handleBranchChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All branches" />
+                  <SelectValue placeholder={t('operations.analytics.allBranches')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All branches</SelectItem>
+                  <SelectItem value="all">{t('operations.analytics.allBranches')}</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id}>
                       {branch.name}
@@ -312,9 +314,9 @@ export function AnalyticsDashboard() {
       {/* Charts */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="hourly">Hourly Analysis</TabsTrigger>
-          <TabsTrigger value="products">Product Popularity</TabsTrigger>
-          <TabsTrigger value="progress">Daily Progress</TabsTrigger>
+          <TabsTrigger value="hourly">{t('operations.analytics.tabs.hourly')}</TabsTrigger>
+          <TabsTrigger value="products">{t('operations.analytics.tabs.products')}</TabsTrigger>
+          <TabsTrigger value="progress">{t('operations.analytics.tabs.progress')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hourly" className="space-y-4">
@@ -322,16 +324,16 @@ export function AnalyticsDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5" />
-                Hourly Profitability Analysis
+                {t('operations.analytics.hourly.title')}
               </CardTitle>
               <CardDescription>
-                Revenue and profit breakdown by hour of day
+                {t('operations.analytics.hourly.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-muted-foreground">Loading chart...</div>
+                  <div className="text-muted-foreground">{t('operations.analytics.loadingChart')}</div>
                 </div>
               ) : (
                 <HourlyProfitabilityChart data={hourlyData} height={400} />
@@ -343,31 +345,31 @@ export function AnalyticsDashboard() {
         <TabsContent value="products" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PieChart className="h-5 w-5" />
-                Product Popularity
-              </CardTitle>
-              <CardDescription>
-                Top-selling products by quantity and revenue
-              </CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <PieChart className="h-5 w-5" />
+            {t('operations.analytics.products.title')}
+          </CardTitle>
+          <CardDescription>
+            {t('operations.analytics.products.description')}
+          </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-muted-foreground">Loading chart...</div>
+                  <div className="text-muted-foreground">{t('operations.analytics.loadingChart')}</div>
                 </div>
               ) : productData.length === 0 ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-muted-foreground">No product data available</div>
+                  <div className="text-muted-foreground">{t('operations.analytics.products.noData')}</div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="text-sm font-medium mb-4">By Quantity</h4>
+                    <h4 className="text-sm font-medium mb-4">{t('operations.analytics.products.byQuantity')}</h4>
                     <ProductPopularityChart data={productData} height={300} showRevenue={false} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium mb-4">By Revenue</h4>
+                    <h4 className="text-sm font-medium mb-4">{t('operations.analytics.products.byRevenue')}</h4>
                     <ProductPopularityChart data={productData} height={300} showRevenue={true} />
                   </div>
                 </div>
@@ -381,30 +383,30 @@ export function AnalyticsDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Daily Progress Tracking
+                {t('operations.analytics.progress.title')}
               </CardTitle>
               <CardDescription>
-                Real-time progress towards daily sales targets
+                {t('operations.analytics.progress.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-muted-foreground">Loading chart...</div>
+                  <div className="text-muted-foreground">{t('operations.analytics.loadingChart')}</div>
                 </div>
               ) : progressData.length === 0 ? (
                 <div className="flex items-center justify-center h-64">
                   <div className="text-center text-muted-foreground space-y-2">
                     <div>
                       {filters.startDate !== filters.endDate
-                        ? "Progress tracking requires a single date selection"
-                        : "No sales targets found for this date"
+                        ? t('operations.analytics.progress.requireSingleDate')
+                        : t('operations.analytics.progress.noTargets', { date: filters.startDate })
                       }
                     </div>
                     <div className="text-sm">
                       {filters.startDate !== filters.endDate
-                        ? "Please select a specific date to view daily progress"
-                        : `Create sales targets for ${filters.startDate} to track progress`
+                        ? t('operations.analytics.progress.selectSpecificDate')
+                        : t('operations.analytics.progress.createTargets', { date: filters.startDate })
                       }
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -58,6 +59,7 @@ interface SalesRecordFormProps {
 }
 
 export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [branches, setBranches] = useState<Branch[]>([])
   const [menus, setMenus] = useState<MenuWithProducts[]>([])
@@ -177,7 +179,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="text-muted-foreground">{t('common.loading')}</div>
       </div>
     )
   }
@@ -191,11 +193,11 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
           name="branchId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Branch</FormLabel>
+              <FormLabel>{t('operations.salesRecordForm.fields.branch')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a branch" />
+                    <SelectValue placeholder={t('operations.salesRecordForm.placeholders.branch')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -217,11 +219,11 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
           name="menuId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Menu</FormLabel>
+              <FormLabel>{t('operations.salesRecordForm.fields.menu')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a menu" />
+                    <SelectValue placeholder={t('operations.salesRecordForm.placeholders.menu')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -243,15 +245,15 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
           name="productId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Product</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
+              <FormLabel>{t('operations.salesRecordForm.fields.product')}</FormLabel>
+              <Select
+                onValueChange={field.onChange}
                 defaultValue={field.value}
                 disabled={!selectedMenuId}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a product" />
+                    <SelectValue placeholder={t('operations.salesRecordForm.placeholders.product')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -275,7 +277,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
             name="saleDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Sale Date</FormLabel>
+                <FormLabel>{t('operations.salesRecordForm.fields.saleDate')}</FormLabel>
                 <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -289,7 +291,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
                         {field.value ? (
                           format(new Date(field.value), "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t('operations.salesRecordForm.placeholders.pickDate')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -318,7 +320,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
             name="saleTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sale Time</FormLabel>
+                <FormLabel>{t('operations.salesRecordForm.fields.saleTime')}</FormLabel>
                 <div className="flex gap-2">
                   <FormControl>
                     <Input
@@ -333,7 +335,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
                     variant="outline"
                     size="icon"
                     onClick={setCurrentTime}
-                    title="Set current time"
+                    title={t('operations.salesRecordForm.buttons.setCurrentTime')}
                   >
                     <Clock className="h-4 w-4" />
                   </Button>
@@ -352,7 +354,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
             name="quantity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>{t('operations.salesRecordForm.fields.quantity')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -372,7 +374,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
             name="unitPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Unit Price (IDR)</FormLabel>
+                <FormLabel>{t('operations.salesRecordForm.fields.unitPrice')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -391,7 +393,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
 
           {/* Total Amount (Read-only) */}
           <div className="space-y-2">
-            <Label>Total Amount</Label>
+            <Label>{t('operations.salesRecordForm.fields.totalAmount')}</Label>
             <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm">
               {formatCurrency(totalAmount)}
             </div>
@@ -404,10 +406,10 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Note (Optional)</FormLabel>
+              <FormLabel>{t('operations.salesRecordForm.fields.note')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Additional notes about this sale..."
+                  placeholder={t('operations.salesRecordForm.placeholders.note')}
                   className="resize-none"
                   {...field}
                 />
@@ -420,10 +422,10 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
         {/* Form Actions */}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type="submit">
-            Record Sale
+            {t('operations.salesRecordForm.buttons.record')}
           </Button>
         </div>
       </form>

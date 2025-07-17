@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { Target, TrendingUp, TrendingDown, Clock, AlertTriangle, CheckCircle } from 'lucide-react'
 
@@ -49,6 +50,7 @@ interface TargetAnalysis {
 
 
 export function TargetVsActualAnalysis() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [analyses, setAnalyses] = useState<TargetAnalysis[]>([])
   const [branches, setBranches] = useState<Branch[]>([])
@@ -215,15 +217,15 @@ export function TargetVsActualAnalysis() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Target vs Actual Analysis</CardTitle>
+          <CardTitle>{t('operations.targetAnalysis.title')}</CardTitle>
           <CardDescription>
-            Real-time comparison between daily sales targets and actual performance
+            {t('operations.targetAnalysis.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date-filter">Date</Label>
+              <Label htmlFor="date-filter">{t('operations.targetAnalysis.date')}</Label>
               <Input
                 id="date-filter"
                 type="date"
@@ -233,13 +235,13 @@ export function TargetVsActualAnalysis() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="branch-filter">Branch</Label>
+              <Label htmlFor="branch-filter">{t('operations.targetAnalysis.branch')}</Label>
               <Select value={selectedBranch || "all"} onValueChange={(value) => setSelectedBranch(value === "all" ? "" : value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All branches" />
+                  <SelectValue placeholder={t('operations.targetAnalysis.allBranches')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All branches</SelectItem>
+                  <SelectItem value="all">{t('operations.targetAnalysis.allBranches')}</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id}>
                       {branch.name} - {branch.location}
@@ -257,7 +259,7 @@ export function TargetVsActualAnalysis() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-center">
-              <div className="text-muted-foreground">Loading analysis...</div>
+              <div className="text-muted-foreground">{t('operations.targetAnalysis.loading')}</div>
             </div>
           </CardContent>
         </Card>
@@ -265,7 +267,7 @@ export function TargetVsActualAnalysis() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-center">
-              <div className="text-muted-foreground">No targets found for this date</div>
+              <div className="text-muted-foreground">{t('operations.targetAnalysis.noTargets')}</div>
             </div>
           </CardContent>
         </Card>
@@ -277,10 +279,10 @@ export function TargetVsActualAnalysis() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      {analysis.target.menu?.name || 'Unknown Menu'}
+                      {analysis.target.menu?.name || t('operations.targetAnalysis.unknownMenu')}
                     </CardTitle>
                     <CardDescription>
-                      {analysis.target.branch?.name || 'Unknown Branch'}
+                      {analysis.target.branch?.name || t('operations.targetAnalysis.unknownBranch')}
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
@@ -293,18 +295,18 @@ export function TargetVsActualAnalysis() {
                 {/* Progress Bar */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Progress</span>
+                    <span>{t('operations.targetAnalysis.progress')}</span>
                     <span>{analysis.progressPercentage.toFixed(1)}%</span>
                   </div>
                   <Progress value={analysis.progressPercentage} className="h-2" />
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{analysis.timeInfo.timeDisplay}</span>
-                      <span>Expected: {analysis.expectedProgress.toFixed(1)}%</span>
+                      <span>{t('operations.targetAnalysis.expected', { value: analysis.expectedProgress.toFixed(1) })}</span>
                     </div>
                     {analysis.timeInfo.timeRemaining && (
                       <div className="text-xs text-muted-foreground">
-                        <span>Time remaining: {analysis.timeInfo.timeRemaining}</span>
+                        <span>{t('operations.targetAnalysis.timeRemaining', { value: analysis.timeInfo.timeRemaining })}</span>
                       </div>
                     )}
                   </div>
@@ -313,11 +315,11 @@ export function TargetVsActualAnalysis() {
                 {/* Financial Metrics */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Target</p>
+                    <p className="text-sm text-muted-foreground">{t('operations.targetAnalysis.target')}</p>
                     <p className="text-lg font-semibold">{formatCurrency(analysis.target.targetAmount)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Actual</p>
+                    <p className="text-sm text-muted-foreground">{t('operations.targetAnalysis.actual')}</p>
                     <p className="text-lg font-semibold">{formatCurrency(analysis.actualRevenue)}</p>
                   </div>
                 </div>
@@ -326,7 +328,7 @@ export function TargetVsActualAnalysis() {
                 <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-2">
                     {getVarianceIcon(analysis.variance)}
-                    <span className="text-sm font-medium">Variance</span>
+                    <span className="text-sm font-medium">{t('operations.targetAnalysis.variance')}</span>
                   </div>
                   <div className="text-right">
                     <p className={`font-semibold ${analysis.variance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -340,7 +342,7 @@ export function TargetVsActualAnalysis() {
 
                 {/* Additional Info */}
                 <div className="text-xs text-muted-foreground">
-                  <p>Sales Count: {analysis.actualSales} items</p>
+                  <p>{t('operations.targetAnalysis.salesCount', { count: analysis.actualSales })}</p>
                 </div>
               </CardContent>
             </Card>
