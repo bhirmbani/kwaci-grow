@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -90,6 +91,7 @@ export function TransactionFilters({
   const [selectedTypes, setSelectedTypes] = useState<TransactionType[]>([])
   const [selectedStatus, setSelectedStatus] = useState<TransactionStatus[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const { t } = useTranslation()
 
   const form = useForm<FiltersFormData>({
     resolver: zodResolver(filtersSchema),
@@ -216,12 +218,12 @@ export function TransactionFilters({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
-          <h3 className="font-medium">Filter Transactions</h3>
+          <h3 className="font-medium">{t('accounting.filters.title')}</h3>
         </div>
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={handleClearFilters}>
             <X className="h-4 w-4 mr-2" />
-            Clear All
+            {t('accounting.filters.clearAll')}
           </Button>
         )}
       </div>
@@ -229,12 +231,12 @@ export function TransactionFilters({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Search */}
         <div className="space-y-2">
-          <Label htmlFor="search">Search</Label>
+          <Label htmlFor="search">{t('accounting.filters.search')}</Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="search"
-              placeholder="Search descriptions, categories, notes..."
+              placeholder={t('accounting.filters.searchPlaceholder')}
               className="pl-10"
               {...form.register('searchTerm')}
             />
@@ -244,7 +246,7 @@ export function TransactionFilters({
         {/* Date Range */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Start Date</Label>
+            <Label>{t('accounting.filters.startDate')}</Label>
             <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -258,7 +260,7 @@ export function TransactionFilters({
                   {form.watch('startDate') ? (
                     format(new Date(form.watch('startDate')!), "PPP")
                   ) : (
-                    <span>Pick start date</span>
+                    <span>{t('accounting.filters.pickStart')}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -278,7 +280,7 @@ export function TransactionFilters({
           </div>
 
           <div className="space-y-2">
-            <Label>End Date</Label>
+            <Label>{t('accounting.filters.endDate')}</Label>
             <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -292,7 +294,7 @@ export function TransactionFilters({
                   {form.watch('endDate') ? (
                     format(new Date(form.watch('endDate')!), "PPP")
                   ) : (
-                    <span>Pick end date</span>
+                    <span>{t('accounting.filters.pickEnd')}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -315,7 +317,7 @@ export function TransactionFilters({
         {/* Amount Range */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="minAmount">Min Amount (IDR)</Label>
+            <Label htmlFor="minAmount">{t('accounting.filters.minAmount')}</Label>
             <Input
               id="minAmount"
               type="number"
@@ -326,7 +328,7 @@ export function TransactionFilters({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="maxAmount">Max Amount (IDR)</Label>
+            <Label htmlFor="maxAmount">{t('accounting.filters.maxAmount')}</Label>
             <Input
               id="maxAmount"
               type="number"
@@ -340,7 +342,7 @@ export function TransactionFilters({
 
         {/* Transaction Types */}
         <div className="space-y-2">
-          <Label>Transaction Types</Label>
+          <Label>{t('accounting.filters.types')}</Label>
           <div className="grid grid-cols-2 gap-2">
             {TRANSACTION_TYPES.map((type) => (
               <div key={type.value} className="flex items-center space-x-2">
@@ -364,7 +366,7 @@ export function TransactionFilters({
 
         {/* Status */}
         <div className="space-y-2">
-          <Label>Status</Label>
+          <Label>{t('accounting.filters.status')}</Label>
           <div className="flex flex-wrap gap-2">
             {TRANSACTION_STATUS.map((status) => (
               <div key={status.value} className="flex items-center space-x-2">
@@ -389,7 +391,7 @@ export function TransactionFilters({
         {/* Categories */}
         {availableCategories.length > 0 && (
           <div className="space-y-2">
-            <Label>Categories</Label>
+            <Label>{t('accounting.filters.categories')}</Label>
             <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
               {availableCategories.map((category) => (
                 <div key={category} className="flex items-center space-x-2">
@@ -417,10 +419,10 @@ export function TransactionFilters({
         {/* Actions */}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={handleClearFilters}>
-            Clear
+            {t('accounting.filters.clear')}
           </Button>
           <Button type="submit">
-            Apply Filters
+            {t('accounting.filters.apply')}
           </Button>
         </div>
       </form>
@@ -428,7 +430,7 @@ export function TransactionFilters({
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Active Filters:</Label>
+          <Label className="text-xs text-muted-foreground">{t('accounting.filters.active')}:</Label>
           <div className="flex flex-wrap gap-1">
             {selectedTypes.map((type) => (
               <Badge key={type} variant="secondary" className="text-xs">
@@ -447,17 +449,17 @@ export function TransactionFilters({
             ))}
             {form.watch('searchTerm') && (
               <Badge variant="secondary" className="text-xs">
-                Search: "{form.watch('searchTerm')}"
+                {t('accounting.filters.searchLabel', { term: form.watch('searchTerm') })}
               </Badge>
             )}
             {(form.watch('startDate') || form.watch('endDate')) && (
               <Badge variant="secondary" className="text-xs">
-                Date Range
+                {t('accounting.filters.dateRange')}
               </Badge>
             )}
             {(form.watch('minAmount') !== undefined || form.watch('maxAmount') !== undefined) && (
               <Badge variant="secondary" className="text-xs">
-                Amount Range
+                {t('accounting.filters.amountRange')}
               </Badge>
             )}
           </div>

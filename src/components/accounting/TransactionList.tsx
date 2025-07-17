@@ -9,6 +9,7 @@
  */
 
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { 
   ChevronDown, 
@@ -111,6 +112,7 @@ export function TransactionList({
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [searchTerm, setSearchTerm] = useState('')
+  const { t } = useTranslation()
 
   // Local filtering and sorting
   const filteredAndSortedTransactions = useMemo(() => {
@@ -211,7 +213,7 @@ export function TransactionList({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search transactions..."
+              placeholder={t('accounting.transactions.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -240,7 +242,7 @@ export function TransactionList({
                 onClick={() => handleSort('date')}
               >
                 <div className="flex items-center gap-2">
-                  Date
+                  {t('accounting.transactions.date')}
                   {getSortIcon('date')}
                 </div>
               </TableHead>
@@ -249,7 +251,7 @@ export function TransactionList({
                 onClick={() => handleSort('type')}
               >
                 <div className="flex items-center gap-2">
-                  Type
+                  {t('accounting.transactions.type')}
                   {getSortIcon('type')}
                 </div>
               </TableHead>
@@ -258,7 +260,7 @@ export function TransactionList({
                 onClick={() => handleSort('description')}
               >
                 <div className="flex items-center gap-2">
-                  Description
+                  {t('accounting.transactions.description')}
                   {getSortIcon('description')}
                 </div>
               </TableHead>
@@ -267,7 +269,7 @@ export function TransactionList({
                 onClick={() => handleSort('category')}
               >
                 <div className="flex items-center gap-2">
-                  Category
+                  {t('accounting.transactions.category')}
                   {getSortIcon('category')}
                 </div>
               </TableHead>
@@ -276,7 +278,7 @@ export function TransactionList({
                 onClick={() => handleSort('amount')}
               >
                 <div className="flex items-center justify-end gap-2">
-                  Amount
+                  {t('accounting.transactions.amount')}
                   {getSortIcon('amount')}
                 </div>
               </TableHead>
@@ -287,7 +289,9 @@ export function TransactionList({
             {filteredAndSortedTransactions.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  {searchTerm ? 'No transactions match your search.' : 'No transactions found.'}
+                  {searchTerm
+                    ? t('accounting.transactions.noMatch')
+                    : t('accounting.transactions.none')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -345,13 +349,13 @@ export function TransactionList({
                         {onViewDetails && (
                           <DropdownMenuItem onClick={() => onViewDetails(transaction)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            View Details
+                            {t('accounting.transactions.viewDetails')}
                           </DropdownMenuItem>
                         )}
                         {onEditTransaction && (
                           <DropdownMenuItem onClick={() => onEditTransaction(transaction)}>
                             <Edit className="h-4 w-4 mr-2" />
-                            Edit
+                            {t('accounting.transactions.edit')}
                           </DropdownMenuItem>
                         )}
                         {onDeleteTransaction && (
@@ -360,7 +364,7 @@ export function TransactionList({
                             className="text-destructive"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            {t('accounting.transactions.delete')}
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -376,8 +380,11 @@ export function TransactionList({
       {/* Results Summary */}
       {filteredAndSortedTransactions.length > 0 && (
         <div className="text-sm text-muted-foreground">
-          Showing {filteredAndSortedTransactions.length} of {transactions.length} transactions
-          {searchTerm && ` matching "${searchTerm}"`}
+          {t('accounting.transactions.showing', {
+            count: filteredAndSortedTransactions.length,
+            total: transactions.length,
+            search: searchTerm ? ` matching "${searchTerm}"` : ''
+          })}
         </div>
       )}
     </div>
