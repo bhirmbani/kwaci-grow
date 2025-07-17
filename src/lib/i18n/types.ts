@@ -387,6 +387,7 @@ export interface TranslationResources {
         }
       }
     }
+    people: Record<string, any>
     cogs: Record<string, any>
   }
 }

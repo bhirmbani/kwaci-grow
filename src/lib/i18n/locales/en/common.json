@@ -1426,7 +1426,144 @@
         "dailyRevenue": "Daily Revenue",
         "dailyProfit": "Daily Profit",
         "monthlyRevenue": "Monthly Revenue",
-        "monthlyProfit": "Monthly Profit"
+      "monthlyProfit": "Monthly Profit"
+      }
+    }
+  },
+  "people": {
+    "page": {
+      "title": "People Management",
+      "description": "Manage employees and point-of-contact assignments",
+      "noBusiness": {
+        "title": "No Business Selected",
+        "description": "Please select a business to manage employees."
+      }
+    },
+    "employees": {
+      "title": "Employees",
+      "description": "Manage employee information and details",
+      "addButton": "Add Employee",
+      "editTitle": "Edit Employee",
+      "createTitle": "Add New Employee",
+      "editDescription": "Update employee information and details",
+      "createDescription": "Add a new employee with complete information",
+      "listTitle": "Employee List",
+      "listDescription": "All employees in your organization",
+      "loading": "Loading employees...",
+      "empty": "No employees found. Add your first employee to get started.",
+      "table": {
+        "employee": "Employee",
+        "position": "Position",
+        "department": "Department",
+        "status": "Status",
+        "hireDate": "Hire Date",
+        "salary": "Salary",
+        "actions": "Actions"
+      },
+      "badges": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "terminated": "Terminated"
+      },
+      "notSpecified": "Not specified",
+      "deleting": "Deleting..."
+    },
+    "toast": {
+      "loadError": "Failed to load employees",
+      "createSuccess": "Employee created successfully",
+      "createError": "Failed to create employee",
+      "updateSuccess": "Employee updated successfully",
+      "updateError": "Failed to update employee",
+      "deleteSuccess": "Employee deleted successfully",
+      "deleteError": "Failed to delete employee"
+    },
+    "poc": {
+      "sectionTitle": "Point of Contact Management",
+      "description": "Assign employees as points of contact for specific branches",
+      "assignButton": "Assign POC",
+      "sheetTitle": "Assign Point of Contact",
+      "sheetDescription": "Assign an employee as a point of contact for a branch",
+      "managerTitle": "Current POC Assignments",
+      "managerDescription": "Manage point of contact assignments for branches",
+      "noAssignments": "No POC assignments found. Assign employees as points of contact for branches.",
+      "table": {
+        "employee": "Employee",
+        "position": "Position",
+        "branch": "Branch",
+        "date": "Assigned Date",
+        "notes": "Notes",
+        "actions": "Actions"
+      },
+      "noNotes": "No notes",
+      "removing": "Removing...",
+      "loading": "Loading POC assignments..."
+    },
+    "forms": {
+      "employee": {
+        "sections": {
+          "personal": "Personal Information",
+          "professional": "Professional Information",
+          "contact": "Contact Information"
+        },
+        "fields": {
+          "fullName": "Full Name *",
+          "companyIdNumber": "Company ID Number *",
+          "nationalIdNumber": "National ID Number",
+          "dateOfBirth": "Date of Birth",
+          "position": "Position/Job Title *",
+          "department": "Department *",
+          "jobLevel": "Job Level",
+          "salary": "Salary (IDR)",
+          "hireDate": "Hire Date *",
+          "employmentStatus": "Employment Status",
+          "phone": "Phone Number",
+          "email": "Email Address",
+          "note": "Additional Notes"
+        },
+        "placeholders": {
+          "fullName": "Enter full name",
+          "companyIdNumber": "e.g., EMP001",
+          "nationalIdNumber": "e.g., 1234567890123456",
+          "position": "e.g., Barista, Manager",
+          "department": "e.g., Operations, Management",
+          "jobLevel": "e.g., Junior, Senior, Manager",
+          "salary": "e.g., 5000000",
+          "phone": "e.g., +62812345678",
+          "email": "e.g., employee@company.com",
+          "note": "Any additional information about the employee..."
+        },
+        "pickDate": "Pick a date",
+        "buttons": {
+          "cancel": "Cancel",
+          "create": "Create Employee",
+          "update": "Update Employee",
+          "saving": "Saving..."
+        }
+      },
+      "poc": {
+        "title": "Assign Point of Contact",
+        "fields": {
+          "employee": "Employee *",
+          "branch": "Branch *",
+          "assignedDate": "Assignment Date *",
+          "note": "Notes"
+        },
+        "placeholders": {
+          "searchEmployees": "Search employees...",
+          "searchBranches": "Search branches...",
+          "notes": "Any additional notes about this assignment..."
+        },
+        "selectEmployee": "Select employee",
+        "selectBranch": "Select branch",
+        "pickDate": "Pick a date",
+        "noEmployee": "No employee found.",
+        "noBranch": "No branch found.",
+        "loading": "Loading employees and branches...",
+        "buttons": {
+          "assign": "Assign POC",
+          "assigning": "Assigning...",
+          "cancel": "Cancel"
+        }
       }
     }
   }
