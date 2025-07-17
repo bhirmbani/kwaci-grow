@@ -1956,5 +1956,81 @@
         }
       }
     }
+  },
+  "analytics": {
+    "page": {
+      "title": "Analitik Menu",
+      "description": "Proyeksi pendapatan dan analisis profit berbasis menu yang diorganisir per struktur menu"
+    },
+    "controls": {
+      "daysPerMonth": "Hari per Bulan"
+    },
+    "loading": "Memuat analitik...",
+    "table": {
+      "title": "Proyeksi & Profit Berdasarkan Menu",
+      "info": "{{menus}} menu • {{products}} produk • Target individual",
+      "loadingTargets": "Memuat target...",
+      "refresh": "Muat Ulang",
+      "noDataTitle": "Tidak ada data menu",
+      "noDataDescription": "Pastikan Anda memiliki:\n• Menu aktif beserta produk\n• Produk dengan bahan dan data HPP\n• Harga produk ditentukan di menu",
+      "headers": {
+        "menuProduct": "Menu / Produk & Target",
+        "cogs": "HPP/Unit",
+        "price": "Harga Menu",
+        "dailyRevenue": "Pendapatan Harian",
+        "weeklyRevenue": "Pendapatan Mingguan",
+        "monthlyRevenue": "Pendapatan Bulanan",
+        "dailyProfit": "Profit Harian",
+        "weeklyProfit": "Profit Mingguan",
+        "monthlyProfit": "Profit Bulanan"
+      },
+      "targetPerDay": "Target/hari:",
+      "units": "unit"
+    },
+    "explanation": {
+      "defaultTitle": "Analitik Menu",
+      "clickPrompt": "Klik baris produk untuk melihat perhitungan dan analisis detail.",
+      "understandingTitle": "Memahami Analitik Berbasis Menu",
+      "understanding": {
+        "menuStructure": "Struktur Menu: Analitik diorganisir per menu dengan produk di bawahnya",
+        "menuPrice": "Harga Menu: Harga yang ditetapkan untuk produk ini pada menu tersebut",
+        "cogs": "HPP/Unit: Biaya bahan per unit",
+        "revenue": "Pendapatan: Total pemasukan penjualan (Harga Menu × Jumlah)",
+        "profit": "Profit: Pendapatan dikurangi HPP (tidak termasuk biaya tetap)"
+      },
+      "benefitsTitle": "Manfaat Berbasis Menu",
+      "benefits": {
+        "seePerformance": "• Lihat performa produk yang sama di menu berbeda",
+        "comparePricing": "• Bandingkan strategi harga di tiap menu",
+        "identifyProfitable": "• Identifikasi menu yang paling menguntungkan",
+        "optimizePlacement": "• Optimalkan penempatan dan harga produk"
+      },
+      "menuContext": "Konteks Menu",
+      "unitEconomics": "Ekonomi Satuan",
+      "dailyProjections": "Proyeksi Harian",
+      "monthlyProjections": "Proyeksi Bulanan",
+      "calculationFormula": "Rumus Perhitungan",
+      "formula": {
+        "revenue": "Pendapatan = Harga Menu × Jumlah × Hari",
+        "profit": "Profit = (Harga Menu - HPP) × Jumlah × Hari",
+        "margin": "Margin = (Profit ÷ Pendapatan) × 100%"
+      },
+      "performanceInsights": "Insight Performa",
+      "insights": {
+        "excellent": "✓ Margin profit sangat bagus pada menu ini",
+        "good": "✓ Margin profit bagus pada menu ini",
+        "moderate": "⚠ Margin profit sedang pada menu ini",
+        "low": "⚠ Margin profit rendah pada menu ini",
+        "negative": "⚠ Margin negatif - tinjau kembali harga pada menu ini"
+      },
+      "compareHint": "💡 Bandingkan performa produk ini di berbagai menu untuk optimasi harga",
+      "inMenu": "di {{menuName}}",
+      "daysPerMonth": "Hari per Bulan:",
+      "totalQuantity": "Total Kuantitas:",
+      "targetQuantity": "Target Kuantitas:",
+      "revenueLabel": "Pendapatan:",
+      "profitLabel": "Profit:",
+      "profitMargin": "Margin Profit:"
+    }
   }
 }

@@ -8,6 +8,7 @@ import { MenuExplanationPanel } from "./MenuExplanationPanel"
 import { useMenuAnalytics } from "@/hooks/useProductAnalytics"
 import { formatCurrency } from "@/utils/formatters"
 import { ProductTargetDefaultService } from "@/lib/services/productTargetDefaultService"
+import { useTranslation } from 'react-i18next'
 
 interface MenuProductProjection {
   menuId: string
@@ -45,6 +46,7 @@ interface MenuAnalyticsTableProps {
 export function MenuAnalyticsTable({
   daysPerMonth
 }: MenuAnalyticsTableProps) {
+  const { t } = useTranslation()
 
   // State for selected row to show detailed calculations
   const [selectedRowData, setSelectedRowData] = useState<MenuProductProjection | undefined>(undefined)
@@ -151,7 +153,7 @@ export function MenuAnalyticsTable({
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg">Loading menu analytics...</div>
+        <div className="text-lg">{t('analytics.loading')}</div>
       </div>
     )
   }
@@ -159,7 +161,7 @@ export function MenuAnalyticsTable({
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-lg text-red-600">Error: {error}</div>
+        <div className="text-lg text-red-600">{t('common.error')}: {error}</div>
       </div>
     )
   }
@@ -168,12 +170,9 @@ export function MenuAnalyticsTable({
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-2">
-          <div className="text-lg text-muted-foreground">No menu data found</div>
-          <div className="text-sm text-muted-foreground">
-            Make sure you have:
-            <br />• Active menus with products
-            <br />• Products with ingredients and COGS data
-            <br />• Product pricing set in menus
+          <div className="text-lg text-muted-foreground">{t('analytics.table.noDataTitle')}</div>
+          <div className="text-sm text-muted-foreground" style={{ whiteSpace: 'pre-line' }}>
+            {t('analytics.table.noDataDescription')}
           </div>
         </div>
       </div>
@@ -186,14 +185,14 @@ export function MenuAnalyticsTable({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Menu-Based Income Projections & Profits</h2>
+        <h2 className="text-xl font-semibold">{t('analytics.table.title')}</h2>
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground">
-            {menuAnalytics.length} menus • {allProducts.length} products • Individual targets
+            {t('analytics.table.info', { menus: menuAnalytics.length, products: allProducts.length })}
             {loadingTargets && (
               <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
                 <Loader2 className="inline h-3 w-3 animate-spin mr-1" />
-                Loading targets...
+                {t('analytics.table.loadingTargets')}
               </span>
             )}
           </div>
@@ -205,7 +204,7 @@ export function MenuAnalyticsTable({
             className="flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('common.refresh')}
           </Button>
         </div>
       </div>
@@ -230,31 +229,31 @@ export function MenuAnalyticsTable({
                   <TableHeader sticky>
                     <TableRow>
                       <TableHead sticky className="min-w-[200px]" scope="col">
-                        Menu / Product & Target
+                        {t('analytics.table.headers.menuProduct')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[100px]" scope="col">
-                        COGS/Unit
+                        {t('analytics.table.headers.cogs')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[100px]" scope="col">
-                        Menu Price
+                        {t('analytics.table.headers.price')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Daily Revenue
+                        {t('analytics.table.headers.dailyRevenue')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Weekly Revenue
+                        {t('analytics.table.headers.weeklyRevenue')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Monthly Revenue
+                        {t('analytics.table.headers.monthlyRevenue')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Daily Profit
+                        {t('analytics.table.headers.dailyProfit')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Weekly Profit
+                        {t('analytics.table.headers.weeklyProfit')}
                       </TableHead>
                       <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                        Monthly Profit
+                        {t('analytics.table.headers.monthlyProfit')}
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -321,7 +320,7 @@ export function MenuAnalyticsTable({
                                   <div className="space-y-2">
                                     <div className="font-medium">{projection.productName}</div>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-xs text-muted-foreground">Target/day:</span>
+                                      <span className="text-xs text-muted-foreground">{t('analytics.table.targetPerDay')}</span>
                                       <div className="relative">
                                         <Input
                                           type="number"
@@ -340,7 +339,7 @@ export function MenuAnalyticsTable({
                                           <Loader2 className="absolute right-1 top-1 h-3 w-3 animate-spin text-muted-foreground" />
                                         )}
                                       </div>
-                                      <span className="text-xs text-muted-foreground">units</span>
+                                      <span className="text-xs text-muted-foreground">{t('analytics.table.units')}</span>
                                     </div>
                                   </div>
                                 </TableCell>

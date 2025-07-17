@@ -1956,5 +1956,81 @@
         }
       }
     }
+  },
+  "analytics": {
+    "page": {
+      "title": "Menu Analytics",
+      "description": "Menu-based income projections and profit analysis organized by menu structure"
+    },
+    "controls": {
+      "daysPerMonth": "Days per Month"
+    },
+    "loading": "Loading analytics...",
+    "table": {
+      "title": "Menu-Based Income Projections & Profits",
+      "info": "{{menus}} menus • {{products}} products • Individual targets",
+      "loadingTargets": "Loading targets...",
+      "refresh": "Refresh",
+      "noDataTitle": "No menu data found",
+      "noDataDescription": "Make sure you have:\n• Active menus with products\n• Products with ingredients and COGS data\n• Product pricing set in menus",
+      "headers": {
+        "menuProduct": "Menu / Product & Target",
+        "cogs": "COGS/Unit",
+        "price": "Menu Price",
+        "dailyRevenue": "Daily Revenue",
+        "weeklyRevenue": "Weekly Revenue",
+        "monthlyRevenue": "Monthly Revenue",
+        "dailyProfit": "Daily Profit",
+        "weeklyProfit": "Weekly Profit",
+        "monthlyProfit": "Monthly Profit"
+      },
+      "targetPerDay": "Target/day:",
+      "units": "units"
+    },
+    "explanation": {
+      "defaultTitle": "Menu Analytics",
+      "clickPrompt": "Click on a product row to see detailed calculations and analysis.",
+      "understandingTitle": "Understanding Menu-Based Analytics",
+      "understanding": {
+        "menuStructure": "Menu Structure: Analytics organized by menu with products underneath",
+        "menuPrice": "Menu Price: Actual price set for this product in this specific menu",
+        "cogs": "COGS/Unit: Cost of Goods Sold per unit (ingredients cost)",
+        "revenue": "Revenue: Total income from sales (Menu Price × Quantity)",
+        "profit": "Profit: Revenue minus COGS (excludes fixed costs)"
+      },
+      "benefitsTitle": "Menu-Centric Benefits",
+      "benefits": {
+        "seePerformance": "• See how the same product performs in different menus",
+        "comparePricing": "• Compare pricing strategies across menus",
+        "identifyProfitable": "• Identify which menus are most profitable",
+        "optimizePlacement": "• Optimize product placement and pricing"
+      },
+      "menuContext": "Menu Context",
+      "unitEconomics": "Unit Economics",
+      "dailyProjections": "Daily Projections",
+      "monthlyProjections": "Monthly Projections",
+      "calculationFormula": "Calculation Formula",
+      "formula": {
+        "revenue": "Revenue = Menu Price × Quantity × Days",
+        "profit": "Profit = (Menu Price - COGS) × Quantity × Days",
+        "margin": "Margin = (Profit ÷ Revenue) × 100%"
+      },
+      "performanceInsights": "Performance Insights",
+      "insights": {
+        "excellent": "✓ Excellent profit margin in this menu",
+        "good": "✓ Good profit margin in this menu",
+        "moderate": "⚠ Moderate profit margin in this menu",
+        "low": "⚠ Low profit margin in this menu",
+        "negative": "⚠ Negative margin - review pricing for this menu"
+      },
+      "compareHint": "💡 Compare this product's performance across different menus to optimize pricing strategy",
+      "inMenu": "in {{menuName}}",
+      "daysPerMonth": "Days per Month:",
+      "totalQuantity": "Total Quantity:",
+      "targetQuantity": "Target Quantity:",
+      "revenueLabel": "Revenue:",
+      "profitLabel": "Profit:",
+      "profitMargin": "Profit Margin:"
+    }
   }
 }
