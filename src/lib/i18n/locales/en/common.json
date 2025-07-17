@@ -213,7 +213,7 @@
         "close": "Close",
         "markComplete": "Mark as Complete",
         "markingComplete": "Marking Complete...",
-        "tipsTitle": "\uD83D\uDCA1 Tips for Success",
+        "tipsTitle": "💡 Tips for Success",
         "tips": {
           "createIngredient": [
             "Start with basic ingredients like Coffee Beans, Milk, and Sugar",
@@ -909,7 +909,7 @@
         "note": "Note",
         "actions": "Actions"
       },
-    "emptyIngredients": "No ingredients added yet"
+      "emptyIngredients": "No ingredients added yet"
     }
   },
   "products": {
@@ -920,7 +920,10 @@
     "create": "Create Product",
     "createNewTitle": "Create New Product",
     "createNewDescription": "Add a new product to your catalog",
-    "tabs": { "overview": "Overview", "products": "Products" },
+    "tabs": {
+      "overview": "Overview",
+      "products": "Products"
+    },
     "overview": {
       "totalProducts": "Total Products",
       "totalProductsDesc": "Active products in catalog",
@@ -956,7 +959,10 @@
         "actions": "Actions"
       },
       "ingredientCount": "{{count}} ingredients",
-      "badge": { "active": "Active", "inactive": "Inactive" },
+      "badge": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
       "deleteTitle": "Delete Product",
       "deleteDescription": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
       "editSheetTitle": "Edit Product",
@@ -1011,7 +1017,10 @@
         "additionalNotes": "Additional notes",
         "notePlaceholder": "Note"
       },
-      "buttons": { "addIngredient": "Add Ingredient", "add": "Add" },
+      "buttons": {
+        "addIngredient": "Add Ingredient",
+        "add": "Add"
+      },
       "messages": {
         "selectIngredient": "Please select an ingredient and enter usage amount",
         "invalidUsage": "Usage per cup must be greater than 0",
@@ -1045,12 +1054,124 @@
       "noIngredients": "No ingredients added to this product yet.",
       "addIngredientsPrompt": "Add ingredients to see COGS calculation.",
       "titleFor": "COGS Calculation for {{name}}",
-      "whatIs": { "title": "What is COGS?", "text": "COGS (Cost of Goods Sold) represents the total cost of ingredients needed to make one cup of this product. It's calculated by multiplying each ingredient's cost per unit by the amount used per cup." },
+      "whatIs": {
+        "title": "What is COGS?",
+        "text": "COGS (Cost of Goods Sold) represents the total cost of ingredients needed to make one cup of this product. It's calculated by multiplying each ingredient's cost per unit by the amount used per cup."
+      },
       "totalCogsPerCup": "Total COGS per Cup",
       "ingredientCount": "{{count}} ingredient{{count !== 1 ? 's' : ''}}",
       "ingredientBreakdown": "Ingredient Breakdown",
-      "table": { "ingredient": "Ingredient", "usagePerCup": "Usage per Cup", "costPerCup": "Cost per Cup", "percentOfTotal": "% of Total" },
-      "formula": { "title": "Calculation Formula:", "formula": "Cost per Cup = (Base Unit Cost ÷ Base Unit Quantity) × Usage per Cup", "example": "Example: If milk costs Rp 20,000 per 1000ml and you use 100ml per cup, then cost per cup = (20,000 ÷ 1000) × 100 = Rp 2,000" }
+      "table": {
+        "ingredient": "Ingredient",
+        "usagePerCup": "Usage per Cup",
+        "costPerCup": "Cost per Cup",
+        "percentOfTotal": "% of Total"
+      },
+      "formula": {
+        "title": "Calculation Formula:",
+        "formula": "Cost per Cup = (Base Unit Cost ÷ Base Unit Quantity) × Usage per Cup",
+        "example": "Example: If milk costs Rp 20,000 per 1000ml and you use 100ml per cup, then cost per cup = (20,000 ÷ 1000) × 100 = Rp 2,000"
+      }
+    }
+  },
+  "menus": {
+    "management": {
+      "title": "Menu Management",
+      "description": "Create and manage your coffee shop menus with products and pricing",
+      "createMenu": "Create Menu",
+      "tabs": {
+        "menus": "Menus",
+        "branches": "Branches"
+      },
+      "menuFiltersView": "Menu Filters & View",
+      "showInactive": "Show inactive menus",
+      "noMenus": "No menus found",
+      "noMenusHint": "Get started by creating your first menu",
+      "branch": {
+        "title": "Branch Management",
+        "description": "Manage your coffee shop locations and their menu assignments",
+        "create": "Create Branch",
+        "filtersTitle": "Branch Filters & View",
+        "showInactive": "Show inactive branches"
+      },
+      "editMenuSheet": {
+        "title": "Edit Menu",
+        "description": "Update menu details and settings"
+      },
+      "createMenuSheet": {
+        "title": "Create New Menu",
+        "description": "Add a new menu to your coffee shop catalog"
+      },
+      "assignBranchesSheet": {
+        "title": "Assign Branches",
+        "description": "Select which branches this menu should be available at"
+      },
+      "menuDetailsSheet": {
+        "title": "Menu Details",
+        "description": "Manage products and settings for this menu"
+      },
+      "branchMenuSheet": {
+        "title": "Branch Menu Management",
+        "description": "Manage menu assignments for this branch"
+      },
+      "createBranchSheet": {
+        "title": "Create New Branch",
+        "description": "Add a new branch location to your coffee shop network"
+      },
+      "editBranchSheet": {
+        "title": "Edit Branch",
+        "description": "Update branch details and settings"
+      }
+    },
+    "branchAssignment": {
+      "loading": "Loading branches...",
+      "assigningTo": "Assigning branches to:",
+      "selectBranches": "Select Branches *",
+      "searchPlaceholder": "Search branches...",
+      "noBranchesFound": "No branches found.",
+      "help": "Select which branches this menu should be available at",
+      "selectedBranches": "Selected Branches",
+      "remove": "Remove",
+      "assign": "Assign Branches",
+      "cancel": "Cancel",
+      "helpTitle": "Branch Assignment:",
+      "helpItems": [
+        "Menus can be assigned to multiple branches",
+        "Each branch can have multiple menus",
+        "Use this to control which menus are available at each location",
+        "You can set different sales targets per branch later"
+      ],
+      "assigning": "Assigning..."
+    },
+    "branchForm": {
+      "name": "Branch Name *",
+      "location": "Location",
+      "businessHours": "Business Hours",
+      "startTime": "Start Time *",
+      "endTime": "End Time *",
+      "activeStatus": "Active Status",
+      "note": "Note",
+      "placeholders": {
+        "name": "Enter branch name",
+        "location": "Enter branch location or address",
+        "note": "Add any additional notes or comments"
+      },
+      "help": {
+        "name": "A descriptive name for your branch (e.g., \"Main Location\")",
+        "location": "Physical location or address of this branch",
+        "businessHours": "Set the operating hours for this branch",
+        "businessHoursInfo": "Business hours are used for calculating time-based progress in target analysis",
+        "note": "Optional notes for internal reference"
+      },
+      "activeHelp": "Branch is active and available for menu assignments",
+      "inactiveHelp": "Branch is inactive and hidden from operations",
+      "buttons": {
+        "create": "Create Branch",
+        "update": "Update Branch",
+        "creating": "Creating...",
+        "updating": "Updating...",
+        "cancel": "Cancel"
+      }
     }
   }
 }

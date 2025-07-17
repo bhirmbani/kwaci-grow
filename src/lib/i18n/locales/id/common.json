@@ -213,7 +213,7 @@
         "close": "Tutup",
         "markComplete": "Tandai Selesai",
         "markingComplete": "Menandai Selesai...",
-        "tipsTitle": "\uD83D\uDCA1 Tips Sukses",
+        "tipsTitle": "💡 Tips Sukses",
         "tips": {
           "createIngredient": [
             "Mulai dengan bahan dasar seperti Biji Kopi, Susu, dan Gula",
@@ -920,7 +920,10 @@
     "create": "Buat Produk",
     "createNewTitle": "Buat Produk Baru",
     "createNewDescription": "Tambahkan produk baru ke katalog Anda",
-    "tabs": { "overview": "Ringkasan", "products": "Produk" },
+    "tabs": {
+      "overview": "Ringkasan",
+      "products": "Produk"
+    },
     "overview": {
       "totalProducts": "Total Produk",
       "totalProductsDesc": "Produk aktif di katalog",
@@ -956,7 +959,10 @@
         "actions": "Aksi"
       },
       "ingredientCount": "{{count}} bahan",
-      "badge": { "active": "Aktif", "inactive": "Nonaktif" },
+      "badge": {
+        "active": "Aktif",
+        "inactive": "Nonaktif"
+      },
       "deleteTitle": "Hapus Produk",
       "deleteDescription": "Yakin ingin menghapus \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
       "editSheetTitle": "Edit Produk",
@@ -1011,7 +1017,10 @@
         "additionalNotes": "Catatan tambahan",
         "notePlaceholder": "Catatan"
       },
-      "buttons": { "addIngredient": "Tambah Bahan", "add": "Tambah" },
+      "buttons": {
+        "addIngredient": "Tambah Bahan",
+        "add": "Tambah"
+      },
       "messages": {
         "selectIngredient": "Pilih bahan dan masukkan jumlah penggunaan",
         "invalidUsage": "Penggunaan per cangkir harus lebih dari 0",
@@ -1062,6 +1071,106 @@
         "title": "Rumus Perhitungan:",
         "formula": "Biaya per Cangkir = (Biaya Satuan ÷ Jumlah Satuan) × Penggunaan",
         "example": "Contoh: Jika susu seharga Rp20.000 per 1000ml dan digunakan 100ml per cangkir, maka biaya per cangkir = (20.000 ÷ 1000) × 100 = Rp2.000"
+      }
+    }
+  },
+  "menus": {
+    "management": {
+      "title": "Manajemen Menu",
+      "description": "Buat dan kelola menu kedai kopi beserta harga produknya",
+      "createMenu": "Buat Menu",
+      "tabs": {
+        "menus": "Menu",
+        "branches": "Cabang"
+      },
+      "menuFiltersView": "Filter & Tampilan Menu",
+      "showInactive": "Tampilkan menu tidak aktif",
+      "noMenus": "Tidak ada menu",
+      "noMenusHint": "Mulai dengan membuat menu pertama Anda",
+      "branch": {
+        "title": "Manajemen Cabang",
+        "description": "Kelola lokasi kedai kopi dan penugasan menunya",
+        "create": "Buat Cabang",
+        "filtersTitle": "Filter & Tampilan Cabang",
+        "showInactive": "Tampilkan cabang tidak aktif"
+      },
+      "editMenuSheet": {
+        "title": "Edit Menu",
+        "description": "Perbarui detail dan pengaturan menu"
+      },
+      "createMenuSheet": {
+        "title": "Buat Menu Baru",
+        "description": "Tambahkan menu baru ke katalog kedai kopi Anda"
+      },
+      "assignBranchesSheet": {
+        "title": "Tetapkan Cabang",
+        "description": "Pilih cabang tempat menu ini tersedia"
+      },
+      "menuDetailsSheet": {
+        "title": "Detail Menu",
+        "description": "Kelola produk dan pengaturan untuk menu ini"
+      },
+      "branchMenuSheet": {
+        "title": "Manajemen Menu Cabang",
+        "description": "Kelola penugasan menu untuk cabang ini"
+      },
+      "createBranchSheet": {
+        "title": "Buat Cabang Baru",
+        "description": "Tambahkan lokasi cabang kedai kopi"
+      },
+      "editBranchSheet": {
+        "title": "Edit Cabang",
+        "description": "Perbarui detail dan pengaturan cabang"
+      }
+    },
+    "branchAssignment": {
+      "loading": "Memuat cabang...",
+      "assigningTo": "Menetapkan cabang untuk:",
+      "selectBranches": "Pilih Cabang *",
+      "searchPlaceholder": "Cari cabang...",
+      "noBranchesFound": "Cabang tidak ditemukan.",
+      "help": "Pilih cabang tempat menu ini tersedia",
+      "selectedBranches": "Cabang Terpilih",
+      "remove": "Hapus",
+      "assign": "Tetapkan Cabang",
+      "cancel": "Batal",
+      "helpTitle": "Penetapan Cabang:",
+      "helpItems": [
+        "Menu dapat ditetapkan ke beberapa cabang",
+        "Setiap cabang dapat memiliki banyak menu",
+        "Gunakan untuk mengontrol menu di setiap lokasi",
+        "Anda dapat menetapkan target penjualan per cabang nanti"
+      ],
+      "assigning": "Menetapkan..."
+    },
+    "branchForm": {
+      "name": "Nama Cabang *",
+      "location": "Lokasi",
+      "businessHours": "Jam Operasional",
+      "startTime": "Jam Mulai *",
+      "endTime": "Jam Selesai *",
+      "activeStatus": "Status Aktif",
+      "note": "Catatan",
+      "placeholders": {
+        "name": "Masukkan nama cabang",
+        "location": "Masukkan lokasi atau alamat cabang",
+        "note": "Tambahkan catatan"
+      },
+      "help": {
+        "name": "Nama deskriptif untuk cabang",
+        "location": "Lokasi fisik atau alamat cabang",
+        "businessHours": "Atur jam operasional cabang",
+        "businessHoursInfo": "Jam operasional digunakan untuk analisis target",
+        "note": "Catatan opsional"
+      },
+      "activeHelp": "Cabang aktif dan dapat digunakan",
+      "inactiveHelp": "Cabang tidak aktif",
+      "buttons": {
+        "create": "Buat Cabang",
+        "update": "Perbarui Cabang",
+        "creating": "Membuat...",
+        "updating": "Memperbarui...",
+        "cancel": "Batal"
       }
     }
   }

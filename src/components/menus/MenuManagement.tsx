@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Plus, Grid, List } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,6 +31,7 @@ type ViewMode = 'grid' | 'list'
 export function MenuManagement() {
   const [includeInactive, setIncludeInactive] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const { t } = useTranslation()
   
   // Use business-reactive hooks
   const { 
@@ -210,22 +212,22 @@ export function MenuManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Menu Management</h1>
+          <h1 className="text-2xl font-bold">{t('menus.management.title')}</h1>
           <p className="text-muted-foreground">
-            Create and manage your coffee shop menus with products and pricing
+            {t('menus.management.description')}
           </p>
         </div>
         <Button onClick={() => setIsCreateSheetOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Create Menu
+          {t('menus.management.createMenu')}
         </Button>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="menus" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="menus">Menus</TabsTrigger>
-          <TabsTrigger value="branches">Branches</TabsTrigger>
+          <TabsTrigger value="menus">{t('menus.management.tabs.menus')}</TabsTrigger>
+          <TabsTrigger value="branches">{t('menus.management.tabs.branches')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="menus">
@@ -234,7 +236,7 @@ export function MenuManagement() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Menu Filters & View</CardTitle>
+                  <CardTitle className="text-lg">{t('menus.management.menuFiltersView')}</CardTitle>
                   <div className="flex items-center space-x-4">
                     {/* View Mode Toggle */}
                     <div className="flex items-center space-x-2">
@@ -262,7 +264,7 @@ export function MenuManagement() {
                         onCheckedChange={setIncludeInactive}
                       />
                       <Label htmlFor="include-inactive" className="text-sm font-medium">
-                        Show inactive menus
+                        {t('menus.management.showInactive')}
                       </Label>
                     </div>
                   </div>
@@ -275,13 +277,13 @@ export function MenuManagement() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2">No menus found</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('menus.management.noMenus')}</h3>
                     <p className="text-muted-foreground mb-4">
-                      Get started by creating your first menu
+                      {t('menus.management.noMenusHint')}
                     </p>
                     <Button onClick={() => setIsCreateSheetOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
-                      Create Menu
+                      {t('menus.management.createMenu')}
                     </Button>
                   </div>
                 </CardContent>
@@ -316,14 +318,14 @@ export function MenuManagement() {
             {/* Branch Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold">Branch Management</h2>
+                <h2 className="text-xl font-semibold">{t('menus.management.branch.title')}</h2>
                 <p className="text-muted-foreground">
-                  Manage your coffee shop locations and their menu assignments
+                  {t('menus.management.branch.description')}
                 </p>
               </div>
               <Button onClick={handleCreateBranch}>
                 <Plus className="h-4 w-4 mr-2" />
-                Create Branch
+                {t('menus.management.branch.create')}
               </Button>
             </div>
 
@@ -331,7 +333,7 @@ export function MenuManagement() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Branch Filters & View</CardTitle>
+                  <CardTitle className="text-lg">{t('menus.management.branch.filtersTitle')}</CardTitle>
                   <div className="flex items-center space-x-4">
                     {/* View Mode Toggle */}
                     <div className="flex items-center space-x-2">
@@ -359,7 +361,7 @@ export function MenuManagement() {
                         onCheckedChange={setIncludeInactive}
                       />
                       <Label htmlFor="include-inactive-branches" className="text-sm font-medium">
-                        Show inactive branches
+                        {t('menus.management.branch.showInactive')}
                       </Label>
                     </div>
                   </div>
@@ -387,9 +389,9 @@ export function MenuManagement() {
       <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
         <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Edit Menu</SheetTitle>
+            <SheetTitle>{t('menus.management.editMenuSheet.title')}</SheetTitle>
             <SheetDescription>
-              Update menu details and settings
+              {t('menus.management.editMenuSheet.description')}
             </SheetDescription>
           </SheetHeader>
           <MenuForm
@@ -404,9 +406,9 @@ export function MenuManagement() {
       <Sheet open={isBranchAssignmentSheetOpen} onOpenChange={setIsBranchAssignmentSheetOpen}>
         <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Assign Branches</SheetTitle>
+            <SheetTitle>{t('menus.management.assignBranchesSheet.title')}</SheetTitle>
             <SheetDescription>
-              Select which branches this menu should be available at
+              {t('menus.management.assignBranchesSheet.description')}
             </SheetDescription>
           </SheetHeader>
           {assigningMenu && (
@@ -423,9 +425,9 @@ export function MenuManagement() {
       <Sheet open={isCreateBranchSheetOpen} onOpenChange={setIsCreateBranchSheetOpen}>
         <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Create New Branch</SheetTitle>
+            <SheetTitle>{t('menus.management.createBranchSheet.title')}</SheetTitle>
             <SheetDescription>
-              Add a new branch location to your coffee shop network
+              {t('menus.management.createBranchSheet.description')}
             </SheetDescription>
           </SheetHeader>
           <BranchForm
@@ -439,9 +441,9 @@ export function MenuManagement() {
       <Sheet open={isEditBranchSheetOpen} onOpenChange={setIsEditBranchSheetOpen}>
         <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Edit Branch</SheetTitle>
+            <SheetTitle>{t('menus.management.editBranchSheet.title')}</SheetTitle>
             <SheetDescription>
-              Update branch details and settings
+              {t('menus.management.editBranchSheet.description')}
             </SheetDescription>
           </SheetHeader>
           <BranchForm
@@ -458,9 +460,9 @@ export function MenuManagement() {
       <Sheet open={isMenuDetailsSheetOpen} onOpenChange={setIsMenuDetailsSheetOpen}>
         <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Menu Details</SheetTitle>
+            <SheetTitle>{t('menus.management.menuDetailsSheet.title')}</SheetTitle>
             <SheetDescription>
-              Manage products and settings for this menu
+              {t('menus.management.menuDetailsSheet.description')}
             </SheetDescription>
           </SheetHeader>
           {viewingMenu && (
@@ -476,9 +478,9 @@ export function MenuManagement() {
       <Sheet open={isBranchMenuSheetOpen} onOpenChange={setIsBranchMenuSheetOpen}>
         <SheetContent className="w-[1000px] sm:w-[1000px] max-w-[90vw] h-full overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Branch Menu Management</SheetTitle>
+            <SheetTitle>{t('menus.management.branchMenuSheet.title')}</SheetTitle>
             <SheetDescription>
-              Manage menu assignments for this branch
+              {t('menus.management.branchMenuSheet.description')}
             </SheetDescription>
           </SheetHeader>
           {viewingBranch && (
@@ -503,9 +505,9 @@ export function MenuManagement() {
           </SheetTrigger>
         <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Create New Menu</SheetTitle>
+              <SheetTitle>{t('menus.management.createMenuSheet.title')}</SheetTitle>
               <SheetDescription>
-                Add a new menu to your coffee shop catalog
+                {t('menus.management.createMenuSheet.description')}
               </SheetDescription>
             </SheetHeader>
             <MenuForm

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -41,6 +42,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
   const [assignedBranches, setAssignedBranches] = useState<Branch[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
+  const { t } = useTranslation()
 
   const form = useForm<BranchAssignmentData>({
     resolver: zodResolver(branchAssignmentSchema),
@@ -105,7 +107,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">Loading branches...</div>
+        <div className="text-muted-foreground">{t('menus.branchAssignment.loading')}</div>
       </div>
     )
   }
@@ -121,7 +123,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
 
       {/* Menu Info */}
       <div className="p-4 bg-muted/30 rounded-lg">
-        <h3 className="font-medium text-sm text-muted-foreground mb-1">Assigning branches to:</h3>
+        <h3 className="font-medium text-sm text-muted-foreground mb-1">{t('menus.branchAssignment.assigningTo')}</h3>
         <p className="font-semibold">{menu.name}</p>
         {menu.description && (
           <p className="text-sm text-muted-foreground mt-1">{menu.description}</p>
@@ -130,7 +132,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
 
       {/* Branch Selection */}
       <div className="space-y-2">
-        <Label>Select Branches *</Label>
+        <Label>{t('menus.branchAssignment.selectBranches')}</Label>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -145,9 +147,9 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
           </PopoverTrigger>
           <PopoverContent className="w-full p-0">
             <Command>
-              <CommandInput placeholder="Search branches..." />
+              <CommandInput placeholder={t('menus.branchAssignment.searchPlaceholder')} />
               <CommandList>
-                <CommandEmpty>No branches found.</CommandEmpty>
+                <CommandEmpty>{t('menus.branchAssignment.noBranchesFound')}</CommandEmpty>
                 <CommandGroup>
                   {branches.map((branch) => (
                     <CommandItem
@@ -175,14 +177,14 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
           </PopoverContent>
         </Popover>
         <p className="text-xs text-muted-foreground">
-          Select which branches this menu should be available at
+          {t('menus.branchAssignment.help')}
         </p>
       </div>
 
       {/* Current Assignments Summary */}
       {watchedBranchIds.length > 0 && (
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Selected Branches ({watchedBranchIds.length})</Label>
+          <Label className="text-sm font-medium">{t('menus.branchAssignment.selectedBranches')} ({watchedBranchIds.length})</Label>
           <div className="space-y-2">
             {branches
               .filter(branch => watchedBranchIds.includes(branch.id))
@@ -200,7 +202,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
                     size="sm"
                     onClick={() => toggleBranch(branch.id)}
                   >
-                    Remove
+                    {t('menus.branchAssignment.remove')}
                   </Button>
                 </div>
               ))}
@@ -214,7 +216,7 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
           type="submit"
           disabled={isSubmitting || watchedBranchIds.length === 0}
         >
-          {isSubmitting ? 'Assigning...' : 'Assign Branches'}
+          {isSubmitting ? t('menus.branchAssignment.assigning') : t('menus.branchAssignment.assign')}
         </Button>
         <Button
           type="button"
@@ -222,18 +224,17 @@ export function BranchAssignment({ menu, onSuccess, onCancel }: BranchAssignment
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('menus.branchAssignment.cancel')}
         </Button>
       </div>
 
       {/* Help Text */}
       <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-        <p className="font-medium mb-1">Branch Assignment:</p>
+        <p className="font-medium mb-1">{t('menus.branchAssignment.helpTitle')}</p>
         <ul className="space-y-1">
-          <li>• Menus can be assigned to multiple branches</li>
-          <li>• Each branch can have multiple menus</li>
-          <li>• Use this to control which menus are available at each location</li>
-          <li>• You can set different sales targets per branch later</li>
+          {(t('menus.branchAssignment.helpItems', { returnObjects: true }) as string[]).map((item, idx) => (
+            <li key={idx}>• {item}</li>
+          ))}
         </ul>
       </div>
     </form>

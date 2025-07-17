@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MoreHorizontal, Edit, Trash2, MapPin, BookOpen, Building2, Clock } from 'lucide-react'
 import {
   Table,
@@ -40,6 +41,7 @@ interface BranchListProps {
 
 export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }: BranchListProps) {
   const [deleteBranchId, setDeleteBranchId] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   const handleDelete = () => {
     if (deleteBranchId) {
@@ -74,9 +76,9 @@ export function BranchList({ branches, onEdit, onDelete, onViewMenus, viewMode }
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No branches found</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('menus.branchList.noBranches')}</h3>
           <p className="text-muted-foreground mb-4 text-center">
-            Create your first branch to start assigning menus to locations
+            {t('menus.branchList.noBranchesHint')}
           </p>
         </CardContent>
       </Card>
