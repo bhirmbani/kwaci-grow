@@ -344,6 +344,27 @@
         }
       }
     },
+    "type": {
+      "daily": "Harian",
+      "weekly": "Mingguan",
+      "monthly": "Bulanan",
+      "daily_id": "Rencana Harian",
+      "weekly_id": "Rencana Mingguan",
+      "monthly_id": "Rencana Bulanan"
+    },
+    "category": {
+      "sales": "Penjualan",
+      "production": "Produksi",
+      "efficiency": "Efisiensi",
+      "quality": "Kualitas",
+      "cost": "Biaya"
+    },
+    "status": {
+      "draft": "Draf",
+      "active": "Aktif",
+      "completed": "Selesai",
+      "archived": "Diarsipkan"
+    },
     "planningDashboard": {
       "loading": "Memuat data dasbor...",
       "title": "Dasbor Perencanaan",
@@ -428,6 +449,7 @@
         "view": "Lihat Rencana"
       },
       "analytics": {
+        "plans": "Rencana",
         "title": "Analitik Perencanaan",
         "description": "Ikhtisar performa dan wawasan perencanaan Anda",
         "planDistribution": "Distribusi Rencana",

@@ -344,6 +344,27 @@
         }
       }
     },
+    "type": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "daily_id": "Daily Plan",
+      "weekly_id": "Weekly Plan",
+      "monthly_id": "Monthly Plan"
+    },
+    "category": {
+      "sales": "Sales",
+      "production": "Production",
+      "efficiency": "Efficiency",
+      "quality": "Quality",
+      "cost": "Cost"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
     "planningDashboard": {
       "loading": "Loading dashboard data...",
       "title": "Planning Dashboard",
@@ -428,6 +449,7 @@
         "view": "View Plan"
       },
       "analytics": {
+        "plans": "Plans",
         "title": "Planning Analytics",
         "description": "Overview of your planning performance and insights",
         "planDistribution": "Plan Distribution",
