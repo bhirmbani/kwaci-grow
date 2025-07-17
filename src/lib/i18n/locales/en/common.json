@@ -781,9 +781,111 @@
           "saveWhenReady": {
             "title": "Save When Ready",
             "description": "When satisfied with your experiments, save to database"
-          }
-        }
+  }
+  },
+  "recurringExpenses": {
+    "page": {
+      "title": "Recurring Expenses",
+      "description": "Manage your monthly and yearly recurring operational expenses",
+      "showInactive": "Show inactive"
+    },
+    "sheet": {
+      "createTitle": "Add New Recurring Expense",
+      "editTitle": "Edit Recurring Expense",
+      "createDescription": "Add a new recurring expense to track your operational costs.",
+      "editDescription": "Update the expense information and settings."
+    },
+    "summary": {
+      "monthlyTotal": "Monthly Total",
+      "yearlyTotal": "Yearly Total",
+      "activeExpenses": "Active Expenses",
+      "totalExpenses": "Total Expenses",
+      "expensesByCategory": "Expenses by Category",
+      "monthlyExpenses": "Monthly Expenses",
+      "yearlyExpenses": "Yearly Expenses",
+      "quickStats": "Quick Stats",
+      "annualCost": "Annual cost (monthly × 12)",
+      "dailyAverageCost": "Daily average cost",
+      "expenseCategories": "Expense categories"
+    },
+    "table": {
+      "title": "Recurring Expenses",
+      "searchPlaceholder": "Search expenses...",
+      "categoryFilterAll": "All Categories",
+      "frequencyFilterAll": "All",
+      "noExpenses": "No recurring expenses found. Create your first expense to get started.",
+      "noMatch": "No expenses match your current filters.",
+      "headers": {
+        "name": "Name",
+        "amount": "Amount",
+        "frequency": "Frequency",
+        "category": "Category",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "ongoing": "Ongoing",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "openMenu": "Open menu",
+        "clear": "Clear"
       }
+    },
+    "form": {
+      "fields": {
+        "name": "Expense Name",
+        "description": "Description (Optional)",
+        "amount": "Amount (IDR)",
+        "frequency": "Frequency",
+        "category": "Category",
+        "startDate": "Start Date",
+        "endDate": "End Date (Optional)",
+        "note": "Note (Optional)"
+      },
+      "placeholders": {
+        "name": "e.g., Office Rent, Employee Salary",
+        "description": "Additional details about this expense...",
+        "category": "Select or create category...",
+        "searchCategories": "Search categories...",
+        "frequency": "Select frequency",
+        "pickDate": "Pick a date",
+        "noEndDate": "No end date",
+        "clearDate": "Clear Date",
+        "note": "Additional notes or comments..."
+      },
+      "descriptions": {
+        "leaveEmpty": "Leave empty for ongoing expenses"
+      },
+      "frequency": {
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create Expense",
+        "update": "Update Expense",
+        "saving": "Saving..."
+      }
+    },
+    "messages": {
+      "createSuccess": "The new recurring expense has been created successfully.",
+      "updateSuccess": "The recurring expense has been updated successfully.",
+      "deleteSuccess": "The recurring expense has been permanently deleted.",
+      "deleteError": "Failed to delete the expense. Please try again.",
+      "deactivateSuccess": "The recurring expense has been deactivated.",
+      "activateSuccess": "The recurring expense has been activated.",
+      "statusError": "Failed to update the expense status. Please try again."
+    }
+  }
+}
     },
     "saveDialog": {
       "title": "Save to Database",

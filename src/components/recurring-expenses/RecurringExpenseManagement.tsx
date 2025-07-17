@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Plus, CheckCircle, AlertCircle } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
@@ -14,6 +15,7 @@ export function RecurringExpenseManagement() {
   const [editingExpense, setEditingExpense] = useState<RecurringExpense | null>(null)
   const [showInactive, setShowInactive] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const { t } = useTranslation()
 
   const {
     expenses,
@@ -47,8 +49,8 @@ export function RecurringExpenseManagement() {
     setMessage({
       type: 'success',
       text: editingExpense
-        ? 'The recurring expense has been updated successfully.'
-        : 'The new recurring expense has been created successfully.',
+        ? t('recurringExpenses.messages.updateSuccess')
+        : t('recurringExpenses.messages.createSuccess'),
     })
     // Clear message after 5 seconds
     setTimeout(() => setMessage(null), 5000)
@@ -100,13 +102,13 @@ export function RecurringExpenseManagement() {
       await deleteExpense(expense.id)
       setMessage({
         type: 'success',
-        text: 'The recurring expense has been permanently deleted.',
+        text: t('recurringExpenses.messages.deleteSuccess'),
       })
       setTimeout(() => setMessage(null), 5000)
     } catch (err) {
       setMessage({
         type: 'error',
-        text: 'Failed to delete the expense. Please try again.',
+        text: t('recurringExpenses.messages.deleteError'),
       })
       setTimeout(() => setMessage(null), 5000)
     }
@@ -118,20 +120,20 @@ export function RecurringExpenseManagement() {
         await softDeleteExpense(expense.id)
         setMessage({
           type: 'success',
-          text: 'The recurring expense has been deactivated.',
+          text: t('recurringExpenses.messages.deactivateSuccess'),
         })
       } else {
         await restoreExpense(expense.id)
         setMessage({
           type: 'success',
-          text: 'The recurring expense has been activated.',
+          text: t('recurringExpenses.messages.activateSuccess'),
         })
       }
       setTimeout(() => setMessage(null), 5000)
     } catch (err) {
       setMessage({
         type: 'error',
-        text: 'Failed to update the expense status. Please try again.',
+        text: t('recurringExpenses.messages.statusError'),
       })
       setTimeout(() => setMessage(null), 5000)
     }
@@ -142,9 +144,11 @@ export function RecurringExpenseManagement() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Recurring Expenses</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('recurringExpenses.page.title')}
+          </h1>
           <p className="text-muted-foreground">
-            Manage your monthly and yearly recurring operational expenses
+            {t('recurringExpenses.page.description')}
           </p>
         </div>
         
@@ -156,7 +160,7 @@ export function RecurringExpenseManagement() {
               onCheckedChange={setShowInactive}
             />
             <Label htmlFor="show-inactive" className="text-sm">
-              Show inactive
+              {t('recurringExpenses.page.showInactive')}
             </Label>
           </div>
         </div>
@@ -209,7 +213,7 @@ export function RecurringExpenseManagement() {
         <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
           <SheetTrigger
             className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
-            aria-label="Add recurring expense"
+            aria-label={t('recurringExpenses.sheet.createTitle')}
             onClick={handleCreateExpense}
           >
             <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
@@ -217,13 +221,14 @@ export function RecurringExpenseManagement() {
           <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background !important">
             <SheetHeader>
               <SheetTitle>
-                {editingExpense ? 'Edit Recurring Expense' : 'Add New Recurring Expense'}
+                {editingExpense
+                  ? t('recurringExpenses.sheet.editTitle')
+                  : t('recurringExpenses.sheet.createTitle')}
               </SheetTitle>
               <SheetDescription>
                 {editingExpense
-                  ? 'Update the expense information and settings.'
-                  : 'Add a new recurring expense to track your operational costs.'
-                }
+                  ? t('recurringExpenses.sheet.editDescription')
+                  : t('recurringExpenses.sheet.createDescription')}
               </SheetDescription>
             </SheetHeader>
             <div className="mt-6">

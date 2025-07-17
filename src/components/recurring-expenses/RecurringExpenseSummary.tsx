@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TrendingUp, TrendingDown, Calendar, DollarSign, PieChart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,8 +20,10 @@ export function RecurringExpenseSummary({
   monthlyTotal, 
   yearlyTotal, 
   categoryTotals,
-  loading = false 
+  loading = false
 }: RecurringExpenseSummaryProps) {
+
+  const { t } = useTranslation()
   
   const summary = useMemo(() => {
     const activeExpenses = expenses.filter(expense => expense.isActive)
@@ -60,7 +63,7 @@ export function RecurringExpenseSummary({
         {[...Array(4)].map((_, i) => (
           <Card key={i}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Loading...</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('common.loading')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">--</div>
@@ -77,33 +80,33 @@ export function RecurringExpenseSummary({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-card border-border !important">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Monthly Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.monthlyTotal')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="text-2xl font-bold text-card-foreground">{formatCurrency(monthlyTotal)}</div>
             <p className="text-xs text-muted-foreground">
-              {summary.monthlyExpenses} monthly + {summary.yearlyExpenses} yearly expenses
+              {summary.monthlyExpenses} {t('recurringExpenses.summary.monthlyExpenses').toLowerCase()} + {summary.yearlyExpenses} {t('recurringExpenses.summary.yearlyExpenses').toLowerCase()}
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-card border-border !important">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Yearly Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.yearlyTotal')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="text-2xl font-bold text-card-foreground">{formatCurrency(yearlyTotal)}</div>
             <p className="text-xs text-muted-foreground">
-              Annual recurring expenses
+              {t('recurringExpenses.summary.yearlyExpenses')}
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-card border-border !important">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Active Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.activeExpenses')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="bg-card !important">
@@ -117,13 +120,13 @@ export function RecurringExpenseSummary({
 
         <Card className="bg-card border-border !important">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.totalExpenses')}</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="text-2xl font-bold text-card-foreground">{summary.totalExpenses}</div>
             <p className="text-xs text-muted-foreground">
-              {summary.inactiveCount} inactive
+              {summary.inactiveCount} {t('recurringExpenses.table.status.inactive')}
             </p>
           </CardContent>
         </Card>
@@ -133,7 +136,7 @@ export function RecurringExpenseSummary({
       {categoryTotals.length > 0 && (
         <Card className="bg-card border-border !important">
           <CardHeader className="bg-card !important">
-            <CardTitle className="text-card-foreground">Expenses by Category</CardTitle>
+            <CardTitle className="text-card-foreground">{t('recurringExpenses.summary.expensesByCategory')}</CardTitle>
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="space-y-4">
@@ -169,7 +172,7 @@ export function RecurringExpenseSummary({
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-card border-border !important">
           <CardHeader className="bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Monthly Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.monthlyExpenses')}</CardTitle>
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="text-2xl font-bold text-card-foreground">{summary.monthlyExpenses}</div>
@@ -181,7 +184,7 @@ export function RecurringExpenseSummary({
 
         <Card className="bg-card border-border !important">
           <CardHeader className="bg-card !important">
-            <CardTitle className="text-sm font-medium text-card-foreground">Yearly Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">{t('recurringExpenses.summary.yearlyExpenses')}</CardTitle>
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="text-2xl font-bold text-card-foreground">{summary.yearlyExpenses}</div>
@@ -196,7 +199,7 @@ export function RecurringExpenseSummary({
       {summary.totalExpenses > 0 && (
         <Card className="bg-card border-border !important">
           <CardHeader className="bg-card !important">
-            <CardTitle className="text-card-foreground">Quick Stats</CardTitle>
+            <CardTitle className="text-card-foreground">{t('recurringExpenses.summary.quickStats')}</CardTitle>
           </CardHeader>
           <CardContent className="bg-card !important">
             <div className="grid gap-4 md:grid-cols-3">
@@ -205,7 +208,7 @@ export function RecurringExpenseSummary({
                   {formatCurrency(monthlyTotal * 12)}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Annual cost (monthly × 12)
+                  {t('recurringExpenses.summary.annualCost')}
                 </p>
               </div>
               <div className="text-center">
@@ -213,7 +216,7 @@ export function RecurringExpenseSummary({
                   {formatCurrency(monthlyTotal / 30)}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Daily average cost
+                  {t('recurringExpenses.summary.dailyAverageCost')}
                 </p>
               </div>
               <div className="text-center">
@@ -221,7 +224,7 @@ export function RecurringExpenseSummary({
                   {categoryTotals.length}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Expense categories
+                  {t('recurringExpenses.summary.expenseCategories')}
                 </p>
               </div>
             </div>
