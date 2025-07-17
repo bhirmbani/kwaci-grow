@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +15,7 @@ import { useReservations } from '@/hooks/useReservations'
 import { useStockLevels } from '@/hooks/useStock'
 
 export function ReservedOperationsList() {
+  const { t } = useTranslation()
   const [purposeFilter, setPurposeFilter] = useState<'all' | 'manual' | 'production'>('all')
   const [newReservation, setNewReservation] = useState({
     selectedStockId: '',
@@ -149,7 +151,7 @@ export function ReservedOperationsList() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading reservations...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     )
@@ -160,7 +162,7 @@ export function ReservedOperationsList() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="text-red-500 mb-4">⚠️</div>
-          <p className="text-muted-foreground">Error loading reservations: {error}</p>
+          <p className="text-muted-foreground">{t('common.error')} {error}</p>
         </div>
       </div>
     )
@@ -172,7 +174,7 @@ export function ReservedOperationsList() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reservations</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('production.reservations.stats.total')}</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -182,7 +184,7 @@ export function ReservedOperationsList() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Manual Reservations</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('production.reservations.stats.manual')}</CardTitle>
             <User className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -192,7 +194,7 @@ export function ReservedOperationsList() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Production Reservations</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('production.reservations.stats.production')}</CardTitle>
             <Factory className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -208,10 +210,10 @@ export function ReservedOperationsList() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
-                Reserved Operations
+                {t('production.reservations.title')}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Manage all stock reservations and their purposes
+                {t('production.reservations.description')}
               </p>
             </div>
             
@@ -220,37 +222,37 @@ export function ReservedOperationsList() {
               <SheetTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Create Reservation
+                  {t('production.reservations.create')}
                 </Button>
               </SheetTrigger>
               <SheetContent className="h-full overflow-y-auto">
                 <SheetHeader>
-                  <SheetTitle>Create Manual Reservation</SheetTitle>
+                  <SheetTitle>{t('production.reservations.createTitle')}</SheetTitle>
                   <SheetDescription>
-                    Reserve stock for manual purposes or future orders
+                    {t('production.reservations.createDescription')}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="space-y-4 mt-6">
                   {stockLoading ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-                      <p className="text-sm text-muted-foreground">Loading stock data...</p>
+                      <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
                     </div>
                   ) : (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="stock-selection">Select Ingredient from Stock</Label>
+                        <Label htmlFor="stock-selection">{t('production.reservations.selectStock')}</Label>
                         <Select
                           value={newReservation.selectedStockId}
                           onValueChange={handleStockSelection}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Choose an ingredient from available stock" />
+                            <SelectValue placeholder={t('production.reservations.chooseStock')} />
                           </SelectTrigger>
                           <SelectContent>
                             {availableStockItems.length === 0 ? (
                               <SelectItem value="no-items-available" disabled>
-                                No stock items available for reservation
+                                {t('production.reservations.noStockItems')}
                               </SelectItem>
                             ) : (
                               availableStockItems.map((stock) => {
@@ -273,13 +275,13 @@ export function ReservedOperationsList() {
                       {selectedStock && (
                         <div className="p-3 bg-muted/50 rounded-lg">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium">Selected: {selectedStock.ingredientName}</span>
+                            <span className="font-medium">{t('production.reservations.selected', { ingredient: selectedStock.ingredientName })}</span>
                             <span className="text-muted-foreground">
-                              Unit: {selectedStock.unit}
+                              {t('production.reservations.unit')}: {selectedStock.unit}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-sm mt-1">
-                            <span>Available for reservation:</span>
+                            <span>{t('production.reservations.available')}</span>
                             <span className="font-medium text-green-600">
                               {selectedAvailableStock.toFixed(1)} {selectedStock.unit}
                             </span>
@@ -289,7 +291,7 @@ export function ReservedOperationsList() {
                     </>
                   )}
                   <div className="space-y-2">
-                    <Label htmlFor="quantity">Quantity to Reserve</Label>
+                    <Label htmlFor="quantity">{t('production.reservations.quantity')}</Label>
                     <Input
                       id="quantity"
                       type="number"
@@ -298,7 +300,7 @@ export function ReservedOperationsList() {
                       step="0.1"
                       value={newReservation.quantity || ''}
                       onChange={(e) => setNewReservation(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                      placeholder={selectedStock ? `Enter quantity (max: ${selectedAvailableStock.toFixed(1)} ${selectedStock.unit})` : "Select an ingredient first"}
+                      placeholder={selectedStock ? `Enter quantity (max: ${selectedAvailableStock.toFixed(1)} ${selectedStock.unit})` : t('production.reservations.selectFirst')}
                       disabled={!selectedStock}
                       className={!isValidQuantity && newReservation.quantity > 0 ? 'border-red-500' : ''}
                     />
@@ -306,23 +308,23 @@ export function ReservedOperationsList() {
                       <div className="flex items-center gap-2 text-sm text-red-600">
                         <AlertCircle className="h-4 w-4" />
                         <span>
-                          Quantity exceeds available stock ({selectedAvailableStock.toFixed(1)} {selectedStock?.unit} available)
+                          {t('production.reservations.invalidQuantity', { available: selectedAvailableStock.toFixed(1), unit: selectedStock?.unit })}
                         </span>
                       </div>
                     )}
                     {selectedStock && newReservation.quantity > 0 && isValidQuantity && (
                       <div className="text-sm text-green-600">
-                        ✓ Valid reservation quantity
+                        {t('production.reservations.validQuantity')}
                       </div>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reason">Reason (Optional)</Label>
+                    <Label htmlFor="reason">{t('production.reservations.reason')}</Label>
                     <Textarea
                       id="reason"
                       value={newReservation.reason}
                       onChange={(e) => setNewReservation(prev => ({ ...prev, reason: e.target.value }))}
-                      placeholder="Reason for this reservation..."
+                      placeholder={t('production.reservations.reasonPlaceholder')}
                       rows={3}
                     />
                   </div>
@@ -337,12 +339,12 @@ export function ReservedOperationsList() {
                     className="w-full"
                   >
                     {isCreatingReservation
-                      ? 'Creating...'
+                      ? t('production.reservations.creating')
                       : !selectedStock
-                      ? 'Select Ingredient First'
+                      ? t('production.reservations.selectFirst')
                       : !isValidQuantity && newReservation.quantity > 0
-                      ? 'Invalid Quantity'
-                      : 'Create Reservation'
+                      ? t('production.reservations.invalidQuantityButton')
+                      : t('production.reservations.createAction')
                     }
                   </Button>
 
@@ -351,7 +353,7 @@ export function ReservedOperationsList() {
                       <div className="flex items-center gap-2">
                         <AlertCircle className="h-4 w-4" />
                         <span>
-                          No stock available for reservation. Add items to warehouse first.
+                          {t('production.reservations.noStockWarning')}
                         </span>
                       </div>
                     </div>
@@ -364,20 +366,20 @@ export function ReservedOperationsList() {
           {/* Filter Controls */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Label htmlFor="purpose-filter">Filter by Purpose:</Label>
+              <Label htmlFor="purpose-filter">{t('production.reservations.filter')}</Label>
               <Select value={purposeFilter} onValueChange={(value) => setPurposeFilter(value as typeof purposeFilter)}>
                 <SelectTrigger className="w-48">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Purposes</SelectItem>
-                  <SelectItem value="manual">Manual Reservations</SelectItem>
-                  <SelectItem value="production">Production Batches</SelectItem>
+                  <SelectItem value="all">{t('production.reservations.allPurposes')}</SelectItem>
+                  <SelectItem value="manual">{t('production.reservations.manual')}</SelectItem>
+                  <SelectItem value="production">{t('production.reservations.productionPurpose')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="text-sm text-muted-foreground">
-              Showing {filteredReservations.length} of {reservations.length} reservations
+              {t('production.reservations.showing', { shown: filteredReservations.length, total: reservations.length })}
             </div>
           </div>
         </CardHeader>
@@ -386,9 +388,9 @@ export function ReservedOperationsList() {
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
-                {purposeFilter === 'all' 
-                  ? 'No stock reservations found.'
-                  : `No ${purposeFilter} reservations found.`
+                {purposeFilter === 'all'
+                  ? t('production.reservations.noReservations.all')
+                  : t('production.reservations.noReservations.purpose', { purpose: purposeFilter })
                 }
               </p>
             </div>
@@ -396,11 +398,11 @@ export function ReservedOperationsList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ingredient</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Purpose</TableHead>
-                  <TableHead>Reserved Date</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('production.reservations.table.ingredient')}</TableHead>
+                  <TableHead>{t('production.reservations.table.quantity')}</TableHead>
+                  <TableHead>{t('production.reservations.table.purpose')}</TableHead>
+                  <TableHead>{t('production.reservations.table.date')}</TableHead>
+                  <TableHead>{t('production.reservations.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -408,7 +410,7 @@ export function ReservedOperationsList() {
                   <TableRow key={`${reservation.ingredientName}-${reservation.unit}-${index}`}>
                     <TableCell>
                       <div className="font-medium">{reservation.ingredientName}</div>
-                      <div className="text-xs text-muted-foreground">Unit: {reservation.unit}</div>
+                      <div className="text-xs text-muted-foreground">{t('production.reservations.unit')}: {reservation.unit}</div>
                     </TableCell>
                     <TableCell className="font-medium">
                       {reservation.quantity} {reservation.unit}
@@ -431,19 +433,18 @@ export function ReservedOperationsList() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Release Reservation</AlertDialogTitle>
+                            <AlertDialogTitle>{t('production.reservations.releaseTitle')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to release the reservation of {reservation.quantity} {reservation.unit} of {reservation.ingredientName}?
-                              This will make the stock available again.
+                              {t('production.reservations.releaseConfirm', { quantity: reservation.quantity, unit: reservation.unit, ingredient: reservation.ingredientName })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{t('production.batchList.cancel')}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleReleaseReservation(reservation)}
                               className="bg-red-600 hover:bg-red-700"
                             >
-                              Release Reservation
+                              {t('production.reservations.release')}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

@@ -2455,6 +2455,111 @@
         "all": "Menampilkan {{shown}} batch aktif."
       },
       "viewAll": "Lihat semua {{count}} batch di halaman Produksi."
+    },
+    "management": {
+      "title": "Manajemen Produksi",
+      "description": "Kelola batch produksi dan pantau alokasi bahan",
+      "tabs": {
+        "overview": "Ikhtisar",
+        "batches": "Batch Produksi",
+        "reservations": "Reservasi Stok"
+      },
+      "quickActions": {
+        "title": "Tindakan Cepat",
+        "description": "Tugas umum manajemen produksi",
+        "viewAllBatches": "Lihat Semua Batch Produksi",
+        "manageReservations": "Kelola Reservasi Stok"
+      },
+      "stats": {
+        "totalBatches": "Total Batch",
+        "totalBatchesDesc": "Batch produksi dibuat",
+        "pending": "Menunggu",
+        "pendingDesc": "Menunggu produksi dimulai",
+        "inProgress": "Sedang Berjalan",
+        "inProgressDesc": "Sedang diproduksi",
+        "completed": "Selesai",
+        "completedDesc": "Produksi selesai",
+        "latestBatch": "Batch Produksi Terbaru",
+        "batchNumber": "Nomor Batch:",
+        "status": "Status:",
+        "created": "Dibuat:",
+        "note": "Catatan:"
+      }
+    },
+    "batchList": {
+      "filter": "Filter berdasarkan Status:",
+      "allStatuses": "Semua Status",
+      "showing": "Menampilkan {{shown}} dari {{total}} batch",
+      "noBatches": {
+        "all": "Belum ada batch produksi. Buat batch pertama dengan Alokasi Produksi Cepat.",
+        "status": "Tidak ada batch {{status}}."
+      },
+      "table": {
+        "batch": "Batch #",
+        "status": "Status",
+        "created": "Dibuat",
+        "items": "Item",
+        "note": "Catatan",
+        "actions": "Aksi"
+      },
+      "viewDetails": "Lihat dan kelola detail batch produksi",
+      "batchNote": "Catatan Batch",
+      "updateNote": "Perbarui catatan batch produksi",
+      "save": "Simpan Perubahan",
+      "cancel": "Batal",
+      "deleteTitle": "Hapus Batch Produksi",
+      "deleteConfirm": "Yakin ingin menghapus Batch Produksi #{{batch}}? {{releaseStock}} Tindakan ini tidak dapat dibatalkan.",
+      "releaseStock": "Ini akan melepas semua stok yang dicadangkan.",
+      "delete": "Hapus Batch",
+      "noNote": "Tidak ada catatan",
+      "allocated": "Bahan Dialokasikan:"
+    },
+    "reservations": {
+      "stats": {
+        "total": "Total Reservasi",
+        "manual": "Reservasi Manual",
+        "production": "Reservasi Produksi"
+      },
+      "title": "Reservasi Stok",
+      "description": "Kelola semua reservasi stok dan tujuannya",
+      "create": "Buat Reservasi",
+      "createTitle": "Buat Reservasi Manual",
+      "createDescription": "Cadangkan stok untuk keperluan manual atau pesanan mendatang",
+      "selectStock": "Pilih Bahan dari Stok",
+      "chooseStock": "Pilih bahan dari stok yang tersedia",
+      "noStockItems": "Tidak ada item stok untuk reservasi",
+      "selected": "Dipilih: {{ingredient}}",
+      "available": "Tersedia untuk reservasi:",
+      "unit": "Unit",
+      "quantity": "Jumlah yang Direservasi",
+      "reason": "Alasan (Opsional)",
+      "reasonPlaceholder": "Alasan reservasi ini...",
+      "creating": "Membuat...",
+      "selectFirst": "Pilih Bahan Terlebih Dahulu",
+      "invalidQuantity": "Jumlah Tidak Valid",
+      "invalidQuantityButton": "Jumlah Tidak Valid",
+      "validQuantity": "\u2713 Jumlah reservasi valid",
+      "createAction": "Buat Reservasi",
+      "noStockWarning": "Tidak ada stok untuk reservasi. Tambah item ke gudang terlebih dahulu.",
+      "filter": "Filter berdasarkan Tujuan:",
+      "allPurposes": "Semua Tujuan",
+      "manual": "Reservasi Manual",
+      "productionPurpose": "Batch Produksi",
+      "showing": "Menampilkan {{shown}} dari {{total}} reservasi",
+      "noReservations": {
+        "all": "Tidak ada reservasi stok.",
+        "purpose": "Tidak ada reservasi {{purpose}}."
+      },
+      "table": {
+        "ingredient": "Bahan",
+        "quantity": "Jumlah",
+        "purpose": "Tujuan",
+        "date": "Tanggal Reservasi",
+        "actions": "Aksi"
+      },
+      "releaseTitle": "Lepaskan Reservasi",
+      "releaseConfirm": "Yakin ingin melepas reservasi {{quantity}} {{unit}} {{ingredient}}? Ini akan membuat stok tersedia kembali.",
+      "release": "Lepaskan Reservasi"
     }
   }
 }
