@@ -35,7 +35,7 @@ function PeoplePage() {
       setEmployees(data)
     } catch (error) {
       console.error('Failed to load employees:', error)
-      toast.error(t('people.employees.toast.loadError'))
+      toast.error(t('people.toast.loadError'))
     } finally {
       setLoading(false)
     }
@@ -52,10 +52,10 @@ function PeoplePage() {
       await loadEmployees()
       setEmployeeSheetOpen(false)
       setEditingEmployee(undefined)
-      toast.success(t('people.employees.toast.createSuccess'))
+      toast.success(t('people.toast.createSuccess'))
     } catch (error) {
       console.error('Failed to create employee:', error)
-      toast.error(error instanceof Error ? error.message : t('people.employees.toast.createError'))
+      toast.error(error instanceof Error ? error.message : t('people.toast.createError'))
       throw error
     } finally {
       setIsSubmitting(false)
@@ -71,10 +71,10 @@ function PeoplePage() {
       await loadEmployees()
       setEmployeeSheetOpen(false)
       setEditingEmployee(undefined)
-      toast.success(t('people.employees.toast.updateSuccess'))
+      toast.success(t('people.toast.updateSuccess'))
     } catch (error) {
       console.error('Failed to update employee:', error)
-      toast.error(error instanceof Error ? error.message : t('people.employees.toast.updateError'))
+      toast.error(error instanceof Error ? error.message : t('people.toast.updateError'))
       throw error
     } finally {
       setIsSubmitting(false)
@@ -86,10 +86,10 @@ function PeoplePage() {
       setDeletingId(employeeId)
       await EmployeeService.delete(employeeId)
       await loadEmployees()
-      toast.success(t('people.employees.toast.deleteSuccess'))
+      toast.success(t('people.toast.deleteSuccess'))
     } catch (error) {
       console.error('Failed to delete employee:', error)
-      toast.error(t('people.employees.toast.deleteError'))
+      toast.error(t('people.toast.deleteError'))
     } finally {
       setDeletingId(null)
     }
@@ -168,7 +168,7 @@ function PeoplePage() {
                 {t('people.employees.addButton')}
               </Button>
             </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-2xl">
+            <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
               <SheetHeader>
                 <SheetTitle>
                   {editingEmployee

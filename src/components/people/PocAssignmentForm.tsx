@@ -320,6 +320,7 @@ export function PocAssignmentManager({
   isLoading = false
 }: PocAssignmentManagerProps) {
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   const handleRemoveAssignment = async (assignmentId: string) => {
     try {
@@ -434,6 +435,7 @@ export function PocAssignmentSection({ onRefresh }: PocAssignmentSectionProps) {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const { t } = useTranslation()
 
   // Load POC assignments
   const loadAssignments = async () => {
@@ -489,7 +491,7 @@ export function PocAssignmentSection({ onRefresh }: PocAssignmentSectionProps) {
               {t('people.poc.assignButton')}
             </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
             <SheetHeader>
               <SheetTitle>{t('people.poc.sheetTitle')}</SheetTitle>
               <SheetDescription>
