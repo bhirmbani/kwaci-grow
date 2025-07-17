@@ -5,6 +5,7 @@
  */
 
 import { Info, Calculator, TrendingUp, DollarSign, PieChart, Target, Receipt, CheckCircle, BarChart3, Activity, Shield } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -626,6 +627,7 @@ export const TotalTransactionsExplanation = ({ summary, transactionCount }: Expl
 }
 
 export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScore, liquidityScore, efficiencyScore, growthScore }: ExplanationProps) => {
+  const { t } = useTranslation()
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -637,15 +639,15 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-emerald-600" />
-            Financial Health Score Explained
+            {t('accounting.health.sheets.healthScore.title')}
           </SheetTitle>
           <SheetDescription>
-            Understanding your overall business health scoring methodology
+            {t('accounting.health.sheets.healthScore.description')}
           </SheetDescription>
         </SheetHeader>
         
         <div className="mt-6 space-y-6">
-          <ExplanationCard title="What is Financial Health Score?" icon={<Shield className="h-5 w-5" />}>
+          <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.whatIs')} icon={<Shield className="h-5 w-5" />}>
             <p className="text-sm text-muted-foreground">
               The Financial Health Score is a comprehensive 0-100 rating that evaluates your coffee shop's overall financial performance. It combines multiple key metrics to give you a single, easy-to-understand health indicator.
             </p>
@@ -654,7 +656,7 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
             </p>
           </ExplanationCard>
 
-          <ExplanationCard title="Score Ranges & Meanings" icon={<Target className="h-5 w-5" />}>
+          <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.scoreRanges')} icon={<Target className="h-5 w-5" />}>
             <div className="space-y-3">
               <div className="bg-green-50 p-3 rounded-lg">
                 <div className="flex items-center justify-between">
@@ -695,7 +697,7 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
             </div>
           </ExplanationCard>
 
-          <ExplanationCard title="Scoring Factors" icon={<Calculator className="h-5 w-5" />}>
+          <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.scoringFactors')} icon={<Calculator className="h-5 w-5" />}>
             <div className="space-y-3">
               <div className="text-sm">
                 <div className="font-medium mb-2">The score is calculated from four key areas:</div>
@@ -722,7 +724,7 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
           </ExplanationCard>
 
           {healthScore !== undefined && (
-            <ExplanationCard title="Your Current Score" icon={<Receipt className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.currentScore')} icon={<Receipt className="h-5 w-5" />}>
               <div className="space-y-4">
                 <div className="text-center">
                   <div className={`text-4xl font-bold ${
@@ -756,7 +758,7 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
           )}
 
           {(profitabilityScore !== undefined || liquidityScore !== undefined || efficiencyScore !== undefined || growthScore !== undefined) && (
-            <ExplanationCard title="Component Scores" icon={<BarChart3 className="h-5 w-5" />}>
+            <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.componentScores')} icon={<BarChart3 className="h-5 w-5" />}>
               <div className="space-y-3">
                 {profitabilityScore !== undefined && (
                   <ScoreDisplay score={profitabilityScore} label="Profitability" />
@@ -774,7 +776,7 @@ export const FinancialHealthScoreExplanation = ({ healthScore, profitabilityScor
             </ExplanationCard>
           )}
 
-          <ExplanationCard title="Improving Your Score" icon={<TrendingUp className="h-5 w-5" />}>
+          <ExplanationCard title={t('accounting.health.sheets.healthScore.cards.improving')} icon={<TrendingUp className="h-5 w-5" />}>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>• <strong>Profitability:</strong> Increase prices, reduce costs, improve product mix</p>
               <p>• <strong>Liquidity:</strong> Manage cash flow, reduce payment delays, build reserves</p>

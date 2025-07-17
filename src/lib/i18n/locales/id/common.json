@@ -1306,7 +1306,6 @@
       },
       "recordsTitle": "Catatan Penjualan",
       "recordsDescription": "Penjualan terbaru untuk {{date}} di {{branch}}",
-
       "loading": "Memuat catatan penjualan...",
       "noRecords": "Tidak ada catatan penjualan untuk tanggal ini",
       "addButton": "Tambah penjualan",
@@ -1427,7 +1426,7 @@
         "dailyRevenue": "Pendapatan Harian",
         "dailyProfit": "Laba Harian",
         "monthlyRevenue": "Pendapatan Bulanan",
-      "monthlyProfit": "Laba Bulanan"
+        "monthlyProfit": "Laba Bulanan"
       }
     }
   },
@@ -1587,7 +1586,95 @@
       "burnRate": "Burn Rate Bulanan",
       "cashFlow": "Arus Kas",
       "netIncome": "Laba Bersih",
-      "alertsTitle": "Peringatan & Rekomendasi"
+      "alertsTitle": "Peringatan & Rekomendasi",
+      "badges": {
+        "excellent": "Sangat Baik",
+        "good": "Baik",
+        "fair": "Cukup",
+        "poor": "Buruk"
+      },
+      "noDataPrompt": "Catat beberapa transaksi untuk melihat indikator kesehatan bisnis.",
+      "alerts": {
+        "negativeProfitMargin": {
+          "title": "Margin Laba Negatif",
+          "message": "Bisnis Anda mengalami kerugian {{value}}%.",
+          "recommendation": "Tinjau pengeluaran dan pertimbangkan menaikkan harga atau menurunkan biaya."
+        },
+        "lowProfitMargin": {
+          "title": "Margin Laba Rendah",
+          "message": "Margin laba {{value}}% berada di bawah tingkat sehat.",
+          "recommendation": "Usahakan margin laba minimal 10-15% untuk pertumbuhan berkelanjutan."
+        },
+        "excellentProfitability": {
+          "title": "Profitabilitas Sangat Baik",
+          "message": "Margin laba kuat sebesar {{value}}%.",
+          "recommendation": "Pertimbangkan reinvestasi laba untuk peluang pertumbuhan."
+        },
+        "negativeCashFlow": {
+          "title": "Arus Kas Negatif",
+          "message": "Arus kas keluar sebesar {{value}}.",
+          "recommendation": "Fokus pada peningkatan pendapatan dan pengelolaan pengeluaran."
+        },
+        "lowCashReserves": {
+          "title": "Cadangan Kas Rendah",
+          "message": "Arus kas hanya menutup kurang dari 3 bulan pengeluaran.",
+          "recommendation": "Bangun cadangan kas untuk kestabilan keuangan."
+        },
+        "highVariableCosts": {
+          "title": "Biaya Variabel Tinggi",
+          "message": "Biaya variabel sebesar {{value}}% dari pendapatan.",
+          "recommendation": "Tinjau biaya pemasok dan efisiensi operasional."
+        },
+        "highFixedCosts": {
+          "title": "Biaya Tetap Tinggi",
+          "message": "Biaya tetap sebesar {{value}}% dari pendapatan.",
+          "recommendation": "Pertimbangkan mengurangi biaya tetap atau meningkatkan pendapatan."
+        },
+        "growthOpportunity": {
+          "title": "Peluang Pertumbuhan",
+          "message": "Posisi keuangan yang kuat memungkinkan ekspansi.",
+          "recommendation": "Pertimbangkan investasi di pemasaran, inventori, atau lokasi baru."
+        }
+      },
+      "sheets": {
+        "healthScore": {
+          "title": "Penjelasan Skor Kesehatan Keuangan",
+          "description": "Memahami metodologi penilaian kesehatan bisnis secara keseluruhan",
+          "cards": {
+            "whatIs": "Apa itu Skor Kesehatan Keuangan?",
+            "scoreRanges": "Rentang Skor & Artinya",
+            "scoringFactors": "Faktor Penilaian",
+            "currentScore": "Skor Anda Saat Ini",
+            "componentScores": "Skor Komponen",
+            "improving": "Meningkatkan Skor Anda"
+          }
+        },
+        "keyMetrics": {
+          "title": "Penjelasan Metrik Utama",
+          "description": "Memahami empat pilar penilaian kesehatan keuangan",
+          "cards": {
+            "whatAre": "Apa itu Metrik Utama?",
+            "profitability": "1. Profitabilitas",
+            "liquidity": "2. Likuiditas",
+            "efficiency": "3. Efisiensi",
+            "growth": "4. Pertumbuhan",
+            "improving": "Meningkatkan Metrik Utama"
+          }
+        },
+        "quickStats": {
+          "title": "Penjelasan Statistik Singkat",
+          "description": "Memahami indikator kinerja utama secara sekilas",
+          "cards": {
+            "whatAre": "Apa itu Statistik Singkat?",
+            "profitMargin": "1. Persentase Margin Laba",
+            "burnRate": "2. Burn Rate Bulanan",
+            "cashFlow": "3. Arus Kas",
+            "netIncome": "4. Laba Bersih",
+            "benchmarks": "Benchmark Kedai Kopi",
+            "using": "Menggunakan Statistik Singkat untuk Keputusan"
+          }
+        }
+      }
     },
     "transactionForm": {
       "fields": {
