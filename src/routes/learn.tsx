@@ -67,131 +67,131 @@ function LearnPage() {
   const accountingTopics = [
     {
       id: 'basic-concepts',
-      title: 'Basic Accounting Concepts',
-      description: 'Fundamental accounting principles for coffee shop owners',
+      title: t('learn.accountingTopics.basicConcepts.title'),
+      description: t('learn.accountingTopics.basicConcepts.description'),
       topics: [
         {
-          term: 'Transactions',
-          definition: 'Any business activity that involves money coming in or going out of your coffee shop.',
-          example: 'When you sell a latte for $5, that\'s a sales transaction. When you buy coffee beans for $50, that\'s an expense transaction.',
-          context: 'In our app, all your business activities are recorded as transactions in the Accounting section.'
+          term: t('learn.accountingTopics.basicConcepts.transactions.term'),
+          definition: t('learn.accountingTopics.basicConcepts.transactions.definition'),
+          example: t('learn.accountingTopics.basicConcepts.transactions.example'),
+          context: t('learn.accountingTopics.basicConcepts.transactions.context')
         },
         {
-          term: 'Revenue (Income)',
-          definition: 'All the money your coffee shop earns from selling products and services.',
-          example: 'If you sell 100 lattes at $5 each, your revenue is $500 for that period.',
-          context: 'Track your daily sales revenue in the Operations section and view totals in Accounting.'
+          term: t('learn.accountingTopics.basicConcepts.revenue.term'),
+          definition: t('learn.accountingTopics.basicConcepts.revenue.definition'),
+          example: t('learn.accountingTopics.basicConcepts.revenue.example'),
+          context: t('learn.accountingTopics.basicConcepts.revenue.context')
         },
         {
-          term: 'Expenses',
-          definition: 'All the money your coffee shop spends to operate the business.',
-          example: 'Rent ($2000/month), coffee beans ($500/month), staff wages ($3000/month) are all expenses.',
-          context: 'Manage recurring expenses and track all business costs in the Accounting section.'
+          term: t('learn.accountingTopics.basicConcepts.expenses.term'),
+          definition: t('learn.accountingTopics.basicConcepts.expenses.definition'),
+          example: t('learn.accountingTopics.basicConcepts.expenses.example'),
+          context: t('learn.accountingTopics.basicConcepts.expenses.context')
         },
         {
-          term: 'Net Income (Profit/Loss)',
-          definition: 'What\'s left after subtracting all expenses from your revenue. Positive = profit, negative = loss.',
-          example: 'Revenue $10,000 - Expenses $8,000 = Net Income $2,000 (profit)',
-          context: 'View your net income in the Financial Summary cards on the Accounting dashboard.'
+          term: t('learn.accountingTopics.basicConcepts.netIncome.term'),
+          definition: t('learn.accountingTopics.basicConcepts.netIncome.definition'),
+          example: t('learn.accountingTopics.basicConcepts.netIncome.example'),
+          context: t('learn.accountingTopics.basicConcepts.netIncome.context')
         }
       ]
     },
     {
       id: 'transaction-types',
-      title: 'Types of Business Transactions',
-      description: 'Understanding different transaction categories in your coffee shop',
+      title: t('learn.accountingTopics.transactionTypes.title'),
+      description: t('learn.accountingTopics.transactionTypes.description'),
       topics: [
         {
-          term: 'Sales Income',
-          definition: 'Money earned from selling coffee, pastries, and other products to customers.',
-          example: 'Daily sales of $500 from selling lattes, cappuccinos, and muffins.',
-          context: 'Automatically tracked when you record sales in the Operations section.'
+          term: t('learn.accountingTopics.transactionTypes.salesIncome.term'),
+          definition: t('learn.accountingTopics.transactionTypes.salesIncome.definition'),
+          example: t('learn.accountingTopics.transactionTypes.salesIncome.example'),
+          context: t('learn.accountingTopics.transactionTypes.salesIncome.context')
         },
         {
-          term: 'Operating Expenses',
-          definition: 'Day-to-day costs needed to run your coffee shop.',
-          example: 'Staff wages, utilities, cleaning supplies, marketing costs.',
-          context: 'Add these in the Accounting section or set up recurring expenses for monthly costs.'
+          term: t('learn.accountingTopics.transactionTypes.operatingExpenses.term'),
+          definition: t('learn.accountingTopics.transactionTypes.operatingExpenses.definition'),
+          example: t('learn.accountingTopics.transactionTypes.operatingExpenses.example'),
+          context: t('learn.accountingTopics.transactionTypes.operatingExpenses.context')
         },
         {
-          term: 'Fixed Costs',
-          definition: 'Expenses that stay the same each month regardless of how much you sell.',
-          example: 'Rent ($2000/month), insurance ($200/month), loan payments ($500/month).',
-          context: 'Set these up in the Financial Terms sheet or as recurring expenses.'
+          term: t('learn.accountingTopics.transactionTypes.fixedCosts.term'),
+          definition: t('learn.accountingTopics.transactionTypes.fixedCosts.definition'),
+          example: t('learn.accountingTopics.transactionTypes.fixedCosts.example'),
+          context: t('learn.accountingTopics.transactionTypes.fixedCosts.context')
         },
         {
-          term: 'Variable Costs (COGS)',
-          definition: 'Costs that change based on how much you produce or sell.',
-          example: 'Coffee beans, milk, sugar - the more drinks you make, the more you spend on these.',
-          context: 'Calculate these using the COGS Calculator and track in Variable COGS sheet.'
+          term: t('learn.accountingTopics.transactionTypes.variableCosts.term'),
+          definition: t('learn.accountingTopics.transactionTypes.variableCosts.definition'),
+          example: t('learn.accountingTopics.transactionTypes.variableCosts.example'),
+          context: t('learn.accountingTopics.transactionTypes.variableCosts.context')
         },
         {
-          term: 'Capital Investment',
-          definition: 'Money invested to start or expand your business, including equipment purchases.',
-          example: 'Buying an espresso machine ($5000), furniture ($2000), initial inventory ($1000).',
-          context: 'Record these in the Initial Capital sheet or Fixed Assets section.'
+          term: t('learn.accountingTopics.transactionTypes.capitalInvestment.term'),
+          definition: t('learn.accountingTopics.transactionTypes.capitalInvestment.definition'),
+          example: t('learn.accountingTopics.transactionTypes.capitalInvestment.example'),
+          context: t('learn.accountingTopics.transactionTypes.capitalInvestment.context')
         }
       ]
     },
     {
       id: 'financial-health',
-      title: 'Understanding Financial Health',
-      description: 'Key indicators to monitor your coffee shop\'s financial performance',
+      title: t('learn.accountingTopics.financialHealth.title'),
+      description: t('learn.accountingTopics.financialHealth.description'),
       topics: [
         {
-          term: 'Gross Profit',
-          definition: 'Revenue minus the direct cost of making your products (COGS).',
-          example: 'If you sell $1000 worth of coffee and the beans/milk cost $300, gross profit is $700.',
-          context: 'View this in your Financial Summary - it shows how efficiently you\'re producing.'
+          term: t('learn.accountingTopics.financialHealth.grossProfit.term'),
+          definition: t('learn.accountingTopics.financialHealth.grossProfit.definition'),
+          example: t('learn.accountingTopics.financialHealth.grossProfit.example'),
+          context: t('learn.accountingTopics.financialHealth.grossProfit.context')
         },
         {
-          term: 'Profit Margin',
-          definition: 'What percentage of each sale becomes profit after all expenses.',
-          example: 'If you make $2 profit on a $5 latte, your profit margin is 40%.',
-          context: 'Higher margins mean your business is more profitable per sale.'
+          term: t('learn.accountingTopics.financialHealth.profitMargin.term'),
+          definition: t('learn.accountingTopics.financialHealth.profitMargin.definition'),
+          example: t('learn.accountingTopics.financialHealth.profitMargin.example'),
+          context: t('learn.accountingTopics.financialHealth.profitMargin.context')
         },
         {
-          term: 'Break-even Point',
-          definition: 'The amount of sales needed to cover all your expenses (no profit, no loss).',
-          example: 'If your monthly expenses are $8000 and average profit per sale is $2, you need 4000 sales to break even.',
-          context: 'Use the Financial Dashboard to see if you\'re above or below break-even.'
+          term: t('learn.accountingTopics.financialHealth.breakEven.term'),
+          definition: t('learn.accountingTopics.financialHealth.breakEven.definition'),
+          example: t('learn.accountingTopics.financialHealth.breakEven.example'),
+          context: t('learn.accountingTopics.financialHealth.breakEven.context')
         },
         {
-          term: 'Cash Flow',
-          definition: 'The timing of money coming in versus money going out.',
-          example: 'You might be profitable but have cash flow problems if customers pay late but you pay suppliers immediately.',
-          context: 'Monitor this in the Financial Health indicators on your dashboard.'
+          term: t('learn.accountingTopics.financialHealth.cashFlow.term'),
+          definition: t('learn.accountingTopics.financialHealth.cashFlow.definition'),
+          example: t('learn.accountingTopics.financialHealth.cashFlow.example'),
+          context: t('learn.accountingTopics.financialHealth.cashFlow.context')
         }
       ]
     },
     {
       id: 'cost-management',
-      title: 'Cost Management & Control',
-      description: 'Managing and optimizing your coffee shop costs',
+      title: t('learn.accountingTopics.costManagement.title'),
+      description: t('learn.accountingTopics.costManagement.description'),
       topics: [
         {
-          term: 'Cost of Goods Sold (COGS)',
-          definition: 'The direct cost of ingredients and materials used to make your products.',
-          example: 'For a latte: coffee beans ($0.50), milk ($0.30), cup ($0.10) = COGS of $0.90',
-          context: 'Calculate precise COGS using our COGS Calculator for each menu item.'
+          term: t('learn.accountingTopics.costManagement.cogs.term'),
+          definition: t('learn.accountingTopics.costManagement.cogs.definition'),
+          example: t('learn.accountingTopics.costManagement.cogs.example'),
+          context: t('learn.accountingTopics.costManagement.cogs.context')
         },
         {
-          term: 'Food Cost Percentage',
-          definition: 'What percentage of your sales goes to ingredient costs.',
-          example: 'If you sell $1000 and spend $300 on ingredients, your food cost percentage is 30%.',
-          context: 'Industry standard for coffee shops is typically 25-35%.'
+          term: t('learn.accountingTopics.costManagement.foodCostPct.term'),
+          definition: t('learn.accountingTopics.costManagement.foodCostPct.definition'),
+          example: t('learn.accountingTopics.costManagement.foodCostPct.example'),
+          context: t('learn.accountingTopics.costManagement.foodCostPct.context')
         },
         {
-          term: 'Labor Cost Percentage',
-          definition: 'What percentage of your sales goes to staff wages and benefits.',
-          example: 'If you sell $1000 and pay $250 in wages, your labor cost percentage is 25%.',
-          context: 'Track this by recording staff costs in Operating Expenses.'
+          term: t('learn.accountingTopics.costManagement.laborCostPct.term'),
+          definition: t('learn.accountingTopics.costManagement.laborCostPct.definition'),
+          example: t('learn.accountingTopics.costManagement.laborCostPct.example'),
+          context: t('learn.accountingTopics.costManagement.laborCostPct.context')
         },
         {
-          term: 'Overhead Costs',
-          definition: 'Indirect costs needed to run your business but not directly tied to making products.',
-          example: 'Rent, utilities, insurance, accounting fees, marketing.',
-          context: 'These are typically recorded as Fixed Costs or Operating Expenses.'
+          term: t('learn.accountingTopics.costManagement.overheadCosts.term'),
+          definition: t('learn.accountingTopics.costManagement.overheadCosts.definition'),
+          example: t('learn.accountingTopics.costManagement.overheadCosts.example'),
+          context: t('learn.accountingTopics.costManagement.overheadCosts.context')
         }
       ]
     }

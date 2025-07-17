@@ -2714,6 +2714,126 @@
     "accounting": {
       "title": "Pembelajaran Akuntansi & Manajemen Keuangan",
       "description": "Konsep keuangan penting yang harus dipahami pemilik kedai kopi"
+    },
+    "accountingTopics": {
+      "basicConcepts": {
+        "title": "Konsep Dasar Akuntansi",
+        "description": "Prinsip akuntansi dasar untuk pemilik kedai kopi",
+        "transactions": {
+          "term": "Transaksi",
+          "definition": "Setiap aktivitas bisnis yang melibatkan uang masuk atau keluar dari kedai kopi Anda.",
+          "example": "Menjual latte seharga Rp5.000 adalah transaksi penjualan. Membeli biji kopi seharga Rp50.000 adalah transaksi pengeluaran.",
+          "context": "Di aplikasi, semua aktivitas bisnis dicatat sebagai transaksi pada bagian Akuntansi."
+        },
+        "revenue": {
+          "term": "Pendapatan",
+          "definition": "Semua uang yang diperoleh kedai kopi dari penjualan produk dan layanan.",
+          "example": "Jika Anda menjual 100 latte seharga Rp5.000, pendapatan Anda Rp500.000 untuk periode tersebut.",
+          "context": "Pantau pendapatan harian di bagian Operasi dan lihat totalnya di Akuntansi."
+        },
+        "expenses": {
+          "term": "Biaya",
+          "definition": "Semua uang yang dikeluarkan kedai kopi untuk operasional bisnis.",
+          "example": "Sewa (Rp2.000.000/bulan), biji kopi (Rp500.000/bulan), gaji karyawan (Rp3.000.000/bulan) merupakan biaya.",
+          "context": "Kelola pengeluaran rutin dan pantau semua biaya bisnis di bagian Akuntansi."
+        },
+        "netIncome": {
+          "term": "Laba Bersih",
+          "definition": "Sisa pendapatan setelah dikurangi semua biaya. Positif = laba, negatif = rugi.",
+          "example": "Pendapatan Rp10.000.000 - Biaya Rp8.000.000 = Laba Bersih Rp2.000.000",
+          "context": "Lihat laba bersih pada kartu Ringkasan Keuangan di dasbor Akuntansi."
+        }
+      },
+      "transactionTypes": {
+        "title": "Jenis Transaksi Bisnis",
+        "description": "Memahami kategori transaksi di kedai kopi",
+        "salesIncome": {
+          "term": "Pendapatan Penjualan",
+          "definition": "Uang yang diperoleh dari penjualan kopi, kue, dan produk lainnya kepada pelanggan.",
+          "example": "Penjualan harian Rp500.000 dari latte, cappuccino, dan muffin.",
+          "context": "Tercatat otomatis saat Anda mencatat penjualan di bagian Operasi."
+        },
+        "operatingExpenses": {
+          "term": "Biaya Operasional",
+          "definition": "Biaya sehari-hari untuk menjalankan kedai kopi.",
+          "example": "Gaji karyawan, utilitas, alat kebersihan, biaya pemasaran.",
+          "context": "Tambahkan di bagian Akuntansi atau atur sebagai biaya rutin bulanan."
+        },
+        "fixedCosts": {
+          "term": "Biaya Tetap",
+          "definition": "Biaya yang tetap setiap bulan terlepas dari jumlah penjualan.",
+          "example": "Sewa (Rp2.000.000/bulan), asuransi (Rp200.000/bulan), cicilan pinjaman (Rp500.000/bulan).",
+          "context": "Atur pada lembar Ketentuan Keuangan atau sebagai biaya rutin."
+        },
+        "variableCosts": {
+          "term": "Biaya Variabel (HPP)",
+          "definition": "Biaya yang berubah tergantung seberapa banyak Anda memproduksi atau menjual.",
+          "example": "Biji kopi, susu, gula - semakin banyak minuman dibuat, semakin besar biayanya.",
+          "context": "Hitung menggunakan Kalkulator HPP dan catat pada lembar HPP Variabel."
+        },
+        "capitalInvestment": {
+          "term": "Investasi Modal",
+          "definition": "Uang yang diinvestasikan untuk memulai atau mengembangkan bisnis, termasuk pembelian peralatan.",
+          "example": "Membeli mesin espresso (Rp5.000.000), furnitur (Rp2.000.000), inventori awal (Rp1.000.000).",
+          "context": "Catat pada lembar Modal Awal atau bagian Aset Tetap."
+        }
+      },
+      "financialHealth": {
+        "title": "Memahami Kesehatan Keuangan",
+        "description": "Indikator penting untuk memantau performa keuangan kedai kopi",
+        "grossProfit": {
+          "term": "Laba Kotor",
+          "definition": "Pendapatan dikurangi biaya langsung pembuatan produk (HPP).",
+          "example": "Jika Anda menjual kopi senilai Rp1.000.000 dan biaya bahan Rp300.000, laba kotor Rp700.000.",
+          "context": "Lihat pada Ringkasan Keuangan - menunjukkan efisiensi produksi."
+        },
+        "profitMargin": {
+          "term": "Margin Laba",
+          "definition": "Persentase keuntungan dari setiap penjualan setelah semua biaya.",
+          "example": "Jika Anda mendapat laba Rp2.000 dari latte seharga Rp5.000, margin laba 40%.",
+          "context": "Margin lebih tinggi berarti bisnis lebih menguntungkan per penjualan."
+        },
+        "breakEven": {
+          "term": "Titik Impas",
+          "definition": "Jumlah penjualan yang dibutuhkan untuk menutupi semua biaya (tidak untung, tidak rugi).",
+          "example": "Jika biaya bulanan Rp8.000.000 dan laba rata-rata per penjualan Rp2.000, dibutuhkan 4.000 penjualan untuk impas.",
+          "context": "Gunakan Dasbor Keuangan untuk melihat apakah Anda di atas atau di bawah titik impas."
+        },
+        "cashFlow": {
+          "term": "Arus Kas",
+          "definition": "Waktu uang masuk dibandingkan dengan uang keluar.",
+          "example": "Bisnis bisa untung tapi bermasalah arus kas jika pelanggan membayar terlambat sementara Anda harus bayar pemasok segera.",
+          "context": "Pantau pada indikator Kesehatan Keuangan di dasbor."
+        }
+      },
+      "costManagement": {
+        "title": "Manajemen & Pengendalian Biaya",
+        "description": "Mengelola dan mengoptimalkan biaya kedai kopi",
+        "cogs": {
+          "term": "Harga Pokok Penjualan (HPP)",
+          "definition": "Biaya langsung bahan dan material untuk membuat produk.",
+          "example": "Untuk latte: biji kopi (Rp500), susu (Rp300), gelas (Rp100) = HPP Rp900",
+          "context": "Hitung HPP secara tepat dengan Kalkulator HPP untuk tiap menu."
+        },
+        "foodCostPct": {
+          "term": "Persentase Biaya Bahan",
+          "definition": "Persentase penjualan yang digunakan untuk biaya bahan baku.",
+          "example": "Jika penjualan Rp1.000.000 dan biaya bahan Rp300.000, persentasenya 30%.",
+          "context": "Standar industri kedai kopi biasanya 25-35%."
+        },
+        "laborCostPct": {
+          "term": "Persentase Biaya Tenaga Kerja",
+          "definition": "Persentase penjualan yang digunakan untuk gaji dan tunjangan karyawan.",
+          "example": "Jika penjualan Rp1.000.000 dan gaji Rp250.000, persentasenya 25%.",
+          "context": "Pantau dengan mencatat biaya staf di Biaya Operasional."
+        },
+        "overheadCosts": {
+          "term": "Biaya Overhead",
+          "definition": "Biaya tidak langsung untuk menjalankan bisnis namun tidak terkait langsung dengan produksi.",
+          "example": "Sewa, utilitas, asuransi, jasa akuntansi, pemasaran.",
+          "context": "Biasanya dicatat sebagai Biaya Tetap atau Biaya Operasional."
+        }
+      }
     }
   }
 }
