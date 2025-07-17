@@ -9,6 +9,7 @@
  */
 
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { 
   AlertTriangle, 
   CheckCircle, 
@@ -47,6 +48,7 @@ interface HealthAlert {
 }
 
 export function FinancialHealthIndicators({ summary, loading }: FinancialHealthIndicatorsProps) {
+  const { t } = useTranslation()
   const healthMetrics = useMemo(() => {
     if (!summary) return null
 
@@ -194,8 +196,8 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Financial Health</CardTitle>
-          <CardDescription>Loading health indicators...</CardDescription>
+          <CardTitle>{t('accounting.health.title')}</CardTitle>
+          <CardDescription>{t('accounting.health.loading')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -212,8 +214,8 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Financial Health</CardTitle>
-          <CardDescription>No data available for health analysis</CardDescription>
+          <CardTitle>{t('accounting.health.title')}</CardTitle>
+          <CardDescription>{t('accounting.health.noData')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
@@ -256,7 +258,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
                 ) : (
                   <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 )}
-                Financial Health Score
+                {t('accounting.health.score')}
                 <FinancialHealthScoreExplanation 
                   summary={summary} 
                   healthScore={healthMetrics.overall}
@@ -267,7 +269,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
                 />
               </CardTitle>
               <CardDescription>
-                Overall business financial health assessment
+                {t('accounting.health.overallAssessment')}
               </CardDescription>
             </div>
             <Badge variant={overallBadge.variant} className="text-lg px-3 py-1">
@@ -297,14 +299,14 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Target className="h-4 w-4" />
-                Key Metrics
+                {t('accounting.health.keyMetrics')}
               </CardTitle>
               <KeyMetricsExplanation summary={summary} />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm">Profitability</span>
+              <span className="text-sm">{t('accounting.health.profitability')}</span>
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.profitability} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.profitability)}`}>
@@ -313,7 +315,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Liquidity</span>
+              <span className="text-sm">{t('accounting.health.liquidity')}</span>
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.liquidity} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.liquidity)}`}>
@@ -322,7 +324,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Efficiency</span>
+              <span className="text-sm">{t('accounting.health.efficiency')}</span>
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.efficiency} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.efficiency)}`}>
@@ -331,7 +333,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Growth</span>
+              <span className="text-sm">{t('accounting.health.growth')}</span>
               <div className="flex items-center gap-2">
                 <Progress value={healthMetrics.growth} className="w-16 h-2" />
                 <span className={`text-sm font-medium ${getHealthColor(healthMetrics.growth)}`}>
@@ -347,32 +349,32 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
-                Quick Stats
+                {t('accounting.health.quickStats')}
               </CardTitle>
               <QuickStatsExplanation summary={summary} />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm">Profit Margin</span>
+              <span className="text-sm">{t('accounting.health.profitMargin')}</span>
               <span className={`text-sm font-medium ${summary.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {summary.profitMargin.toFixed(1)}%
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Monthly Burn Rate</span>
+              <span className="text-sm">{t('accounting.health.burnRate')}</span>
               <span className="text-sm font-medium">
                 {formatCurrency(summary.burnRate)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Cash Flow</span>
+              <span className="text-sm">{t('accounting.health.cashFlow')}</span>
               <span className={`text-sm font-medium ${summary.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(summary.cashFlow)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm">Net Income</span>
+              <span className="text-sm">{t('accounting.health.netIncome')}</span>
               <span className={`text-sm font-medium ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(summary.netIncome)}
               </span>
@@ -384,7 +386,7 @@ export function FinancialHealthIndicators({ summary, loading }: FinancialHealthI
       {/* Health Alerts */}
       {healthAlerts.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Health Alerts & Recommendations</h3>
+          <h3 className="text-sm font-medium text-muted-foreground">{t('accounting.health.alertsTitle')}</h3>
           {healthAlerts.map((alert, index) => (
             <Alert key={index} variant={alert.type === 'error' ? 'destructive' : 'default'}>
               {alert.type === 'success' && <CheckCircle className="h-4 w-4" />}

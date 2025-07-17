@@ -9,6 +9,7 @@
  */
 
 import { TrendingUp, TrendingDown, DollarSign, PieChart, AlertTriangle, CheckCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -34,6 +35,7 @@ interface FinancialSummaryCardsProps {
 }
 
 export function FinancialSummaryCards({ summary, loading, error }: FinancialSummaryCardsProps) {
+  const { t } = useTranslation()
   // Loading state
   if (loading) {
     return (
@@ -92,14 +94,14 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           <AlertTriangle className="h-5 w-5 text-red-600" />
         )}
         <span className="font-medium">
-          Financial Health: 
+          {t('accounting.summary.financialHealth')}
         </span>
         <Badge variant={isHealthy ? "default" : "destructive"}>
-          {isHealthy ? "Healthy" : "Needs Attention"}
+          {isHealthy ? t('accounting.summary.healthy') : t('accounting.summary.needsAttention')}
         </Badge>
         {summary.profitMargin !== 0 && (
           <Badge variant="outline">
-            {summary.profitMargin.toFixed(1)}% Profit Margin
+            {summary.profitMargin.toFixed(1)}% {t('accounting.summary.profitMargin')}
           </Badge>
         )}
       </div>
@@ -109,7 +111,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         {/* Total Income */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.summary.totalIncome')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <TotalIncomeExplanation summary={summary} />
               <TrendingUp className="h-4 w-4 text-green-600" />
@@ -120,8 +124,8 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
               {formatCurrency(summary.totalIncome)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Sales: {formatCurrency(summary.salesIncome)}</div>
-              <div>Capital: {formatCurrency(summary.capitalInvestments)}</div>
+              <div>{t('accounting.summary.sales')}: {formatCurrency(summary.salesIncome)}</div>
+              <div>{t('accounting.summary.capital')}: {formatCurrency(summary.capitalInvestments)}</div>
             </div>
           </CardContent>
         </Card>
@@ -129,7 +133,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         {/* Total Expenses */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.summary.totalExpenses')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <TotalExpensesExplanation summary={summary} />
               <TrendingDown className="h-4 w-4 text-red-600" />
@@ -140,9 +146,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
               {formatCurrency(summary.totalExpenses)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Operating: {formatCurrency(summary.operatingExpenses)}</div>
-              <div>Fixed: {formatCurrency(summary.fixedCosts)}</div>
-              <div>Variable: {formatCurrency(summary.variableCosts)}</div>
+              <div>{t('accounting.summary.operating')}: {formatCurrency(summary.operatingExpenses)}</div>
+              <div>{t('accounting.summary.fixed')}: {formatCurrency(summary.fixedCosts)}</div>
+              <div>{t('accounting.summary.variable')}: {formatCurrency(summary.variableCosts)}</div>
             </div>
           </CardContent>
         </Card>
@@ -150,7 +156,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         {/* Net Income */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Net Income</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.summary.netIncome')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <NetIncomeExplanation summary={summary} />
               <DollarSign className={`h-4 w-4 ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`} />
@@ -161,8 +169,8 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
               {formatCurrency(summary.netIncome)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Gross Profit: {formatCurrency(summary.grossProfit)}</div>
-              <div>Operating Profit: {formatCurrency(summary.operatingProfit)}</div>
+              <div>{t('accounting.summary.grossProfit')}: {formatCurrency(summary.grossProfit)}</div>
+              <div>{t('accounting.summary.operatingProfit')}: {formatCurrency(summary.operatingProfit)}</div>
             </div>
           </CardContent>
         </Card>
@@ -170,7 +178,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
         {/* Cash Flow */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cash Flow</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('accounting.summary.cashFlow')}
+            </CardTitle>
             <div className="flex items-center gap-1">
               <CashFlowExplanation summary={summary} />
               <PieChart className="h-4 w-4 text-muted-foreground" />
@@ -181,9 +191,9 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
               {formatCurrency(summary.cashFlow)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>Burn Rate: {formatCurrency(summary.burnRate)}/month</div>
+              <div>{t('accounting.summary.burnRate')}: {formatCurrency(summary.burnRate)}/month</div>
               {summary.profitMargin !== 0 && (
-                <div>Margin: {summary.profitMargin.toFixed(1)}%</div>
+                <div>{t('accounting.summary.margin')}: {summary.profitMargin.toFixed(1)}%</div>
               )}
             </div>
           </CardContent>
@@ -196,22 +206,24 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           <Card>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Cost Structure</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  {t('accounting.summary.costStructure')}
+                </CardTitle>
                 <CostStructureExplanation summary={summary} />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Variable Costs:</span>
+                  <span>{t('accounting.summary.variableCosts')}:</span>
                   <span>{((summary.variableCosts / summary.totalIncome) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Fixed Costs:</span>
+                  <span>{t('accounting.summary.fixedCosts')}:</span>
                   <span>{((summary.fixedCosts / summary.totalIncome) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Operating:</span>
+                  <span>{t('accounting.summary.operatingCosts')}:</span>
                   <span>{((summary.operatingExpenses / summary.totalIncome) * 100).toFixed(1)}%</span>
                 </div>
               </div>
@@ -221,18 +233,20 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           <Card>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Revenue Mix</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  {t('accounting.summary.revenueMix')}
+                </CardTitle>
                 <RevenueMixExplanation summary={summary} />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Sales Revenue:</span>
+                  <span>{t('accounting.summary.salesRevenue')}:</span>
                   <span>{((summary.salesIncome / summary.totalIncome) * 100).toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Capital Investment:</span>
+                  <span>{t('accounting.summary.capitalInvestment')}:</span>
                   <span>{((summary.capitalInvestments / summary.totalIncome) * 100).toFixed(1)}%</span>
                 </div>
               </div>
@@ -242,14 +256,16 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           <Card>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Performance</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  {t('accounting.summary.performance')}
+                </CardTitle>
                 <PerformanceExplanation summary={summary} />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Profit Margin:</span>
+                  <span>{t('accounting.summary.profitMargin')}:</span>
                   <Badge variant={
                     profitMarginStatus === 'excellent' ? 'default' :
                     profitMarginStatus === 'good' ? 'secondary' :
@@ -259,7 +275,7 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
                   </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span>Status:</span>
+                  <span>{t('accounting.summary.status')}:</span>
                   <span className="capitalize">{profitMarginStatus}</span>
                 </div>
               </div>
