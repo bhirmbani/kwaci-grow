@@ -37,6 +37,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { MenuService } from '@/lib/services/menuService'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { formatCurrency } from '@/utils/formatters'
 import { ProductSelector } from './ProductSelector'
 import { MenuProductForm } from './MenuProductForm'
 import type { MenuWithProducts, MenuProduct, Product } from '@/lib/db/schema'
@@ -50,6 +52,7 @@ type SortField = 'name' | 'price' | 'category' | 'displayOrder'
 type SortDirection = 'asc' | 'desc'
 
 export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
+  const currentCurrency = useCurrentBusinessCurrency()
   const [menuData, setMenuData] = useState<MenuWithProducts>(menu)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('displayOrder')
@@ -175,11 +178,7 @@ export function MenuDetailsView({ menu, onMenuUpdated }: MenuDetailsViewProps) {
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price)
+    return formatCurrency(price, currentCurrency)
   }
 
   const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (

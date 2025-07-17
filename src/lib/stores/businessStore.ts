@@ -167,6 +167,7 @@ export const useBusinessStore = create<BusinessState>()(
 // Helper hooks for common use cases
 export const useCurrentBusiness = () => useBusinessStore((state) => state.currentBusiness)
 export const useCurrentBusinessId = () => useBusinessStore((state) => state.getCurrentBusinessId())
+export const useCurrentBusinessCurrency = () => useBusinessStore((state) => state.currentBusiness?.currency || 'IDR')
 export const useBusinesses = () => useBusinessStore((state) => state.businesses)
 export const useIsBusinessSelected = () => useBusinessStore((state) => state.isBusinessSelected())
 export const useIsBusinessSwitching = () => useBusinessStore((state) => state.isBusinessSwitching)

@@ -35,14 +35,23 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useBusinessStore, useBusinesses, useCurrentBusiness } from "@/lib/stores/businessStore"
 import { BusinessService } from "@/lib/services/businessService"
+import { getCurrencyOptions, DEFAULT_CURRENCY } from "@/lib/utils/currencyUtils"
 import type { Business } from "@/lib/db/schema"
 
 const businessSchema = z.object({
   name: z.string().min(1, "Business name is required").max(100, "Name must be less than 100 characters"),
   description: z.string().max(500, "Description must be less than 500 characters").optional(),
   note: z.string().max(1000, "Note must be less than 1000 characters").optional(),
+  currency: z.string().min(1, "Currency is required"),
 })
 
 type BusinessFormData = z.infer<typeof businessSchema>
@@ -73,6 +82,7 @@ export function BusinessManagementSheet({
       name: "",
       description: "",
       note: "",
+      currency: DEFAULT_CURRENCY,
     },
   })
 
@@ -95,6 +105,7 @@ export function BusinessManagementSheet({
       name: business.name,
       description: business.description || "",
       note: business.note || "",
+      currency: business.currency || DEFAULT_CURRENCY,
     })
   }
 
@@ -136,6 +147,7 @@ export function BusinessManagementSheet({
           name: data.name,
           description: data.description,
           note: data.note || "",
+          currency: data.currency,
         })
         addBusiness(newBusiness)
       }
@@ -185,6 +197,34 @@ export function BusinessManagementSheet({
                       </FormControl>
                       <FormDescription>
                         The name of your business
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {getCurrencyOptions().map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The currency for this business (cannot be changed later)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

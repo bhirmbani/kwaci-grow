@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { MenuService } from '@/lib/services/menuService'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { formatCurrency } from '@/utils/formatters'
 import type { MenuProduct, Product } from '@/lib/db/schema'
 
 const menuProductFormSchema = z.object({
@@ -68,6 +70,7 @@ export function MenuProductForm({
   onCancel 
 }: MenuProductFormProps) {
   const isEditing = !!menuProduct
+  const currentCurrency = useCurrentBusinessCurrency()
 
   const form = useForm<MenuProductFormData>({
     resolver: zodResolver(menuProductFormSchema),
@@ -169,11 +172,7 @@ export function MenuProductForm({
   const watchedPrice = watch('price')
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price)
+    return formatCurrency(price, currentCurrency)
   }
 
   return (

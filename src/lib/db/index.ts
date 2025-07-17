@@ -1325,6 +1325,60 @@ export class FinancialDashboardDB extends Dexie {
       console.log('✅ Employee POC assignments table added with compound indexes [businessId+employeeId] and [businessId+branchId]')
       console.log('✅ Employee management system ready')
     })
+
+    // Version 32 - Add currency field to Business table
+    this.version(32).stores({
+      businesses: 'id, name, description, note, currency, createdAt, updatedAt',
+      financialItems: 'id, name, category, value, note, businessId, createdAt, updatedAt, baseUnitCost, baseUnitQuantity, usagePerCup, unit, isFixedAsset, estimatedUsefulLifeYears, sourceAssetId',
+      bonusSchemes: '++id, target, perCup, baristaCount, note, businessId, createdAt, updatedAt',
+      appSettings: '++id, &key, value, createdAt, updatedAt',
+      warehouseBatches: 'id, batchNumber, dateAdded, note, businessId, createdAt, updatedAt',
+      warehouseItems: 'id, batchId, ingredientName, quantity, unit, costPerUnit, totalCost, note, businessId, createdAt, updatedAt, [businessId+batchId]',
+      stockLevels: 'id, ingredientName, unit, currentStock, reservedStock, lowStockThreshold, lastUpdated, businessId, createdAt, updatedAt',
+      stockTransactions: 'id, ingredientName, unit, transactionType, quantity, reason, batchId, transactionDate, businessId, createdAt, updatedAt',
+      productionBatches: 'id, batchNumber, dateCreated, status, note, businessId, productName, outputQuantity, outputUnit, createdAt, updatedAt',
+      productionItems: 'id, productionBatchId, ingredientName, quantity, unit, note, businessId, createdAt, updatedAt, [businessId+productionBatchId]',
+      ingredientCategories: 'id, name, description, businessId, createdAt, updatedAt',
+      ingredients: 'id, name, baseUnitCost, baseUnitQuantity, unit, category, supplierInfo, note, businessId, isActive, createdAt, updatedAt',
+      products: 'id, name, description, note, businessId, isActive, createdAt, updatedAt',
+      productIngredients: 'id, productId, ingredientId, usagePerCup, note, businessId, createdAt, updatedAt',
+      menus: 'id, name, description, status, note, businessId, createdAt, updatedAt',
+      menuProducts: 'id, menuId, productId, price, category, displayOrder, note, businessId, createdAt, updatedAt',
+      branches: 'id, name, location, note, businessId, isActive, businessHoursStart, businessHoursEnd, createdAt, updatedAt',
+      menuBranches: 'id, menuId, branchId, businessId, createdAt, updatedAt',
+      dailySalesTargets: 'id, menuId, branchId, targetDate, targetAmount, note, businessId, createdAt, updatedAt',
+      dailyProductSalesTargets: 'id, menuId, productId, branchId, targetDate, targetQuantity, note, businessId, createdAt, updatedAt, [menuId+productId+branchId+targetDate]',
+      salesRecords: 'id, menuId, productId, branchId, saleDate, saleTime, quantity, unitPrice, totalAmount, note, businessId, createdAt, updatedAt',
+      productTargetDefaults: 'id, productId, defaultTargetQuantityPerDay, note, businessId, createdAt, updatedAt',
+      journeyProgress: 'id, stepId, completed, completedAt, userId, businessId, createdAt, updatedAt',
+      planTemplates: 'id, name, description, category, isActive, businessId, createdAt, updatedAt',
+      planGoalTemplates: 'id, templateId, title, category, defaultTargetValue, priority, note, businessId',
+      planTaskTemplates: 'id, templateId, title, category, priority, estimatedDuration, note, businessId',
+      planMetricTemplates: 'id, templateId, name, category, defaultTargetValue, trackingFrequency, note, businessId',
+      plans: 'id, name, description, planType, startDate, endDate, branchId, templateId, status, note, businessId, createdAt, updatedAt',
+      planGoals: 'id, planId, title, category, targetValue, currentValue, priority, status, note, businessId, createdAt, updatedAt',
+      planTasks: 'id, planId, goalId, title, category, priority, status, estimatedDuration, actualDuration, dependencies, taskType, note, businessId, createdAt, updatedAt',
+      planMetrics: 'id, planId, name, category, targetValue, currentValue, trackingFrequency, lastTracked, note, businessId, createdAt, updatedAt',
+      fixedAssets: 'id, name, categoryId, purchaseDate, purchaseCost, depreciationMonths, currentValue, note, businessId, createdAt, updatedAt',
+      assetCategories: 'id, name, description, businessId, createdAt, updatedAt',
+      recurringExpenses: 'id, name, description, amount, frequency, category, startDate, endDate, note, businessId, isActive, createdAt, updatedAt',
+      employees: 'id, businessId, name, companyIdNumber, nationalIdNumber, dateOfBirth, position, department, jobLevel, salary, phone, email, hireDate, employmentStatus, note, createdAt, updatedAt, [businessId+companyIdNumber]',
+      employeePocAssignments: 'id, businessId, employeeId, branchId, assignedDate, isActive, note, createdAt, updatedAt, [businessId+employeeId], [businessId+branchId]'
+    }).upgrade(async tx => {
+      console.log('🔄 Adding currency field to Business table...')
+
+      // Update all existing businesses to have IDR as default currency
+      const businesses = await tx.table('businesses').toArray()
+      for (const business of businesses) {
+        if (!business.currency) {
+          await tx.table('businesses').update(business.id, { currency: 'IDR' })
+        }
+      }
+
+      console.log(`✅ Updated ${businesses.length} existing businesses with IDR currency`)
+      console.log('✅ Currency field added to Business table')
+      console.log('✅ Currency scoping system ready')
+    })
   }
 }
 

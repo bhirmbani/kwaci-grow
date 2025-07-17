@@ -6,11 +6,12 @@ import { Progress } from '../ui/progress'
 import { Wallet, TrendingUp, TrendingDown, AlertTriangle, DollarSign, CreditCard, Clock } from 'lucide-react'
 import { DashboardService, type FinancialOverview } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
-import { useCurrentBusinessId } from '../../lib/stores/businessStore'
+import { useCurrentBusinessId, useCurrentBusinessCurrency } from '../../lib/stores/businessStore'
 
 export function FinancialOverviewSection() {
   const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
+  const currentCurrency = useCurrentBusinessCurrency()
   const [financialData, setFinancialData] = useState<FinancialOverview | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -96,7 +97,7 @@ export function FinancialOverviewSection() {
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(financialData?.availableCash || 0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(financialData?.availableCash || 0, currentCurrency)}</p>
                 )}
               </div>
               <Wallet className="h-8 w-8 text-green-500" />
@@ -125,7 +126,7 @@ export function FinancialOverviewSection() {
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(financialData?.totalExpenses || 0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(financialData?.totalExpenses || 0, currentCurrency)}</p>
                 )}
               </div>
               <CreditCard className="h-8 w-8 text-red-500" />
@@ -133,7 +134,7 @@ export function FinancialOverviewSection() {
             {financialData && (
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground">
-                  {t('dashboard.financialOverview.metrics.burnRate')}: {formatCurrency(financialData.monthlyBurnRate)}/month
+                  {t('dashboard.financialOverview.metrics.burnRate')}: {formatCurrency(financialData.monthlyBurnRate, currentCurrency)}/month
                 </p>
               </div>
             )}
@@ -151,7 +152,7 @@ export function FinancialOverviewSection() {
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(financialData?.netPosition || 0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(financialData?.netPosition || 0, currentCurrency)}</p>
                 )}
               </div>
               {financialData && financialData.netPosition >= 0 ? (
@@ -269,17 +270,17 @@ export function FinancialOverviewSection() {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{t('dashboard.financialOverview.summary.monthlyRevenue')}</span>
                     <span className="font-medium">
-                      {formatCurrency(financialData.netPosition + financialData.totalExpenses)}
+                      {formatCurrency(financialData.netPosition + financialData.totalExpenses, currentCurrency)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{t('dashboard.financialOverview.summary.monthlyExpenses')}</span>
-                    <span className="font-medium">{formatCurrency(financialData.totalExpenses)}</span>
+                    <span className="font-medium">{formatCurrency(financialData.totalExpenses, currentCurrency)}</span>
                   </div>
                   <div className="flex justify-between text-sm font-semibold border-t pt-1">
                     <span>{t('dashboard.financialOverview.summary.netResult')}</span>
                     <span className={financialData.netPosition >= 0 ? 'text-green-600' : 'text-red-600'}>
-                      {formatCurrency(financialData.netPosition)}
+                      {formatCurrency(financialData.netPosition, currentCurrency)}
                     </span>
                   </div>
                 </div>

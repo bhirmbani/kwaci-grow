@@ -6,6 +6,7 @@ export interface Business {
   name: string
   description?: string
   note: string
+  currency: string // Currency code (e.g., 'IDR', 'THB', 'SGD')
   createdAt: string
   updatedAt: string
 }

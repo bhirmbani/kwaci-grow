@@ -29,5 +29,8 @@ in reports - financial overview user need to know profit and cost for each branc
 
 - send WA to customer
 
-- handle intangible ingredient to the COGS calculator and related. for example cost of transportation,
-delivery cost, etc. how to implement this in our app?
+- handle intangible ingredient to the COGS calculator and related. for example cost of transportation delivery cost, etc. how to implement this in our app? how the calculation to be able to come to conclusion that the cost is X amount per product item?
+
+- smart production recommendation:
+    - based on product sales trend, create auto spread sales-targets for every product in the manu
+    - based on product sales trend, create recommendation of ingredient stock and when we should buy more of that ingredient

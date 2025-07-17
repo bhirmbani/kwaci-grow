@@ -254,6 +254,7 @@ export class MultiBusinessSeeder {
         name: 'On The Go Coffee',
         description: 'Premium coffee shop serving artisan coffee and fresh pastries',
         note: 'Original coffee business with comprehensive menu and operations',
+        currency: 'IDR', // Indonesian Rupiah for coffee business
         createdAt: now,
         updatedAt: now
       }

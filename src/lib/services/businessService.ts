@@ -71,6 +71,7 @@ export class BusinessService {
       name: 'My Coffee Business',
       description: 'Default business created during multi-business migration',
       note: 'This is the default business created when upgrading to multi-business support. You can rename or modify this business as needed.',
+      currency: 'IDR', // Default to Indonesian Rupiah
     })
 
     return defaultBusiness
