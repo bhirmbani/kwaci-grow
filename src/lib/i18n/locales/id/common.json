@@ -1171,7 +1171,54 @@
         "creating": "Membuat...",
         "updating": "Memperbarui...",
         "cancel": "Batal"
+      },
+      "helpTitle": "Manajemen Cabang:",
+      "helpItems": [
+        "Cabang merepresentasikan lokasi fisik tempat Anda melayani pelanggan",
+        "Setiap cabang dapat memiliki beberapa menu",
+        "Gunakan cabang untuk mengatur penawaran dan target per lokasi",
+        "Cabang tidak aktif disembunyikan namun bisa diaktifkan kembali"
+      ]
+    },
+    "menuForm": {
+      "fields": {
+        "name": "Nama Menu *",
+        "description": "Deskripsi",
+        "note": "Catatan",
+        "activeStatus": "Status Aktif"
+      },
+      "placeholders": {
+        "name": "Masukkan nama menu",
+        "description": "Masukkan deskripsi menu",
+        "note": "Tambahkan catatan"
+      },
+      "help": {
+        "name": "Nama deskriptif untuk menu (mis. \"Menu Pagi\", \"Menu Sore\")",
+        "description": "Deskripsi opsional tentang menu dan tujuannya",
+        "note": "Catatan opsional untuk referensi"
+      },
+      "statusHelp": {
+        "active": "Menu aktif dan dapat digunakan",
+        "inactive": "Menu tidak aktif dan disembunyikan"
+      },
+      "buttons": {
+        "create": "Buat Menu",
+        "update": "Perbarui Menu",
+        "creating": "Membuat...",
+        "updating": "Memperbarui...",
+        "cancel": "Batal"
+      },
+      "nextSteps": {
+        "title": "Langkah selanjutnya:",
+        "step1": "Setelah membuat menu, Anda dapat menambah produk beserta harga",
+        "step2": "Tetapkan menu ke cabang tertentu",
+        "step3": "Atur target penjualan harian untuk tiap cabang",
+        "step4": "Gunakan menu dalam operasi harian Anda"
       }
+    },
+    "branchList": {
+      "noBranches": "Belum ada cabang",
+      "noBranchesHint": "Buat cabang untuk mulai menetapkan menu"
     }
   }
 }

@@ -1171,7 +1171,54 @@
         "creating": "Creating...",
         "updating": "Updating...",
         "cancel": "Cancel"
+      },
+      "helpTitle": "Branch Management:",
+      "helpItems": [
+        "Branches represent physical locations where you serve customers",
+        "Each branch can have multiple menus assigned to it",
+        "Use branches to manage location-specific offerings and targets",
+        "Inactive branches are hidden but can be reactivated later"
+      ]
+    },
+    "menuForm": {
+      "fields": {
+        "name": "Menu Name *",
+        "description": "Description",
+        "note": "Note",
+        "activeStatus": "Active Status"
+      },
+      "placeholders": {
+        "name": "Enter menu name",
+        "description": "Enter menu description",
+        "note": "Add any additional notes or comments"
+      },
+      "help": {
+        "name": "A descriptive name for your menu (e.g., \"Morning Coffee Menu\", \"Afternoon Specials\")",
+        "description": "Optional description of the menu and its purpose",
+        "note": "Optional notes for internal reference"
+      },
+      "statusHelp": {
+        "active": "Menu is active and available for use",
+        "inactive": "Menu is inactive and hidden from operations"
+      },
+      "buttons": {
+        "create": "Create Menu",
+        "update": "Update Menu",
+        "creating": "Creating...",
+        "updating": "Updating...",
+        "cancel": "Cancel"
+      },
+      "nextSteps": {
+        "title": "Next steps:",
+        "step1": "After creating the menu, you can add products with pricing",
+        "step2": "Assign the menu to specific branches/locations",
+        "step3": "Set daily sales targets for each branch",
+        "step4": "Use the menu in your daily operations"
       }
+    },
+    "branchList": {
+      "noBranches": "No branches yet",
+      "noBranchesHint": "Create a branch to start assigning menus"
     }
   }
 }
