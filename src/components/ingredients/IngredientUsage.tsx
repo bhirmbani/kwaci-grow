@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Package, Calculator, ExternalLink } from 'lucide-react'
@@ -13,6 +14,7 @@ interface IngredientUsageProps {
 }
 
 export function IngredientUsage({ ingredientId, ingredientName, onClose }: IngredientUsageProps) {
+  const { t } = useTranslation()
   const { ingredient, loading } = useIngredient(ingredientId)
 
   if (loading) {
@@ -20,7 +22,7 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading ingredient details...</p>
+          <p className="text-muted-foreground">{t('ingredients.usage.loading')}</p>
         </div>
       </div>
     )
@@ -29,8 +31,8 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
   if (!ingredient) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Ingredient not found</p>
-        <Button onClick={onClose} className="mt-4">Close</Button>
+        <p className="text-red-500">{t('ingredients.usage.notFound')}</p>
+        <Button onClick={onClose} className="mt-4">{t('ingredients.usage.close')}</Button>
       </div>
     )
   }
@@ -52,33 +54,33 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Category</p>
-              <p className="font-medium">{ingredient.category || 'No category'}</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.category')}</p>
+              <p className="font-medium">{ingredient.category || t('ingredients.overview.noCategory')}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Unit</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.unit')}</p>
               <Badge variant="secondary">{ingredient.unit}</Badge>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Base Unit Cost</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.baseUnitCost')}</p>
               <p className="font-medium">{formatCurrency(ingredient.baseUnitCost)}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Base Unit Quantity</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.baseUnitQuantity')}</p>
               <p className="font-medium">{ingredient.baseUnitQuantity} {ingredient.unit}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Cost per Unit</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.costPerUnit')}</p>
               <p className="font-medium text-lg">{formatCurrency(unitCost)} per {ingredient.unit}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Supplier</p>
-              <p className="font-medium">{ingredient.supplierInfo || 'No supplier info'}</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.supplier')}</p>
+              <p className="font-medium">{ingredient.supplierInfo || t('ingredients.usage.noSupplier')}</p>
             </div>
           </div>
           {ingredient.note && (
             <div className="mt-4">
-              <p className="text-sm text-muted-foreground">Notes</p>
+              <p className="text-sm text-muted-foreground">{t('ingredients.usage.notes')}</p>
               <p className="font-medium">{ingredient.note}</p>
             </div>
           )}
@@ -90,27 +92,27 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Product Usage ({ingredient.usageInProducts.length})
+            {t('ingredients.usage.productUsageTitle', { count: ingredient.usageInProducts.length })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {ingredient.usageInProducts.length === 0 ? (
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Not used in any products</h3>
+              <h3 className="text-lg font-medium mb-2">{t('ingredients.usage.notUsed')}</h3>
               <p className="text-muted-foreground">
-                This ingredient is not currently used in any products
+                {t('ingredients.usage.notUsedDesc')}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Usage per Cup</TableHead>
-                  <TableHead>Cost per Cup</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t('ingredients.usage.table.product')}</TableHead>
+                  <TableHead>{t('ingredients.usage.table.usagePerCup')}</TableHead>
+                  <TableHead>{t('ingredients.usage.table.costPerCup')}</TableHead>
+                  <TableHead>{t('ingredients.usage.table.note')}</TableHead>
+                  <TableHead>{t('ingredients.usage.table.status')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -144,7 +146,7 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
                       </TableCell>
                       <TableCell>
                         <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                          {product.isActive ? 'Active' : 'Inactive'}
+                        {product.isActive ? t('ingredients.usage.badge.active') : t('ingredients.usage.badge.inactive')}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -162,17 +164,17 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
-              Cost Analysis
+              {t('ingredients.usage.costAnalysis')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">Total Products Using</p>
+                <p className="text-sm text-muted-foreground">{t('ingredients.usage.totalProductsUsing')}</p>
                 <p className="text-2xl font-bold">{ingredient.usageInProducts.length}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Average Usage per Cup</p>
+                <p className="text-sm text-muted-foreground">{t('ingredients.usage.avgUsagePerCup')}</p>
                 <p className="text-2xl font-bold">
                   {ingredient.usageInProducts.length > 0 
                     ? (ingredient.usageInProducts.reduce((sum, usage) => sum + usage.usagePerCup, 0) / ingredient.usageInProducts.length).toFixed(2)
@@ -181,7 +183,7 @@ export function IngredientUsage({ ingredientId, ingredientName, onClose }: Ingre
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Average Cost per Cup</p>
+                <p className="text-sm text-muted-foreground">{t('ingredients.usage.avgCostPerCup')}</p>
                 <p className="text-2xl font-bold">
                   {formatCurrency(
                     ingredient.usageInProducts.length > 0 

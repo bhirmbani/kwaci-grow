@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,6 +30,7 @@ interface FormData {
 }
 
 export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -142,14 +144,14 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Ingredient Name *</Label>
+          <Label htmlFor="name">{t('ingredients.form.fields.name')}</Label>
           <Input
             id="name"
             {...register('name', {
-              required: 'Ingredient name is required',
-              validate: (value) => value.trim() !== '' || 'Ingredient name is required'
+              required: t('ingredients.form.validation.nameRequired'),
+              validate: (value) => value.trim() !== '' || t('ingredients.form.validation.nameRequired')
             })}
-            placeholder="Enter ingredient name"
+            placeholder={t('ingredients.form.placeholders.name')}
           />
           {errors.name && (
             <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -157,20 +159,20 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="category">Category *</Label>
+          <Label htmlFor="category">{t('ingredients.form.fields.category')}</Label>
           <CategoryCombobox
             key={`category-${ingredient?.id || 'new'}`}
             value={watchedCategory === '__NONE__' ? '' : watchedCategory}
             onValueChange={(value) => setValue('category', value || '__NONE__')}
-            placeholder="Select or create category..."
+            placeholder={t('ingredients.form.placeholders.selectCategory')}
             disabled={isSubmitting}
           />
           {/* Hidden input for validation */}
           <input
             type="hidden"
             {...register('category', {
-              required: 'Category is required',
-              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || 'Category is required'
+              required: t('ingredients.form.validation.categoryRequired'),
+              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || t('ingredients.form.validation.categoryRequired')
             })}
           />
           {errors.category && (
@@ -181,21 +183,21 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
 
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="baseUnitCost">Base Unit Cost *</Label>
+          <Label htmlFor="baseUnitCost">{t('ingredients.form.fields.baseUnitCost')}</Label>
           <Input
             id="baseUnitCost"
             type="number"
             step="0.01"
             min="0"
             {...register('baseUnitCost', {
-              required: 'Base unit cost is required',
-              min: { value: 0, message: 'Base unit cost must be positive' },
-              validate: (value) => !isNaN(parseFloat(value)) || 'Base unit cost must be a valid number'
+              required: t('ingredients.form.validation.baseUnitCostRequired'),
+              min: { value: 0, message: t('ingredients.form.validation.baseUnitCostPositive') },
+              validate: (value) => !isNaN(parseFloat(value)) || t('ingredients.form.validation.baseUnitCostNumber')
             })}
-            placeholder="0.00"
+            placeholder={t('ingredients.form.placeholders.baseUnitCost')}
           />
           <p className="text-xs text-muted-foreground">
-            Cost for the base quantity
+            {t('ingredients.form.placeholders.costBaseHelp')}
           </p>
           {errors.baseUnitCost && (
             <p className="text-sm text-red-600">{errors.baseUnitCost.message}</p>
@@ -203,21 +205,21 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="baseUnitQuantity">Base Unit Quantity *</Label>
+          <Label htmlFor="baseUnitQuantity">{t('ingredients.form.fields.baseUnitQuantity')}</Label>
           <Input
             id="baseUnitQuantity"
             type="number"
             step="0.01"
             min="0.01"
             {...register('baseUnitQuantity', {
-              required: 'Base unit quantity is required',
-              min: { value: 0.01, message: 'Base unit quantity must be positive' },
-              validate: (value) => !isNaN(parseFloat(value)) || 'Base unit quantity must be a valid number'
+              required: t('ingredients.form.validation.baseUnitQuantityRequired'),
+              min: { value: 0.01, message: t('ingredients.form.validation.baseUnitQuantityPositive') },
+              validate: (value) => !isNaN(parseFloat(value)) || t('ingredients.form.validation.baseUnitQuantityNumber')
             })}
-            placeholder="1.00"
+            placeholder={t('ingredients.form.placeholders.baseUnitQuantity')}
           />
           <p className="text-xs text-muted-foreground">
-            Quantity in the base unit
+            {t('ingredients.form.placeholders.quantityHelp')}
           </p>
           {errors.baseUnitQuantity && (
             <p className="text-sm text-red-600">{errors.baseUnitQuantity.message}</p>
@@ -225,20 +227,20 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="unit">Unit *</Label>
+          <Label htmlFor="unit">{t('ingredients.form.fields.unit')}</Label>
           <UnitCombobox
             key={`unit-${ingredient?.id || 'new'}`}
             value={watchedUnit === '__NONE__' ? '' : watchedUnit}
             onValueChange={(value) => setValue('unit', value || '__NONE__')}
-            placeholder="Select or enter unit..."
+            placeholder={t('ingredients.form.placeholders.selectUnit')}
             disabled={isSubmitting}
           />
           {/* Hidden input for validation */}
           <input
             type="hidden"
             {...register('unit', {
-              required: 'Unit is required',
-              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || 'Unit is required'
+              required: t('ingredients.form.validation.unitRequired'),
+              validate: (value) => (value && value.trim() !== '' && value !== '__NONE__') || t('ingredients.form.validation.unitRequired')
             })}
           />
           {errors.unit && (
@@ -250,7 +252,7 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
       {/* Unit Cost Preview */}
       {baseUnitCost > 0 && baseUnitQuantity > 0 && (
         <div className="p-3 bg-muted/30 rounded-lg">
-          <p className="text-sm font-medium">Cost Preview:</p>
+          <p className="text-sm font-medium">{t('ingredients.form.costPreview')}</p>
           <p className="text-lg font-bold text-primary">
             {formatCurrency(unitCost)} per {watchedUnit && watchedUnit !== '__NONE__' ? watchedUnit : 'unit'}
           </p>
@@ -261,20 +263,20 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="supplierInfo">Supplier Information</Label>
+        <Label htmlFor="supplierInfo">{t('ingredients.form.fields.supplierInfo')}</Label>
         <Input
           id="supplierInfo"
           {...register('supplierInfo')}
-          placeholder="Supplier name, contact, etc."
+          placeholder={t('ingredients.form.placeholders.supplierInfo')}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="note">Notes</Label>
+        <Label htmlFor="note">{t('ingredients.form.fields.note')}</Label>
         <Textarea
           id="note"
           {...register('note')}
-          placeholder="Additional notes about this ingredient"
+          placeholder={t('ingredients.form.placeholders.note')}
           rows={3}
         />
       </div>
@@ -286,10 +288,10 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
           onCheckedChange={handleIsActiveChange}
         />
         <Label htmlFor="isActive" className="text-sm font-medium">
-          Active Status
+          {t('ingredients.form.fields.activeStatus')}
         </Label>
         <span className="text-sm text-muted-foreground">
-          {watchedIsActive ? 'Ingredient is active' : 'Ingredient is inactive'}
+          {watchedIsActive ? t('ingredients.form.activeIngredient') : t('ingredients.form.inactiveIngredient')}
         </span>
         {/* Hidden input for form validation */}
         <input
@@ -304,8 +306,8 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
           disabled={isSubmitting || Object.keys(errors).length > 0}
         >
           {isSubmitting
-            ? (isEditing ? 'Updating...' : 'Creating...')
-            : (isEditing ? 'Update Ingredient' : 'Create Ingredient')
+            ? (isEditing ? t('ingredients.form.buttons.updating') : t('ingredients.form.buttons.creating'))
+            : (isEditing ? t('ingredients.form.buttons.update') : t('ingredients.form.buttons.create'))
           }
         </Button>
         <Button
@@ -314,17 +316,17 @@ export function IngredientForm({ ingredient, onSuccess, onCancel }: IngredientFo
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
       </div>
 
       {!isEditing && (
         <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p className="font-medium mb-1">Example:</p>
+          <p className="font-medium mb-1">{t('ingredients.form.exampleTitle')}</p>
           <ul className="space-y-1">
-            <li>• Milk: Base cost 20,000 IDR for 1,000 ml = 20 IDR per ml</li>
-            <li>• Coffee beans: Base cost 200,000 IDR for 1,000 g = 200 IDR per g</li>
-            <li>• Cups: Base cost 850 IDR for 1 piece = 850 IDR per piece</li>
+            <li>{t('ingredients.form.exampleItem1')}</li>
+            <li>{t('ingredients.form.exampleItem2')}</li>
+            <li>{t('ingredients.form.exampleItem3')}</li>
           </ul>
         </div>
       )}

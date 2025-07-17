@@ -1176,6 +1176,158 @@
       }
     }
   },
+  "ingredients": {
+    "loading": "Loading ingredients...",
+    "errorLoading": "Error loading ingredients: {{error}}",
+    "title": "Ingredient Management",
+    "description": "Manage your ingredients and their properties",
+    "create": "Create Ingredient",
+    "createNewTitle": "Create New Ingredient",
+    "createNewDescription": "Add a new ingredient to your inventory",
+    "tabs": {
+      "overview": "Overview",
+      "ingredients": "Ingredients"
+    },
+    "overview": {
+      "totalIngredients": "Total Ingredients",
+      "totalIngredientsDesc": "Active ingredients",
+      "categories": "Categories",
+      "categoriesDesc": "Ingredient categories",
+      "totalUsages": "Total Usages",
+      "totalUsagesDesc": "Across all products",
+      "avgUsage": "Avg. Usage",
+      "avgUsageDesc": "Per ingredient",
+      "recentIngredients": "Recent Ingredients",
+      "noIngredients": "No ingredients yet",
+      "noIngredientsDesc": "Create your first ingredient to get started",
+      "viewDetails": "View Details",
+      "viewAll": "View All Ingredients ({{count}})",
+      "noCategory": "No category",
+      "usedInProducts": "Used in {{count}} products"
+    },
+    "filters": {
+      "title": "Ingredient Filters",
+      "showInactive": "Show inactive ingredients"
+    },
+    "list": {
+      "title": "Ingredients ({{count}})",
+      "searchPlaceholder": "Search ingredients...",
+      "allCategories": "All Categories",
+      "noIngredientsFound": "No ingredients found",
+      "tryAdjustSearch": "Try adjusting your search terms or filters",
+      "createFirst": "Create your first ingredient to get started",
+      "table": {
+        "name": "Name",
+        "category": "Category",
+        "unit": "Unit",
+        "unitCost": "Unit Cost",
+        "usage": "Usage",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "badge": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "deleteTitle": "Delete Ingredient",
+      "deleteDescription": "Are you sure you want to delete \"{{name}}\"?",
+      "deleteInUse": "This ingredient is used in {{count}} products and cannot be deleted.",
+      "editSheetTitle": "Edit Ingredient",
+      "editSheetDescription": "Update ingredient information",
+      "viewSheetTitle": "Ingredient Usage",
+      "viewSheetDescription": "View which products use this ingredient"
+    },
+    "categoryCombobox": {
+      "searchPlaceholder": "Search categories...",
+      "emptyText": "No categories found.",
+      "deleteTitle": "Delete Category",
+      "alertDescription": "Select a category to delete. You can only delete categories that are not in use.",
+      "confirmTitle": "Delete Category \"{{name}}\"",
+      "inUseMessage": "This category is used by {{count}} ingredient(s). You cannot delete a category that is in use.",
+      "confirmMessage": "Are you sure you want to delete this category? This action cannot be undone."
+    },
+    "unitCombobox": {
+      "searchPlaceholder": "Search units...",
+      "emptyText": "No unit found."
+    },
+    "form": {
+      "fields": {
+        "name": "Ingredient Name *",
+        "category": "Category *",
+        "baseUnitCost": "Base Unit Cost *",
+        "baseUnitQuantity": "Base Unit Quantity *",
+        "unit": "Unit *",
+        "supplierInfo": "Supplier Information",
+        "note": "Notes"
+      },
+      "placeholders": {
+        "name": "Enter ingredient name",
+        "selectCategory": "Select or create category...",
+        "baseUnitCost": "0.00",
+        "baseUnitQuantity": "1.00",
+        "selectUnit": "Select or enter unit...",
+        "supplierInfo": "Supplier name, contact, etc.",
+        "note": "Additional notes about this ingredient"
+      },
+      "costPreview": "Cost Preview:",
+      "activeStatus": "Active Status",
+      "activeIngredient": "Ingredient is active",
+      "inactiveIngredient": "Ingredient is inactive",
+      "buttons": {
+        "create": "Create Ingredient",
+        "update": "Update Ingredient",
+        "creating": "Creating...",
+        "updating": "Updating...",
+        "cancel": "Cancel"
+      },
+      "exampleTitle": "Example:",
+      "exampleItem1": "• Milk: Base cost 20,000 IDR for 1,000 ml = 20 IDR per ml",
+      "exampleItem2": "• Coffee beans: Base cost 200,000 IDR for 1,000 g = 200 IDR per g",
+      "exampleItem3": "• Cups: Base cost 850 IDR for 1 piece = 850 IDR per piece"
+    },
+    "validation": {
+      "nameRequired": "Ingredient name is required",
+      "categoryRequired": "Category is required",
+      "baseUnitCostRequired": "Base unit cost is required",
+      "baseUnitCostPositive": "Base unit cost must be positive",
+      "baseUnitCostNumber": "Base unit cost must be a valid number",
+      "baseUnitQuantityRequired": "Base unit quantity is required",
+      "baseUnitQuantityPositive": "Base unit quantity must be positive",
+      "baseUnitQuantityNumber": "Base unit quantity must be a valid number",
+      "unitRequired": "Unit is required"
+    },
+    "usage": {
+      "loading": "Loading ingredient details...",
+      "notFound": "Ingredient not found",
+      "close": "Close",
+      "category": "Category",
+      "unit": "Unit",
+      "baseUnitCost": "Base Unit Cost",
+      "baseUnitQuantity": "Base Unit Quantity",
+      "costPerUnit": "Cost per Unit",
+      "supplier": "Supplier",
+      "noSupplier": "No supplier info",
+      "notes": "Notes",
+      "productUsageTitle": "Product Usage ({{count}})",
+      "notUsed": "Not used in any products",
+      "notUsedDesc": "This ingredient is not currently used in any products",
+      "table": {
+        "product": "Product",
+        "usagePerCup": "Usage per Cup",
+        "costPerCup": "Cost per Cup",
+        "note": "Note",
+        "status": "Status"
+      },
+      "badge": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "costAnalysis": "Cost Analysis",
+      "totalProductsUsing": "Total Products Using",
+      "avgUsagePerCup": "Average Usage per Cup",
+      "avgCostPerCup": "Average Cost per Cup"
+    }
+  },
   "menus": {
     "management": {
       "title": "Menu Management",

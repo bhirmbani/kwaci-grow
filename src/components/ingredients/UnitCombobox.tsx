@@ -1,6 +1,7 @@
 import { Combobox } from '@/components/ui/combobox'
 import { UNIT_OPTIONS } from '@/utils/cogsCalculations'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface ComboboxOption {
   value: string
@@ -19,10 +20,11 @@ interface UnitComboboxProps {
 export function UnitCombobox({
   value,
   onValueChange,
-  placeholder = "Select or enter unit...",
+  placeholder = t('ingredients.form.placeholders.selectUnit'),
   className,
   disabled = false,
 }: UnitComboboxProps) {
+  const { t } = useTranslation()
   // Convert UNIT_OPTIONS to combobox options
   const options: ComboboxOption[] = UNIT_OPTIONS.map(unit => ({
     value: unit.value,
@@ -42,8 +44,8 @@ export function UnitCombobox({
         onValueChange={onValueChange}
         onCreateNew={handleCreateUnit}
         placeholder={placeholder}
-        searchPlaceholder="Search units..."
-        emptyText="No unit found."
+        searchPlaceholder={t('ingredients.unitCombobox.searchPlaceholder')}
+        emptyText={t('ingredients.unitCombobox.emptyText')}
         disabled={disabled}
         allowCreate={false}
       />
