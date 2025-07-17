@@ -781,111 +781,9 @@
           "saveWhenReady": {
             "title": "Simpan Jika Siap",
             "description": "Jika sudah puas dengan percobaan Anda, simpan ke database"
-  }
-  },
-  "recurringExpenses": {
-    "page": {
-      "title": "Biaya Berulang",
-      "description": "Kelola biaya operasional berulang bulanan dan tahunan",
-      "showInactive": "Tampilkan yang tidak aktif"
-    },
-    "sheet": {
-      "createTitle": "Tambah Biaya Berulang",
-      "editTitle": "Edit Biaya Berulang",
-      "createDescription": "Tambahkan biaya berulang baru untuk melacak biaya operasional.",
-      "editDescription": "Perbarui informasi dan pengaturan biaya."
-    },
-    "summary": {
-      "monthlyTotal": "Total Bulanan",
-      "yearlyTotal": "Total Tahunan",
-      "activeExpenses": "Biaya Aktif",
-      "totalExpenses": "Total Biaya",
-      "expensesByCategory": "Biaya per Kategori",
-      "monthlyExpenses": "Biaya Bulanan",
-      "yearlyExpenses": "Biaya Tahunan",
-      "quickStats": "Statistik Singkat",
-      "annualCost": "Biaya tahunan (bulanan × 12)",
-      "dailyAverageCost": "Rata-rata biaya harian",
-      "expenseCategories": "Kategori biaya"
-    },
-    "table": {
-      "title": "Biaya Berulang",
-      "searchPlaceholder": "Cari biaya...",
-      "categoryFilterAll": "Semua Kategori",
-      "frequencyFilterAll": "Semua",
-      "noExpenses": "Belum ada biaya berulang. Buat biaya pertama Anda.",
-      "noMatch": "Tidak ada biaya yang cocok dengan filter Anda.",
-      "headers": {
-        "name": "Nama",
-        "amount": "Jumlah",
-        "frequency": "Frekuensi",
-        "category": "Kategori",
-        "startDate": "Tanggal Mulai",
-        "endDate": "Tanggal Akhir",
-        "status": "Status",
-        "actions": "Aksi"
-      },
-      "ongoing": "Berlangsung",
-      "status": {
-        "active": "Aktif",
-        "inactive": "Tidak Aktif"
-      },
-      "actions": {
-        "edit": "Edit",
-        "delete": "Hapus",
-        "activate": "Aktifkan",
-        "deactivate": "Nonaktifkan",
-        "openMenu": "Buka menu",
-        "clear": "Bersihkan"
+          }
+        }
       }
-    },
-    "form": {
-      "fields": {
-        "name": "Nama Biaya",
-        "description": "Deskripsi (Opsional)",
-        "amount": "Jumlah (IDR)",
-        "frequency": "Frekuensi",
-        "category": "Kategori",
-        "startDate": "Tanggal Mulai",
-        "endDate": "Tanggal Akhir (Opsional)",
-        "note": "Catatan (Opsional)"
-      },
-      "placeholders": {
-        "name": "mis. Sewa Kantor, Gaji Karyawan",
-        "description": "Detail tambahan tentang biaya ini...",
-        "category": "Pilih atau buat kategori...",
-        "searchCategories": "Cari kategori...",
-        "frequency": "Pilih frekuensi",
-        "pickDate": "Pilih tanggal",
-        "noEndDate": "Tanpa tanggal akhir",
-        "clearDate": "Hapus Tanggal",
-        "note": "Catatan tambahan..."
-      },
-      "descriptions": {
-        "leaveEmpty": "Biarkan kosong untuk biaya berkelanjutan"
-      },
-      "frequency": {
-        "monthly": "Bulanan",
-        "yearly": "Tahunan"
-      },
-      "buttons": {
-        "cancel": "Batal",
-        "create": "Buat Biaya",
-        "update": "Perbarui Biaya",
-        "saving": "Menyimpan..."
-      }
-    },
-    "messages": {
-      "createSuccess": "Biaya berulang baru berhasil dibuat.",
-      "updateSuccess": "Biaya berulang berhasil diperbarui.",
-      "deleteSuccess": "Biaya berulang berhasil dihapus permanen.",
-      "deleteError": "Gagal menghapus biaya. Silakan coba lagi.",
-      "deactivateSuccess": "Biaya berulang berhasil dinonaktifkan.",
-      "activateSuccess": "Biaya berulang berhasil diaktifkan.",
-      "statusError": "Gagal memperbarui status biaya. Silakan coba lagi."
-    }
-  }
-}
     },
     "saveDialog": {
       "title": "Simpan ke Database",
@@ -1012,6 +910,108 @@
         "actions": "Aksi"
       },
       "emptyIngredients": "Belum ada bahan yang ditambahkan"
+    }
+  },
+  "recurringExpenses": {
+    "page": {
+      "title": "Biaya Berulang",
+      "description": "Kelola biaya operasional berulang bulanan dan tahunan",
+      "showInactive": "Tampilkan yang tidak aktif"
+    },
+    "sheet": {
+      "createTitle": "Tambah Biaya Berulang",
+      "editTitle": "Edit Biaya Berulang",
+      "createDescription": "Tambahkan biaya berulang baru untuk melacak biaya operasional.",
+      "editDescription": "Perbarui informasi dan pengaturan biaya."
+    },
+    "summary": {
+      "monthlyTotal": "Total Bulanan",
+      "yearlyTotal": "Total Tahunan",
+      "activeExpenses": "Biaya Aktif",
+      "totalExpenses": "Total Biaya",
+      "expensesByCategory": "Biaya per Kategori",
+      "monthlyExpenses": "Biaya Bulanan",
+      "yearlyExpenses": "Biaya Tahunan",
+      "quickStats": "Statistik Singkat",
+      "annualCost": "Biaya tahunan (bulanan × 12)",
+      "dailyAverageCost": "Rata-rata biaya harian",
+      "expenseCategories": "Kategori biaya"
+    },
+    "table": {
+      "title": "Biaya Berulang",
+      "searchPlaceholder": "Cari biaya...",
+      "categoryFilterAll": "Semua Kategori",
+      "frequencyFilterAll": "Semua",
+      "noExpenses": "Belum ada biaya berulang. Buat biaya pertama Anda.",
+      "noMatch": "Tidak ada biaya yang cocok dengan filter Anda.",
+      "headers": {
+        "name": "Nama",
+        "amount": "Jumlah",
+        "frequency": "Frekuensi",
+        "category": "Kategori",
+        "startDate": "Tanggal Mulai",
+        "endDate": "Tanggal Akhir",
+        "status": "Status",
+        "actions": "Aksi"
+      },
+      "ongoing": "Berlangsung",
+      "status": {
+        "active": "Aktif",
+        "inactive": "Tidak Aktif"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Hapus",
+        "activate": "Aktifkan",
+        "deactivate": "Nonaktifkan",
+        "openMenu": "Buka menu",
+        "clear": "Bersihkan"
+      }
+    },
+    "form": {
+      "fields": {
+        "name": "Nama Biaya",
+        "description": "Deskripsi (Opsional)",
+        "amount": "Jumlah (IDR)",
+        "frequency": "Frekuensi",
+        "category": "Kategori",
+        "startDate": "Tanggal Mulai",
+        "endDate": "Tanggal Akhir (Opsional)",
+        "note": "Catatan (Opsional)"
+      },
+      "placeholders": {
+        "name": "mis. Sewa Kantor, Gaji Karyawan",
+        "description": "Detail tambahan tentang biaya ini...",
+        "category": "Pilih atau buat kategori...",
+        "searchCategories": "Cari kategori...",
+        "frequency": "Pilih frekuensi",
+        "pickDate": "Pilih tanggal",
+        "noEndDate": "Tanpa tanggal akhir",
+        "clearDate": "Hapus Tanggal",
+        "note": "Catatan tambahan..."
+      },
+      "descriptions": {
+        "leaveEmpty": "Biarkan kosong untuk biaya berkelanjutan"
+      },
+      "frequency": {
+        "monthly": "Bulanan",
+        "yearly": "Tahunan"
+      },
+      "buttons": {
+        "cancel": "Batal",
+        "create": "Buat Biaya",
+        "update": "Perbarui Biaya",
+        "saving": "Menyimpan..."
+      }
+    },
+    "messages": {
+      "createSuccess": "Biaya berulang baru berhasil dibuat.",
+      "updateSuccess": "Biaya berulang berhasil diperbarui.",
+      "deleteSuccess": "Biaya berulang berhasil dihapus permanen.",
+      "deleteError": "Gagal menghapus biaya. Silakan coba lagi.",
+      "deactivateSuccess": "Biaya berulang berhasil dinonaktifkan.",
+      "activateSuccess": "Biaya berulang berhasil diaktifkan.",
+      "statusError": "Gagal memperbarui status biaya. Silakan coba lagi."
     }
   },
   "products": {
