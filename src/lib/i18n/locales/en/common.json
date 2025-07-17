@@ -90,6 +90,13 @@
     "english": "English",
     "indonesian": "Bahasa Indonesia"
   },
+  "operationsStatus": {
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    }
+  },
   "kwaci": {
     "brandName": "KWACI Grow",
     "acronyms": {

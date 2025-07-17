@@ -28,3 +28,6 @@ in reports - financial overview user need to know profit and cost for each branc
 - invoice module with payment
 
 - send WA to customer
+
+- handle intangible ingredient to the COGS calculator and related. for example cost of transportation,
+delivery cost, etc. how to implement this in our app?
