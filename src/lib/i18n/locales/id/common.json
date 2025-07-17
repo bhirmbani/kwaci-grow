@@ -1220,5 +1220,64 @@
       "noBranches": "Belum ada cabang",
       "noBranchesHint": "Buat cabang untuk mulai menetapkan menu"
     }
+  },
+  "salesTargets": {
+    "errors": {
+      "loadBranches": "Gagal memuat cabang. Silakan segarkan halaman.",
+      "loadTargets": "Gagal memuat target penjualan. Coba lagi.",
+      "updateTarget": "Gagal memperbarui target. Coba lagi.",
+      "loadMonthlyTargets": "Gagal memuat target bulanan. Coba lagi."
+    },
+    "dailyPage": {
+      "title": "Target Penjualan Harian",
+      "description": "Tetapkan dan kelola target penjualan harian untuk produk menu",
+      "selectBranchPlaceholder": "Pilih cabang",
+      "summary": {
+        "totalItems": "Total Item",
+        "estRevenue": "Perk. Pendapatan",
+        "activeProducts": "Produk Aktif",
+        "activeMenus": "Menu Aktif"
+      },
+      "noActiveMenusTitle": "Tidak Ada Menu Aktif",
+      "noActiveMenusDescription": "Tidak ada menu aktif untuk cabang dan tanggal ini.",
+      "selectBranchTitle": "Pilih Cabang",
+      "selectBranchDescription": "Silakan pilih cabang untuk melihat dan mengelola target penjualan"
+    },
+    "calendar": {
+      "noBusiness": "Pilih bisnis untuk melihat target penjualan",
+      "noBranch": "Pilih cabang untuk melihat target penjualan",
+      "invalidBranch": "Cabang tidak tersedia di bisnis saat ini",
+      "totalTargets": "Total Target",
+      "estRevenue": "Perk. Pendapatan",
+      "items": "{{count}} item",
+      "noMenusForDate": "Tidak ada menu aktif pada tanggal ini",
+      "menusCount": "Menu ({{count}})",
+      "menuSummary": "{{products}} produk • {{total}} target item"
+    },
+    "menuSection": {
+      "productsBadge": "{{active}}/{{total}} produk",
+      "itemsBadge": "{{count}} item",
+      "noProductsTitle": "Tidak Ada Produk",
+      "noProductsDescription": "Menu ini belum memiliki produk.",
+      "table": {
+        "product": "Produk",
+        "price": "Harga",
+        "targetQty": "Target Qty",
+        "estRevenue": "Perk. Pendapatan",
+        "actions": "Aksi"
+      },
+      "summary": {
+        "menuTotal": "Total Menu",
+        "activeLabel": "{{count}} aktif"
+      }
+    },
+    "productRow": {
+      "notePlaceholder": "Tambahkan catatan (opsional)...",
+      "saveTooltip": "Simpan (Ctrl+Enter)",
+      "cancelTooltip": "Batal (Esc)",
+      "editTooltip": "Edit target",
+      "noteLabel": "Catatan: {{note}}",
+      "targetMinError": "Target harus 0 atau lebih"
+    }
   }
 }

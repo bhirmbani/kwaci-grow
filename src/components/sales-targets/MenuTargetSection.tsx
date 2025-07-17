@@ -2,6 +2,7 @@ import { useState, useMemo } from "react"
 import { ChevronDown, ChevronRight, Package, Target } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -33,6 +34,7 @@ export function MenuTargetSection({
   isUpdating = false
 }: MenuTargetSectionProps) {
   const [isOpen, setIsOpen] = useState(true)
+  const { t } = useTranslation()
 
   // Calculate menu totals
   const menuStats = useMemo(() => {
@@ -87,10 +89,10 @@ export function MenuTargetSection({
               
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
-                  {menuStats.activeTargets}/{menuStats.totalProducts} products
+                  {t('salesTargets.menuSection.productsBadge', { active: menuStats.activeTargets, total: menuStats.totalProducts })}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
-                  {menuStats.totalTargets} items
+                  {t('salesTargets.menuSection.itemsBadge', { count: menuStats.totalTargets })}
                 </Badge>
                 <Badge variant="default" className="text-xs">
                   {formatCurrency(menuStats.totalRevenue)}
@@ -105,20 +107,20 @@ export function MenuTargetSection({
             {products.length === 0 ? (
               <div className="text-center py-8">
                 <Target className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-lg font-semibold mb-2">No Products</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('salesTargets.menuSection.noProductsTitle')}</h3>
                 <p className="text-muted-foreground">
-                  This menu doesn't have any products assigned yet.
+                  {t('salesTargets.menuSection.noProductsDescription')}
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 {/* Header Row */}
                 <div className="grid grid-cols-12 gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b">
-                  <div className="col-span-4">Product</div>
-                  <div className="col-span-2 text-center">Price</div>
-                  <div className="col-span-2 text-center">Target Qty</div>
-                  <div className="col-span-2 text-center">Est. Revenue</div>
-                  <div className="col-span-2 text-center">Actions</div>
+                  <div className="col-span-4">{t('salesTargets.menuSection.table.product')}</div>
+                  <div className="col-span-2 text-center">{t('salesTargets.menuSection.table.price')}</div>
+                  <div className="col-span-2 text-center">{t('salesTargets.menuSection.table.targetQty')}</div>
+                  <div className="col-span-2 text-center">{t('salesTargets.menuSection.table.estRevenue')}</div>
+                  <div className="col-span-2 text-center">{t('salesTargets.menuSection.table.actions')}</div>
                 </div>
 
                 {/* Product Rows */}
@@ -134,7 +136,7 @@ export function MenuTargetSection({
                 {/* Summary Row */}
                 <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-muted/30 rounded-lg border-t mt-4">
                   <div className="col-span-4 font-medium">
-                    Menu Total
+                    {t('salesTargets.menuSection.summary.menuTotal')}
                   </div>
                   <div className="col-span-2 text-center text-muted-foreground">
                     —
@@ -146,7 +148,7 @@ export function MenuTargetSection({
                     {formatCurrency(menuStats.totalRevenue)}
                   </div>
                   <div className="col-span-2 text-center text-muted-foreground">
-                    {menuStats.activeTargets} active
+                    {t('salesTargets.menuSection.summary.activeLabel', { count: menuStats.activeTargets })}
                   </div>
                 </div>
               </div>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { useTranslation } from 'react-i18next'
 import {
   Form,
   FormControl,
@@ -45,6 +46,7 @@ export function ProductTargetRow({
 }: ProductTargetRowProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const { t } = useTranslation()
 
   const form = useForm<ProductTargetFormData>({
     resolver: zodResolver(productTargetSchema),
@@ -175,7 +177,7 @@ export function ProductTargetRow({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Save (Ctrl+Enter)</p>
+                    <p>{t('salesTargets.productRow.saveTooltip')}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -194,7 +196,7 @@ export function ProductTargetRow({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Cancel (Esc)</p>
+                    <p>{t('salesTargets.productRow.cancelTooltip')}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -209,7 +211,7 @@ export function ProductTargetRow({
                   <FormItem>
                     <FormControl>
                       <Textarea
-                        placeholder="Add a note (optional)..."
+                        placeholder={t('salesTargets.productRow.notePlaceholder')}
                         className="min-h-[60px] resize-none"
                         {...field}
                       />
@@ -240,7 +242,7 @@ export function ProductTargetRow({
         )}
         {product.note && (
           <div className="text-xs text-muted-foreground mt-1 italic">
-            Note: {product.note}
+            {t('salesTargets.productRow.noteLabel', { note: product.note })}
           </div>
         )}
       </div>
@@ -284,7 +286,7 @@ export function ProductTargetRow({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Edit target</p>
+              <p>{t('salesTargets.productRow.editTooltip')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

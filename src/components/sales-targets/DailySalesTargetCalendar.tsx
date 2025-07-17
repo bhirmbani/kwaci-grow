@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { Target, Calendar as CalendarIcon } from "lucide-react"
+import { useTranslation } from 'react-i18next'
 
 
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
@@ -22,6 +23,7 @@ export default function DailySalesTargetCalendar({
   branchId,
   onAddTarget
 }: DailySalesTargetCalendarProps) {
+  const { t } = useTranslation()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [productTargets, setProductTargets] = useState<ProductTargetForDate[]>([])
   const [monthlyTargets, setMonthlyTargets] = useState<Map<string, ProductTargetForDate[]>>(new Map())
@@ -86,7 +88,7 @@ export default function DailySalesTargetCalendar({
       console.error('Error loading targets:', err)
       // Only show error if the branch is still valid (not during business switching)
       if (isValidBranch) {
-        setError('Failed to load sales targets. Please try again.')
+        setError(t('salesTargets.errors.loadTargets'))
       }
       setProductTargets([])
     } finally {
@@ -135,7 +137,7 @@ export default function DailySalesTargetCalendar({
       console.error('Error loading monthly targets:', err)
       // Only show error if the branch is still valid (not during business switching)
       if (isValidBranch) {
-        setError('Failed to load monthly targets. Please try again.')
+        setError(t('salesTargets.errors.loadMonthlyTargets'))
       }
     }
   }, [branchId, currentBusinessId, isValidBranch])
@@ -198,7 +200,7 @@ export default function DailySalesTargetCalendar({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4" />
-              Daily Sales Targets
+              {t('salesTargets.dailyPage.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="px-3">
@@ -206,10 +208,10 @@ export default function DailySalesTargetCalendar({
               <CalendarIcon className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">
                 {!currentBusinessId
-                  ? "Please select a business to view sales targets"
+                  ? t('salesTargets.calendar.noBusiness')
                   : !branchId
-                  ? "Please select a branch to view sales targets"
-                  : "Selected branch is not available in the current business"}
+                  ? t('salesTargets.calendar.noBranch')
+                  : t('salesTargets.calendar.invalidBranch')}
               </p>
             </div>
           </CardContent>
@@ -224,7 +226,7 @@ export default function DailySalesTargetCalendar({
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <Target className="h-4 w-4" />
-            Daily Sales Targets
+            {t('salesTargets.dailyPage.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="px-3">
@@ -293,11 +295,11 @@ export default function DailySalesTargetCalendar({
           {selectedDate && !loading && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Total Targets:</span>
-                <Badge variant="secondary" className="text-xs">{totalTargets} items</Badge>
+                <span className="text-muted-foreground">{t('salesTargets.calendar.totalTargets')}:</span>
+                <Badge variant="secondary" className="text-xs">{t('salesTargets.calendar.items', { count: totalTargets })}</Badge>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Est. Revenue:</span>
+                <span className="text-muted-foreground">{t('salesTargets.calendar.estRevenue')}:</span>
                 <Badge variant="outline" className="text-xs">{formatCurrency(estimatedRevenue)}</Badge>
               </div>
             </div>
@@ -324,7 +326,7 @@ export default function DailySalesTargetCalendar({
             <div className="text-center py-3">
               <CalendarIcon className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
               <p className="text-xs text-muted-foreground">
-                No active menus found for this date
+                {t('salesTargets.calendar.noMenusForDate')}
               </p>
             </div>
           )}
@@ -333,7 +335,7 @@ export default function DailySalesTargetCalendar({
           {!loading && !error && targetsByMenu.size > 0 && (
             <div className="space-y-2">
               <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                Menus ({targetsByMenu.size})
+                {t('salesTargets.calendar.menusCount', { count: targetsByMenu.size })}
               </div>
               {Array.from(targetsByMenu.entries()).map(([menuId, targets]) => {
                 const menu = targets[0]?.menu
@@ -346,7 +348,7 @@ export default function DailySalesTargetCalendar({
                   >
                     <div className="font-medium">{menu?.name}</div>
                     <div className="text-muted-foreground text-[10px]">
-                      {targets.length} products • {menuTotal} target items
+                      {t('salesTargets.calendar.menuSummary', { products: targets.length, total: menuTotal })}
                     </div>
                   </div>
                 )
