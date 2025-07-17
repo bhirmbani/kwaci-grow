@@ -1,4 +1,5 @@
 import { useState, memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { Edit, Trash2, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -23,13 +24,14 @@ export const FixedAssetTable = memo(function FixedAssetTable({
   onDelete,
   loading = false
 }: FixedAssetTableProps) {
+  const { t } = useTranslation()
   const { categories, loading: categoriesLoading } = useAssetCategories()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const getCategoryName = (categoryId: string) => {
-    if (categoriesLoading) return 'Loading...'
+    if (categoriesLoading) return t('common.loading')
     const category = categories.find(cat => cat.id === categoryId)
-    return category?.name || 'Unknown Category'
+    return category?.name || t('common.unknown')
   }
 
   const getDepreciationStatus = (asset: FixedAsset) => {
@@ -39,13 +41,13 @@ export const FixedAssetTable = memo(function FixedAssetTable({
     const progress = Math.min(100, (monthsElapsed / asset.depreciationMonths) * 100)
     
     if (progress >= 100) {
-      return { label: 'Fully Depreciated', variant: 'secondary' as const, progress: 100 }
+      return { label: t('fixedAssets.table.status.fully'), variant: 'secondary' as const, progress: 100 }
     } else if (progress >= 75) {
-      return { label: 'Mostly Depreciated', variant: 'destructive' as const, progress }
+      return { label: t('fixedAssets.table.status.mostly'), variant: 'destructive' as const, progress }
     } else if (progress >= 50) {
-      return { label: 'Half Depreciated', variant: 'default' as const, progress }
+      return { label: t('fixedAssets.table.status.half'), variant: 'default' as const, progress }
     } else {
-      return { label: 'Recently Purchased', variant: 'default' as const, progress }
+      return { label: t('fixedAssets.table.status.recent'), variant: 'default' as const, progress }
     }
   }
 
@@ -76,9 +78,9 @@ export const FixedAssetTable = memo(function FixedAssetTable({
   if (assets.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No fixed assets found.</p>
+        <p className="text-muted-foreground">{t('fixedAssets.table.emptyTitle')}</p>
         <p className="text-sm text-muted-foreground mt-1">
-          Click the + button to add your first asset.
+          {t('fixedAssets.table.emptyDescription')}
         </p>
       </div>
     )
@@ -89,13 +91,13 @@ export const FixedAssetTable = memo(function FixedAssetTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Asset Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Purchase Date</TableHead>
-            <TableHead className="text-right">Purchase Cost</TableHead>
-            <TableHead className="text-right">Current Value</TableHead>
-            <TableHead className="text-center">Depreciation Period</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>{t('fixedAssets.table.columns.name')}</TableHead>
+            <TableHead>{t('fixedAssets.table.columns.category')}</TableHead>
+            <TableHead>{t('fixedAssets.table.columns.purchaseDate')}</TableHead>
+            <TableHead className="text-right">{t('fixedAssets.table.columns.purchaseCost')}</TableHead>
+            <TableHead className="text-right">{t('fixedAssets.table.columns.currentValue')}</TableHead>
+            <TableHead className="text-center">{t('fixedAssets.table.columns.depreciation')}</TableHead>
+            <TableHead>{t('fixedAssets.table.columns.status')}</TableHead>
             <TableHead className="w-10"></TableHead>
           </TableRow>
         </TableHeader>
@@ -151,7 +153,7 @@ export const FixedAssetTable = memo(function FixedAssetTable({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground text-center">
-                        {Math.round(status.progress)}% depreciated
+                        {t('fixedAssets.table.status.percent', { percent: Math.round(status.progress) })}
                       </p>
                     </div>
                   </div>
@@ -160,39 +162,37 @@ export const FixedAssetTable = memo(function FixedAssetTable({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">{t('fixedAssets.table.menu')}</span>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => onEdit(asset)}>
                         <Edit className="mr-2 h-4 w-4" />
-                        Edit
+                        {t('fixedAssets.table.edit')}
                       </DropdownMenuItem>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            {t('fixedAssets.table.delete')}
                           </DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Asset</AlertDialogTitle>
+                            <AlertDialogTitle>{t('fixedAssets.table.deleteTitle')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{asset.name}"? 
-                              This will also remove the corresponding depreciation entry from Fixed Costs.
-                              This action cannot be undone.
+                              {t('fixedAssets.table.deleteConfirm', { name: asset.name })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(asset.id)}
                               disabled={deletingId === asset.id}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              {deletingId === asset.id ? 'Deleting...' : 'Delete'}
+                              {deletingId === asset.id ? t('fixedAssets.categoryCombobox.deleting') : t('fixedAssets.table.delete')}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

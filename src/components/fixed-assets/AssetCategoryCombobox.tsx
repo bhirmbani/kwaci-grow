@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Trash2 } from 'lucide-react'
 import { Combobox } from '@/components/ui/combobox'
 import { Button } from '@/components/ui/button'
@@ -29,6 +30,7 @@ export function AssetCategoryCombobox({
   disabled = false,
   showManagement = true,
 }: AssetCategoryComboboxProps) {
+  const { t } = useTranslation()
   const { categories, createCategory, deleteCategory, getCategoryUsageCount } = useAssetCategories()
   const [isCreating, setIsCreating] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -110,9 +112,9 @@ export function AssetCategoryCombobox({
           value={value}
           onValueChange={onValueChange}
           onCreateNew={handleCreateCategory}
-          placeholder={isCreating ? "Creating category..." : placeholder}
-          searchPlaceholder="Search categories..."
-          emptyText="No categories found."
+          placeholder={isCreating ? t('fixedAssets.categoryCombobox.creating') : (placeholder || t('fixedAssets.form.placeholders.selectCategory'))}
+          searchPlaceholder={t('fixedAssets.categoryCombobox.searchPlaceholder')}
+          emptyText={t('fixedAssets.categoryCombobox.emptyText')}
           className={cn("flex-1", className)}
           disabled={disabled || isCreating}
           allowCreate={true}
@@ -121,7 +123,7 @@ export function AssetCategoryCombobox({
 
       {showManagement && categories.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">Manage Categories</h4>
+          <h4 className="text-sm font-medium text-muted-foreground">{t('fixedAssets.categoryCombobox.manage')}</h4>
           <div className="grid gap-2 max-h-32 overflow-y-auto">
             {categories.map((category) => (
               <div key={category.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
@@ -140,31 +142,27 @@ export function AssetCategoryCombobox({
                       onClick={() => handleDeleteCategory(category.id)}
                     >
                       <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete {category.name}</span>
+                      <span className="sr-only">{t('fixedAssets.table.delete')} {category.name}</span>
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Category</AlertDialogTitle>
+                      <AlertDialogTitle>{t('fixedAssets.categoryCombobox.deleteTitle')}</AlertDialogTitle>
                       <AlertDialogDescription>
                         {deleteUsageCount > 0 ? (
                           <>
-                            Cannot delete "{categories.find(c => c.id === categoryToDelete)?.name}". 
-                            It is currently used by {deleteUsageCount} asset(s).
-                            <br /><br />
-                            Please reassign or delete those assets first.
+                            {t('fixedAssets.categoryCombobox.inUseMessage', { name: categories.find(c => c.id === categoryToDelete)?.name, count: deleteUsageCount })}
                           </>
                         ) : (
                           <>
-                            Are you sure you want to delete "{categories.find(c => c.id === categoryToDelete)?.name}"? 
-                            This action cannot be undone.
+                            {t('fixedAssets.categoryCombobox.confirmMessage', { name: categories.find(c => c.id === categoryToDelete)?.name })}
                           </>
                         )}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel onClick={() => setCategoryToDelete(null)}>
-                        Cancel
+                        {t('common.cancel')}
                       </AlertDialogCancel>
                       {deleteUsageCount === 0 && (
                         <AlertDialogAction
@@ -172,7 +170,7 @@ export function AssetCategoryCombobox({
                           disabled={isDeleting}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          {isDeleting ? 'Deleting...' : 'Delete'}
+                          {isDeleting ? t('fixedAssets.categoryCombobox.deleting') : t('fixedAssets.table.delete')}
                         </AlertDialogAction>
                       )}
                     </AlertDialogFooter>

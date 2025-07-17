@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useCallback, useMemo } from 'react'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { FixedAssetSummary, DepreciationExplanation } from '@/components/fixed-assets/FixedAssetSummary'
 import { FixedAssetTable } from '@/components/fixed-assets/FixedAssetTable'
@@ -12,6 +13,7 @@ function FixedAssets() {
   const { assets, loading, error, summary, addAsset, updateAsset, deleteAsset } = useFixedAssets()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingAsset, setEditingAsset] = useState<FixedAsset | null>(null)
+  const { t } = useTranslation()
 
   const handleCreateAsset = useCallback(() => {
     setEditingAsset(null)
@@ -67,9 +69,9 @@ function FixedAssets() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Fixed Assets</h1>
+        <h1 className="text-2xl font-bold">{t('fixedAssets.title')}</h1>
         <p className="text-muted-foreground">
-          Manage fixed assets and automatic depreciation calculations.
+          {t('fixedAssets.description')}
         </p>
       </div>
 
@@ -88,8 +90,8 @@ function FixedAssets() {
       {/* Assets Table */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Asset Inventory</h2>
-        </div>
+          <h2 className="text-lg font-semibold">{t('fixedAssets.assetInventory')}</h2>
+      </div>
         {memoizedTable}
       </div>
 
@@ -100,7 +102,7 @@ function FixedAssets() {
         <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
           <SheetTrigger
             className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
-            aria-label="Add fixed asset"
+            aria-label={t('fixedAssets.sheet.addTitle')}
             onClick={handleCreateAsset}
           >
             <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
@@ -108,13 +110,12 @@ function FixedAssets() {
           <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
             <SheetHeader>
               <SheetTitle>
-                {editingAsset ? 'Edit Fixed Asset' : 'Add New Fixed Asset'}
+                {editingAsset ? t('fixedAssets.sheet.editTitle') : t('fixedAssets.sheet.addTitle')}
               </SheetTitle>
               <SheetDescription>
                 {editingAsset
-                  ? 'Update the asset information and depreciation settings.'
-                  : 'Add a new fixed asset with automatic depreciation tracking.'
-                }
+                  ? t('fixedAssets.sheet.editDescription')
+                  : t('fixedAssets.sheet.addDescription')}
               </SheetDescription>
             </SheetHeader>
             <div className="mt-6">
