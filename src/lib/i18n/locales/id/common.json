@@ -2185,7 +2185,188 @@
       "targetQuantity": "Target Kuantitas:",
       "revenueLabel": "Pendapatan:",
       "profitLabel": "Profit:",
-      "profitMargin": "Margin Profit:"
+    "profitMargin": "Margin Profit:"
+    }
+  },
+  "warehouse": {
+    "sheet": {
+      "triggerAria": "Tambah item ke gudang",
+      "title": "Tambah ke Gudang",
+      "description": "Tambahkan bahan ke stok gudang dengan memilih produk dan bahannya"
+    },
+    "form": {
+      "header": "Tambah Item ke Gudang",
+      "productQuantity": "Produk & Jumlah",
+      "fields": {
+        "product": "Produk",
+        "numberOfCups": "Jumlah Cangkir yang Disiapkan",
+        "smartStock": "Perhitungan Stok Cerdas",
+        "batchNote": "Catatan Batch (Opsional)"
+      },
+      "placeholders": {
+        "product": "Pilih produk untuk menghitung bahan...",
+        "numberOfCups": "Masukkan jumlah cangkir...",
+        "batchNote": "Tambahkan catatan untuk batch gudang ini..."
+      },
+      "autoCalcHint": "Jumlah bahan akan dihitung otomatis berdasarkan resep produk",
+      "smartStockHint": "Hanya menambah kekurangan agar mencapai jumlah target berdasarkan stok saat ini",
+      "calculated": {
+        "titleSmart": "Perhitungan Stok Cerdas",
+        "titleDefault": "Bahan yang Dihitung",
+        "forCups": "untuk {{cups}} cangkir {{product}}",
+        "explanationSmart": "Hanya jumlah kekurangan yang akan ditambahkan untuk mencapai target.",
+        "explanation": "Jumlah dan biaya dihitung otomatis berdasarkan resep produk.",
+        "roundedInfo": "Jumlah aktual dibulatkan ke satuan pembelian minimum sesuai kemasan bahan."
+      },
+      "table": {
+        "ingredient": "Bahan",
+        "currentStock": "Stok Saat Ini",
+        "usagePerCup": "Pemakaian per Cangkir",
+        "requiredQuantity": "Jumlah Dibutuhkan",
+        "theoreticalNeed": "Kebutuhan Teoritis",
+        "actualQuantityToAdd": "Jumlah Aktual Ditambahkan",
+        "purchaseInfo": "Info Pembelian",
+        "costPerUnit": "Biaya per Satuan",
+        "totalCost": "Total Biaya",
+        "sufficient": "Cukup",
+        "noPurchaseNeeded": "Tidak perlu membeli",
+        "roundedUpFrom": "Dibulatkan dari {{quantity}} {{unit}}"
+      },
+      "totalCost": {
+        "label": "Total Biaya Batch:",
+        "costForDeficit": "Biaya kekurangan untuk mencapai {{cups}} cangkir {{product}}",
+        "costFor": "Biaya untuk {{cups}} cangkir {{product}}",
+        "sufficient": "Stok saat ini cukup untuk jumlah yang dipilih"
+      },
+      "buttons": {
+        "submitAdding": "Menambahkan ke Gudang...",
+        "submitNoItems": "Tidak Ada Item yang Perlu Ditambahkan",
+        "submitAdd": "Tambah {{count}} Bahan ke Gudang"
+      },
+      "messages": {
+        "failedLoadProducts": "Gagal memuat produk",
+        "failedLoadIngredients": "Gagal memuat bahan produk",
+        "noIngredients": "Tidak ada bahan untuk produk yang dipilih",
+        "stockSufficient": "Stok saat ini cukup untuk jumlah yang dipilih. Tidak ada item yang perlu ditambahkan.",
+        "successAdd": "Berhasil menambahkan {{count}} bahan ke batch gudang #{{batch}} untuk {{cups}} cangkir {{product}}",
+        "failedAdd": "Gagal menambahkan item ke gudang"
+      }
+    },
+    "stock": {
+      "loading": "Memuat level stok...",
+      "error": "Gagal memuat level stok",
+      "title": "Level Stok Saat Ini",
+      "description": "Level persediaan real-time dan batas stok rendah",
+      "noData": {
+        "title": "Tidak Ada Data Stok",
+        "description": "Level stok akan muncul setelah Anda menambahkan item ke gudang."
+      },
+      "alerts": "Peringatan Stok Rendah ({{count}})",
+      "alert": {
+        "remaining": "{{count}} {{unit}} tersisa",
+        "threshold": "Batas: {{threshold}} {{unit}}"
+      },
+      "reservation": {
+        "negative": "Jumlah reservasi tidak boleh negatif",
+        "updated": "Reservasi berhasil diperbarui. Stok tersedia: {{stock}}",
+        "failed": "Gagal memperbarui reservasi",
+        "unexpected": "Terjadi kesalahan saat memperbarui reservasi",
+        "reserved": "Berhasil mereservasi {{quantity}} {{unit}}. Stok tersedia: {{stock}}",
+        "reserveFailed": "Gagal mereservasi stok",
+        "reserveUnexpected": "Terjadi kesalahan saat mereservasi stok",
+        "unreserved": "Berhasil melepas reservasi {{quantity}} {{unit}}. Stok tersedia: {{stock}}",
+        "unreserveFailed": "Gagal melepas reservasi stok",
+        "unreserveUnexpected": "Terjadi kesalahan saat melepas reservasi stok"
+      },
+      "table": {
+        "ingredient": "Bahan",
+        "currentStock": "Stok Saat Ini",
+        "reserved": "Direservasi",
+        "available": "Tersedia",
+        "status": "Status",
+        "lowStockAlert": "Peringatan Stok Rendah",
+        "actions": "Aksi",
+        "low": "Stok Rendah",
+        "good": "Baik",
+        "moderate": "Sedang",
+        "editReservation": "Ubah reservasi",
+        "editThreshold": "Ubah batas stok rendah",
+        "releaseReservations": "Lepaskan semua reservasi",
+        "quickReserve": "Reservasi cepat {{quantity}} {{unit}}"
+      },
+      "summary": {
+        "totalIngredients": "Total Bahan",
+        "lowStockItems": "Item Stok Rendah",
+        "wellStocked": "Stok Aman"
+      }
+    },
+    "batchList": {
+      "noBatches": {
+        "title": "Belum Ada Batch Gudang",
+        "description": "Anda belum menambahkan item apapun ke gudang.",
+        "hint": "Gunakan Kalkulator HPP untuk membuat batch gudang pertama."
+      },
+      "title": "Batch Gudang ({{count}})",
+      "searchPlaceholder": "Cari batch, bahan, atau catatan...",
+      "batchItems": "Item Batch",
+      "table": {
+        "ingredient": "Bahan",
+        "quantity": "Jumlah",
+        "unitCost": "Biaya Satuan",
+        "totalCost": "Total Biaya"
+      },
+      "items": "{{count}} item",
+      "ingredients": "{{count}} bahan",
+      "noResults": {
+        "title": "Tidak Ada Hasil",
+        "description": "Tidak ada batch yang cocok dengan kata pencarian \"{{term}}\"",
+        "clear": "Bersihkan Pencarian"
+      }
+    },
+    "calendar": {
+      "title": "Kalender Gudang",
+      "batchesFor": "Batch untuk {{date}}",
+      "noActivity": {
+        "title": "Tidak Ada Aktivitas Gudang",
+        "description": "Belum ada batch gudang dibuat. Gunakan Kalkulator HPP untuk menambah batch pertama."
+      },
+      "days": {
+        "sun": "Min",
+        "mon": "Sen",
+        "tue": "Sel",
+        "wed": "Rab",
+        "thu": "Kam",
+        "fri": "Jum",
+        "sat": "Sab"
+      },
+      "batchCount": "{{count}} batch{{plural}}"
+    },
+    "management": {
+      "title": "Manajemen Gudang",
+      "description": "Kelola inventori dan pantau penambahan stok",
+      "tabs": {
+        "overview": "Ikhtisar",
+        "stock": "Level Stok",
+        "production": "Alokasi Produksi Cepat",
+        "batches": "Batch",
+        "calendar": "Kalender"
+      },
+      "overview": {
+        "recentBatches": "Batch Terbaru",
+        "noBatches": "Belum ada batch gudang",
+        "addFirstBatch": "Gunakan Kalkulator HPP untuk menambah batch pertama",
+        "inventorySummary": "Ringkasan Inventori",
+        "noInventory": "Tidak ada data inventori",
+        "mostStockedIngredients": "Bahan Paling Banyak Stok",
+        "viewAllBatches": "Lihat Semua Batch ({{count}})"
+      }
+    },
+    "stats": {
+      "totalBatches": "Total Batch",
+      "totalItems": "Total Item",
+      "totalValue": "Total Nilai",
+      "latestBatch": "Batch Terakhir",
+      "none": "Tidak ada"
     }
   }
 }

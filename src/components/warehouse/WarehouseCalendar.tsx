@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,6 +12,7 @@ interface WarehouseCalendarProps {
 }
 
 export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
+  const { t } = useTranslation()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
@@ -88,7 +90,7 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Warehouse Calendar
+              {t('warehouse.calendar.title')}
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
@@ -107,7 +109,7 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
           {/* Calendar Grid */}
           <div className="grid grid-cols-7 gap-1">
             {/* Day headers */}
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            {[t('warehouse.calendar.days.sun'), t('warehouse.calendar.days.mon'), t('warehouse.calendar.days.tue'), t('warehouse.calendar.days.wed'), t('warehouse.calendar.days.thu'), t('warehouse.calendar.days.fri'), t('warehouse.calendar.days.sat')].map(day => (
               <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
                 {day}
               </div>
@@ -133,7 +135,7 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
                 {day.hasBatches && (
                   <div className="space-y-1">
                     <Badge variant="secondary" className="text-xs">
-                      {day.batches.length} batch{day.batches.length !== 1 ? 'es' : ''}
+                      {t('warehouse.calendar.batchCount', { count: day.batches.length, plural: day.batches.length !== 1 ? 'es' : '' })}
                     </Badge>
                     <div className="text-xs text-muted-foreground">
                       {formatCurrency(day.totalValue)}
@@ -152,7 +154,7 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
-              Batches for {new Date(selectedDate).toLocaleDateString()}
+              {t('warehouse.calendar.batchesFor', { date: new Date(selectedDate).toLocaleDateString() })}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -192,9 +194,9 @@ export function WarehouseCalendar({ batches }: WarehouseCalendarProps) {
           <CardContent className="p-12">
             <div className="text-center">
               <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Warehouse Activity</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('warehouse.calendar.noActivity.title')}</h3>
               <p className="text-muted-foreground">
-                No warehouse batches have been created yet. Use the COGS Calculator to add your first batch.
+                {t('warehouse.calendar.noActivity.description')}
               </p>
             </div>
           </CardContent>

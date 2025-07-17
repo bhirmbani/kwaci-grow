@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Package, ShoppingCart, TrendingUp, Calendar } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { formatCurrency } from '@/utils/formatters'
 import type { WarehouseBatch } from '@/lib/db/schema'
 
@@ -13,6 +14,7 @@ interface WarehouseStatsProps {
 }
 
 export function WarehouseStats({ stats }: WarehouseStatsProps) {
+  const { t } = useTranslation()
   if (!stats) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -37,7 +39,7 @@ export function WarehouseStats({ stats }: WarehouseStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Batches</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.totalBatches')}</p>
               <p className="text-2xl font-bold">{stats.totalBatches}</p>
             </div>
             <Package className="h-8 w-8 text-blue-500" />
@@ -50,7 +52,7 @@ export function WarehouseStats({ stats }: WarehouseStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Items</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.totalItems')}</p>
               <p className="text-2xl font-bold">{stats.totalItems}</p>
             </div>
             <ShoppingCart className="h-8 w-8 text-green-500" />
@@ -63,7 +65,7 @@ export function WarehouseStats({ stats }: WarehouseStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Value</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.totalValue')}</p>
               <p className="text-2xl font-bold">{formatCurrency(stats.totalValue)}</p>
             </div>
             <TrendingUp className="h-8 w-8 text-purple-500" />
@@ -76,9 +78,9 @@ export function WarehouseStats({ stats }: WarehouseStatsProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Latest Batch</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('warehouse.stats.latestBatch')}</p>
               <p className="text-2xl font-bold">
-                {stats.latestBatch ? `#${stats.latestBatch.batchNumber}` : 'None'}
+                {stats.latestBatch ? `#${stats.latestBatch.batchNumber}` : t('warehouse.stats.none')}
               </p>
               {stats.latestBatch && (
                 <p className="text-xs text-muted-foreground">
