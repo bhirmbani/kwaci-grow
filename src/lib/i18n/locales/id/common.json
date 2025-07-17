@@ -1279,5 +1279,155 @@
       "noteLabel": "Catatan: {{note}}",
       "targetMinError": "Target harus 0 atau lebih"
     }
+  },
+  "operations": {
+    "page": {
+      "title": "Operasional",
+      "description": "Ubah target penjualan harian menjadi pipeline operasional dengan pelacakan dan analitik real-time"
+    },
+    "tabs": {
+      "recording": "Pencatatan Penjualan",
+      "analysis": "Analisis Target",
+      "analytics": "Analitik",
+      "projections": "Proyeksi"
+    },
+    "salesRecording": {
+      "filtersTitle": "Filter",
+      "date": "Tanggal",
+      "branch": "Cabang",
+      "allBranches": "Semua cabang",
+      "summary": {
+        "totalSales": "Total Penjualan",
+        "totalRevenue": "Total Pendapatan",
+        "avgOrderValue": "Rata-rata Nilai Pesanan",
+        "topProduct": "Produk Terlaris",
+        "none": "Tidak ada",
+        "sold": "terjual {{count}}"
+      },
+      "recordsTitle": "Catatan Penjualan",
+      "recordsDescription": "Penjualan terbaru untuk {{date}}{{branch ? ` di ${branch}` : ''}}",
+      "loading": "Memuat catatan penjualan...",
+      "noRecords": "Tidak ada catatan penjualan untuk tanggal ini",
+      "addButton": "Tambah penjualan",
+      "sheetTitle": "Catat Penjualan Baru",
+      "sheetDescription": "Catat penjualan baru dengan detail produk, jumlah, dan harga"
+    },
+    "salesRecordForm": {
+      "fields": {
+        "branch": "Cabang",
+        "menu": "Menu",
+        "product": "Produk",
+        "saleDate": "Tanggal Penjualan",
+        "saleTime": "Waktu Penjualan",
+        "quantity": "Jumlah",
+        "unitPrice": "Harga Satuan (IDR)",
+        "totalAmount": "Total",
+        "note": "Catatan (Opsional)"
+      },
+      "placeholders": {
+        "branch": "Pilih cabang",
+        "menu": "Pilih menu",
+        "product": "Pilih produk",
+        "pickDate": "Pilih tanggal",
+        "note": "Catatan tambahan tentang penjualan ini..."
+      },
+      "buttons": {
+        "setCurrentTime": "Waktu sekarang",
+        "record": "Catat Penjualan"
+      }
+    },
+    "targetAnalysis": {
+      "title": "Analisis Target vs Aktual",
+      "description": "Perbandingan real-time antara target penjualan harian dan kinerja aktual",
+      "date": "Tanggal",
+      "branch": "Cabang",
+      "allBranches": "Semua cabang",
+      "loading": "Memuat analisis...",
+      "noTargets": "Tidak ada target untuk tanggal ini",
+      "progress": "Progres",
+      "expected": "Harapan: {{value}}%",
+      "timeRemaining": "Sisa waktu: {{value}}",
+      "target": "Target",
+      "actual": "Aktual",
+      "variance": "Variansi",
+      "salesCount": "Jumlah Penjualan: {{count}} item",
+      "unknownMenu": "Menu Tidak Dikenal",
+      "unknownBranch": "Cabang Tidak Dikenal"
+    },
+    "analytics": {
+      "filtersTitle": "Filter Analitik",
+      "filtersDescription": "Saring data analitik berdasarkan rentang waktu dan cabang",
+      "timeRange": "Rentang Waktu",
+      "range": {
+        "today": "Hari ini",
+        "week": "7 Hari Terakhir",
+        "month": "30 Hari Terakhir",
+        "custom": "Rentang Kustom"
+      },
+      "startDate": "Tanggal Mulai",
+      "endDate": "Tanggal Akhir",
+      "branch": "Cabang",
+      "allBranches": "Semua cabang",
+      "tabs": {
+        "hourly": "Analisis Per Jam",
+        "products": "Popularitas Produk",
+        "progress": "Progres Harian"
+      },
+      "hourly": {
+        "title": "Analisis Profitabilitas Per Jam",
+        "description": "Rincian pendapatan dan profit per jam"
+      },
+      "products": {
+        "title": "Popularitas Produk",
+        "description": "Produk terlaris berdasarkan jumlah dan pendapatan",
+        "byQuantity": "Berdasarkan Jumlah",
+        "byRevenue": "Berdasarkan Pendapatan",
+        "noData": "Tidak ada data produk"
+      },
+      "progress": {
+        "title": "Pelacakan Progres Harian",
+        "description": "Progres real-time menuju target penjualan harian",
+        "requireSingleDate": "Pelacakan progres memerlukan pilihan satu tanggal",
+        "noTargets": "Tidak ada target penjualan untuk tanggal ini",
+        "selectSpecificDate": "Pilih tanggal khusus untuk melihat progres harian",
+        "createTargets": "Buat target penjualan untuk {{date}} untuk melacak progres"
+      },
+      "loadingChart": "Memuat grafik..."
+    },
+    "projections": {
+      "title": "Proyeksi Pendapatan Lanjutan",
+      "description": "Proyeksi multi-produk berdasarkan kinerja penjualan aktual dan target",
+      "branch": "Cabang",
+      "selectBranch": "Pilih cabang",
+      "menu": "Menu",
+      "selectMenu": "Pilih menu",
+      "referenceDate": "Tanggal Referensi",
+      "daysPerMonth": "Hari per Bulan",
+      "useActual": "Gunakan Data Penjualan Aktual",
+      "usingActual": "Menggunakan penjualan aktual",
+      "usingTargets": "Hanya menggunakan target",
+      "loading": "Memuat proyeksi...",
+      "selectBranchMenu": "Pilih cabang dan menu untuk melihat proyeksi",
+      "noProducts": "Tidak ada produk untuk menu yang dipilih",
+      "summary": {
+        "dailyRevenue": "Pendapatan Harian",
+        "dailyProfit": "Laba Harian",
+        "monthlyRevenue": "Pendapatan Bulanan",
+        "avgPerformance": "Rata-rata Performa"
+      },
+      "tableTitle": "Proyeksi Produk",
+      "tableDescription": "Kinerja produk individu dan proyeksi pendapatan",
+      "table": {
+        "product": "Produk",
+        "targetQty": "Target Qty",
+        "actualSales": "Penjualan Aktual",
+        "performance": "Performa",
+        "unitPrice": "Harga Satuan",
+        "dailyRevenue": "Pendapatan Harian",
+        "dailyProfit": "Laba Harian",
+        "monthlyRevenue": "Pendapatan Bulanan",
+        "monthlyProfit": "Laba Bulanan"
+      }
+    }
   }
 }

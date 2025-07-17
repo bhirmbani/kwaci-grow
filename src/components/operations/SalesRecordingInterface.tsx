@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { Plus, Filter, TrendingUp, DollarSign, Package, Award } from 'lucide-react'
 
@@ -37,6 +38,7 @@ import { useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { SalesRecordWithDetails, Branch } from '@/lib/db/schema'
 
 export function SalesRecordingInterface() {
+  const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
   const [salesRecords, setSalesRecords] = useState<SalesRecordWithDetails[]>([])
   const [salesSummary, setSalesSummary] = useState<SalesRecordSummary>({
@@ -139,13 +141,13 @@ export function SalesRecordingInterface() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filters
+            {t('operations.salesRecording.filtersTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="date-filter">Date</Label>
+              <Label htmlFor="date-filter">{t('operations.salesRecording.date')}</Label>
               <Input
                 id="date-filter"
                 type="date"
@@ -155,16 +157,16 @@ export function SalesRecordingInterface() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="branch-filter">Branch</Label>
+              <Label htmlFor="branch-filter">{t('operations.salesRecording.branch')}</Label>
               <Select
                 value={selectedBranch || 'all'}
                 onValueChange={(value) => setSelectedBranch(value === 'all' ? '' : value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="All branches" />
+                  <SelectValue placeholder={t('operations.salesRecording.allBranches')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All branches</SelectItem>
+                  <SelectItem value="all">{t('operations.salesRecording.allBranches')}</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id}>
                       {branch.name} - {branch.location}
@@ -183,7 +185,7 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm font-medium">Total Sales</p>
+                <p className="text-muted-foreground text-sm font-medium">{t('operations.salesRecording.summary.totalSales')}</p>
                 <p className="text-2xl font-bold">{salesSummary.totalSales}</p>
               </div>
               <Package className="h-8 w-8 text-blue-500" />
@@ -195,7 +197,7 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm font-medium">Total Revenue</p>
+                <p className="text-muted-foreground text-sm font-medium">{t('operations.salesRecording.summary.totalRevenue')}</p>
                 <p className="text-2xl font-bold">{formatCurrency(salesSummary.totalRevenue)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-green-500" />
@@ -207,7 +209,7 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm font-medium">Avg Order Value</p>
+                <p className="text-muted-foreground text-sm font-medium">{t('operations.salesRecording.summary.avgOrderValue')}</p>
                 <p className="text-2xl font-bold">
                   {formatCurrency(salesSummary.averageOrderValue)}
                 </p>
@@ -221,13 +223,13 @@ export function SalesRecordingInterface() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm font-medium">Top Product</p>
+                <p className="text-muted-foreground text-sm font-medium">{t('operations.salesRecording.summary.topProduct')}</p>
                 <p className="text-lg font-bold">
-                  {salesSummary.topProduct ? salesSummary.topProduct.name : 'None'}
+                  {salesSummary.topProduct ? salesSummary.topProduct.name : t('operations.salesRecording.summary.none')}
                 </p>
                 {salesSummary.topProduct && (
                   <p className="text-muted-foreground text-xs">
-                    {salesSummary.topProduct.quantity} sold
+                    {t('operations.salesRecording.summary.sold', { count: salesSummary.topProduct.quantity })}
                   </p>
                 )}
               </div>
@@ -237,36 +239,38 @@ export function SalesRecordingInterface() {
         </Card>
       </div>
 
-      {/* Sales Records Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Sales Records</CardTitle>
-          <CardDescription>
-            Recent sales for {format(new Date(selectedDate), 'PPP')}
-            {selectedBranch && ` at ${branches.find((b) => b.id === selectedBranch)?.name}`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">Loading sales records...</div>
-            </div>
-          ) : salesRecords.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-muted-foreground">No sales records found for this date</div>
-            </div>
+        {/* Sales Records Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('operations.salesRecording.recordsTitle')}</CardTitle>
+            <CardDescription>
+              {t('operations.salesRecording.recordsDescription', {
+                date: format(new Date(selectedDate), 'PPP'),
+                branch: selectedBranch ? branches.find((b) => b.id === selectedBranch)?.name : null
+              })}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-muted-foreground">{t('operations.salesRecording.loading')}</div>
+              </div>
+            ) : salesRecords.length === 0 ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-muted-foreground">{t('operations.salesRecording.noRecords')}</div>
+              </div>
           ) : (
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Menu</TableHead>
-                    <TableHead>Branch</TableHead>
-                    <TableHead className="text-right">Qty</TableHead>
-                    <TableHead className="text-right">Unit Price</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>{t('operations.salesRecording.table.time')}</TableHead>
+                    <TableHead>{t('operations.salesRecording.table.product')}</TableHead>
+                    <TableHead>{t('operations.salesRecording.table.menu')}</TableHead>
+                    <TableHead>{t('operations.salesRecording.table.branch')}</TableHead>
+                    <TableHead className="text-right">{t('operations.salesRecording.table.qty')}</TableHead>
+                    <TableHead className="text-right">{t('operations.salesRecording.table.unitPrice')}</TableHead>
+                    <TableHead className="text-right">{t('operations.salesRecording.table.total')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -297,15 +301,15 @@ export function SalesRecordingInterface() {
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger
             className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 w-14 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
-            aria-label="Add sales"
+            aria-label={t('operations.salesRecording.addButton')}
           >
             <Plus className="text-primary-foreground m-auto flex h-8 w-8" />
           </SheetTrigger>
           <SheetContent className="h-full w-full overflow-y-auto sm:max-w-2xl">
             <SheetHeader>
-              <SheetTitle>Record New Sale</SheetTitle>
+              <SheetTitle>{t('operations.salesRecording.sheetTitle')}</SheetTitle>
               <SheetDescription>
-                Record a new sale with product details, quantity, and pricing information.
+                {t('operations.salesRecording.sheetDescription')}
               </SheetDescription>
             </SheetHeader>
             <div className="mt-6">

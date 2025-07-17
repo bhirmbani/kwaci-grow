@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { SalesRecordingInterface } from '@/components/operations/SalesRecordingInterface'
 import { TargetVsActualAnalysis } from '@/components/operations/TargetVsActualAnalysis'
@@ -13,25 +14,26 @@ import { EnhancedProjectionTable } from '@/components/operations/EnhancedProject
 // EnhancedProjectionTable component is now imported from components/operations
 
 function OperationsPage() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('recording')
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Operations</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('operations.page.title')}</h1>
         <p className="text-muted-foreground">
-          Transform daily sales targets into operational pipeline with real-time tracking and analytics
+          {t('operations.page.description')}
         </p>
       </div>
 
       {/* Operations Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="recording">Sales Recording</TabsTrigger>
-          <TabsTrigger value="analysis">Target Analysis</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="projections">Projections</TabsTrigger>
+          <TabsTrigger value="recording">{t('operations.tabs.recording')}</TabsTrigger>
+          <TabsTrigger value="analysis">{t('operations.tabs.analysis')}</TabsTrigger>
+          <TabsTrigger value="analytics">{t('operations.tabs.analytics')}</TabsTrigger>
+          <TabsTrigger value="projections">{t('operations.tabs.projections')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="recording" className="space-y-6">
