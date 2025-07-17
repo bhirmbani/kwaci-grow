@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +22,7 @@ interface ProductionAllocationProps {
 }
 
 export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocationProps = {}) {
+  const { t } = useTranslation()
   const [cupsToAllocate, setCupsToAllocate] = useState<number>(0)
   const [note, setNote] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
@@ -34,6 +36,7 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
   const { product: selectedProduct, loading: selectedProductLoading } = useProduct(
     selectedProductId !== 'legacy' ? selectedProductId : ''
   )
+  const productSuffix = selectedProductId !== 'legacy' && selectedProduct ? t('production.allocation.productSuffix', { name: selectedProduct.name }) : ''
 
   // Get ingredients based on selected mode (product or legacy COGS)
   const validIngredients = useMemo(() => {
@@ -96,12 +99,12 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
 
   const handleAllocateProduction = async () => {
     if (cupsToAllocate <= 0) {
-      setMessage({ type: 'error', text: 'Please enter a valid number of cups to allocate' })
+      setMessage({ type: 'error', text: t('production.allocation.messages.invalidCups') })
       return
     }
 
     if (validIngredients.length === 0) {
-      setMessage({ type: 'error', text: 'No valid ingredients found for production allocation' })
+      setMessage({ type: 'error', text: t('production.allocation.messages.noValidIngredients') })
       return
     }
 
@@ -112,12 +115,12 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
         .join('; ')
 
       const maxCupsMessage = stockValidation.maxPossibleCups > 0
-        ? ` You can produce up to ${stockValidation.maxPossibleCups} cups with current stock.`
-        : ' No production possible with current stock levels.'
+        ? ` ${t('production.allocation.hints.maxPossible', { count: stockValidation.maxPossibleCups })}`
+        : ` ${t('production.allocation.hints.noProduction')}`
 
       setMessage({
         type: 'error',
-        text: `Insufficient stock for production: ${insufficientList}.${maxCupsMessage}`
+        text: t('production.allocation.messages.insufficientStock', { details: insufficientList, maxCupsMessage })
       })
       return
     }
@@ -128,13 +131,13 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
     try {
       // Prepare batch data
       const productInfo = selectedProductId === 'legacy'
-        ? 'Legacy COGS Items'
+        ? t('production.allocation.legacy')
         : selectedProduct?.name || 'Unknown Product'
 
       const batchData = {
         dateCreated: new Date().toISOString(),
         status: 'Pending' as const,
-        note: note || `Production allocation for ${cupsToAllocate} cups of ${productInfo}`
+        note: note || t('production.allocation.messages.noteDefault', { cups: cupsToAllocate, product: productInfo })
       }
 
       // Prepare items data
@@ -150,7 +153,7 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
       if (result.success) {
         setMessage({
           type: 'success',
-          text: `Successfully created Production Batch #${result.batch?.batchNumber} for ${cupsToAllocate} cups of ${productInfo}. Ingredients allocated from stock.`
+          text: t('production.allocation.messages.success', { batch: result.batch?.batchNumber, cups: cupsToAllocate, product: productInfo })
         })
         setCupsToAllocate(0)
         setNote('')
@@ -158,13 +161,13 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
       } else {
         setMessage({
           type: 'error',
-          text: `Failed to create production batch: ${result.error}`
+          text: t('production.allocation.messages.failed', { error: result.error })
         })
       }
     } catch (error) {
       setMessage({
         type: 'error',
-        text: 'An unexpected error occurred while creating the production batch'
+        text: t('production.allocation.messages.unexpected')
       })
     } finally {
       setIsProcessing(false)
@@ -179,7 +182,7 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
         <CardContent className="p-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading production allocation...</p>
+            <p className="text-muted-foreground">{t('production.allocation.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -192,22 +195,22 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Factory className="h-5 w-5" />
-            Quick Production Allocation
+            {t('production.allocation.title')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Allocate ingredients for production batches and reserve stock
+            {t('production.allocation.description')}
           </p>
         </CardHeader>
       <CardContent className="space-y-4">
         {/* Product Selection */}
         <div className="space-y-2">
-          <Label htmlFor="product-selection">Product to Produce</Label>
+          <Label htmlFor="product-selection">{t('production.allocation.fields.product')}</Label>
           <Select value={selectedProductId} onValueChange={setSelectedProductId}>
             <SelectTrigger>
-              <SelectValue placeholder="Select product" />
+              <SelectValue placeholder={t('production.allocation.placeholders.selectProduct')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="legacy">Legacy COGS Items</SelectItem>
+              <SelectItem value="legacy">{t('production.allocation.legacy')}</SelectItem>
               {products.map((product) => (
                 <SelectItem key={product.id} value={product.id}>
                   {product.name}
@@ -221,7 +224,7 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
                 <strong>{selectedProduct.name}</strong>: {selectedProduct.description}
               </p>
               <p className="text-xs text-blue-600 mt-1">
-                {selectedProduct.ingredients.length} ingredients configured
+                {t('production.allocation.selectedProductInfo', { count: selectedProduct.ingredients.length })}
               </p>
             </div>
           )}
@@ -229,22 +232,22 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
 
         {/* Production Input */}
         <div className="space-y-2">
-          <Label htmlFor="cups-to-allocate">Number of Cups to Produce</Label>
+          <Label htmlFor="cups-to-allocate">{t('production.allocation.fields.cups')}</Label>
           <Input
             id="cups-to-allocate"
             type="number"
             min="0"
             value={cupsToAllocate || ''}
             onChange={(e) => setCupsToAllocate(Number(e.target.value))}
-            placeholder="Enter number of cups to produce"
+            placeholder={t('production.allocation.placeholders.cups')}
             className="w-full"
           />
           {/* Real-time stock availability hint */}
           {validIngredients.length > 0 && stockValidation.maxPossibleCups >= 0 && (
             <p className="text-xs text-muted-foreground">
               {stockValidation.maxPossibleCups > 0
-                ? `Maximum possible with current stock: ${stockValidation.maxPossibleCups} cups`
-                : 'No production possible - insufficient stock for all ingredients'
+                ? t('production.allocation.hints.maxPossible', { count: stockValidation.maxPossibleCups })
+                : t('production.allocation.hints.noProduction')
               }
             </p>
           )}
@@ -252,12 +255,12 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
 
         {/* Note Input */}
         <div className="space-y-2">
-          <Label htmlFor="production-note">Production Note (Optional)</Label>
+          <Label htmlFor="production-note">{t('production.allocation.fields.note')}</Label>
           <Textarea
             id="production-note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Add a note about this production batch..."
+            placeholder={t('production.allocation.placeholders.note')}
             className="w-full"
             rows={2}
           />
@@ -266,7 +269,7 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
         {/* Ingredient Preview */}
         {validIngredients.length > 0 && cupsToAllocate > 0 && (
           <div className="space-y-2">
-            <Label>Ingredients to be allocated:</Label>
+            <Label>{t('production.allocation.ingredientsTitle')}</Label>
             <div className={`rounded-lg p-3 space-y-2 ${
               stockValidation.isValid
                 ? 'bg-muted/50'
@@ -308,21 +311,21 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
                 <div className="flex items-start gap-2">
                   <span className="text-yellow-600 dark:text-yellow-400">⚠️</span>
                   <div>
-                    <p className="font-medium">Insufficient stock for {cupsToAllocate} cups</p>
+                    <p className="font-medium">{t('production.allocation.stockSummary.insufficient', { cups: cupsToAllocate })}</p>
                     {stockValidation.maxPossibleCups > 0 ? (
                       <p className="mt-1">
-                        Maximum possible with current stock: <strong>{stockValidation.maxPossibleCups} cups</strong>
+                        {t('production.allocation.hints.maxPossible', { count: stockValidation.maxPossibleCups })}
                         <Button
                           variant="link"
                           size="sm"
                           className="h-auto p-0 ml-2 text-yellow-700 dark:text-yellow-300"
                           onClick={() => setCupsToAllocate(stockValidation.maxPossibleCups)}
                         >
-                          Use maximum
+                          {t('production.allocation.stockSummary.useMaximum')}
                         </Button>
                       </p>
                     ) : (
-                      <p className="mt-1">Add more stock to warehouse before creating production batch.</p>
+                      <p className="mt-1">{t('production.allocation.stockSummary.addStock')}</p>
                     )}
                   </div>
                 </div>
@@ -345,10 +348,10 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
         >
           <Package className="h-4 w-4 mr-2" />
           {isProcessing
-            ? 'Creating Production Batch...'
+            ? t('production.allocation.buttons.creating')
             : !stockValidation.isValid && cupsToAllocate > 0
-            ? 'Insufficient Stock for Production'
-            : `Allocate for ${cupsToAllocate} Cups${selectedProductId !== 'legacy' && selectedProduct ? ` of ${selectedProduct.name}` : ''}`
+            ? t('production.allocation.buttons.insufficient')
+            : t('production.allocation.buttons.allocate', { count: cupsToAllocate, product: productSuffix })
           }
         </Button>
 
@@ -373,29 +376,27 @@ export function ProductionAllocation({ onStockLevelsChanged }: ProductionAllocat
           <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
-              <span>
-                No valid ingredients found. Please add ingredients with usage per cup data in the COGS Calculator.
-              </span>
+              <span>{t('production.allocation.warningNoIngredients')}</span>
             </div>
           </div>
         )}
 
         {/* Info */}
         <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p className="font-medium mb-1">How it works:</p>
+          <p className="font-medium mb-1">{t('production.allocation.info.howTitle')}</p>
           <ul className="space-y-1">
-            <li>• Enter the number of cups to produce</li>
-            <li>• System validates stock availability for all ingredients</li>
-            <li>• Calculates ingredient requirements based on COGS data</li>
-            <li>• Creates production batch and reserves stock (if sufficient)</li>
-            <li>• Stock shows as "Reserved" until production is completed</li>
-            <li>• Manage production batches in the Production page</li>
+            <li>• {t('production.allocation.info.step1')}</li>
+            <li>• {t('production.allocation.info.step2')}</li>
+            <li>• {t('production.allocation.info.step3')}</li>
+            <li>• {t('production.allocation.info.step4')}</li>
+            <li>• {t('production.allocation.info.step5')}</li>
+            <li>• {t('production.allocation.info.step6')}</li>
           </ul>
-          <p className="font-medium mt-2 mb-1">Stock validation:</p>
+          <p className="font-medium mt-2 mb-1">{t('production.allocation.info.stockTitle')}</p>
           <ul className="space-y-1">
-            <li>• Red highlighting indicates insufficient stock</li>
-            <li>• System suggests maximum possible production quantity</li>
-            <li>• Button disabled when stock is insufficient</li>
+            <li>• {t('production.allocation.info.stockStep1')}</li>
+            <li>• {t('production.allocation.info.stockStep2')}</li>
+            <li>• {t('production.allocation.info.stockStep3')}</li>
           </ul>
         </div>
       </CardContent>

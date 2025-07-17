@@ -2368,5 +2368,86 @@
       "latestBatch": "Batch Terakhir",
       "none": "Tidak ada"
     }
+  },
+  "production": {
+    "allocation": {
+      "loading": "Memuat alokasi produksi...",
+      "title": "Alokasi Produksi Cepat",
+      "description": "Alokasikan bahan untuk batch produksi dan cadangkan stok",
+      "fields": {
+        "product": "Produk yang Diproduksi",
+        "cups": "Jumlah Cangkir yang Diproduksi",
+        "note": "Catatan Produksi (Opsional)"
+      },
+      "placeholders": {
+        "selectProduct": "Pilih produk",
+        "cups": "Masukkan jumlah cangkir yang akan diproduksi",
+        "note": "Tambahkan catatan tentang batch produksi ini..."
+      },
+      "legacy": "Item HPP Lama",
+      "productSuffix": " dari {{name}}",
+      "selectedProductInfo": "{{count}} bahan dikonfigurasi",
+      "hints": {
+        "maxPossible": "Maksimum dengan stok saat ini: {{count}} cangkir",
+        "noProduction": "Produksi tidak mungkin - stok semua bahan tidak mencukupi"
+      },
+      "ingredientsTitle": "Bahan yang akan dialokasikan:",
+      "stockSummary": {
+        "insufficient": "Stok tidak cukup untuk {{cups}} cangkir",
+        "useMaximum": "Gunakan maksimum",
+        "addStock": "Tambahkan stok ke gudang sebelum membuat batch produksi."
+      },
+      "buttons": {
+        "creating": "Membuat Batch Produksi...",
+        "insufficient": "Stok Tidak Cukup untuk Produksi",
+        "allocate": "Alokasikan untuk {{count}} Cangkir{{product}}"
+      },
+      "messages": {
+        "invalidCups": "Masukkan jumlah cangkir yang valid untuk dialokasikan",
+        "noValidIngredients": "Tidak ada bahan valid untuk alokasi produksi",
+        "insufficientStock": "Stok tidak mencukupi untuk produksi: {{details}}{{maxCupsMessage}}",
+        "success": "Berhasil membuat Batch Produksi #{{batch}} untuk {{cups}} cangkir {{product}}. Bahan dialokasikan dari stok.",
+        "failed": "Gagal membuat batch produksi: {{error}}",
+        "unexpected": "Terjadi kesalahan tak terduga saat membuat batch produksi",
+        "noteDefault": "Alokasi produksi untuk {{cups}} cangkir {{product}}"
+      },
+      "warningNoIngredients": "Tidak ada bahan valid. Tambahkan data penggunaan per cangkir di Kalkulator HPP.",
+      "info": {
+        "howTitle": "Cara kerja:",
+        "step1": "Masukkan jumlah cangkir yang akan diproduksi",
+        "step2": "Sistem memeriksa ketersediaan stok semua bahan",
+        "step3": "Menghitung kebutuhan bahan berdasarkan data HPP",
+        "step4": "Membuat batch produksi dan mencadangkan stok (jika cukup)",
+        "step5": "Stok ditandai \"Tercadangkan\" sampai produksi selesai",
+        "step6": "Kelola batch produksi di halaman Produksi",
+        "stockTitle": "Validasi stok:",
+        "stockStep1": "Sorotan merah menandakan stok kurang",
+        "stockStep2": "Sistem menyarankan jumlah produksi maksimum",
+        "stockStep3": "Tombol dinonaktifkan jika stok tidak mencukupi"
+      }
+    },
+    "batchStatus": {
+      "loading": "Memuat batch produksi...",
+      "error": "Gagal memuat batch produksi: {{error}}",
+      "title": "Status Batch Produksi",
+      "description": "Kelola batch produksi aktif dan perbarui statusnya",
+      "noActive": "Tidak ada batch produksi aktif. Buat dengan Alokasi Produksi Cepat.",
+      "complete": "Selesai",
+      "completeTitle": "Selesaikan Batch Produksi",
+      "completeConfirm": "Yakin menandai Batch #{{batch}} selesai? Ini akan mengurangi stok yang dialokasikan secara permanen.",
+      "completeBatch": "Selesaikan Batch",
+      "table": {
+        "batch": "Batch",
+        "status": "Status",
+        "items": "Item",
+        "created": "Dibuat",
+        "actions": "Aksi"
+      },
+      "showing": {
+        "partial": "Menampilkan {{shown}} dari {{total}} batch aktif.",
+        "all": "Menampilkan {{shown}} batch aktif."
+      },
+      "viewAll": "Lihat semua {{count}} batch di halaman Produksi."
+    }
   }
 }

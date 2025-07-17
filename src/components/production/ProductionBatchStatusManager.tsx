@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +29,7 @@ export function ProductionBatchStatusManager({
   error: propError,
   onStockLevelsChanged
 }: ProductionBatchStatusManagerProps) {
+  const { t } = useTranslation()
   const { batches: hookBatches, updateBatchStatus, loading: hookLoading, error: hookError } = useProduction()
   const [updatingBatch, setUpdatingBatch] = useState<string | null>(null)
   const [optimisticBatches, setOptimisticBatches] = useState<ProductionBatchWithItems[]>([])
@@ -74,6 +76,9 @@ export function ProductionBatchStatusManager({
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
     }
   }
+
+  const statusLabel = (status: ProductionBatchStatus) =>
+    t(`operationsStatus.status.${status === 'In Progress' ? 'inProgress' : status.toLowerCase()}`)
 
   const getNextStatus = (currentStatus: ProductionBatchStatus): ProductionBatchStatus | null => {
     switch (currentStatus) {
@@ -127,7 +132,7 @@ export function ProductionBatchStatusManager({
         <CardContent className="p-6">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading production batches...</p>
+            <p className="text-muted-foreground">{t('production.batchStatus.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -139,7 +144,7 @@ export function ProductionBatchStatusManager({
       <Card>
         <CardContent className="p-6">
           <div className="text-center text-red-500">
-            <p>Error loading production batches: {error}</p>
+            <p>{t('production.batchStatus.error', { error })}</p>
           </div>
         </CardContent>
       </Card>
@@ -152,10 +157,10 @@ export function ProductionBatchStatusManager({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Factory className="h-5 w-5" />
-            Production Batch Status
+            {t('production.batchStatus.title')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Manage active production batches and update their status
+            {t('production.batchStatus.description')}
           </p>
         </CardHeader>
       )}
@@ -164,7 +169,7 @@ export function ProductionBatchStatusManager({
           <div className="text-center py-6">
             <Factory className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">
-              No active production batches. Create one using Quick Production Allocation.
+              {t('production.batchStatus.noActive')}
             </p>
           </div>
         ) : (
@@ -203,24 +208,23 @@ export function ProductionBatchStatusManager({
                                     className="flex items-center gap-1"
                                   >
                                     <ArrowRight className="h-3 w-3" />
-                                    Complete
+                                    {t('production.batchStatus.complete')}
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Complete Production Batch</AlertDialogTitle>
+                                    <AlertDialogTitle>{t('production.batchStatus.completeTitle')}</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to mark Batch #{batch.batchNumber} as completed? 
-                                      This will permanently consume the allocated ingredients from stock.
+                                      {t('production.batchStatus.completeConfirm', { batch: batch.batchNumber })}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => handleQuickStatusAdvance(batch.id, batch.status)}
                                       className="bg-green-600 hover:bg-green-700"
                                     >
-                                      Complete Batch
+                                      {t('production.batchStatus.completeBatch')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -234,7 +238,7 @@ export function ProductionBatchStatusManager({
                                 className="flex items-center gap-1"
                               >
                                 <ArrowRight className="h-3 w-3" />
-                                {nextStatus}
+                                {statusLabel(nextStatus)}
                               </Button>
                             )}
                           </>
@@ -249,9 +253,9 @@ export function ProductionBatchStatusManager({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Pending">Pending</SelectItem>
-                            <SelectItem value="In Progress">In Progress</SelectItem>
-                            <SelectItem value="Completed">Completed</SelectItem>
+                            <SelectItem value="Pending">{statusLabel('Pending')}</SelectItem>
+                            <SelectItem value="In Progress">{statusLabel('In Progress')}</SelectItem>
+                            <SelectItem value="Completed">{statusLabel('Completed')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -264,11 +268,11 @@ export function ProductionBatchStatusManager({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Batch</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Items</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('operationsStatus.columns.batchNumber')}</TableHead>
+                    <TableHead>{t('operationsStatus.columns.status')}</TableHead>
+                    <TableHead>{t('operationsStatus.columns.quantity')}</TableHead>
+                    <TableHead>{t('operationsStatus.columns.created')}</TableHead>
+                    <TableHead>{t('operationsStatus.columns.actions', { defaultValue: 'Actions' })}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -298,7 +302,7 @@ export function ProductionBatchStatusManager({
                                 className="flex items-center gap-1"
                               >
                                 <ArrowRight className="h-3 w-3" />
-                                {nextStatus}
+                                {statusLabel(nextStatus)}
                               </Button>
                             )}
                             
@@ -311,9 +315,9 @@ export function ProductionBatchStatusManager({
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="Pending">Pending</SelectItem>
-                                <SelectItem value="In Progress">In Progress</SelectItem>
-                                <SelectItem value="Completed">Completed</SelectItem>
+                                <SelectItem value="Pending">{statusLabel('Pending')}</SelectItem>
+                                <SelectItem value="In Progress">{statusLabel('In Progress')}</SelectItem>
+                                <SelectItem value="Completed">{statusLabel('Completed')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -327,12 +331,11 @@ export function ProductionBatchStatusManager({
             
             {batches.length > 0 && (
               <p className="text-xs text-muted-foreground text-center">
-                {allActiveBatches.length > maxItems ? (
-                  <>Showing {activeBatches.length} of {allActiveBatches.length} active batches. </>
-                ) : (
-                  <>Showing {activeBatches.length} active batch{activeBatches.length !== 1 ? 'es' : ''}. </>
-                )}
-                View all {batches.length} batch{batches.length !== 1 ? 'es' : ''} in Production page.
+                {allActiveBatches.length > maxItems
+                  ? t('production.batchStatus.showing.partial', { shown: activeBatches.length, total: allActiveBatches.length })
+                  : t('production.batchStatus.showing.all', { shown: activeBatches.length, plural: activeBatches.length !== 1 ? 's' : '' })}
+                {" "}
+                {t('production.batchStatus.viewAll', { count: batches.length, plural: batches.length !== 1 ? 'es' : '' })}
               </p>
             )}
           </div>

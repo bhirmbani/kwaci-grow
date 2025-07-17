@@ -2368,5 +2368,86 @@
       "latestBatch": "Latest Batch",
       "none": "None"
     }
+  },
+  "production": {
+    "allocation": {
+      "loading": "Loading production allocation...",
+      "title": "Quick Production Allocation",
+      "description": "Allocate ingredients for production batches and reserve stock",
+      "fields": {
+        "product": "Product to Produce",
+        "cups": "Number of Cups to Produce",
+        "note": "Production Note (Optional)"
+      },
+      "placeholders": {
+        "selectProduct": "Select product",
+        "cups": "Enter number of cups to produce",
+        "note": "Add a note about this production batch..."
+      },
+      "legacy": "Legacy COGS Items",
+      "productSuffix": " of {{name}}",
+      "selectedProductInfo": "{{count}} ingredients configured",
+      "hints": {
+        "maxPossible": "Maximum possible with current stock: {{count}} cups",
+        "noProduction": "No production possible - insufficient stock for all ingredients"
+      },
+      "ingredientsTitle": "Ingredients to be allocated:",
+      "stockSummary": {
+        "insufficient": "Insufficient stock for {{cups}} cups",
+        "useMaximum": "Use maximum",
+        "addStock": "Add more stock to warehouse before creating production batch."
+      },
+      "buttons": {
+        "creating": "Creating Production Batch...",
+        "insufficient": "Insufficient Stock for Production",
+        "allocate": "Allocate for {{count}} Cups{{product}}"
+      },
+      "messages": {
+        "invalidCups": "Please enter a valid number of cups to allocate",
+        "noValidIngredients": "No valid ingredients found for production allocation",
+        "insufficientStock": "Insufficient stock for production: {{details}}{{maxCupsMessage}}",
+        "success": "Successfully created Production Batch #{{batch}} for {{cups}} cups of {{product}}. Ingredients allocated from stock.",
+        "failed": "Failed to create production batch: {{error}}",
+        "unexpected": "An unexpected error occurred while creating the production batch",
+        "noteDefault": "Production allocation for {{cups}} cups of {{product}}"
+      },
+      "warningNoIngredients": "No valid ingredients found. Please add ingredients with usage per cup data in the COGS Calculator.",
+      "info": {
+        "howTitle": "How it works:",
+        "step1": "Enter the number of cups to produce",
+        "step2": "System validates stock availability for all ingredients",
+        "step3": "Calculates ingredient requirements based on COGS data",
+        "step4": "Creates production batch and reserves stock (if sufficient)",
+        "step5": "Stock shows as \"Reserved\" until production is completed",
+        "step6": "Manage production batches in the Production page",
+        "stockTitle": "Stock validation:",
+        "stockStep1": "Red highlighting indicates insufficient stock",
+        "stockStep2": "System suggests maximum possible production quantity",
+        "stockStep3": "Button disabled when stock is insufficient"
+      }
+    },
+    "batchStatus": {
+      "loading": "Loading production batches...",
+      "error": "Error loading production batches: {{error}}",
+      "title": "Production Batch Status",
+      "description": "Manage active production batches and update their status",
+      "noActive": "No active production batches. Create one using Quick Production Allocation.",
+      "complete": "Complete",
+      "completeTitle": "Complete Production Batch",
+      "completeConfirm": "Are you sure you want to mark Batch #{{batch}} as completed? This will permanently consume the allocated ingredients from stock.",
+      "completeBatch": "Complete Batch",
+      "table": {
+        "batch": "Batch",
+        "status": "Status",
+        "items": "Items",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "showing": {
+        "partial": "Showing {{shown}} of {{total}} active batches.",
+        "all": "Showing {{shown}} active batch{{plural}}."
+      },
+      "viewAll": "View all {{count}} batch{{plural}} in Production page."
+    }
   }
 }
