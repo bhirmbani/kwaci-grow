@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -39,6 +40,7 @@ interface BranchFormProps {
 
 export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
   const isEditing = !!branch
+  const { t } = useTranslation()
 
   const form = useForm<BranchFormData>({
     resolver: zodResolver(branchFormSchema),
@@ -120,14 +122,14 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
 
       {/* Branch Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Branch Name *</Label>
+        <Label htmlFor="name">{t('menus.branchForm.name')}</Label>
         <Input
           id="name"
-          placeholder="Enter branch name"
+          placeholder={t('menus.branchForm.placeholders.name')}
           {...register('name')}
         />
         <p className="text-xs text-muted-foreground">
-          A descriptive name for your branch (e.g., "Main Location", "University Campus")
+          {t('menus.branchForm.help.name')}
         </p>
         {errors.name && (
           <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -136,15 +138,15 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
 
       {/* Location */}
       <div className="space-y-2">
-        <Label htmlFor="location">Location</Label>
+        <Label htmlFor="location">{t('menus.branchForm.location')}</Label>
         <Textarea
           id="location"
-          placeholder="Enter branch location or address"
+          placeholder={t('menus.branchForm.placeholders.location')}
           rows={2}
           {...register('location')}
         />
         <p className="text-xs text-muted-foreground">
-          Physical location or address of this branch
+          {t('menus.branchForm.help.location')}
         </p>
         {errors.location && (
           <p className="text-sm text-red-600">{errors.location.message}</p>
@@ -154,16 +156,16 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
       {/* Business Hours */}
       <div className="space-y-4">
         <div>
-          <Label className="text-base">Business Hours</Label>
+          <Label className="text-base">{t('menus.branchForm.businessHours')}</Label>
           <p className="text-sm text-muted-foreground">
-            Set the operating hours for this branch
+            {t('menus.branchForm.help.businessHours')}
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           {/* Start Time */}
           <div className="space-y-2">
-            <Label htmlFor="businessHoursStart">Start Time *</Label>
+            <Label htmlFor="businessHoursStart">{t('menus.branchForm.startTime')}</Label>
             <Input
               id="businessHoursStart"
               type="time"
@@ -176,7 +178,7 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
 
           {/* End Time */}
           <div className="space-y-2">
-            <Label htmlFor="businessHoursEnd">End Time *</Label>
+            <Label htmlFor="businessHoursEnd">{t('menus.branchForm.endTime')}</Label>
             <Input
               id="businessHoursEnd"
               type="time"
@@ -189,18 +191,18 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Business hours are used for calculating time-based progress in target analysis
+          {t('menus.branchForm.help.businessHoursInfo')}
         </p>
       </div>
 
       {/* Active Status */}
       <div className="flex flex-row items-center justify-between rounded-lg border p-4">
         <div className="space-y-0.5">
-          <Label className="text-base">Active Status</Label>
+          <Label className="text-base">{t('menus.branchForm.activeStatus')}</Label>
           <p className="text-sm text-muted-foreground">
-            {watchedIsActive 
-              ? 'Branch is active and available for menu assignments'
-              : 'Branch is inactive and hidden from operations'
+            {watchedIsActive
+              ? t('menus.branchForm.activeHelp')
+              : t('menus.branchForm.inactiveHelp')
             }
           </p>
         </div>
@@ -214,15 +216,15 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
 
       {/* Note */}
       <div className="space-y-2">
-        <Label htmlFor="note">Note</Label>
+        <Label htmlFor="note">{t('menus.branchForm.note')}</Label>
         <Textarea
           id="note"
-          placeholder="Add any additional notes or comments"
+          placeholder={t('menus.branchForm.placeholders.note')}
           rows={2}
           {...register('note')}
         />
         <p className="text-xs text-muted-foreground">
-          Optional notes for internal reference
+          {t('menus.branchForm.help.note')}
         </p>
         {errors.note && (
           <p className="text-sm text-red-600">{errors.note.message}</p>
@@ -235,9 +237,9 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting 
-            ? (isEditing ? 'Updating...' : 'Creating...') 
-            : (isEditing ? 'Update Branch' : 'Create Branch')
+          {isSubmitting
+            ? (isEditing ? t('menus.branchForm.buttons.updating') : t('menus.branchForm.buttons.creating'))
+            : (isEditing ? t('menus.branchForm.buttons.update') : t('menus.branchForm.buttons.create'))
           }
         </Button>
         <Button
@@ -246,7 +248,7 @@ export function BranchForm({ branch, onSuccess, onCancel }: BranchFormProps) {
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('menus.branchForm.buttons.cancel')}
         </Button>
       </div>
 
