@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,6 +20,7 @@ interface ProductListProps {
 }
 
 export function ProductList({ products, onProductsChange }: ProductListProps) {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -68,13 +70,13 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Products ({filteredProducts.length})
+            {t('products.list.title', { count: filteredProducts.length })}
           </CardTitle>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search products..."
+                placeholder={t('products.list.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8 w-64"
@@ -88,26 +90,25 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
           <div className="text-center py-8">
             <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">
-              {searchQuery ? 'No products found' : 'No products yet'}
+              {searchQuery ? t('products.list.noProductsFound') : t('products.list.noProducts')}
             </h3>
             <p className="text-muted-foreground">
-              {searchQuery 
-                ? 'Try adjusting your search terms'
-                : 'Create your first product to get started'
-              }
+              {searchQuery
+                ? t('products.list.tryAdjustSearch')
+                : t('products.list.createFirst')}
             </p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Ingredients</TableHead>
-                <TableHead className="text-right">COGS per Cup</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('products.list.table.name')}</TableHead>
+                <TableHead>{t('products.list.table.description')}</TableHead>
+                <TableHead>{t('products.list.table.ingredients')}</TableHead>
+                <TableHead className="text-right">{t('products.list.table.cogsPerCup')}</TableHead>
+                <TableHead>{t('products.list.table.status')}</TableHead>
+                <TableHead>{t('products.list.table.created')}</TableHead>
+                <TableHead>{t('products.list.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,7 +120,7 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">
-                      {product.ingredientCount} ingredients
+                      {t('products.list.ingredientCount', { count: product.ingredientCount })}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -134,7 +135,7 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
                   </TableCell>
                   <TableCell>
                     <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                      {product.isActive ? 'Active' : 'Inactive'}
+                      {product.isActive ? t('products.list.badge.active') : t('products.list.badge.inactive')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -169,19 +170,19 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+                            <AlertDialogTitle>{t('products.list.deleteTitle')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{product.name}"? This action cannot be undone.
+                              {t('products.list.deleteDescription', { name: product.name })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(product)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
+                            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(product)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                              {t('common.delete')}
+                          </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -197,9 +198,9 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
         <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
           <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Edit Product</SheetTitle>
+              <SheetTitle>{t('products.list.editSheetTitle')}</SheetTitle>
               <SheetDescription>
-                Update product information
+                {t('products.list.editSheetDescription')}
               </SheetDescription>
             </SheetHeader>
             {editingProduct && (
@@ -216,9 +217,9 @@ export function ProductList({ products, onProductsChange }: ProductListProps) {
         <Sheet open={isViewSheetOpen} onOpenChange={setIsViewSheetOpen}>
           <SheetContent className="w-[800px] sm:w-[800px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Product Details</SheetTitle>
+              <SheetTitle>{t('products.list.viewSheetTitle')}</SheetTitle>
               <SheetDescription>
-                View and manage product ingredients
+                {t('products.list.viewSheetDescription')}
               </SheetDescription>
             </SheetHeader>
             {selectedProduct && (

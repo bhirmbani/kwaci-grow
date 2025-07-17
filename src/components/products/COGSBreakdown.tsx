@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -12,11 +13,12 @@ interface COGSBreakdownProps {
   showExplanation?: boolean
 }
 
-export const COGSBreakdown = memo(function COGSBreakdown({ 
-  productId, 
-  productName, 
-  showExplanation = true 
+export const COGSBreakdown = memo(function COGSBreakdown({
+  productId,
+  productName,
+  showExplanation = true
 }: COGSBreakdownProps) {
+  const { t } = useTranslation()
   const { cogsData, loading, error } = useProductCOGS(productId)
 
   if (loading) {
@@ -25,14 +27,14 @@ export const COGSBreakdown = memo(function COGSBreakdown({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            COGS Calculation
+            {t('products.cogs.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-              <p className="text-sm text-muted-foreground">Calculating COGS...</p>
+              <p className="text-sm text-muted-foreground">{t('products.cogs.loading')}</p>
             </div>
           </div>
         </CardContent>
@@ -46,7 +48,7 @@ export const COGSBreakdown = memo(function COGSBreakdown({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            COGS Calculation
+            {t('products.cogs.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -64,16 +66,16 @@ export const COGSBreakdown = memo(function COGSBreakdown({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            COGS Calculation
+            {t('products.cogs.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <p className="text-sm text-muted-foreground">
-              No ingredients added to this product yet.
+              {t('products.cogs.noIngredients')}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Add ingredients to see COGS calculation.
+              {t('products.cogs.addIngredientsPrompt')}
             </p>
           </div>
         </CardContent>
@@ -86,16 +88,15 @@ export const COGSBreakdown = memo(function COGSBreakdown({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calculator className="h-5 w-5" />
-          COGS Calculation for {productName}
+          {t('products.cogs.titleFor', { name: productName })}
         </CardTitle>
         {showExplanation && (
           <div className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
             <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-1">What is COGS?</p>
+              <p className="font-medium mb-1">{t('products.cogs.whatIs.title')}</p>
               <p>
-                COGS (Cost of Goods Sold) represents the total cost of ingredients needed to make one cup of this product. 
-                It's calculated by multiplying each ingredient's cost per unit by the amount used per cup.
+                {t('products.cogs.whatIs.text')}
               </p>
             </div>
           </div>
@@ -105,26 +106,26 @@ export const COGSBreakdown = memo(function COGSBreakdown({
         {/* Total COGS Display */}
         <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Total COGS per Cup</p>
+            <p className="text-sm font-medium text-muted-foreground">{t('products.cogs.totalCogsPerCup')}</p>
             <p className="text-2xl font-bold text-primary">
               {formatCurrency(cogsData.totalCostPerCup)}
             </p>
           </div>
           <Badge variant="secondary" className="text-xs">
-            {cogsData.ingredients.length} ingredient{cogsData.ingredients.length !== 1 ? 's' : ''}
+            {t('products.cogs.ingredientCount', { count: cogsData.ingredients.length })}
           </Badge>
         </div>
 
         {/* Ingredient Breakdown */}
         <div>
-          <h4 className="text-sm font-medium mb-3">Ingredient Breakdown</h4>
+          <h4 className="text-sm font-medium mb-3">{t('products.cogs.ingredientBreakdown')}</h4>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ingredient</TableHead>
-                <TableHead className="text-right">Usage per Cup</TableHead>
-                <TableHead className="text-right">Cost per Cup</TableHead>
-                <TableHead className="text-right">% of Total</TableHead>
+                <TableHead>{t('products.cogs.table.ingredient')}</TableHead>
+                <TableHead className="text-right">{t('products.cogs.table.usagePerCup')}</TableHead>
+                <TableHead className="text-right">{t('products.cogs.table.costPerCup')}</TableHead>
+                <TableHead className="text-right">{t('products.cogs.table.percentOfTotal')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -153,12 +154,9 @@ export const COGSBreakdown = memo(function COGSBreakdown({
         {/* Calculation Formula */}
         {showExplanation && (
           <div className="text-xs text-muted-foreground p-3 bg-muted/20 rounded-lg">
-            <p className="font-medium mb-1">Calculation Formula:</p>
-            <p>Cost per Cup = (Base Unit Cost ÷ Base Unit Quantity) × Usage per Cup</p>
-            <p className="mt-1">
-              Example: If milk costs Rp 20,000 per 1000ml and you use 100ml per cup, 
-              then cost per cup = (20,000 ÷ 1000) × 100 = Rp 2,000
-            </p>
+            <p className="font-medium mb-1">{t('products.cogs.formula.title')}</p>
+            <p>{t('products.cogs.formula.formula')}</p>
+            <p className="mt-1">{t('products.cogs.formula.example')}</p>
           </div>
         )}
       </CardContent>

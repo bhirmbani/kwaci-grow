@@ -80,7 +80,9 @@
     "sort": "Sort",
     "export": "Export",
     "import": "Import",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "retry": "Retry",
+    "remove": "Remove"
   },
   "language": {
     "switchLanguage": "Switch Language",
@@ -907,7 +909,148 @@
         "note": "Note",
         "actions": "Actions"
       },
-      "emptyIngredients": "No ingredients added yet"
+    "emptyIngredients": "No ingredients added yet"
+    }
+  },
+  "products": {
+    "loading": "Loading products...",
+    "errorLoading": "Error loading products: {{error}}",
+    "title": "Product Management",
+    "description": "Manage your products and their ingredient compositions",
+    "create": "Create Product",
+    "createNewTitle": "Create New Product",
+    "createNewDescription": "Add a new product to your catalog",
+    "tabs": { "overview": "Overview", "products": "Products" },
+    "overview": {
+      "totalProducts": "Total Products",
+      "totalProductsDesc": "Active products in catalog",
+      "totalIngredients": "Total Ingredients",
+      "totalIngredientsDesc": "Across all products",
+      "avgIngredients": "Avg. Ingredients",
+      "avgIngredientsDesc": "Per product",
+      "recentProducts": "Recent Products",
+      "noProducts": "No products yet",
+      "noProductsDesc": "Create your first product to get started",
+      "viewDetails": "View Details",
+      "viewAll": "View All Products ({{count}})",
+      "ingredientsCount": "{{count}} ingredients"
+    },
+    "filters": {
+      "title": "Product Filters",
+      "showInactive": "Show inactive products"
+    },
+    "list": {
+      "title": "Products ({{count}})",
+      "searchPlaceholder": "Search products...",
+      "noProductsFound": "No products found",
+      "noProducts": "No products yet",
+      "tryAdjustSearch": "Try adjusting your search terms",
+      "createFirst": "Create your first product to get started",
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "ingredients": "Ingredients",
+        "cogsPerCup": "COGS per Cup",
+        "status": "Status",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "ingredientCount": "{{count}} ingredients",
+      "badge": { "active": "Active", "inactive": "Inactive" },
+      "deleteTitle": "Delete Product",
+      "deleteDescription": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "editSheetTitle": "Edit Product",
+      "editSheetDescription": "Update product information",
+      "viewSheetTitle": "Product Details",
+      "viewSheetDescription": "View and manage product ingredients"
+    },
+    "form": {
+      "nameRequired": "Product name is required",
+      "saveFailed": "Failed to save product",
+      "unexpectedError": "An unexpected error occurred",
+      "fields": {
+        "name": "Product Name *",
+        "description": "Description",
+        "note": "Notes",
+        "activeStatus": "Active Status"
+      },
+      "placeholders": {
+        "name": "Enter product name",
+        "description": "Enter product description",
+        "note": "Additional notes about this product"
+      },
+      "active": "Product is active",
+      "inactive": "Product is inactive",
+      "buttons": {
+        "create": "Create Product",
+        "update": "Update Product",
+        "creating": "Creating...",
+        "updating": "Updating..."
+      },
+      "nextSteps": {
+        "title": "Next steps:",
+        "step1": "After creating the product, you can add ingredients",
+        "step2": "Set usage amounts per cup for each ingredient",
+        "step3": "Use the product in COGS calculations and production"
+      }
+    },
+    "ingredients": {
+      "loadingDetails": "Loading product details...",
+      "notFound": "Product not found",
+      "title": "Ingredients",
+      "productInfo": {
+        "description": "Description",
+        "noDescription": "No description",
+        "totalCogsPerCup": "Total COGS per Cup"
+      },
+      "form": {
+        "ingredient": "Ingredient",
+        "selectIngredient": "Select ingredient",
+        "usagePerCup": "Usage per Cup",
+        "noteOptional": "Note (optional)",
+        "additionalNotes": "Additional notes",
+        "notePlaceholder": "Note"
+      },
+      "buttons": { "addIngredient": "Add Ingredient", "add": "Add" },
+      "messages": {
+        "selectIngredient": "Please select an ingredient and enter usage amount",
+        "invalidUsage": "Usage per cup must be greater than 0",
+        "addSuccess": "Ingredient added successfully",
+        "addFailure": "Failed to add ingredient",
+        "updateSuccess": "Ingredient updated successfully",
+        "updateFailure": "Failed to update ingredient",
+        "removeSuccess": "Ingredient removed successfully",
+        "removeFailure": "Failed to remove ingredient"
+      },
+      "noIngredients": "No ingredients yet",
+      "noIngredientsDescription": "Add ingredients to define this product's composition",
+      "table": {
+        "ingredient": "Ingredient",
+        "usagePerCup": "Usage per Cup",
+        "costPerCup": "Cost per Cup",
+        "unitCost": "Unit Cost",
+        "note": "Note",
+        "actions": "Actions"
+      },
+      "missingIngredient": "Missing Ingredient (ID: {{id}})",
+      "removeDialog": {
+        "title": "Remove Ingredient",
+        "description": "Remove \"{{name}}\" from this product?",
+        "remove": "Remove"
+      }
+    },
+    "cogs": {
+      "title": "COGS Calculation",
+      "loading": "Calculating COGS...",
+      "noIngredients": "No ingredients added to this product yet.",
+      "addIngredientsPrompt": "Add ingredients to see COGS calculation.",
+      "titleFor": "COGS Calculation for {{name}}",
+      "whatIs": { "title": "What is COGS?", "text": "COGS (Cost of Goods Sold) represents the total cost of ingredients needed to make one cup of this product. It's calculated by multiplying each ingredient's cost per unit by the amount used per cup." },
+      "totalCogsPerCup": "Total COGS per Cup",
+      "ingredientCount": "{{count}} ingredient{{count !== 1 ? 's' : ''}}",
+      "ingredientBreakdown": "Ingredient Breakdown",
+      "table": { "ingredient": "Ingredient", "usagePerCup": "Usage per Cup", "costPerCup": "Cost per Cup", "percentOfTotal": "% of Total" },
+      "formula": { "title": "Calculation Formula:", "formula": "Cost per Cup = (Base Unit Cost ÷ Base Unit Quantity) × Usage per Cup", "example": "Example: If milk costs Rp 20,000 per 1000ml and you use 100ml per cup, then cost per cup = (20,000 ÷ 1000) × 100 = Rp 2,000" }
     }
   }
 }

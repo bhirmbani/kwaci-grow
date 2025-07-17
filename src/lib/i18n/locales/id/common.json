@@ -80,7 +80,9 @@
     "sort": "Urutkan",
     "export": "Ekspor",
     "import": "Impor",
-    "refresh": "Segarkan"
+    "refresh": "Segarkan",
+    "retry": "Coba Lagi",
+    "remove": "Hapus"
   },
   "language": {
     "switchLanguage": "Ganti Bahasa",
@@ -909,6 +911,147 @@
       },
       "emptyIngredients": "Belum ada bahan yang ditambahkan"
     }
-  }
+  },
+  "products": {
+    "loading": "Memuat produk...",
+    "errorLoading": "Kesalahan memuat produk: {{error}}",
+    "title": "Manajemen Produk",
+    "description": "Kelola produk dan komposisi bahannya",
+    "create": "Buat Produk",
+    "createNewTitle": "Buat Produk Baru",
+    "createNewDescription": "Tambahkan produk baru ke katalog Anda",
+    "tabs": { "overview": "Ringkasan", "products": "Produk" },
+    "overview": {
+      "totalProducts": "Total Produk",
+      "totalProductsDesc": "Produk aktif di katalog",
+      "totalIngredients": "Total Bahan",
+      "totalIngredientsDesc": "Di semua produk",
+      "avgIngredients": "Rata-rata Bahan",
+      "avgIngredientsDesc": "Per produk",
+      "recentProducts": "Produk Terbaru",
+      "noProducts": "Belum ada produk",
+      "noProductsDesc": "Buat produk pertama Anda untuk memulai",
+      "viewDetails": "Lihat Detail",
+      "viewAll": "Lihat Semua Produk ({{count}})",
+      "ingredientsCount": "{{count}} bahan"
+    },
+    "filters": {
+      "title": "Filter Produk",
+      "showInactive": "Tampilkan produk tidak aktif"
+    },
+    "list": {
+      "title": "Produk ({{count}})",
+      "searchPlaceholder": "Cari produk...",
+      "noProductsFound": "Produk tidak ditemukan",
+      "noProducts": "Belum ada produk",
+      "tryAdjustSearch": "Coba ubah kata pencarian",
+      "createFirst": "Buat produk pertama Anda untuk memulai",
+      "table": {
+        "name": "Nama",
+        "description": "Deskripsi",
+        "ingredients": "Bahan",
+        "cogsPerCup": "HPP per Cangkir",
+        "status": "Status",
+        "created": "Dibuat",
+        "actions": "Aksi"
+      },
+      "ingredientCount": "{{count}} bahan",
+      "badge": { "active": "Aktif", "inactive": "Nonaktif" },
+      "deleteTitle": "Hapus Produk",
+      "deleteDescription": "Yakin ingin menghapus \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
+      "editSheetTitle": "Edit Produk",
+      "editSheetDescription": "Perbarui informasi produk",
+      "viewSheetTitle": "Detail Produk",
+      "viewSheetDescription": "Lihat dan kelola bahan produk"
+    },
+    "form": {
+      "nameRequired": "Nama produk wajib diisi",
+      "saveFailed": "Gagal menyimpan produk",
+      "unexpectedError": "Terjadi kesalahan tak terduga",
+      "fields": {
+        "name": "Nama Produk *",
+        "description": "Deskripsi",
+        "note": "Catatan",
+        "activeStatus": "Status Aktif"
+      },
+      "placeholders": {
+        "name": "Masukkan nama produk",
+        "description": "Masukkan deskripsi produk",
+        "note": "Catatan tambahan tentang produk"
+      },
+      "active": "Produk aktif",
+      "inactive": "Produk tidak aktif",
+      "buttons": {
+        "create": "Buat Produk",
+        "update": "Perbarui Produk",
+        "creating": "Membuat...",
+        "updating": "Memperbarui..."
+      },
+      "nextSteps": {
+        "title": "Langkah selanjutnya:",
+        "step1": "Setelah membuat produk, Anda bisa menambah bahan",
+        "step2": "Atur jumlah penggunaan per cangkir untuk tiap bahan",
+        "step3": "Gunakan produk untuk perhitungan HPP dan produksi"
+      }
+    },
+    "ingredients": {
+      "loadingDetails": "Memuat detail produk...",
+      "notFound": "Produk tidak ditemukan",
+      "title": "Bahan",
+      "productInfo": {
+        "description": "Deskripsi",
+        "noDescription": "Tidak ada deskripsi",
+        "totalCogsPerCup": "Total HPP per Cangkir"
+      },
+      "form": {
+        "ingredient": "Bahan",
+        "selectIngredient": "Pilih bahan",
+        "usagePerCup": "Penggunaan per Cangkir",
+        "noteOptional": "Catatan (opsional)",
+        "additionalNotes": "Catatan tambahan",
+        "notePlaceholder": "Catatan"
+      },
+      "buttons": { "addIngredient": "Tambah Bahan", "add": "Tambah" },
+      "messages": {
+        "selectIngredient": "Pilih bahan dan masukkan jumlah penggunaan",
+        "invalidUsage": "Penggunaan per cangkir harus lebih dari 0",
+        "addSuccess": "Berhasil menambah bahan",
+        "addFailure": "Gagal menambah bahan",
+        "updateSuccess": "Berhasil memperbarui bahan",
+        "updateFailure": "Gagal memperbarui bahan",
+        "removeSuccess": "Berhasil menghapus bahan",
+        "removeFailure": "Gagal menghapus bahan"
+      },
+      "noIngredients": "Belum ada bahan",
+      "noIngredientsDescription": "Tambahkan bahan untuk menentukan komposisi produk",
+      "table": {
+        "ingredient": "Bahan",
+        "usagePerCup": "Penggunaan per Cangkir",
+        "costPerCup": "Biaya per Cangkir",
+        "unitCost": "Biaya Satuan",
+        "note": "Catatan",
+        "actions": "Aksi"
+      },
+      "missingIngredient": "Bahan hilang (ID: {{id}})",
+      "removeDialog": {
+        "title": "Hapus Bahan",
+        "description": "Hapus \"{{name}}\" dari produk ini?",
+        "remove": "Hapus"
+      }
+    },
+    "cogs": {
+      "title": "Perhitungan HPP",
+      "loading": "Menghitung HPP...",
+      "noIngredients": "Belum ada bahan pada produk ini.",
+      "addIngredientsPrompt": "Tambahkan bahan untuk melihat perhitungan HPP.",
+      "titleFor": "Perhitungan HPP untuk {{name}}",
+      "whatIs": { "title": "Apa itu HPP?", "text": "HPP (Harga Pokok Penjualan) adalah total biaya bahan yang dibutuhkan untuk membuat satu cangkir produk ini." },
+      "totalCogsPerCup": "Total HPP per Cangkir",
+      "ingredientCount": "{{count}} bahan",
+      "ingredientBreakdown": "Rincian Bahan",
+      "table": { "ingredient": "Bahan", "usagePerCup": "Penggunaan", "costPerCup": "Biaya per Cangkir", "percentOfTotal": "% dari Total" },
+      "formula": { "title": "Rumus Perhitungan:", "formula": "Biaya per Cangkir = (Biaya Satuan ÷ Jumlah Satuan) × Penggunaan", "example": "Contoh: Jika susu seharga Rp20.000 per 1000ml dan digunakan 100ml per cangkir, maka biaya per cangkir = (20.000 ÷ 1000) × 100 = Rp2.000" }
+    }
+  },
 
 }

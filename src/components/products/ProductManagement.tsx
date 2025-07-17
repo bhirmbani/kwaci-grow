@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -11,6 +12,7 @@ import { ProductForm } from './ProductForm'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 
 export function ProductManagement() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'overview' | 'products'>('overview')
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false)
   const [includeInactive, setIncludeInactive] = useState(false)
@@ -21,7 +23,7 @@ export function ProductManagement() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading products...</p>
+          <p className="text-muted-foreground">{t('products.loading')}</p>
         </div>
       </div>
     )
@@ -31,9 +33,9 @@ export function ProductManagement() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center text-red-500">
-          <p>Error loading products: {error}</p>
+          <p>{t('products.errorLoading', { error })}</p>
           <Button onClick={loadProducts} className="mt-4">
-            Retry
+            {t('common.retry')}
           </Button>
         </div>
       </div>
@@ -49,23 +51,23 @@ export function ProductManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Product Management</h1>
+          <h1 className="text-2xl font-bold">{t('products.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your products and their ingredient compositions
+            {t('products.description')}
           </p>
         </div>
         <Sheet open={isCreateSheetOpen} onOpenChange={setIsCreateSheetOpen}>
           <SheetTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Create Product
+              {t('products.create')}
             </Button>
           </SheetTrigger>
           <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Create New Product</SheetTitle>
+              <SheetTitle>{t('products.createNewTitle')}</SheetTitle>
               <SheetDescription>
-                Add a new product to your catalog
+                {t('products.createNewDescription')}
               </SheetDescription>
             </SheetHeader>
             <ProductForm
@@ -84,11 +86,11 @@ export function ProductManagement() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            Overview
+            {t('products.tabs.overview')}
           </TabsTrigger>
           <TabsTrigger value="products" className="flex items-center gap-2">
             <List className="h-4 w-4" />
-            Products
+            {t('products.tabs.products')}
           </TabsTrigger>
         </TabsList>
 
@@ -97,39 +99,39 @@ export function ProductManagement() {
             {/* Statistics Cards */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('products.overview.totalProducts')}</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalProducts}</div>
                 <p className="text-xs text-muted-foreground">
-                  Active products in catalog
+                  {t('products.overview.totalProductsDesc')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Ingredients</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('products.overview.totalIngredients')}</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalIngredients}</div>
                 <p className="text-xs text-muted-foreground">
-                  Across all products
+                  {t('products.overview.totalIngredientsDesc')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Ingredients</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('products.overview.avgIngredients')}</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{averageIngredientsPerProduct}</div>
                 <p className="text-xs text-muted-foreground">
-                  Per product
+                  {t('products.overview.avgIngredientsDesc')}
                 </p>
               </CardContent>
             </Card>
@@ -137,19 +139,19 @@ export function ProductManagement() {
             {/* Recent Products */}
             <Card className="md:col-span-2 lg:col-span-3">
               <CardHeader>
-                <CardTitle>Recent Products</CardTitle>
+                <CardTitle>{t('products.overview.recentProducts')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {products.length === 0 ? (
                   <div className="text-center py-8">
                     <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No products yet</h3>
+                    <h3 className="text-lg font-medium mb-2">{t('products.overview.noProducts')}</h3>
                     <p className="text-muted-foreground mb-4">
-                      Create your first product to get started
+                      {t('products.overview.noProductsDesc')}
                     </p>
                     <Button onClick={() => setIsCreateSheetOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
-                      Create Product
+                      {t('products.create')}
                     </Button>
                   </div>
                 ) : (
@@ -165,7 +167,7 @@ export function ProductManagement() {
                             {product.description}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {product.ingredientCount} ingredients
+                            {t('products.overview.ingredientsCount', { count: product.ingredientCount })}
                           </p>
                         </div>
                         <Button
@@ -173,7 +175,7 @@ export function ProductManagement() {
                           size="sm"
                           onClick={() => setActiveTab('products')}
                         >
-                          View Details
+                          {t('products.overview.viewDetails')}
                         </Button>
                       </div>
                     ))}
@@ -183,7 +185,7 @@ export function ProductManagement() {
                           variant="outline"
                           onClick={() => setActiveTab('products')}
                         >
-                          View All Products ({products.length})
+                          {t('products.overview.viewAll', { count: products.length })}
                         </Button>
                       </div>
                     )}
@@ -200,7 +202,7 @@ export function ProductManagement() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Product Filters</CardTitle>
+                  <CardTitle className="text-lg">{t('products.filters.title')}</CardTitle>
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="include-inactive"
@@ -208,7 +210,7 @@ export function ProductManagement() {
                       onCheckedChange={setIncludeInactive}
                     />
                     <Label htmlFor="include-inactive" className="text-sm font-medium">
-                      Show inactive products
+                      {t('products.filters.showInactive')}
                     </Label>
                   </div>
                 </div>
