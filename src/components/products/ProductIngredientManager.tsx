@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +22,7 @@ interface ProductIngredientManagerProps {
 }
 
 export function ProductIngredientManager({ productId, productName, onClose }: ProductIngredientManagerProps) {
+  const { t } = useTranslation()
   const { product, loading: productLoading } = useProduct(productId)
   const { ingredients, loading: ingredientsLoading } = useIngredients()
   const { addIngredientToProduct, updateIngredientUsage, removeIngredientFromProduct } = useProducts()
@@ -47,7 +49,7 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading product details...</p>
+          <p className="text-muted-foreground">{t('products.ingredients.loadingDetails')}</p>
         </div>
       </div>
     )
@@ -56,8 +58,8 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
   if (!product) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Product not found</p>
-        <Button onClick={onClose} className="mt-4">Close</Button>
+        <p className="text-red-500">{t('products.ingredients.notFound')}</p>
+        <Button onClick={onClose} className="mt-4">{t('common.close')}</Button>
       </div>
     )
   }
@@ -69,19 +71,19 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
 
   const handleAddIngredient = async () => {
     if (!selectedIngredientId || !usagePerCup) {
-      setMessage({ type: 'error', text: 'Please select an ingredient and enter usage amount' })
+      setMessage({ type: 'error', text: t('products.ingredients.messages.selectIngredient') })
       return
     }
 
     const usage = parseFloat(usagePerCup)
     if (usage <= 0) {
-      setMessage({ type: 'error', text: 'Usage per cup must be greater than 0' })
+      setMessage({ type: 'error', text: t('products.ingredients.messages.invalidUsage') })
       return
     }
 
     const result = await addIngredientToProduct(productId, selectedIngredientId, usage, note)
     if (result.success) {
-      setMessage({ type: 'success', text: 'Ingredient added successfully' })
+      setMessage({ type: 'success', text: t('products.ingredients.messages.addSuccess') })
       setSelectedIngredientId('')
       setUsagePerCup('')
       setNote('')
@@ -89,38 +91,38 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
       // Reload product data
       window.location.reload() // Simple reload for now
     } else {
-      setMessage({ type: 'error', text: result.error || 'Failed to add ingredient' })
+      setMessage({ type: 'error', text: result.error || t('products.ingredients.messages.addFailure') })
     }
   }
 
   const handleUpdateIngredient = async (ingredientId: string) => {
     const usage = parseFloat(editUsage)
     if (usage <= 0) {
-      setMessage({ type: 'error', text: 'Usage per cup must be greater than 0' })
+      setMessage({ type: 'error', text: t('products.ingredients.messages.invalidUsage') })
       return
     }
 
     const result = await updateIngredientUsage(productId, ingredientId, usage, editNote)
     if (result.success) {
-      setMessage({ type: 'success', text: 'Ingredient updated successfully' })
+      setMessage({ type: 'success', text: t('products.ingredients.messages.updateSuccess') })
       setEditingIngredient(null)
       setEditUsage('')
       setEditNote('')
       // Reload product data
       window.location.reload() // Simple reload for now
     } else {
-      setMessage({ type: 'error', text: result.error || 'Failed to update ingredient' })
+      setMessage({ type: 'error', text: result.error || t('products.ingredients.messages.updateFailure') })
     }
   }
 
   const handleRemoveIngredient = async (ingredientId: string) => {
     const result = await removeIngredientFromProduct(productId, ingredientId)
     if (result.success) {
-      setMessage({ type: 'success', text: 'Ingredient removed successfully' })
+      setMessage({ type: 'success', text: t('products.ingredients.messages.removeSuccess') })
       // Reload product data
       window.location.reload() // Simple reload for now
     } else {
-      setMessage({ type: 'error', text: result.error || 'Failed to remove ingredient' })
+      setMessage({ type: 'error', text: result.error || t('products.ingredients.messages.removeFailure') })
     }
   }
 
@@ -164,11 +166,11 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Description</p>
-              <p className="font-medium">{product.description || 'No description'}</p>
+              <p className="text-sm text-muted-foreground">{t('products.ingredients.productInfo.description')}</p>
+              <p className="font-medium">{product.description || t('products.ingredients.productInfo.noDescription')}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total COGS per Cup</p>
+              <p className="text-sm text-muted-foreground">{t('products.ingredients.productInfo.totalCogsPerCup')}</p>
               <p className="font-medium text-lg">{formatCurrency(totalCOGS)}</p>
             </div>
           </div>
@@ -190,13 +192,13 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Ingredients</CardTitle>
+            <CardTitle className="text-lg">{t('products.ingredients.title')}</CardTitle>
             <Button
               onClick={() => setIsAddingIngredient(!isAddingIngredient)}
               disabled={availableIngredients.length === 0}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Ingredient
+              {t('products.ingredients.buttons.addIngredient')}
             </Button>
           </div>
         </CardHeader>
@@ -205,10 +207,10 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
             <div className="space-y-4 p-4 border rounded-lg mb-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Ingredient</Label>
+                  <Label>{t('products.ingredients.form.ingredient')}</Label>
                   <Select value={selectedIngredientId} onValueChange={setSelectedIngredientId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select ingredient" />
+                      <SelectValue placeholder={t('products.ingredients.form.selectIngredient')} />
                     </SelectTrigger>
                     <SelectContent>
                       {availableIngredients.map((ingredient) => (
@@ -220,7 +222,7 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                   </Select>
                 </div>
                 <div>
-                  <Label>Usage per Cup</Label>
+                  <Label>{t('products.ingredients.form.usagePerCup')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -232,17 +234,17 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                 </div>
               </div>
               <div>
-                <Label>Note (optional)</Label>
+                <Label>{t('products.ingredients.form.noteOptional')}</Label>
                 <Input
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="Additional notes"
+                  placeholder={t('products.ingredients.form.additionalNotes')}
                 />
               </div>
               <div className="flex gap-2">
-                <Button onClick={handleAddIngredient}>Add</Button>
+                <Button onClick={handleAddIngredient}>{t('products.ingredients.buttons.add')}</Button>
                 <Button variant="outline" onClick={() => setIsAddingIngredient(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </div>
             </div>
@@ -252,21 +254,21 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
           {product.ingredients.length === 0 ? (
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No ingredients yet</h3>
+              <h3 className="text-lg font-medium mb-2">{t('products.ingredients.noIngredients')}</h3>
               <p className="text-muted-foreground">
-                Add ingredients to define this product's composition
+                {t('products.ingredients.noIngredientsDescription')}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ingredient</TableHead>
-                  <TableHead>Usage per Cup</TableHead>
-                  <TableHead>Cost per Cup</TableHead>
-                  <TableHead>Unit Cost</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t('products.ingredients.table.ingredient')}</TableHead>
+                  <TableHead>{t('products.ingredients.table.usagePerCup')}</TableHead>
+                  <TableHead>{t('products.ingredients.table.costPerCup')}</TableHead>
+                  <TableHead>{t('products.ingredients.table.unitCost')}</TableHead>
+                  <TableHead>{t('products.ingredients.table.note')}</TableHead>
+                  <TableHead>{t('products.ingredients.table.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -279,7 +281,7 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                     return (
                       <TableRow key={pi.id}>
                         <TableCell className="font-medium text-red-500">
-                          Missing Ingredient (ID: {pi.ingredientId})
+                          {t('products.ingredients.missingIngredient', { id: pi.ingredientId })}
                         </TableCell>
                         <TableCell>{pi.usagePerCup}</TableCell>
                         <TableCell>N/A</TableCell>
@@ -344,7 +346,7 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                           <Input
                             value={editNote}
                             onChange={(e) => setEditNote(e.target.value)}
-                            placeholder="Note"
+                            placeholder={t('products.ingredients.form.notePlaceholder')}
                             className="w-32"
                           />
                         ) : (
@@ -359,14 +361,14 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                                 size="sm"
                                 onClick={() => handleUpdateIngredient(pi.ingredientId)}
                               >
-                                Save
+                                {t('common.save')}
                               </Button>
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={cancelEdit}
                               >
-                                Cancel
+                                {t('common.cancel')}
                               </Button>
                             </>
                           ) : (
@@ -386,17 +388,17 @@ export function ProductIngredientManager({ productId, productName, onClose }: Pr
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Remove Ingredient</AlertDialogTitle>
+                                    <AlertDialogTitle>{t('products.ingredients.removeDialog.title')}</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Remove "{ingredient.name}" from this product?
+                                      {t('products.ingredients.removeDialog.description', { name: ingredient.name })}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => handleRemoveIngredient(pi.ingredientId)}
                                     >
-                                      Remove
+                                      {t('products.ingredients.removeDialog.remove')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>

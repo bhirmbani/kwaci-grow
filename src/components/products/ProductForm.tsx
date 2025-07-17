@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +16,7 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -47,7 +49,7 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
     try {
       // Validate form
       if (!formData.name.trim()) {
-        setError('Product name is required')
+        setError(t('products.form.nameRequired'))
         return
       }
 
@@ -71,10 +73,10 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
       if (result.success) {
         onSuccess()
       } else {
-        setError(result.error || 'Failed to save product')
+        setError(result.error || t('products.form.saveFailed'))
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+      setError(err instanceof Error ? err.message : t('products.form.unexpectedError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -98,34 +100,34 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="name">Product Name *</Label>
+        <Label htmlFor="name">{t('products.form.fields.name')}</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
-          placeholder="Enter product name"
+          placeholder={t('products.form.placeholders.name')}
           required
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t('products.form.fields.description')}</Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => handleInputChange('description', e.target.value)}
-          placeholder="Enter product description"
+          placeholder={t('products.form.placeholders.description')}
           rows={3}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="note">Notes</Label>
+        <Label htmlFor="note">{t('products.form.fields.note')}</Label>
         <Textarea
           id="note"
           value={formData.note}
           onChange={(e) => handleInputChange('note', e.target.value)}
-          placeholder="Additional notes about this product"
+          placeholder={t('products.form.placeholders.note')}
           rows={2}
         />
       </div>
@@ -137,10 +139,10 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           onCheckedChange={(checked) => handleInputChange('isActive', checked)}
         />
         <Label htmlFor="isActive" className="text-sm font-medium">
-          Active Status
+          {t('products.form.fields.activeStatus')}
         </Label>
         <span className="text-sm text-muted-foreground">
-          {formData.isActive ? 'Product is active' : 'Product is inactive'}
+          {formData.isActive ? t('products.form.active') : t('products.form.inactive')}
         </span>
       </div>
 
@@ -161,8 +163,8 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           disabled={isSubmitting || !formData.name.trim()}
         >
           {isSubmitting
-            ? (isEditing ? 'Updating...' : 'Creating...')
-            : (isEditing ? 'Update Product' : 'Create Product')
+            ? (isEditing ? t('products.form.buttons.updating') : t('products.form.buttons.creating'))
+            : (isEditing ? t('products.form.buttons.update') : t('products.form.buttons.create'))
           }
         </Button>
         <Button
@@ -171,17 +173,17 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
       </div>
 
       {!isEditing && (
         <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p className="font-medium mb-1">Next steps:</p>
+          <p className="font-medium mb-1">{t('products.form.nextSteps.title')}</p>
           <ul className="space-y-1">
-            <li>• After creating the product, you can add ingredients</li>
-            <li>• Set usage amounts per cup for each ingredient</li>
-            <li>• Use the product in COGS calculations and production</li>
+            <li>• {t('products.form.nextSteps.step1')}</li>
+            <li>• {t('products.form.nextSteps.step2')}</li>
+            <li>• {t('products.form.nextSteps.step3')}</li>
           </ul>
         </div>
       )}
