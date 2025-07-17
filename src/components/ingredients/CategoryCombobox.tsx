@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Trash2 } from 'lucide-react'
 import { Combobox } from '@/components/ui/combobox'
 import { Button } from '@/components/ui/button'
@@ -24,11 +25,12 @@ interface CategoryComboboxProps {
 export function CategoryCombobox({
   value,
   onValueChange,
-  placeholder = "Select or create category...",
+  placeholder = t('ingredients.form.placeholders.selectCategory'),
   className,
   disabled = false,
   showManagement = true,
 }: CategoryComboboxProps) {
+  const { t } = useTranslation()
   const { categories, createCategory, deleteCategory, getCategoryUsageCount } = useIngredientCategories()
   const [isCreating, setIsCreating] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -99,9 +101,9 @@ export function CategoryCombobox({
           value={value}
           onValueChange={onValueChange}
           onCreateNew={handleCreateCategory}
-          placeholder={isCreating ? "Creating category..." : placeholder}
-          searchPlaceholder="Search categories..."
-          emptyText="No categories found."
+          placeholder={isCreating ? t('ingredients.form.buttons.creating') : placeholder}
+          searchPlaceholder={t('ingredients.categoryCombobox.searchPlaceholder')}
+          emptyText={t('ingredients.categoryCombobox.emptyText')}
           className={cn("flex-1", className)}
           disabled={disabled || isCreating}
           allowCreate={true}
@@ -114,16 +116,16 @@ export function CategoryCombobox({
                 variant="outline"
                 size="icon"
                 disabled={disabled || isDeleting}
-                title="Delete category"
+                title={t('ingredients.categoryCombobox.deleteTitle')}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-h-[80vh] flex flex-col">
               <AlertDialogHeader className="flex-shrink-0">
-                <AlertDialogTitle>Delete Category</AlertDialogTitle>
+                <AlertDialogTitle>{t('ingredients.categoryCombobox.deleteTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Select a category to delete. You can only delete categories that are not in use.
+                  {t('ingredients.categoryCombobox.alertDescription')}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="flex-1 overflow-y-auto min-h-0 max-h-[50vh] space-y-2 pr-2">
@@ -136,13 +138,13 @@ export function CategoryCombobox({
                       onClick={() => handleDeleteCategory(category)}
                       disabled={isDeleting}
                     >
-                      Delete
+                      {t('common.delete')}
                     </Button>
                   </div>
                 ))}
               </div>
               <AlertDialogFooter className="flex-shrink-0">
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -153,29 +155,28 @@ export function CategoryCombobox({
       <AlertDialog open={!!categoryToDelete} onOpenChange={() => setCategoryToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Category "{categoryToDelete}"</AlertDialogTitle>
+            <AlertDialogTitle>{t('ingredients.categoryCombobox.confirmTitle', { name: categoryToDelete })}</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteUsageCount > 0 ? (
                 <>
-                  This category is used by {deleteUsageCount} ingredient(s). 
-                  You cannot delete a category that is in use.
+                  {t('ingredients.categoryCombobox.inUseMessage', { count: deleteUsageCount })}
                 </>
               ) : (
                 <>
-                  Are you sure you want to delete this category? This action cannot be undone.
+                  {t('ingredients.categoryCombobox.confirmMessage')}
                 </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             {deleteUsageCount === 0 && (
               <AlertDialogAction
                 onClick={confirmDeleteCategory}
                 disabled={isDeleting}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {isDeleting ? 'Deleting...' : 'Delete Category'}
+                {isDeleting ? t('ingredients.form.buttons.creating') : t('common.delete')}
               </AlertDialogAction>
             )}
           </AlertDialogFooter>

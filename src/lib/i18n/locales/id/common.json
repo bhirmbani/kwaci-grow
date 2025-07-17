@@ -1176,6 +1176,158 @@
       }
     }
   },
+  "ingredients": {
+    "loading": "Memuat bahan...",
+    "errorLoading": "Kesalahan memuat bahan: {{error}}",
+    "title": "Manajemen Bahan",
+    "description": "Kelola bahan baku dan propertinya",
+    "create": "Buat Bahan",
+    "createNewTitle": "Buat Bahan Baru",
+    "createNewDescription": "Tambahkan bahan baru ke inventori",
+    "tabs": {
+      "overview": "Ringkasan",
+      "ingredients": "Bahan"
+    },
+    "overview": {
+      "totalIngredients": "Total Bahan",
+      "totalIngredientsDesc": "Bahan aktif",
+      "categories": "Kategori",
+      "categoriesDesc": "Kategori bahan",
+      "totalUsages": "Total Penggunaan",
+      "totalUsagesDesc": "Di semua produk",
+      "avgUsage": "Rata-rata Penggunaan",
+      "avgUsageDesc": "Per bahan",
+      "recentIngredients": "Bahan Terbaru",
+      "noIngredients": "Belum ada bahan",
+      "noIngredientsDesc": "Buat bahan pertama Anda untuk memulai",
+      "viewDetails": "Lihat Detail",
+      "viewAll": "Lihat Semua Bahan ({{count}})",
+      "noCategory": "Tanpa kategori",
+      "usedInProducts": "Digunakan di {{count}} produk"
+    },
+    "filters": {
+      "title": "Filter Bahan",
+      "showInactive": "Tampilkan bahan tidak aktif"
+    },
+    "list": {
+      "title": "Bahan ({{count}})",
+      "searchPlaceholder": "Cari bahan...",
+      "allCategories": "Semua Kategori",
+      "noIngredientsFound": "Bahan tidak ditemukan",
+      "tryAdjustSearch": "Coba ubah kata pencarian atau filter",
+      "createFirst": "Buat bahan pertama Anda untuk memulai",
+      "table": {
+        "name": "Nama",
+        "category": "Kategori",
+        "unit": "Unit",
+        "unitCost": "Biaya Satuan",
+        "usage": "Penggunaan",
+        "status": "Status",
+        "actions": "Aksi"
+      },
+      "badge": {
+        "active": "Aktif",
+        "inactive": "Nonaktif"
+      },
+      "deleteTitle": "Hapus Bahan",
+      "deleteDescription": "Yakin ingin menghapus \"{{name}}\"?",
+      "deleteInUse": "Bahan ini digunakan di {{count}} produk dan tidak dapat dihapus.",
+      "editSheetTitle": "Edit Bahan",
+      "editSheetDescription": "Perbarui informasi bahan",
+      "viewSheetTitle": "Penggunaan Bahan",
+      "viewSheetDescription": "Lihat produk yang menggunakan bahan ini"
+    },
+    "categoryCombobox": {
+      "searchPlaceholder": "Cari kategori...",
+      "emptyText": "Kategori tidak ditemukan.",
+      "deleteTitle": "Hapus Kategori",
+      "alertDescription": "Pilih kategori yang ingin dihapus. Hanya kategori yang tidak digunakan yang bisa dihapus.",
+      "confirmTitle": "Hapus Kategori \"{{name}}\"",
+      "inUseMessage": "Kategori ini digunakan oleh {{count}} bahan dan tidak dapat dihapus.",
+      "confirmMessage": "Apakah Anda yakin ingin menghapus kategori ini? Tindakan ini tidak dapat dibatalkan."
+    },
+    "unitCombobox": {
+      "searchPlaceholder": "Cari unit...",
+      "emptyText": "Unit tidak ditemukan."
+    },
+    "form": {
+      "fields": {
+        "name": "Nama Bahan *",
+        "category": "Kategori *",
+        "baseUnitCost": "Biaya Satuan Dasar *",
+        "baseUnitQuantity": "Jumlah Satuan Dasar *",
+        "unit": "Unit *",
+        "supplierInfo": "Informasi Supplier",
+        "note": "Catatan"
+      },
+      "placeholders": {
+        "name": "Masukkan nama bahan",
+        "selectCategory": "Pilih atau buat kategori...",
+        "baseUnitCost": "0.00",
+        "baseUnitQuantity": "1.00",
+        "selectUnit": "Pilih atau masukkan unit...",
+        "supplierInfo": "Nama supplier, kontak, dll.",
+        "note": "Catatan tambahan tentang bahan ini"
+      },
+      "costPreview": "Pratinjau Biaya:",
+      "activeStatus": "Status Aktif",
+      "activeIngredient": "Bahan aktif",
+      "inactiveIngredient": "Bahan tidak aktif",
+      "buttons": {
+        "create": "Buat Bahan",
+        "update": "Perbarui Bahan",
+        "creating": "Membuat...",
+        "updating": "Memperbarui...",
+        "cancel": "Batal"
+      },
+      "exampleTitle": "Contoh:",
+      "exampleItem1": "• Susu: Biaya 20.000 IDR untuk 1.000 ml = 20 IDR per ml",
+      "exampleItem2": "• Biji kopi: Biaya 200.000 IDR untuk 1.000 g = 200 IDR per g",
+      "exampleItem3": "• Gelas: Biaya 850 IDR per pcs"
+    },
+    "validation": {
+      "nameRequired": "Nama bahan wajib diisi",
+      "categoryRequired": "Kategori wajib diisi",
+      "baseUnitCostRequired": "Biaya satuan dasar wajib diisi",
+      "baseUnitCostPositive": "Biaya satuan dasar harus positif",
+      "baseUnitCostNumber": "Biaya satuan dasar harus berupa angka",
+      "baseUnitQuantityRequired": "Jumlah satuan dasar wajib diisi",
+      "baseUnitQuantityPositive": "Jumlah satuan dasar harus positif",
+      "baseUnitQuantityNumber": "Jumlah satuan dasar harus berupa angka",
+      "unitRequired": "Unit wajib diisi"
+    },
+    "usage": {
+      "loading": "Memuat detail bahan...",
+      "notFound": "Bahan tidak ditemukan",
+      "close": "Tutup",
+      "category": "Kategori",
+      "unit": "Unit",
+      "baseUnitCost": "Biaya Satuan Dasar",
+      "baseUnitQuantity": "Jumlah Satuan Dasar",
+      "costPerUnit": "Biaya per Unit",
+      "supplier": "Supplier",
+      "noSupplier": "Tidak ada info supplier",
+      "notes": "Catatan",
+      "productUsageTitle": "Penggunaan Produk ({{count}})",
+      "notUsed": "Tidak digunakan di produk manapun",
+      "notUsedDesc": "Bahan ini belum digunakan di produk manapun",
+      "table": {
+        "product": "Produk",
+        "usagePerCup": "Penggunaan per Cangkir",
+        "costPerCup": "Biaya per Cangkir",
+        "note": "Catatan",
+        "status": "Status"
+      },
+      "badge": {
+        "active": "Aktif",
+        "inactive": "Nonaktif"
+      },
+      "costAnalysis": "Analisis Biaya",
+      "totalProductsUsing": "Total Produk Menggunakan",
+      "avgUsagePerCup": "Rata-rata Penggunaan per Cangkir",
+      "avgCostPerCup": "Rata-rata Biaya per Cangkir"
+    }
+  },
   "menus": {
     "management": {
       "title": "Manajemen Menu",

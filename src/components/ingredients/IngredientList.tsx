@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +21,7 @@ interface IngredientListProps {
 }
 
 export function IngredientList({ ingredients, onIngredientsChange }: IngredientListProps) {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null)
@@ -66,7 +68,7 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Ingredients ({filteredIngredients.length})
+            {t('ingredients.list.title', { count: filteredIngredients.length })}
           </CardTitle>
           <div className="flex items-center gap-2">
             {/* Category Filter */}
@@ -76,7 +78,7 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all">{t('ingredients.list.allCategories')}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -89,7 +91,7 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search ingredients..."
+                placeholder={t('ingredients.list.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8 w-64"
@@ -103,12 +105,12 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
           <div className="text-center py-8">
             <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">
-              {searchQuery || categoryFilter !== 'all' ? 'No ingredients found' : 'No ingredients yet'}
+              {searchQuery || categoryFilter !== 'all' ? t('ingredients.list.noIngredientsFound') : t('ingredients.list.createFirst')}
             </h3>
             <p className="text-muted-foreground">
               {searchQuery || categoryFilter !== 'all'
-                ? 'Try adjusting your search terms or filters'
-                : 'Create your first ingredient to get started'
+                ? t('ingredients.list.tryAdjustSearch')
+                : t('ingredients.list.createFirst')
               }
             </p>
           </div>
@@ -116,13 +118,13 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead>Unit Cost</TableHead>
-                <TableHead>Usage</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('ingredients.list.table.name')}</TableHead>
+                <TableHead>{t('ingredients.list.table.category')}</TableHead>
+                <TableHead>{t('ingredients.list.table.unit')}</TableHead>
+                <TableHead>{t('ingredients.list.table.unitCost')}</TableHead>
+                <TableHead>{t('ingredients.list.table.usage')}</TableHead>
+                <TableHead>{t('ingredients.list.table.status')}</TableHead>
+                <TableHead>{t('ingredients.list.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -147,12 +149,12 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
                     <TableCell>{formatCurrency(unitCost)}</TableCell>
                     <TableCell>
                       <Badge variant={ingredient.usageCount > 0 ? 'default' : 'secondary'}>
-                        {ingredient.usageCount} products
+                        {t('ingredients.overview.usedInProducts', { count: ingredient.usageCount })}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={ingredient.isActive ? 'default' : 'secondary'}>
-                        {ingredient.isActive ? 'Active' : 'Inactive'}
+                        {ingredient.isActive ? t('ingredients.list.badge.active') : t('ingredients.list.badge.inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -184,24 +186,24 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Ingredient</AlertDialogTitle>
+                              <AlertDialogTitle>{t('ingredients.list.deleteTitle')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete "{ingredient.name}"? 
+                                {t('ingredients.list.deleteDescription', { name: ingredient.name })}
                                 {ingredient.usageCount > 0 && (
                                   <span className="text-red-600 font-medium">
-                                    {' '}This ingredient is used in {ingredient.usageCount} products and cannot be deleted.
+                                    {' '}{t('ingredients.list.deleteInUse', { count: ingredient.usageCount })}
                                   </span>
                                 )}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDelete(ingredient)}
                                 disabled={ingredient.usageCount > 0}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
                               >
-                                Delete
+                                {t('common.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -219,9 +221,9 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
         <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
           <SheetContent className="w-[600px] sm:w-[600px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Edit Ingredient</SheetTitle>
+              <SheetTitle>{t('ingredients.list.editSheetTitle')}</SheetTitle>
               <SheetDescription>
-                Update ingredient information
+                {t('ingredients.list.editSheetDescription')}
               </SheetDescription>
             </SheetHeader>
             {editingIngredient && (
@@ -238,9 +240,9 @@ export function IngredientList({ ingredients, onIngredientsChange }: IngredientL
         <Sheet open={isViewSheetOpen} onOpenChange={setIsViewSheetOpen}>
           <SheetContent className="w-[800px] sm:w-[800px] h-full overflow-y-auto">
             <SheetHeader>
-              <SheetTitle>Ingredient Usage</SheetTitle>
+              <SheetTitle>{t('ingredients.list.viewSheetTitle')}</SheetTitle>
               <SheetDescription>
-                View which products use this ingredient
+                {t('ingredients.list.viewSheetDescription')}
               </SheetDescription>
             </SheetHeader>
             {selectedIngredient && (
