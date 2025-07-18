@@ -16,6 +16,7 @@ import { Combobox } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { type RecurringExpense } from '@/lib/db/schema'
 import { useExpenseCategories } from '@/hooks/useRecurringExpenses'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 
 const recurringExpenseFormSchema = z.object({
   name: z.string()
@@ -82,6 +83,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
   const isEditing = !!expense
   const predefinedCategories = useExpenseCategories()
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
 
   const form = useForm<RecurringExpenseFormData>({
     resolver: zodResolver(recurringExpenseFormSchema),
@@ -174,7 +176,7 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
             name="amount"
             render={({ field }) => (
               <FormItem>
-              <FormLabel>{t('recurringExpenses.form.fields.amount')}</FormLabel>
+              <FormLabel>{t('recurringExpenses.form.fields.amount', { currency: currentCurrency })}</FormLabel>
               <FormControl>
                 <Input
                   type="number"

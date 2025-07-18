@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { cn } from '@/lib/utils'
 import type { Employee } from '@/lib/db/schema'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 
 // Form validation schema
 const employeeFormSchema = z.object({
@@ -68,6 +69,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
   const [dobCalendarOpen, setDobCalendarOpen] = useState(false)
   const [hireDateCalendarOpen, setHireDateCalendarOpen] = useState(false)
   const isEditing = !!employee
+  const currentCurrency = useCurrentBusinessCurrency()
 
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeFormSchema),
@@ -247,7 +249,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel, isSubmitting = fals
               name="salary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('people.forms.employee.fields.salary')}</FormLabel>
+                  <FormLabel>{t('people.forms.employee.fields.salary', { currency: currentCurrency })}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

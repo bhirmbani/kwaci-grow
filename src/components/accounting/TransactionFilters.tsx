@@ -41,6 +41,7 @@ import type {
   TransactionType, 
   TransactionStatus 
 } from '@/lib/types/accounting'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 
 const filtersSchema = z.object({
   searchTerm: z.string().optional(),
@@ -92,6 +93,7 @@ export function TransactionFilters({
   const [selectedStatus, setSelectedStatus] = useState<TransactionStatus[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
 
   const form = useForm<FiltersFormData>({
     resolver: zodResolver(filtersSchema),
@@ -317,7 +319,7 @@ export function TransactionFilters({
         {/* Amount Range */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="minAmount">{t('accounting.filters.minAmount')}</Label>
+            <Label htmlFor="minAmount">{t('accounting.filters.minAmount', { currency: currentCurrency })}</Label>
             <Input
               id="minAmount"
               type="number"
@@ -328,7 +330,7 @@ export function TransactionFilters({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="maxAmount">{t('accounting.filters.maxAmount')}</Label>
+            <Label htmlFor="maxAmount">{t('accounting.filters.maxAmount', { currency: currentCurrency })}</Label>
             <Input
               id="maxAmount"
               type="number"

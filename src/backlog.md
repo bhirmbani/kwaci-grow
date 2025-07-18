@@ -34,3 +34,9 @@ in reports - financial overview user need to know profit and cost for each branc
 - smart production recommendation:
     - based on product sales trend, create auto spread sales-targets for every product in the manu
     - based on product sales trend, create recommendation of ingredient stock and when we should buy more of that ingredient
+
+- implement bonus feature:
+    - per employee if reach sales target amount
+
+- in dashboard / root route:
+    - add quick actions for user to record income and outcome for the day

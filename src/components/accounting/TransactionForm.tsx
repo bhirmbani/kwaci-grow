@@ -43,7 +43,7 @@ import {
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { useAccounting } from '@/hooks/useAccounting'
-import { useCurrentBusinessId } from '@/lib/stores/businessStore'
+import { useCurrentBusinessCurrency, useCurrentBusinessId } from '@/lib/stores/businessStore'
 import type { 
   TransactionType, 
   CreateTransactionData,
@@ -183,6 +183,7 @@ export function TransactionForm({
 }: TransactionFormProps) {
   const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
+  const currentCurrency = useCurrentBusinessCurrency()
   const { createTransaction, updateTransaction } = useAccounting()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
@@ -386,7 +387,7 @@ export function TransactionForm({
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('accounting.transactionForm.fields.amount')}</FormLabel>
+              <FormLabel>{t('accounting.transactionForm.fields.amount', { currency: currentCurrency || 'IDR' })}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -490,7 +491,7 @@ export function TransactionForm({
               name="unitPrice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('accounting.transactionForm.fields.unitPrice')}</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.unitPrice', { currency: currentCurrency })}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -582,7 +583,7 @@ export function TransactionForm({
               name="baseUnitCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('accounting.transactionForm.fields.baseUnitCost')}</FormLabel>
+                  <FormLabel>{t('accounting.transactionForm.fields.baseUnitCost', { currency: currentCurrency })}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

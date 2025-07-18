@@ -16,7 +16,6 @@ import { AssetCategoryCombobox } from './AssetCategoryCombobox'
 import { FixedAssetService } from '@/lib/services/fixedAssetService'
 import { formatCurrency } from '@/utils/formatters'
 import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
-import { getCurrency } from '@/lib/utils/currencyUtils'
 import { cn } from '@/lib/utils'
 import type { FixedAsset, NewFixedAsset } from '@/lib/db/schema'
 
@@ -76,6 +75,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
   const [currentValue, setCurrentValue] = useState<number | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const isEditing = !!asset
+  const currentCurrency = useCurrentBusinessCurrency()
 
   const form = useForm<FixedAssetFormData>({
     resolver: zodResolver(fixedAssetFormSchema),
@@ -268,7 +268,7 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
           name="purchaseCost"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('fixedAssets.form.fields.purchaseCost')}</FormLabel>
+              <FormLabel>{t('fixedAssets.form.fields.purchaseCost', { currency: currentCurrency })}</FormLabel>
               <FormControl>
                 <Input
                   type="number"

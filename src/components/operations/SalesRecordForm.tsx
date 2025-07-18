@@ -375,7 +375,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
             name="unitPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('operations.salesRecordForm.fields.unitPrice')}</FormLabel>
+                <FormLabel>{t('operations.salesRecordForm.fields.unitPrice', { currency: currentCurrency || 'IDR' })}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
