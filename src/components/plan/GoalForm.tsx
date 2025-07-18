@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 import { BranchService } from '@/lib/services/branchService'
 import type { PlanGoal, PlanTask, NewPlanGoal } from '@/lib/db/planningSchema'
 import type { Branch } from '@/lib/db/schema'
@@ -51,6 +53,8 @@ export function GoalForm({ goal, planId, availableTasks, onSubmit, onCancel, isS
   const [loading, setLoading] = useState(true)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const isEditing = !!goal
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),
@@ -188,7 +192,7 @@ export function GoalForm({ goal, planId, availableTasks, onSubmit, onCancel, isS
             placeholder="500"
           />
           <p className="text-xs text-muted-foreground">
-            The goal you want to achieve (e.g., 500 cups sold, 2000000 IDR revenue)
+            The goal you want to achieve (e.g., 500 cups sold, 2000000 {currencyInfo.code} revenue)
           </p>
           {errors.targetValue && (
             <p className="text-sm text-red-600">{errors.targetValue.message}</p>
@@ -220,7 +224,7 @@ export function GoalForm({ goal, planId, availableTasks, onSubmit, onCancel, isS
             placeholder="cups"
           />
           <p className="text-xs text-muted-foreground">
-            Measurement unit (cups, IDR, percentage, customers, etc.)
+            Measurement unit (cups, {currencyInfo.code}, percentage, customers, etc.)
           </p>
           {errors.unit && (
             <p className="text-sm text-red-600">{errors.unit.message}</p>

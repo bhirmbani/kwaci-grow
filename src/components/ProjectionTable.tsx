@@ -5,6 +5,8 @@ import { FinancialExplanationPanel } from "./FinancialExplanationPanel"
 import type { BonusScheme, FinancialItem } from "@/types"
 
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 
 interface Projection {
   cupsPerDay: number
@@ -33,6 +35,8 @@ export function ProjectionTable({
 }: ProjectionTableProps) {
   const fixedTotal = fixedItems.reduce((sum, item) => sum + item.value, 0)
   const cogsTotal = cogsItems.reduce((sum, item) => sum + item.value, 0)
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   // State for selected row to show detailed calculations
   const [selectedRowData, setSelectedRowData] = useState<
@@ -174,22 +178,22 @@ export function ProjectionTable({
                       Cups/Day
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                      Revenue (IDR)
+                      Revenue ({currencyInfo.code})
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                      Variable COGS (IDR)
+                      Variable COGS ({currencyInfo.code})
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                      Gross Profit (IDR)
+                      Gross Profit ({currencyInfo.code})
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                      Fixed Costs (IDR)
+                      Fixed Costs ({currencyInfo.code})
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[100px]" scope="col">
-                      Bonus (IDR)
+                      Bonus ({currencyInfo.code})
                     </TableHead>
                     <TableHead sticky className="text-right min-w-[120px]" scope="col">
-                      Net Profit (IDR)
+                      Net Profit ({currencyInfo.code})
                     </TableHead>
                   </TableRow>
                 </TableHeader>

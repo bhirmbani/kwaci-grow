@@ -15,6 +15,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { AssetCategoryCombobox } from './AssetCategoryCombobox'
 import { FixedAssetService } from '@/lib/services/fixedAssetService'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 import { cn } from '@/lib/utils'
 import type { FixedAsset, NewFixedAsset } from '@/lib/db/schema'
 
@@ -36,7 +38,7 @@ const fixedAssetFormSchema = z.object({
     }, 'Purchase date must be within the last 10 years and not in the future'),
   purchaseCost: z.number()
     .min(0.01, 'Purchase cost must be greater than 0')
-    .max(1000000000000, 'Purchase cost cannot exceed 1 trillion IDR')
+    .max(1000000000000, `Purchase cost cannot exceed 1 trillion ${currencyInfo.code}`)
     .refine((cost) => Number.isFinite(cost), 'Purchase cost must be a valid number'),
   depreciationMonths: z.number()
     .min(1, 'Depreciation period must be at least 1 month')
@@ -74,6 +76,8 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
   const [currentValue, setCurrentValue] = useState<number | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const isEditing = !!asset
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   const form = useForm<FixedAssetFormData>({
     resolver: zodResolver(fixedAssetFormSchema),

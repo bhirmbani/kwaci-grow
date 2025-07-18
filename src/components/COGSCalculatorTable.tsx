@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2, Plus, Calculator, Package } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 import { useProducts, useProduct } from "@/hooks/useProducts"
 import {
   calculateCostPerCup,
@@ -51,6 +53,8 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
   const [selectedProductId, setSelectedProductId] = useState<string>('custom')
   const [isProductMode, setIsProductMode] = useState(false)
   const [customItems, setCustomItems] = useState<FinancialItem[]>([])
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   // Use refs to track previous values and prevent infinite loops
   const prevSelectedProductIdRef = useRef<string>('custom')
@@ -276,7 +280,7 @@ export const COGSCalculatorTable = memo(function COGSCalculatorTable({
               <TableHeader>
                 <TableRow className="border-b">
                   <TableHead className="px-4 py-3 font-semibold w-[15%]">Ingredient</TableHead>
-                  <TableHead className="px-4 py-3 text-right font-semibold w-[12%]">Base Cost (IDR)</TableHead>
+                  <TableHead className="px-4 py-3 text-right font-semibold w-[12%]">Base Cost ({currencyInfo.code})</TableHead>
                   <TableHead className="px-4 py-3 text-right font-semibold w-[10%]">Base Qty</TableHead>
                   <TableHead className="px-4 py-3 font-semibold w-[8%]">Unit</TableHead>
                   <TableHead className="px-4 py-3 text-right font-semibold w-[10%]">Usage/Cup</TableHead>

@@ -16,6 +16,8 @@ import { Combobox } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { type RecurringExpense } from '@/lib/db/schema'
 import { useExpenseCategories } from '@/hooks/useRecurringExpenses'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 
 const recurringExpenseFormSchema = z.object({
   name: z.string()
@@ -27,7 +29,7 @@ const recurringExpenseFormSchema = z.object({
     .optional(),
   amount: z.number()
     .min(0.01, 'Amount must be greater than 0')
-    .max(1000000000000, 'Amount cannot exceed 1 trillion IDR')
+    .max(1000000000000, `Amount cannot exceed 1 trillion ${currencyInfo.code}`)
     .refine((amount) => Number.isFinite(amount), 'Amount must be a valid number'),
   frequency: z.enum(['monthly', 'yearly'], {
     required_error: 'Frequency is required',
@@ -82,6 +84,8 @@ export function RecurringExpenseForm({ expense, onSuccess, onCancel, onSubmit: o
   const isEditing = !!expense
   const predefinedCategories = useExpenseCategories()
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   const form = useForm<RecurringExpenseFormData>({
     resolver: zodResolver(recurringExpenseFormSchema),
