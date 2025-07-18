@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Trash2, Plus } from "lucide-react"
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from "@/lib/stores/businessStore"
+import { getCurrency } from "@/lib/utils/currencyUtils"
 import type { FinancialItem } from "@/types"
 
 interface FinancialItemsTableProps {
@@ -22,6 +24,9 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
   currency = true,
   enableFixedAssets = false
 }: FinancialItemsTableProps) {
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
+
   const [newItem, setNewItem] = useState({
     name: "",
     value: 0,
@@ -91,7 +96,7 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
             <TableRow>
               <TableHead>Item</TableHead>
               <TableHead className="text-right">
-                {currency ? "Amount (IDR)" : "Cost/Cup (IDR)"}
+                {currency ? `Amount (${currencyInfo.code})` : `Cost/Cup (${currencyInfo.code})`}
               </TableHead>
               {enableFixedAssets && (
                 <>
@@ -233,7 +238,7 @@ export const FinancialItemsTable = memo(function FinancialItemsTable({
             <TableRow>
               <TableCell className="font-semibold">Total</TableCell>
               <TableCell className="text-right font-semibold">
-                {formatCurrency(total)}
+                {formatCurrency(total, currentCurrency)}
               </TableCell>
               {enableFixedAssets && (
                 <>

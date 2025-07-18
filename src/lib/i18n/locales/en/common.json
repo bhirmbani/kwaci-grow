@@ -1179,7 +1179,7 @@
       "formula": {
         "title": "Calculation Formula:",
         "formula": "Cost per Cup = (Base Unit Cost ÷ Base Unit Quantity) × Usage per Cup",
-        "example": "Example: If milk costs Rp 20,000 per 1000ml and you use 100ml per cup, then cost per cup = (20,000 ÷ 1000) × 100 = Rp 2,000"
+        "example": "Example: If milk costs 20,000 per 1000ml and you use 100ml per cup, then cost per cup = (20,000 ÷ 1000) × 100 = 2,000"
       }
     }
   },

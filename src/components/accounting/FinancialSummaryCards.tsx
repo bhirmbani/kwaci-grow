@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 import type { FinancialSummary } from '@/lib/types/accounting'
 import { 
   TotalIncomeExplanation, 
@@ -36,6 +37,8 @@ interface FinancialSummaryCardsProps {
 
 export function FinancialSummaryCards({ summary, loading, error }: FinancialSummaryCardsProps) {
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
+
   // Loading state
   if (loading) {
     return (
@@ -121,11 +124,11 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(summary.totalIncome)}
+              {formatCurrency(summary.totalIncome, currentCurrency)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>{t('accounting.summary.sales')}: {formatCurrency(summary.salesIncome)}</div>
-              <div>{t('accounting.summary.capital')}: {formatCurrency(summary.capitalInvestments)}</div>
+              <div>{t('accounting.summary.sales')}: {formatCurrency(summary.salesIncome, currentCurrency)}</div>
+              <div>{t('accounting.summary.capital')}: {formatCurrency(summary.capitalInvestments, currentCurrency)}</div>
             </div>
           </CardContent>
         </Card>
@@ -143,12 +146,12 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(summary.totalExpenses)}
+              {formatCurrency(summary.totalExpenses, currentCurrency)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>{t('accounting.summary.operating')}: {formatCurrency(summary.operatingExpenses)}</div>
-              <div>{t('accounting.summary.fixed')}: {formatCurrency(summary.fixedCosts)}</div>
-              <div>{t('accounting.summary.variable')}: {formatCurrency(summary.variableCosts)}</div>
+              <div>{t('accounting.summary.operating')}: {formatCurrency(summary.operatingExpenses, currentCurrency)}</div>
+              <div>{t('accounting.summary.fixed')}: {formatCurrency(summary.fixedCosts, currentCurrency)}</div>
+              <div>{t('accounting.summary.variable')}: {formatCurrency(summary.variableCosts, currentCurrency)}</div>
             </div>
           </CardContent>
         </Card>
@@ -166,11 +169,11 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${summary.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {formatCurrency(summary.netIncome)}
+              {formatCurrency(summary.netIncome, currentCurrency)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>{t('accounting.summary.grossProfit')}: {formatCurrency(summary.grossProfit)}</div>
-              <div>{t('accounting.summary.operatingProfit')}: {formatCurrency(summary.operatingProfit)}</div>
+              <div>{t('accounting.summary.grossProfit')}: {formatCurrency(summary.grossProfit, currentCurrency)}</div>
+              <div>{t('accounting.summary.operatingProfit')}: {formatCurrency(summary.operatingProfit, currentCurrency)}</div>
             </div>
           </CardContent>
         </Card>
@@ -188,10 +191,10 @@ export function FinancialSummaryCards({ summary, loading, error }: FinancialSumm
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${summary.cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {formatCurrency(summary.cashFlow)}
+              {formatCurrency(summary.cashFlow, currentCurrency)}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              <div>{t('accounting.summary.burnRate')}: {formatCurrency(summary.burnRate)}/month</div>
+              <div>{t('accounting.summary.burnRate')}: {formatCurrency(summary.burnRate, currentCurrency)}/month</div>
               {summary.profitMargin !== 0 && (
                 <div>{t('accounting.summary.margin')}: {summary.profitMargin.toFixed(1)}%</div>
               )}

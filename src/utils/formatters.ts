@@ -4,13 +4,13 @@ export function formatCurrency(value: number, currency: string = DEFAULT_CURRENC
   return formatCurrencyValue(value, currency, short)
 }
 
-export function formatNumber(value: number): string {
+export function formatNumber(value: number, locale: string = 'id-ID'): string {
   // Handle NaN, undefined, null, and invalid numbers
   if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
-    return new Intl.NumberFormat('id-ID').format(0)
+    return new Intl.NumberFormat(locale).format(0)
   }
 
-  return new Intl.NumberFormat('id-ID').format(value)
+  return new Intl.NumberFormat(locale).format(value)
 }
 
 export function parseCurrency(value: string): number {

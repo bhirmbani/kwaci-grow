@@ -6,7 +6,7 @@ import { Badge } from '../ui/badge'
 import { TrendingUp, DollarSign, ShoppingCart, Clock, Star } from 'lucide-react'
 import { DashboardService, type TimePeriod, type SalesAnalytics } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
-import { useCurrentBusinessId } from '../../lib/stores/businessStore'
+import { useCurrentBusinessId, useCurrentBusinessCurrency } from '../../lib/stores/businessStore'
 
 interface SalesAnalyticsSectionProps {
   onPeriodChange?: (period: TimePeriod) => void
@@ -16,6 +16,7 @@ interface SalesAnalyticsSectionProps {
 export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' }: SalesAnalyticsSectionProps) {
   const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
+  const currentCurrency = useCurrentBusinessCurrency()
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>(initialPeriod)
   const [salesData, setSalesData] = useState<SalesAnalytics | null>(null)
   const [loading, setLoading] = useState(true)
@@ -113,7 +114,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(salesData?.totalRevenue || 0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(salesData?.totalRevenue || 0, currentCurrency)}</p>
                 )}
               </div>
               <DollarSign className="h-8 w-8 text-green-500" />
@@ -165,7 +166,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.errorLoading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(salesData?.averageOrderValue || 0)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(salesData?.averageOrderValue || 0, currentCurrency)}</p>
                 )}
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
@@ -194,7 +195,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
                   <div className="mt-2">
                     <p className="text-lg font-bold truncate">{salesData.topProduct.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {salesData.topProduct.quantity} {t('dashboard.salesAnalytics.metrics.sold')} • {formatCurrency(salesData.topProduct.revenue)}
+                      {salesData.topProduct.quantity} {t('dashboard.salesAnalytics.metrics.sold')} • {formatCurrency(salesData.topProduct.revenue, currentCurrency)}
                     </p>
                   </div>
                 ) : (
@@ -234,7 +235,7 @@ export function SalesAnalyticsSection({ onPeriodChange, initialPeriod = 'today' 
                         <div 
                           className="w-full bg-blue-500 rounded-t-sm min-h-[2px] transition-all duration-300 hover:bg-blue-600"
                           style={{ height: `${height}%` }}
-                          title={`${hourData.hour}: ${formatCurrency(hourData.revenue)} (${hourData.transactions} transactions)`}
+                          title={`${hourData.hour}: ${formatCurrency(hourData.revenue, currentCurrency)} (${hourData.transactions} transactions)`}
                         />
                         <span className="text-xs text-muted-foreground mt-1 transform -rotate-45 origin-bottom-left">
                           {hourData.hour.split(':')[0]}

@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 import { TransactionFilters } from './TransactionFilters'
 import type { UnifiedTransaction, TransactionFilters as ITransactionFilters, TransactionType } from '@/lib/types/accounting'
 
@@ -113,6 +114,7 @@ export function TransactionList({
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [searchTerm, setSearchTerm] = useState('')
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
 
   // Local filtering and sorting
   const filteredAndSortedTransactions = useMemo(() => {
@@ -335,7 +337,7 @@ export function TransactionList({
                         : 'text-red-600'
                     }`}>
                       {['SALES_INCOME', 'CAPITAL_INVESTMENT'].includes(transaction.type) ? '+' : '-'}
-                      {formatCurrency(transaction.amount)}
+                      {formatCurrency(transaction.amount, currentCurrency)}
                     </span>
                   </TableCell>
                   <TableCell>

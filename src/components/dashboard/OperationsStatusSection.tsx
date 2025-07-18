@@ -293,8 +293,10 @@ export function OperationsStatusSection() {
                             </div>
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground py-3 h-16">
-                            <div className="truncate" title={formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })}>
-                              {formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })}
+                            <div className="truncate" title={batch.dateCreated && !isNaN(new Date(batch.dateCreated).getTime()) ? formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true }) : t('dashboard.operationsStatus.columns.invalidDate')}>
+                              {batch.dateCreated && !isNaN(new Date(batch.dateCreated).getTime())
+                                ? formatDistanceToNow(new Date(batch.dateCreated), { addSuffix: true })
+                                : t('dashboard.operationsStatus.columns.invalidDate')}
                             </div>
                           </TableCell>
                         </TableRow>

@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { formatCurrency } from '@/utils/formatters'
+import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 import { type RecurringExpense } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
 
@@ -40,10 +41,10 @@ interface RecurringExpenseTableProps {
 type SortField = 'name' | 'amount' | 'frequency' | 'category' | 'startDate' | 'endDate'
 type SortDirection = 'asc' | 'desc'
 
-export function RecurringExpenseTable({ 
-  expenses, 
-  onEdit, 
-  onDelete, 
+export function RecurringExpenseTable({
+  expenses,
+  onEdit,
+  onDelete,
   onToggleActive,
   loading = false,
   showInactive = false
@@ -54,6 +55,7 @@ export function RecurringExpenseTable({
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
 
   // Get unique categories for filter
   const categories = useMemo(() => {
@@ -244,7 +246,7 @@ export function RecurringExpenseTable({
                       </div>
                     </TableCell>
                     <TableCell className="text-right font-mono">
-                      {formatCurrency(expense.amount)}
+                      {formatCurrency(expense.amount, currentCurrency)}
                     </TableCell>
                     <TableCell>
                       <Badge variant={expense.frequency === 'monthly' ? 'default' : 'secondary'}>

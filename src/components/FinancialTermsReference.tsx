@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from "@/lib/stores/businessStore"
 import { Calculator, TrendingUp, TrendingDown, DollarSign, Target, Gift, Info } from "lucide-react"
 
 export function FinancialTermsReference() {
+  const currentCurrency = useCurrentBusinessCurrency()
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -32,7 +36,7 @@ export function FinancialTermsReference() {
                 <strong>Formula:</strong> Cups per Day × Days per Month × Price per Cup
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Example: 50 cups/day × 22 days × Rp 8,000 = Rp 8,800,000
+                Example: 50 cups/day × 22 days × {formatCurrency(8000, currentCurrency)} = {formatCurrency(8800000, currentCurrency)}
               </p>
             </div>
             <p className="text-xs text-muted-foreground">

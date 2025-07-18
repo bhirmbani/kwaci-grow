@@ -239,7 +239,7 @@ export function BusinessManagementSheet({
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         disabled={!!editingBusiness} // Disable when editing existing business
                       >
                         <FormControl>
@@ -309,12 +309,18 @@ export function BusinessManagementSheet({
                     {isSubmitting ? "Saving..." : editingBusiness ? "Update Business" : "Create Business"}
                   </Button>
                   {editingBusiness && (
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       onClick={() => {
                         setEditingBusiness(null)
-                        form.reset()
+                        // Reset form to clean default values
+                        form.reset({
+                          name: "",
+                          description: "",
+                          note: "",
+                          currency: DEFAULT_CURRENCY,
+                        })
                       }}
                     >
                       Cancel

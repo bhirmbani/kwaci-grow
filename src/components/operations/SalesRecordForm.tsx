@@ -37,7 +37,7 @@ import { SalesRecordService } from '@/lib/services/salesRecordService'
 import { MenuService } from '@/lib/services/menuService'
 import { BranchService } from '@/lib/services/branchService'
 import { formatCurrency } from '@/utils/formatters'
-import { useCurrentBusinessId } from '@/lib/stores/businessStore'
+import { useCurrentBusinessId, useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 import type { Branch, MenuWithProducts, Product, MenuProduct } from '@/lib/db/schema'
 
 const salesRecordSchema = z.object({
@@ -61,6 +61,7 @@ interface SalesRecordFormProps {
 export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
   const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
+  const currentCurrency = useCurrentBusinessCurrency()
   const [branches, setBranches] = useState<Branch[]>([])
   const [menus, setMenus] = useState<MenuWithProducts[]>([])
   const [availableProducts, setAvailableProducts] = useState<(Product & { menuProduct: MenuProduct })[]>([])
@@ -259,7 +260,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
                 <SelectContent>
                   {availableProducts.map((product) => (
                     <SelectItem key={product.id} value={product.id}>
-                      {product.name} - {formatCurrency(product.menuProduct.price)}
+                      {product.name} - {formatCurrency(product.menuProduct.price, currentCurrency)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -395,7 +396,7 @@ export function SalesRecordForm({ onSuccess, onCancel }: SalesRecordFormProps) {
           <div className="space-y-2">
             <Label>{t('operations.salesRecordForm.fields.totalAmount')}</Label>
             <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm">
-              {formatCurrency(totalAmount)}
+              {formatCurrency(totalAmount, currentCurrency)}
             </div>
           </div>
         </div>

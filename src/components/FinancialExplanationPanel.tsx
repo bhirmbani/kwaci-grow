@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from "@/lib/stores/businessStore"
 import { Calculator, TrendingUp, TrendingDown, DollarSign, Target, Gift, X } from "lucide-react"
 
 interface FinancialData {
@@ -27,6 +28,8 @@ export function FinancialExplanationPanel({
   className = "",
   onClearSelection
 }: FinancialExplanationPanelProps) {
+  const currentCurrency = useCurrentBusinessCurrency()
+
   if (!selectedData) {
     return (
       <Card className={`h-full flex flex-col ${className}`}>
@@ -134,7 +137,7 @@ export function FinancialExplanationPanel({
             </div>
             <div className="flex justify-between">
               <span>Price per cup:</span>
-              <span>{formatCurrency(selectedData.pricePerCup)}</span>
+              <span>{formatCurrency(selectedData.pricePerCup, currentCurrency)}</span>
             </div>
             <div className="border-t pt-1 flex justify-between font-medium">
               <span>Monthly cups:</span>
@@ -143,10 +146,10 @@ export function FinancialExplanationPanel({
             <div className="bg-green-50 dark:bg-green-950 p-2 rounded">
               <div className="flex justify-between font-semibold">
                 <span>Total Revenue:</span>
-                <span className="text-green-600">{formatCurrency(selectedData.revenue)}</span>
+                <span className="text-green-600">{formatCurrency(selectedData.revenue, currentCurrency)}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                {monthlyCups.toLocaleString()} × {formatCurrency(selectedData.pricePerCup)}
+                {monthlyCups.toLocaleString()} × {formatCurrency(selectedData.pricePerCup, currentCurrency)}
               </div>
             </div>
           </div>
@@ -161,7 +164,7 @@ export function FinancialExplanationPanel({
           <div className="text-sm space-y-1 pl-6">
             <div className="flex justify-between">
               <span>Cost per cup:</span>
-              <span>{formatCurrency(selectedData.cogsPerCup)}</span>
+              <span>{formatCurrency(selectedData.cogsPerCup, currentCurrency)}</span>
             </div>
             <div className="flex justify-between">
               <span>Monthly cups:</span>
@@ -170,10 +173,10 @@ export function FinancialExplanationPanel({
             <div className="bg-orange-50 dark:bg-orange-950 p-2 rounded">
               <div className="flex justify-between font-semibold">
                 <span>Total Variable COGS:</span>
-                <span className="text-orange-600">{formatCurrency(selectedData.variableCogs)}</span>
+                <span className="text-orange-600">{formatCurrency(selectedData.variableCogs, currentCurrency)}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                {monthlyCups.toLocaleString()} × {formatCurrency(selectedData.cogsPerCup)}
+                {monthlyCups.toLocaleString()} × {formatCurrency(selectedData.cogsPerCup, currentCurrency)}
               </div>
             </div>
           </div>
@@ -188,16 +191,16 @@ export function FinancialExplanationPanel({
           <div className="text-sm space-y-1 pl-6">
             <div className="flex justify-between">
               <span>Revenue:</span>
-              <span>{formatCurrency(selectedData.revenue)}</span>
+              <span>{formatCurrency(selectedData.revenue, currentCurrency)}</span>
             </div>
             <div className="flex justify-between">
               <span>Variable COGS:</span>
-              <span>-{formatCurrency(selectedData.variableCogs)}</span>
+              <span>-{formatCurrency(selectedData.variableCogs, currentCurrency)}</span>
             </div>
             <div className="bg-blue-50 dark:bg-blue-950 p-2 rounded">
               <div className="flex justify-between font-semibold">
                 <span>Gross Profit:</span>
-                <span className="text-blue-600">{formatCurrency(selectedData.grossProfit)}</span>
+                <span className="text-blue-600">{formatCurrency(selectedData.grossProfit, currentCurrency)}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 Revenue - Variable COGS
@@ -216,7 +219,7 @@ export function FinancialExplanationPanel({
             <div className="bg-purple-50 dark:bg-purple-950 p-2 rounded">
               <div className="flex justify-between font-semibold">
                 <span>Monthly Fixed Costs:</span>
-                <span className="text-purple-600">{formatCurrency(selectedData.fixedCosts)}</span>
+                <span className="text-purple-600">{formatCurrency(selectedData.fixedCosts, currentCurrency)}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 Rent, salaries, depreciation, etc.
@@ -236,7 +239,7 @@ export function FinancialExplanationPanel({
               <div className="bg-amber-50 dark:bg-amber-950 p-2 rounded">
                 <div className="flex justify-between font-semibold">
                   <span>Barista Bonus:</span>
-                  <span className="text-amber-600">{formatCurrency(selectedData.bonus)}</span>
+                  <span className="text-amber-600">{formatCurrency(selectedData.bonus, currentCurrency)}</span>
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
                   Performance incentive for exceeding targets
@@ -260,26 +263,26 @@ export function FinancialExplanationPanel({
           <div className="text-sm space-y-1 pl-6">
             <div className="flex justify-between">
               <span>Gross Profit:</span>
-              <span>{formatCurrency(selectedData.grossProfit)}</span>
+              <span>{formatCurrency(selectedData.grossProfit, currentCurrency)}</span>
             </div>
             <div className="flex justify-between">
               <span>Fixed Costs:</span>
-              <span>-{formatCurrency(selectedData.fixedCosts)}</span>
+              <span>-{formatCurrency(selectedData.fixedCosts, currentCurrency)}</span>
             </div>
             {selectedData.bonus > 0 && (
               <div className="flex justify-between">
                 <span>Bonus:</span>
-                <span>-{formatCurrency(selectedData.bonus)}</span>
+                <span>-{formatCurrency(selectedData.bonus, currentCurrency)}</span>
               </div>
             )}
             <div className={`p-3 rounded font-semibold text-lg ${
-              selectedData.netProfit >= 0 
-                ? 'bg-green-50 dark:bg-green-950 text-green-600' 
+              selectedData.netProfit >= 0
+                ? 'bg-green-50 dark:bg-green-950 text-green-600'
                 : 'bg-red-50 dark:bg-red-950 text-red-600'
             }`}>
               <div className="flex justify-between">
                 <span>Net Profit:</span>
-                <span>{formatCurrency(selectedData.netProfit)}</span>
+                <span>{formatCurrency(selectedData.netProfit, currentCurrency)}</span>
               </div>
               <div className="text-xs text-muted-foreground mt-1 font-normal">
                 {selectedData.netProfit >= 0 ? 'Profitable scenario' : 'Loss scenario'}

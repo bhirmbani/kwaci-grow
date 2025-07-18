@@ -6,7 +6,7 @@ import { Button } from '../ui/button'
 import { Building2, TrendingUp, TrendingDown, ArrowUpDown, Crown, MapPin } from 'lucide-react'
 import { DashboardService, type BranchPerformance, type TimePeriod } from '../../lib/services/dashboardService'
 import { formatCurrency } from '../../utils/formatters'
-import { useCurrentBusinessId } from '../../lib/stores/businessStore'
+import { useCurrentBusinessId, useCurrentBusinessCurrency } from '../../lib/stores/businessStore'
 import { useTranslation } from 'react-i18next'
 
 interface BranchPerformanceSectionProps {
@@ -19,6 +19,7 @@ type SortDirection = 'asc' | 'desc'
 export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSectionProps) {
   const { t } = useTranslation()
   const currentBusinessId = useCurrentBusinessId()
+  const currentCurrency = useCurrentBusinessCurrency()
   const [branchData, setBranchData] = useState<BranchPerformance[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -199,7 +200,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(totalRevenue)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalRevenue, currentCurrency)}</p>
                 )}
               </div>
               <TrendingUp className="h-8 w-8 text-green-500" />
@@ -225,7 +226,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                 ) : error ? (
                   <p className="text-sm text-destructive">{t('dashboard.branchPerformance.error.loading')}</p>
                 ) : (
-                  <p className="text-2xl font-bold">{formatCurrency(averageRevenuePerBranch)}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(averageRevenuePerBranch, currentCurrency)}</p>
                 )}
               </div>
               <Building2 className="h-8 w-8 text-purple-500" />
@@ -254,7 +255,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                   <div className="mt-2">
                     <p className="text-lg font-bold truncate">{topPerformer.branchName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatCurrency(topPerformer.totalRevenue)}
+                      {formatCurrency(topPerformer.totalRevenue, currentCurrency)}
                     </p>
                   </div>
                 ) : (
@@ -363,7 +364,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                         </TableCell>
                         <TableCell>
                           <span className="font-medium">
-                            {formatCurrency(branch.totalRevenue)}
+                            {formatCurrency(branch.totalRevenue, currentCurrency)}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -373,7 +374,7 @@ export function BranchPerformanceSection({ selectedPeriod }: BranchPerformanceSe
                         </TableCell>
                         <TableCell>
                           <span className="font-medium">
-                            {formatCurrency(branch.averageOrderValue)}
+                            {formatCurrency(branch.averageOrderValue, currentCurrency)}
                           </span>
                         </TableCell>
                         <TableCell>

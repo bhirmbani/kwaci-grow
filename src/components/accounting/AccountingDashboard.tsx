@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAccounting } from '@/hooks/useAccounting'
-import { useCurrentBusiness } from '@/lib/stores/businessStore'
+import { useCurrentBusiness, useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
 import { formatCurrency } from '@/utils/formatters'
 import { exportFinancialReport } from '@/utils/exportUtils'
 import { TransactionList } from './TransactionList'
@@ -33,6 +33,7 @@ export function AccountingDashboard() {
   const [showFilters, setShowFilters] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
   const { t } = useTranslation()
+  const currentCurrency = useCurrentBusinessCurrency()
 
   // Always call useAccounting hook to prevent unmounting issues
   const {
@@ -260,7 +261,7 @@ export function AccountingDashboard() {
               <Skeleton className="h-8 w-24" />
             ) : (
               <div className="text-2xl font-bold text-red-600">
-                {formatCurrency(totals.OPERATING_EXPENSE + totals.RECURRING_EXPENSE)}
+                {formatCurrency(totals.OPERATING_EXPENSE + totals.RECURRING_EXPENSE, currentCurrency)}
               </div>
             )}
             <p className="text-xs text-muted-foreground">
@@ -288,7 +289,7 @@ export function AccountingDashboard() {
                   ? 'text-green-600' 
                   : 'text-red-600'
               }`}>
-                {financialSummary ? formatCurrency(financialSummary.netIncome) : '—'}
+                {financialSummary ? formatCurrency(financialSummary.netIncome, currentCurrency) : '—'}
               </div>
             )}
             <p className="text-xs text-muted-foreground">

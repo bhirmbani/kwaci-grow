@@ -4,7 +4,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { BonusScheme } from "@/types"
 
-import { formatNumber } from "@/utils/formatters"
+import { formatNumber, formatCurrency } from "@/utils/formatters"
+import { useCurrentBusinessCurrency } from "@/lib/stores/businessStore"
+import { getCurrency } from "@/lib/utils/currencyUtils"
 
 interface BonusSchemeCardProps {
   bonusScheme: BonusScheme
@@ -12,6 +14,9 @@ interface BonusSchemeCardProps {
 }
 
 export const BonusSchemeCard = memo(function BonusSchemeCard({ bonusScheme, onUpdate }: BonusSchemeCardProps) {
+  const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
+
   const handleBaristaCountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdate({ ...bonusScheme, baristaCount: Number(e.target.value) })
   }, [bonusScheme, onUpdate])
@@ -57,7 +62,7 @@ export const BonusSchemeCard = memo(function BonusSchemeCard({ bonusScheme, onUp
             />
           </div>
           <div>
-            <Label htmlFor="bonusPerCup">Bonus per cup above target (IDR)</Label>
+            <Label htmlFor="bonusPerCup">Bonus per cup above target ({currencyInfo.code})</Label>
             <Input
               id="bonusPerCup"
               type="number"
@@ -77,9 +82,9 @@ export const BonusSchemeCard = memo(function BonusSchemeCard({ bonusScheme, onUp
           />
         </div>
         <CardDescription>
-          Contoh: {bonusScheme.baristaCount} barista{bonusScheme.baristaCount > 1 ? 's' : ''} mendapat bonus Rp {formatNumber(bonusScheme.perCup)} per cup
+          Contoh: {bonusScheme.baristaCount} barista{bonusScheme.baristaCount > 1 ? 's' : ''} mendapat bonus {formatCurrency(bonusScheme.perCup, currentCurrency)} per cup
           untuk setiap penjualan di atas {formatNumber(bonusScheme.target)} cup per bulan.
-          Total bonus maksimal per bulan: Rp {formatNumber(bonusScheme.perCup * bonusScheme.baristaCount)} per cup di atas target.
+          Total bonus maksimal per bulan: {formatCurrency(bonusScheme.perCup * bonusScheme.baristaCount, currentCurrency)} per cup di atas target.
         </CardDescription>
       </CardContent>
     </Card>
