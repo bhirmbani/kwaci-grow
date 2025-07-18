@@ -1,5 +1,4 @@
-import * as React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -60,12 +59,14 @@ interface BusinessManagementSheetProps {
   children?: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  mode?: 'create' | 'manage' // Add mode to distinguish between create and manage
 }
 
-export function BusinessManagementSheet({ 
-  children, 
-  open, 
-  onOpenChange 
+export function BusinessManagementSheet({
+  children,
+  open,
+  onOpenChange,
+  mode = 'manage' // Default to manage mode
 }: BusinessManagementSheetProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [editingBusiness, setEditingBusiness] = useState<Business | null>(null)
@@ -92,12 +93,30 @@ export function BusinessManagementSheet({
     } else {
       setIsOpen(newOpen)
     }
-    
+
     if (!newOpen) {
       setEditingBusiness(null)
-      form.reset()
+      // Reset form to default values
+      form.reset({
+        name: "",
+        description: "",
+        note: "",
+        currency: DEFAULT_CURRENCY,
+      })
     }
   }
+
+  // Reset form when opening in create mode
+  React.useEffect(() => {
+    if (open && mode === 'create' && !editingBusiness) {
+      form.reset({
+        name: "",
+        description: "",
+        note: "",
+        currency: DEFAULT_CURRENCY,
+      })
+    }
+  }, [open, mode, editingBusiness, form])
 
   const handleEdit = (business: Business) => {
     setEditingBusiness(business)
@@ -172,12 +191,19 @@ export function BusinessManagementSheet({
         <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>
-              {editingBusiness ? "Edit Business" : "Manage Businesses"}
+              {editingBusiness
+                ? "Edit Business"
+                : mode === 'create'
+                  ? "Add New Business"
+                  : "Manage Businesses"
+              }
             </SheetTitle>
             <SheetDescription>
-              {editingBusiness 
-                ? "Update business information" 
-                : "Create and manage your businesses"
+              {editingBusiness
+                ? "Update business information (currency cannot be changed)"
+                : mode === 'create'
+                  ? "Create a new business with your preferred currency"
+                  : "Create and manage your businesses"
               }
             </SheetDescription>
           </SheetHeader>
@@ -208,10 +234,16 @@ export function BusinessManagementSheet({
                   name="currency"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Currency</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormLabel className={editingBusiness ? "text-muted-foreground" : ""}>
+                        Currency {editingBusiness && <span className="text-xs font-normal">(Read-only)</span>}
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!!editingBusiness} // Disable when editing existing business
+                      >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className={editingBusiness ? "opacity-60 cursor-not-allowed" : ""}>
                             <SelectValue placeholder="Select currency" />
                           </SelectTrigger>
                         </FormControl>
@@ -224,7 +256,10 @@ export function BusinessManagementSheet({
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        The currency for this business (cannot be changed later)
+                        {editingBusiness
+                          ? "Currency cannot be changed after business creation for data consistency"
+                          : "Select the currency for this business (cannot be changed later)"
+                        }
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -289,8 +324,8 @@ export function BusinessManagementSheet({
               </form>
             </Form>
 
-            {/* Existing Businesses List */}
-            {!editingBusiness && businesses.length > 0 && (
+            {/* Existing Businesses List - only show in manage mode */}
+            {!editingBusiness && mode === 'manage' && businesses.length > 0 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Existing Businesses</h3>
                 <div className="space-y-2">

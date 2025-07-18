@@ -211,12 +211,15 @@ const items = [
 export function AppSidebar() {
   const { t } = useTranslation()
   const [isBusinessManagementOpen, setIsBusinessManagementOpen] = useState(false)
+  const [businessManagementMode, setBusinessManagementMode] = useState<'create' | 'manage'>('manage')
 
   const handleCreateBusiness = () => {
+    setBusinessManagementMode('create')
     setIsBusinessManagementOpen(true)
   }
 
   const handleManageBusinesses = () => {
+    setBusinessManagementMode('manage')
     setIsBusinessManagementOpen(true)
   }
 
@@ -388,6 +391,7 @@ export function AppSidebar() {
       <BusinessManagementSheet
         open={isBusinessManagementOpen}
         onOpenChange={setIsBusinessManagementOpen}
+        mode={businessManagementMode}
       />
       
       {/* Rail for easier expansion when collapsed */}
