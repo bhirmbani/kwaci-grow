@@ -38,7 +38,7 @@ const fixedAssetFormSchema = z.object({
     }, 'Purchase date must be within the last 10 years and not in the future'),
   purchaseCost: z.number()
     .min(0.01, 'Purchase cost must be greater than 0')
-    .max(1000000000000, `Purchase cost cannot exceed 1 trillion ${currencyInfo.code}`)
+    .max(1000000000000, 'Purchase cost cannot exceed 1 trillion')
     .refine((cost) => Number.isFinite(cost), 'Purchase cost must be a valid number'),
   depreciationMonths: z.number()
     .min(1, 'Depreciation period must be at least 1 month')
@@ -76,8 +76,6 @@ export function FixedAssetForm({ asset, onSuccess, onCancel, onSubmit: onSubmitP
   const [currentValue, setCurrentValue] = useState<number | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const isEditing = !!asset
-  const currentCurrency = useCurrentBusinessCurrency()
-  const currencyInfo = getCurrency(currentCurrency)
 
   const form = useForm<FixedAssetFormData>({
     resolver: zodResolver(fixedAssetFormSchema),
