@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select'
 import { MenuService } from '@/lib/services/menuService'
 import { useCurrentBusinessCurrency } from '@/lib/stores/businessStore'
+import { getCurrency } from '@/lib/utils/currencyUtils'
 import { formatCurrency } from '@/utils/formatters'
 import type { MenuProduct, Product } from '@/lib/db/schema'
 
@@ -71,6 +72,7 @@ export function MenuProductForm({
 }: MenuProductFormProps) {
   const isEditing = !!menuProduct
   const currentCurrency = useCurrentBusinessCurrency()
+  const currencyInfo = getCurrency(currentCurrency)
 
   const form = useForm<MenuProductFormData>({
     resolver: zodResolver(menuProductFormSchema),
@@ -203,11 +205,11 @@ export function MenuProductForm({
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price (IDR) *</FormLabel>
+              <FormLabel>Price ({currencyInfo.code}) *</FormLabel>
               <FormControl>
                 <Input
                   type="number"
-                  placeholder="Enter price in IDR"
+                  placeholder={`Enter price in ${currencyInfo.code}`}
                   {...field}
                   onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                 />
@@ -309,7 +311,7 @@ export function MenuProductForm({
                 <div className="flex gap-2">
                   <Input
                     type="number"
-                    placeholder="IDR"
+                    placeholder={currencyInfo.code}
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     className="text-xs h-8"
