@@ -10,20 +10,22 @@
 import { format } from 'date-fns'
 import type { UnifiedTransaction, FinancialSummary } from '@/lib/types/accounting'
 import { formatCurrency } from './formatters'
+import { DEFAULT_CURRENCY } from '@/lib/utils/currencyUtils'
 
 /**
  * Convert transactions to CSV format
  */
 export function exportTransactionsToCSV(
   transactions: UnifiedTransaction[],
-  businessName: string = 'Business'
+  businessName: string = 'Business',
+  currency: string = DEFAULT_CURRENCY
 ): string {
   const headers = [
     'Date',
     'Type',
     'Category',
     'Description',
-    'Amount (IDR)',
+    `Amount (${currency})`,
     'Status',
     'Note',
     'Created At'
@@ -57,14 +59,15 @@ export function exportTransactionsToCSV(
  */
 export function exportFinancialSummaryToCSV(
   summary: FinancialSummary,
-  businessName: string = 'Business'
+  businessName: string = 'Business',
+  currency: string = DEFAULT_CURRENCY
 ): string {
   const summaryData = [
     ['# Financial Summary Export', businessName],
     ['# Generated on:', format(new Date(), 'yyyy-MM-dd HH:mm:ss')],
     ['# Period:', `${summary.periodStart || 'All time'} to ${summary.periodEnd || 'Present'}`],
     [''], // Empty row
-    ['Metric', 'Amount (IDR)', 'Percentage'],
+    ['Metric', `Amount (${currency})`, 'Percentage'],
     ['Total Income', summary.totalIncome.toString(), '100.0%'],
     ['Sales Income', summary.salesIncome.toString(), summary.totalIncome > 0 ? `${((summary.salesIncome / summary.totalIncome) * 100).toFixed(1)}%` : '0.0%'],
     ['Capital Investments', summary.capitalInvestments.toString(), summary.totalIncome > 0 ? `${((summary.capitalInvestments / summary.totalIncome) * 100).toFixed(1)}%` : '0.0%'],
@@ -121,13 +124,14 @@ export function downloadCSV(content: string, filename: string): void {
 export function exportTransactions(
   transactions: UnifiedTransaction[],
   businessName: string = 'Business',
-  format: 'csv' = 'csv'
+  format: 'csv' = 'csv',
+  currency: string = DEFAULT_CURRENCY
 ): void {
   const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss')
   const filename = `${businessName.replace(/[^a-zA-Z0-9]/g, '_')}_transactions_${timestamp}.csv`
   
   if (format === 'csv') {
-    const csvContent = exportTransactionsToCSV(transactions, businessName)
+    const csvContent = exportTransactionsToCSV(transactions, businessName, currency)
     downloadCSV(csvContent, filename)
   }
 }
@@ -138,13 +142,14 @@ export function exportTransactions(
 export function exportFinancialSummary(
   summary: FinancialSummary,
   businessName: string = 'Business',
-  format: 'csv' = 'csv'
+  format: 'csv' = 'csv',
+  currency: string = DEFAULT_CURRENCY
 ): void {
   const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss')
   const filename = `${businessName.replace(/[^a-zA-Z0-9]/g, '_')}_financial_summary_${timestamp}.csv`
   
   if (format === 'csv') {
-    const csvContent = exportFinancialSummaryToCSV(summary, businessName)
+    const csvContent = exportFinancialSummaryToCSV(summary, businessName, currency)
     downloadCSV(csvContent, filename)
   }
 }
@@ -156,14 +161,15 @@ export function exportFinancialReport(
   transactions: UnifiedTransaction[],
   summary: FinancialSummary,
   businessName: string = 'Business',
-  format: 'csv' = 'csv'
+  format: 'csv' = 'csv',
+  currency: string = DEFAULT_CURRENCY
 ): void {
   const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss')
   const filename = `${businessName.replace(/[^a-zA-Z0-9]/g, '_')}_financial_report_${timestamp}.csv`
   
   if (format === 'csv') {
-    const summaryContent = exportFinancialSummaryToCSV(summary, businessName)
-    const transactionsContent = exportTransactionsToCSV(transactions, businessName)
+    const summaryContent = exportFinancialSummaryToCSV(summary, businessName, currency)
+    const transactionsContent = exportTransactionsToCSV(transactions, businessName, currency)
     
     const combinedContent = [
       summaryContent,

@@ -979,7 +979,7 @@
       "fields": {
         "name": "Nama Biaya",
         "description": "Deskripsi (Opsional)",
-        "amount": "Jumlah (IDR)",
+        "amount": "Jumlah ({{currency}})",
         "frequency": "Frekuensi",
         "category": "Kategori",
         "startDate": "Tanggal Mulai",
@@ -1291,9 +1291,9 @@
         "cancel": "Batal"
       },
       "exampleTitle": "Contoh:",
-      "exampleItem1": "• Susu: Biaya 20.000 IDR untuk 1.000 ml = 20 IDR per ml",
-      "exampleItem2": "• Biji kopi: Biaya 200.000 IDR untuk 1.000 g = 200 IDR per g",
-      "exampleItem3": "• Gelas: Biaya 850 IDR per pcs"
+      "exampleItem1": "• Susu: Biaya 20.000 untuk 1.000 ml = 20 per ml",
+      "exampleItem2": "• Biji kopi: Biaya 200.000 untuk 1.000 g = 200 per g",
+      "exampleItem3": "• Gelas: Biaya 850 per pcs"
     },
     "validation": {
       "nameRequired": "Nama bahan wajib diisi",
@@ -1584,7 +1584,7 @@
         "saleDate": "Tanggal Penjualan",
         "saleTime": "Waktu Penjualan",
         "quantity": "Jumlah",
-        "unitPrice": "Harga Satuan (IDR)",
+        "unitPrice": "Harga Satuan ({{currency}})",
         "totalAmount": "Total",
         "note": "Catatan (Opsional)"
       },
@@ -1822,8 +1822,8 @@
       "endDate": "Tanggal Akhir",
       "pickStart": "Pilih tanggal mulai",
       "pickEnd": "Pilih tanggal akhir",
-      "minAmount": "Jumlah Minimum (IDR)",
-      "maxAmount": "Jumlah Maksimum (IDR)",
+      "minAmount": "Jumlah Minimum ({{currency}})",
+      "maxAmount": "Jumlah Maksimum ({{currency}})",
       "types": "Tipe Transaksi",
       "status": "Status",
       "categories": "Kategori",
@@ -1944,15 +1944,15 @@
       "fields": {
         "transactionType": "Tipe Transaksi",
         "category": "Kategori",
-        "amount": "Jumlah (IDR)",
+        "amount": "Jumlah ({{currency}})",
         "description": "Deskripsi",
         "date": "Tanggal",
         "quantity": "Kuantitas",
-        "unitPrice": "Harga Satuan (IDR)",
+        "unitPrice": "Harga Satuan ({{currency}})",
         "frequency": "Frekuensi",
         "usefulLife": "Umur Manfaat (Tahun)",
         "unit": "Satuan",
-        "baseUnitCost": "Biaya Satuan Dasar (IDR)",
+        "baseUnitCost": "Biaya Satuan Dasar ({{currency}})",
         "usagePerCup": "Penggunaan Per Cup",
         "note": "Catatan (Opsional)"
       },
@@ -2065,7 +2065,7 @@
           "position": "Posisi/Jabatan *",
           "department": "Departemen *",
           "jobLevel": "Level Jabatan",
-          "salary": "Gaji (IDR)",
+          "salary": "Gaji ({{currency}})",
           "hireDate": "Tanggal Masuk *",
           "employmentStatus": "Status Karyawan",
           "phone": "Nomor Telepon",
@@ -2621,7 +2621,7 @@
         "name": "Nama Aset",
         "category": "Kategori",
         "purchaseDate": "Tanggal Beli",
-        "purchaseCost": "Biaya Pembelian (IDR)",
+        "purchaseCost": "Biaya Pembelian ({{currency}})",
         "depreciation": "Periode Depresiasi",
         "customDuration": "Durasi Kustom (Bulan)",
         "note": "Catatan (Opsional)"
