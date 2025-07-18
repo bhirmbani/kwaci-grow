@@ -979,7 +979,7 @@
       "fields": {
         "name": "Expense Name",
         "description": "Description (Optional)",
-        "amount": "Amount (IDR)",
+        "amount": "Amount ({{currency}})",
         "frequency": "Frequency",
         "category": "Category",
         "startDate": "Start Date",
@@ -1291,9 +1291,9 @@
         "cancel": "Cancel"
       },
       "exampleTitle": "Example:",
-      "exampleItem1": "• Milk: Base cost 20,000 IDR for 1,000 ml = 20 IDR per ml",
-      "exampleItem2": "• Coffee beans: Base cost 200,000 IDR for 1,000 g = 200 IDR per g",
-      "exampleItem3": "• Cups: Base cost 850 IDR for 1 piece = 850 IDR per piece"
+      "exampleItem1": "• Milk: Base cost 20,000 for 1,000 ml = 20 per ml",
+      "exampleItem2": "• Coffee beans: Base cost 200,000 for 1,000 g = 200 per g",
+      "exampleItem3": "• Cups: Base cost 850 for 1 piece = 850 per piece"
     },
     "validation": {
       "nameRequired": "Ingredient name is required",
@@ -1584,7 +1584,7 @@
         "saleDate": "Sale Date",
         "saleTime": "Sale Time",
         "quantity": "Quantity",
-        "unitPrice": "Unit Price (IDR)",
+        "unitPrice": "Unit Price ({{currency}})",
         "totalAmount": "Total Amount",
         "note": "Note (Optional)"
       },
@@ -1822,8 +1822,8 @@
       "endDate": "End Date",
       "pickStart": "Pick start date",
       "pickEnd": "Pick end date",
-      "minAmount": "Min Amount (IDR)",
-      "maxAmount": "Max Amount (IDR)",
+      "minAmount": "Min Amount ({{currency}})",
+      "maxAmount": "Max Amount ({{currency}})",
       "types": "Transaction Types",
       "status": "Status",
       "categories": "Categories",
@@ -1944,15 +1944,15 @@
       "fields": {
         "transactionType": "Transaction Type",
         "category": "Category",
-        "amount": "Amount (IDR)",
+        "amount": "Amount ({{currency}})",
         "description": "Description",
         "date": "Date",
         "quantity": "Quantity",
-        "unitPrice": "Unit Price (IDR)",
+        "unitPrice": "Unit Price ({{currency}})",
         "frequency": "Frequency",
         "usefulLife": "Estimated Useful Life (Years)",
         "unit": "Unit",
-        "baseUnitCost": "Base Unit Cost (IDR)",
+        "baseUnitCost": "Base Unit Cost ({{currency}})",
         "usagePerCup": "Usage Per Cup",
         "note": "Note (Optional)"
       },
@@ -2065,7 +2065,7 @@
           "position": "Position/Job Title *",
           "department": "Department *",
           "jobLevel": "Job Level",
-          "salary": "Salary (IDR)",
+          "salary": "Salary ({{currency}})",
           "hireDate": "Hire Date *",
           "employmentStatus": "Employment Status",
           "phone": "Phone Number",
@@ -2621,7 +2621,7 @@
         "name": "Asset Name",
         "category": "Category",
         "purchaseDate": "Purchase Date",
-        "purchaseCost": "Purchase Cost (IDR)",
+        "purchaseCost": "Purchase Cost ({{currency}})",
         "depreciation": "Depreciation Period",
         "customDuration": "Custom Duration (Months)",
         "note": "Note (Optional)"
