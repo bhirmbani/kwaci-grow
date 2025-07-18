@@ -7,6 +7,7 @@ export interface Business {
   description?: string
   note: string
   currency: string // Currency code (e.g., 'IDR', 'THB', 'SGD')
+  logo?: string // Emoji character for business logo (e.g., '☕', '🥐', '🧃')
   createdAt: string
   updatedAt: string
 }

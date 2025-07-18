@@ -104,6 +104,7 @@ export class ComprehensiveBakerySeeder {
       description: 'Artisan bakery specializing in fresh breads, pastries, and custom cakes',
       note: 'Family-owned bakery serving the community since 2020',
       currency: 'THB', // Thai Baht for bakery business
+      logo: '🥐', // Croissant emoji for bakery business
       createdAt: now,
       updatedAt: now
     }

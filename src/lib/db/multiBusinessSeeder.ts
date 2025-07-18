@@ -255,6 +255,7 @@ export class MultiBusinessSeeder {
         description: 'Premium coffee shop serving artisan coffee and fresh pastries',
         note: 'Original coffee business with comprehensive menu and operations',
         currency: 'IDR', // Indonesian Rupiah for coffee business
+        logo: '☕', // Coffee emoji for coffee business
         createdAt: now,
         updatedAt: now
       }

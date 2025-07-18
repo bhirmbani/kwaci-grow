@@ -44,6 +44,7 @@ import {
 import { useBusinessStore, useBusinesses, useCurrentBusiness } from "@/lib/stores/businessStore"
 import { BusinessService } from "@/lib/services/businessService"
 import { getCurrencyOptions, DEFAULT_CURRENCY } from "@/lib/utils/currencyUtils"
+import { EmojiPickerField } from "@/components/ui/emoji-picker-field"
 import type { Business } from "@/lib/db/schema"
 
 const businessSchema = z.object({
@@ -51,6 +52,7 @@ const businessSchema = z.object({
   description: z.string().max(500, "Description must be less than 500 characters").optional(),
   note: z.string().max(1000, "Note must be less than 1000 characters").optional(),
   currency: z.string().min(1, "Currency is required"),
+  logo: z.string().optional(),
 })
 
 type BusinessFormData = z.infer<typeof businessSchema>
@@ -84,6 +86,7 @@ export function BusinessManagementSheet({
       description: "",
       note: "",
       currency: DEFAULT_CURRENCY,
+      logo: undefined,
     },
   })
 
@@ -102,6 +105,7 @@ export function BusinessManagementSheet({
         description: "",
         note: "",
         currency: DEFAULT_CURRENCY,
+        logo: undefined,
       })
     }
   }
@@ -114,6 +118,7 @@ export function BusinessManagementSheet({
         description: "",
         note: "",
         currency: DEFAULT_CURRENCY,
+        logo: undefined,
       })
     }
   }, [open, mode, editingBusiness, form])
@@ -125,6 +130,7 @@ export function BusinessManagementSheet({
       description: business.description || "",
       note: business.note || "",
       currency: business.currency || DEFAULT_CURRENCY,
+      logo: business.logo,
     })
   }
 
@@ -268,6 +274,27 @@ export function BusinessManagementSheet({
 
                 <FormField
                   control={form.control}
+                  name="logo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Business Logo</FormLabel>
+                      <FormControl>
+                        <EmojiPickerField
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Select an emoji for your business"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Choose an emoji that represents your business. This will be displayed in the business switcher.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
@@ -320,6 +347,7 @@ export function BusinessManagementSheet({
                           description: "",
                           note: "",
                           currency: DEFAULT_CURRENCY,
+                          logo: undefined,
                         })
                       }}
                     >
